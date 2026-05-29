@@ -1,0 +1,23 @@
+{
+  "name": "dfe.educationproviderregistry.mvc",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "govuk:build": "npm run govuk:css && npm run govuk:js && npm run govuk:fonts && npm run govuk:images && npm run govuk:manifest",
+    "govuk:css": "copyfiles -f node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.css wwwroot/css",
+    "govuk:js": "copyfiles -f node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.js wwwroot/js",
+    "govuk:fonts": "copyfiles -f node_modules/govuk-frontend/dist/govuk/assets/fonts/* wwwroot/assets/fonts",
+    "govuk:images": "copyfiles -f node_modules/govuk-frontend/dist/govuk/assets/images/* wwwroot/assets/images",
+    "govuk:manifest": "copyfiles -f node_modules/govuk-frontend/dist/govuk/assets/manifest.json wwwroot/assets"
+  },
+  "dependencies": {
+    "govuk-frontend": "^6.1.0"
+  },
+  "devDependencies": {
+    "copyfiles": "^2.4.1"
+  }
+}

@@ -1,0 +1,6 @@
+@DfE.EducationProviderRegistry.Web.Api_HostAddress = https://localhost:32795
+
+GET {{DfE.EducationProviderRegistry.Web.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

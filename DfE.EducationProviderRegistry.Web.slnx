@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/DfE.EducationProviderRegistry.Web.Api/DfE.EducationProviderRegistry.Web.Api.csproj" Id="c7a463ad-27aa-453d-adc2-e8ed0bb85d73" />
     <Project Path="src/DfE.EducationProviderRegistry.Web.Mvc/DfE.EducationProviderRegistry.Web.Mvc.csproj" />
   </Folder>
 </Solution>

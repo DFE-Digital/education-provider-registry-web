@@ -1,0 +1,15 @@
+﻿@model DfE.EducationProviderRegistry.Web.Mvc.ViewModels.Pages.SearchPageViewModel
+@{
+    ViewData["Title"] = "Search Page";
+}
+
+<h1 class="govuk-heading-xl">Search for an establishment</h1>
+
+<form method="post" action="/search">
+    <div class="govuk-form-group">
+        <label class="govuk-label" for="query">Search</label>
+        <input class="govuk-input" id="query" name="query" type="text" value="@Model.Query" />
+    </div>
+
+    <button class="govuk-button" type="submit">Search</button>
+</form>

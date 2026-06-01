@@ -1,0 +1,51 @@
+﻿@model EstablishmentSearchResultViewModel
+
+<div class="govuk-!-margin-bottom-6">
+
+    <h2 class="govuk-heading-m">
+        <a href="@Model.EstablishmentUrl" class="govuk-link">
+            @Model.Name
+        </a>
+    </h2>
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-0">
+
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">URN</dt>
+            <dd class="govuk-summary-list__value">@Model.Urn</dd>
+        </div>
+
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Type</dt>
+            <dd class="govuk-summary-list__value">@Model.Type</dd>
+        </div>
+
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Address</dt>
+            <dd class="govuk-summary-list__value">@Model.Address</dd>
+        </div>
+
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Local authority</dt>
+            <dd class="govuk-summary-list__value">
+                <a href="@Model.LaUrl" class="govuk-link">
+                    @Model.LocalAuthorityName
+                </a>
+            </dd>
+        </div>
+
+        @if (Model.HasPartOf)
+        {
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Part of</dt>
+                <dd class="govuk-summary-list__value">
+                    <a href="@Model.PartOfUrl" class="govuk-link">
+                        @Model.PartOfName
+                    </a>
+                </dd>
+            </div>
+        }
+
+    </dl>
+
+</div>

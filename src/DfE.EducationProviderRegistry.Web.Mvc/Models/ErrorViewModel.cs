@@ -1,4 +1,4 @@
-namespace DfE.EducationProviderRegistry.Mvc.Models
+namespace DfE.EducationProviderRegistry.Web.Mvc.Models
 {
     public class ErrorViewModel
     {

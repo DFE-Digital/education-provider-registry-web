@@ -2,6 +2,7 @@
 using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.Model;
 using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.UseCases.GetEstablishments.Request;
+using DfE.EducationProviderRegistry.Web.Api.Establishments.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Runtime.CompilerServices;
 
@@ -20,7 +21,7 @@ public sealed class EstablishmentsController : ControllerBase
     private readonly IUseCase<
         GetEstablishmentsRequest,
         UseCaseResponse<IReadOnlyCollection<Establishment>>> _getEstablishmentsUseCase;
-    private readonly IMapper<Establishment, object?> _modelToViewModelMapper;
+    private readonly IMapper<Establishment, EstablishmentViewModel?> _modelToViewModelMapper;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="EstablishmentsController"/> class.
@@ -38,7 +39,7 @@ public sealed class EstablishmentsController : ControllerBase
         IUseCase<
             GetEstablishmentsRequest,
             UseCaseResponse<IReadOnlyCollection<Establishment>>> getEstablishmentsUseCase,
-        IMapper<Establishment, object?> modelToViewModelMapper)
+        IMapper<Establishment, EstablishmentViewModel?> modelToViewModelMapper)
     {
         _logger = logger;
         _getEstablishmentsUseCase = getEstablishmentsUseCase;

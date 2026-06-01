@@ -85,7 +85,7 @@
                 <div class="govuk-service-navigation__container">
                     <span class="govuk-service-navigation__service-name">
                         <a href="#" class="govuk-service-navigation__link">
-                            Service name
+                            Get information about schools
                         </a>
                     </span>
                     <nav aria-label="Menu" class="govuk-service-navigation__wrapper">
@@ -94,18 +94,13 @@
                         </button>
                         <ul class="govuk-service-navigation__list" id="navigation">
                             <li class="govuk-service-navigation__item govuk-service-navigation__item--active">
-                                <a class="govuk-service-navigation__link" href="#" aria-current="true">
-                                    <strong class="govuk-service-navigation__active-fallback">Navigation item 1</strong>
+                                <a class="govuk-service-navigation__link" asp-controller="Home" asp-action="Index" aria-current="true">
+                                    <strong class="govuk-service-navigation__active-fallback">Home</strong>
                                 </a>
                             </li>
                             <li class="govuk-service-navigation__item">
-                                <a class="govuk-service-navigation__link" href="#">
-                                    Navigation item 2
-                                </a>
-                            </li>
-                            <li class="govuk-service-navigation__item">
-                                <a class="govuk-service-navigation__link" href="#">
-                                    Navigation item 3
+                                <a class="govuk-service-navigation__link" asp-controller="Search" asp-action="Index">
+                                    Search
                                 </a>
                             </li>
                         </ul>
@@ -116,7 +111,7 @@
         <div class="govuk-phase-banner govuk-width-container">
             <p class="govuk-phase-banner__content">
                 <strong class="govuk-tag govuk-phase-banner__content__tag">
-                    Alpha
+                    Beta
                 </strong>
                 <span class="govuk-phase-banner__text">
                     This is a new service – your <a class="govuk-link" href="#">feedback</a> will help us to improve it.

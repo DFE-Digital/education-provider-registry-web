@@ -1,0 +1,17 @@
+﻿@model DfE.EducationProviderRegistry.Web.Mvc.ViewModels.Pages.SearchResultsPageViewModel
+
+<h1 class="govuk-heading-xl">Search results</h1>
+
+<p class="govuk-body">You searched for: <strong>@Model.Query</strong></p>
+
+@if (Model.Results.Any())
+{
+    foreach (var result in Model.Results)
+    {
+        @await Component.InvokeAsync("EstablishmentSearchResult", new { model = result })
+    }
+}
+else
+{
+    <p class="govuk-body">No results found.</p>
+}

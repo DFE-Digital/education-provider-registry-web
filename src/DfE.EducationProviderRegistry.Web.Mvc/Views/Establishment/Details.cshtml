@@ -1,0 +1,32 @@
+﻿@model DfE.EducationProviderRegistry.Web.Mvc.ViewModels.Pages.EstablishmentDetailsPageViewModel
+
+<h1 class="govuk-heading-xl">@Model.Name</h1>
+
+<dl class="govuk-summary-list">
+
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">URN</dt>
+        <dd class="govuk-summary-list__value">@Model.Urn</dd>
+    </div>
+
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Type</dt>
+        <dd class="govuk-summary-list__value">@Model.Type</dd>
+    </div>
+
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Address</dt>
+        <dd class="govuk-summary-list__value">@Model.Address</dd>
+    </div>
+
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Local authority</dt>
+        <dd class="govuk-summary-list__value">@Model.LocalAuthority</dd>
+    </div>
+
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Trust</dt>
+        <dd class="govuk-summary-list__value">@Model.TrustName</dd>
+    </div>
+
+</dl>

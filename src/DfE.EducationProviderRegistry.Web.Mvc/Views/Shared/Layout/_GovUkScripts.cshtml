@@ -5,3 +5,15 @@
     } from '/js/govuk-frontend.min.js'
     initAll()
 </script>
+
+
+<script type="module" src="/js/govuk-frontend.min.js"></script>
+<script type="module" src="/js/moj-frontend.min.js"></script>
+
+<script type="module">
+    import * as GOVUKFrontend from '/js/govuk-frontend.min.js'
+    import * as MOJFrontend from '/js/moj-frontend.min.js'
+
+    GOVUKFrontend.initAll()
+    MOJFrontend.initAll()
+</script>

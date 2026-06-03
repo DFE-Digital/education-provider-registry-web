@@ -1,0 +1,29 @@
+﻿<section aria-label="Service information" class="govuk-service-navigation"
+         data-module="govuk-service-navigation">
+    <div class="govuk-width-container">
+        <div class="govuk-service-navigation__container">
+            <span class="govuk-service-navigation__service-name">
+                <a href="/" class="govuk-service-navigation__link">
+                    Get information about schools
+                </a>
+            </span>
+            <nav aria-label="Menu" class="govuk-service-navigation__wrapper">
+                <button type="button" class="govuk-service-navigation__toggle govuk-js-service-navigation-toggle" aria-controls="navigation" hidden aria-hidden="true">
+                    Menu
+                </button>
+                <ul class="govuk-service-navigation__list" id="navigation">
+                    <li class="govuk-service-navigation__item @Html.ActiveClassForPath("/")">
+                        <a class="govuk-service-navigation__link" asp-controller="Home" asp-action="Index" aria-current="true">
+                            <strong class="govuk-service-navigation__active-fallback">Home</strong>
+                        </a>
+                    </li>
+                    <li class="govuk-service-navigation__item @Html.ActiveClassForPath("/search")">
+                        <a class="govuk-service-navigation__link" asp-controller="Search" asp-action="Index">
+                            Search
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</section>

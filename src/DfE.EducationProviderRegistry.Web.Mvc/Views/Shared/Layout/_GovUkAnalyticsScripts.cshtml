@@ -1,0 +1,11 @@
+﻿@if (Context.Request.Cookies.TryGetValue("cookies_analytics", out var analytics)
+    && analytics == "yes")
+{
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){ dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXX');
+    </script>
+}

@@ -3,10 +3,12 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>@ViewData["Title"] - Get information about schools</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#1d70b8">
+
     <link rel="icon" sizes="48x48" href="~/assets/images/favicon.ico">
     <link rel="icon" sizes="any" href="~/assets/images/favicon.svg" type="image/svg+xml">
     <link rel="mask-icon" href="~/assets/images/govuk-icon-mask.svg" color="#1d70b8">
@@ -15,39 +17,15 @@
 
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/css/govuk-frontend.min.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/DfE.EducationProviderRegistry.Mvc.styles.css" asp-append-version="true" />
 </head>
 <body class="govuk-template__body app-body-class" data-test="My value" data-other="report:details">
     <script>
         document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');
     </script>
-    <form action="/form-handler" method="post" novalidate>
-        <div class="govuk-cookie-banner" data-nosnippet role="region" aria-label="Cookies on [name of service]">
-            <div class="govuk-cookie-banner__message govuk-width-container">
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-two-thirds">
-                        <h2 class="govuk-cookie-banner__heading govuk-heading-m">
-                            Cookies on [name of service]
-                        </h2>
-                        <div class="govuk-cookie-banner__content">
-                            <p class="govuk-body">We use some essential cookies to make this service work.</p>
-                            <p class="govuk-body">We’d also like to use analytics cookies so we can understand how you use the service and make improvements.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="govuk-button-group">
-                    <button type="submit" value="yes" name="cookies[analytics]" class="govuk-button" data-module="govuk-button">
-                        Accept analytics cookies
-                    </button>
-                    <button type="submit" value="no" name="cookies[analytics]" class="govuk-button" data-module="govuk-button">
-                        Reject analytics cookies
-                    </button>
-                    <a class="govuk-link" href="#">View cookies</a>
-                </div>
-            </div>
-        </div>
-    </form>
-    <a href="#main-content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
+
+    @await Html.PartialAsync("Layout/_GovUkCookies")
+    @* @await Html.PartialAsync("Layout/_GovUkAnalyticsScripts") *@
+
     <header class="govuk-template__header">
         @await Html.PartialAsync("Layout/_GovUkServiceHeader")
         @await Html.PartialAsync("Layout/_GovUkNavigation")
@@ -55,7 +33,6 @@
     </header>
 
     <div class="govuk-width-container app-width-container">
-        <a href="#" class="govuk-back-link">Back</a>
         <main class="govuk-main-wrapper app-main-class" id="main-content">
             @RenderBody()
         </main>

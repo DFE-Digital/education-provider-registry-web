@@ -1,0 +1,53 @@
+﻿<table class="govuk-table">
+    @if (!string.IsNullOrWhiteSpace(Model.Caption))
+    {
+        <caption class="govuk-table__caption @(Model.IsCaptionLarge ? "govuk-table__caption--l" : "govuk-table__caption--m")">
+            @if (!string.IsNullOrWhiteSpace(Model.CaptionLinkUrl))
+            {
+                <a class="govuk-link" href="@Model.CaptionLinkUrl">@Model.Caption</a>
+            }
+            else
+            {
+                @Model.Caption
+            }
+        </caption>
+    }
+
+    @if (Model.Headers != null && Model.Headers.Count > 0)
+    {
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                @foreach (var header in Model.Headers)
+                {
+                    <th scope="col" class="govuk-table__header">@header</th>
+                }
+            </tr>
+        </thead>
+    }
+
+    <tbody class="govuk-table__body">
+        @foreach (var row in Model.Rows)
+        {
+            <tr class="govuk-table__row">
+                @foreach (var cell in row.Cells)
+                {
+                    <td class="govuk-table__cell @(cell.IsBold ? "govuk-!-font-weight-bold" : "")">
+                        @RenderCell(cell)
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+@functions {
+    IHtmlContent RenderCell(GovUkTableCell cell)
+    {
+        if (!string.IsNullOrWhiteSpace(cell.LinkUrl))
+        {
+            return new HtmlString($"<a class=\"govuk-link\" href=\"{cell.LinkUrl}\">{cell.Text}</a>");
+        }
+
+        return new HtmlString(cell.Text);
+    }
+}

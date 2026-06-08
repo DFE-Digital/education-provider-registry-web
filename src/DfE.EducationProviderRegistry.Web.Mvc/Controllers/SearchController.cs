@@ -21,14 +21,32 @@ public class SearchController : Controller
             {
                 new EstablishmentSearchResultViewModel
                 {
-                    Name = "Example School",
+                    Name = "St Mary's and St John's Cofe School",
+                    Urn = "123456",
+                    Type = "Independant",
+                    Address = "123 Example Road",
+                    LocalAuthorityName = "Birminghan",
+                    LocalAuthorityCode = "001",
+                },
+                new EstablishmentSearchResultViewModel
+                {
+                    Name = "St Mary's Primary",
                     Urn = "123456",
                     Type = "Academy",
                     Address = "123 Example Road",
-                    LocalAuthorityName = "Example LA",
-                    LaCode = "111",
-                    PartOfName = "Example Trust",
-                    PartOfCode = "111"
+                    LocalAuthorityName = "Birminghan",
+                    LocalAuthorityCode = "001",
+                    PartOfName = "Erdington Trust",
+                    PartOfCode = "001"
+                },
+                new EstablishmentSearchResultViewModel
+                {
+                    Name = "St Mary's Catholic School",
+                    Urn = "123456",
+                    Type = "Maintained",
+                    Address = "123 Example Road",
+                    LocalAuthorityName = "Birminghan",
+                    LocalAuthorityCode = "001",
                 }
             };
 

@@ -10,8 +10,8 @@ public class EstablishmentSearchResultViewModel
     public string Address { get; set; }
 
     public string LocalAuthorityName { get; set; }
-    public string LaCode { get; set; }
-    public string LaUrl => $"/la/{LaCode}";
+    public string LocalAuthorityCode { get; set; }
+    public string LocalAuthorityUrl => $"/la/{LocalAuthorityCode}";
 
     public string PartOfName { get; set; }
     public string PartOfCode { get; set; }

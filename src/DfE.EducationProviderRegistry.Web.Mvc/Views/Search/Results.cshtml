@@ -1,4 +1,5 @@
 ﻿@model DfE.EducationProviderRegistry.Web.Mvc.ViewModels.Pages.SearchResultsPageViewModel
+@inject IMapper<EstablishmentSearchResultViewModel, GovUkTable> TableMapper
 
 <h1 class="govuk-heading-xl">Search results</h1>
 
@@ -96,16 +97,24 @@
 
     </div>
 
-
-
     <div class="govuk-grid-column-two-thirds">
-        <p class="govuk-body">You searched for: <strong>@Model.Query</strong></p>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-half">
+                <p class="govuk-body">X results found</p>
+            </div>
+            <div class="govuk-grid-column-one-half">
+                <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                    Download results
+                </button>
+            </div>
+        </div>
 
         @if (Model.Results.Any())
         {
             foreach (var result in Model.Results)
             {
-                @await Component.InvokeAsync("EstablishmentSearchResult", new { model = result })
+                var table = TableMapper.Map(result);
+                @await Component.InvokeAsync("GovUkTable", table)
             }
 
             <nav class="govuk-pagination" aria-label="Pagination">

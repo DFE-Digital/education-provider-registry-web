@@ -14,7 +14,7 @@
 #   server_version              = var.postgres_server_version
 # }
 
-
+/*
 module "redis_managed" {
   source = "./vendor/modules/aks//aks/redis_managed"
 
@@ -28,3 +28,4 @@ module "redis_managed" {
   use_azure                 = var.deploy_azure_backing_services
   azure_enable_monitoring   = var.enable_monitoring
 }
+*/

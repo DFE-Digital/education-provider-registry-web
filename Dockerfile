@@ -1,7 +1,8 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine3.23@sha256:732cd42c6f659814c9804ad7b05c7f761e83ef8379c5b2fdc3af673353caff73 AS build
 WORKDIR /source
 
-COPY . ./sample/
+COPY ./sample/. ./
+
 RUN dotnet restore
 RUN dotnet publish --no-restore --configuration Release
 

@@ -1,8 +1,41 @@
 ﻿using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Web.Mvc.ApplicationDtos;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
+using DfE.EducationProviderRegistry.Web.Mvc.ViewModels.Pages;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Mappers;
+
+public class GroupDetailsPageViewModelMapper :
+    IMapper<GroupDto, GroupDetailsPageViewModel>
+{
+    private readonly IMapper<GroupBasicDetailsDto, GovUkTable> _basicMapper;
+    private readonly IMapper<List<GroupAcademiesDto>, GovUkTable> _academiesMapper;
+    private readonly IMapper<List<GroupTrusteesDto>, GovUkTable> _trusteesMapper;
+    private readonly IMapper<List<GroupMembersDto>, GovUkTable> _membersMapper;
+
+    public GroupDetailsPageViewModelMapper(
+        IMapper<GroupBasicDetailsDto, GovUkTable> basicMapper,
+        IMapper<List<GroupAcademiesDto>, GovUkTable> academiesMapper,
+        IMapper<List<GroupTrusteesDto>, GovUkTable> trusteesMapper,
+        IMapper<List<GroupMembersDto>, GovUkTable> membersMapper)
+    {
+        _basicMapper = basicMapper;
+        _academiesMapper = academiesMapper;
+        _trusteesMapper = trusteesMapper;
+        _membersMapper = membersMapper;
+    }
+    public GroupDetailsPageViewModel Map(GroupDto dto)
+    {
+        return new GroupDetailsPageViewModel
+        {
+            Heading = dto.BasicDetails.Name,
+            BasicDetailsTable = _basicMapper.Map(dto.BasicDetails),
+            AcademiesTable = _academiesMapper.Map(dto.Academies),
+            TrusteesTable = _trusteesMapper.Map(dto.Trustees),
+            MembersTable = _membersMapper.Map(dto.Members)
+        };
+    }
+}
 
 public class GroupDetailsBasicDetailsTableMapper :
     IMapper<GroupBasicDetailsDto, GovUkTable>

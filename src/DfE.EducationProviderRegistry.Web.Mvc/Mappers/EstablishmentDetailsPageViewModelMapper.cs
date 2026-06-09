@@ -1,10 +1,40 @@
 ﻿using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Web.Mvc.ApplicationDtos;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
+using DfE.EducationProviderRegistry.Web.Mvc.ViewModels.Pages;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Mappers;
 
 // Establishment details page mappers
+public class EstablishmentDetailsPageViewModelMapper :
+    IMapper<EstablishmentDto, EstablishmentDetailsPageViewModel>
+{
+    private readonly IMapper<EstablishmentBasicDetailsDto, GovUkTable> _basicMapper;
+    private readonly IMapper<List<EstablishmentGovernorDto>, GovUkTable> _governorMapper;
+    private readonly IMapper<List<EstablishmentHistoryDto>, GovUkTable> _historyMapper;
+
+    public EstablishmentDetailsPageViewModelMapper(
+        IMapper<EstablishmentBasicDetailsDto, GovUkTable> basicMapper,
+        IMapper<List<EstablishmentGovernorDto>, GovUkTable> governorMapper,
+        IMapper<List<EstablishmentHistoryDto>, GovUkTable> historyMapper)
+    {
+        _basicMapper = basicMapper;
+        _governorMapper = governorMapper;
+        _historyMapper = historyMapper;
+    }
+
+    public EstablishmentDetailsPageViewModel Map(EstablishmentDto dto)
+    {
+        return new EstablishmentDetailsPageViewModel
+        {
+            Heading = dto.BasicDetails.Name,
+            BasicDetails = _basicMapper.Map(dto.BasicDetails),
+            Governors = _governorMapper.Map(dto.Governors),
+            History = _historyMapper.Map(dto.History)
+        };
+    }
+}
+
 public class EstablishmentDetailsBasicDetailsTableMapper :
     IMapper<EstablishmentBasicDetailsDto, GovUkTable>
 {

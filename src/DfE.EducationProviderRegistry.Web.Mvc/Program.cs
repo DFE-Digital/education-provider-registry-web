@@ -2,6 +2,7 @@ using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Web.Mvc.ApplicationDtos;
 using DfE.EducationProviderRegistry.Web.Mvc.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
+using DfE.EducationProviderRegistry.Web.Mvc.ViewModels.Pages;
 using Microsoft.AspNetCore.CookiePolicy;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,29 +24,39 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
 });
 
 
-builder.Services.AddScoped<
+builder.Services.AddTransient<
+    IMapper<List<EstablishmentSearchResultDto>, SearchResultsPageViewModel>,
+    SearchResultsPageViewModelMapper>();
+builder.Services.AddTransient<
     IMapper<EstablishmentSearchResultDto, GovUkTable>,
     SearchResultsEstablishmentSummaryTableMapper>();
-builder.Services.AddScoped<
+
+builder.Services.AddTransient<
+    IMapper<EstablishmentDto, EstablishmentDetailsPageViewModel>,
+    EstablishmentDetailsPageViewModelMapper>();
+builder.Services.AddTransient<
     IMapper<EstablishmentBasicDetailsDto, GovUkTable>,
     EstablishmentDetailsBasicDetailsTableMapper>();
-builder.Services.AddScoped<
+builder.Services.AddTransient<
     IMapper<List<EstablishmentGovernorDto>, GovUkTable>,
     EstablishmentDetailsGovernorsTableMapper>();
-builder.Services.AddScoped<
+builder.Services.AddTransient<
     IMapper<List<EstablishmentHistoryDto>, GovUkTable>,
     EstablishmentDetailsHistoryTableMapper>();
 
-builder.Services.AddScoped<
+builder.Services.AddTransient<
+    IMapper<GroupDto, GroupDetailsPageViewModel>,
+    GroupDetailsPageViewModelMapper>();
+builder.Services.AddTransient<
     IMapper<GroupBasicDetailsDto, GovUkTable>,
     GroupDetailsBasicDetailsTableMapper>();
-builder.Services.AddScoped<
+builder.Services.AddTransient<
     IMapper<List<GroupAcademiesDto>, GovUkTable>,
     GroupDetailsAcademiesTableMapper>();
-builder.Services.AddScoped<
+builder.Services.AddTransient<
     IMapper<List<GroupTrusteesDto>, GovUkTable>,
     GroupDetailsTrusteesTableMapper>();
-builder.Services.AddScoped<
+builder.Services.AddTransient<
     IMapper<List<GroupMembersDto>, GovUkTable>,
     GroupDetailsMembersTableMapper>();
 

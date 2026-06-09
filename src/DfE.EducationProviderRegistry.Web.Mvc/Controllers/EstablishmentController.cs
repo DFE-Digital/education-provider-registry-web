@@ -1,6 +1,5 @@
 ﻿using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Web.Mvc.ApplicationDtos;
-using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewModels.Pages;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,18 +7,12 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Controllers;
 
 public class EstablishmentController : Controller
 {
-    private readonly IMapper<EstablishmentBasicDetailsDto, GovUkTable> _basicMapper;
-    private readonly IMapper<List<EstablishmentGovernorDto>, GovUkTable> _governorMapper;
-    private readonly IMapper<List<EstablishmentHistoryDto>, GovUkTable> _historyMapper;
+    private readonly IMapper<EstablishmentDto, EstablishmentDetailsPageViewModel> _establishmentDetailsPageMapper;
 
     public EstablishmentController(
-        IMapper<EstablishmentBasicDetailsDto, GovUkTable> basicMapper,
-        IMapper<List<EstablishmentGovernorDto>, GovUkTable> governorMapper,
-        IMapper<List<EstablishmentHistoryDto>, GovUkTable> historyMapper)
+        IMapper<EstablishmentDto, EstablishmentDetailsPageViewModel> basicMapper)
     {
-        _basicMapper = basicMapper;
-        _governorMapper = governorMapper;
-        _historyMapper = historyMapper;
+        _establishmentDetailsPageMapper = basicMapper;
     }
 
     [HttpGet("/establishment/{urn}")]
@@ -87,13 +80,7 @@ public class EstablishmentController : Controller
             }
         };
 
-        EstablishmentDetailsPageViewModel model = new()
-        {
-            Heading = applicationDtoDummy.BasicDetails.Name,
-            BasicDetails = _basicMapper.Map(applicationDtoDummy.BasicDetails),
-            Governors = _governorMapper.Map(applicationDtoDummy.Governors),
-            History = _historyMapper.Map(applicationDtoDummy.History)
-        };
+        EstablishmentDetailsPageViewModel model = _establishmentDetailsPageMapper.Map(applicationDtoDummy);
 
         return View(model);
     }

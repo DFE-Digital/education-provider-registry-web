@@ -1,6 +1,5 @@
 ﻿using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Web.Mvc.ApplicationDtos;
-using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewModels.Pages;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,10 +7,10 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Controllers;
 
 public class SearchController : Controller
 {
-    private readonly IMapper<EstablishmentSearchResultDto, GovUkTable> _searchResultsEstablishmentSummaryTableMapper;
+    private readonly IMapper<List<EstablishmentSearchResultDto>, SearchResultsPageViewModel> _searchResultsEstablishmentSummaryTableMapper;
 
     public SearchController(
-        IMapper<EstablishmentSearchResultDto, GovUkTable> searchResultsMapper)
+        IMapper<List<EstablishmentSearchResultDto>, SearchResultsPageViewModel> searchResultsMapper)
     {
         _searchResultsEstablishmentSummaryTableMapper = searchResultsMapper;
     }
@@ -34,10 +33,7 @@ public class SearchController : Controller
             new() { Name = "St Mary's Catholic School", Urn = "123456", Type = "Maintained", Address = "123 Example Road", LocalAuthorityName = "Birmingham", LocalAuthorityCode = "001" }
         ];
 
-        return View(new SearchResultsPageViewModel
-        {
-            Query = model.Query,
-            EstablishmentResults = results.Select(_searchResultsEstablishmentSummaryTableMapper.Map).ToList()
-        });
+        SearchResultsPageViewModel updatedModel = _searchResultsEstablishmentSummaryTableMapper.Map(results);
+        return View(updatedModel);
     }
 }

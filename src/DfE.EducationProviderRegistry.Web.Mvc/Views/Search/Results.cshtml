@@ -1,5 +1,4 @@
-﻿@model DfE.EducationProviderRegistry.Web.Mvc.ViewModels.Pages.SearchResultsPageViewModel
-@inject IMapper<EstablishmentSearchResultViewModel, GovUkTable> TableMapper
+﻿@model SearchResultsPageViewModel
 
 <h1 class="govuk-heading-xl">Search results</h1>
 
@@ -109,12 +108,11 @@
             </div>
         </div>
 
-        @if (Model.Results.Any())
+        @if (Model.EstablishmentResults.Any())
         {
-            foreach (var result in Model.Results)
+            @foreach (GovUkTable result in Model.EstablishmentResults)
             {
-                var table = TableMapper.Map(result);
-                @await Component.InvokeAsync("GovUkTable", table)
+                @await Component.InvokeAsync("GovUkTable", result)
             }
 
             <nav class="govuk-pagination" aria-label="Pagination">

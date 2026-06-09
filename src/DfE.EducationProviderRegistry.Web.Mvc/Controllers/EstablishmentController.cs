@@ -1,4 +1,5 @@
 ﻿using DfE.Core.Libraries.CrossCutting.Mapper;
+using DfE.EducationProviderRegistry.Web.Mvc.ApplicationDtos;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewModels.Pages;
 using Microsoft.AspNetCore.Mvc;
@@ -7,14 +8,14 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Controllers;
 
 public class EstablishmentController : Controller
 {
-    private readonly IMapper<EstablishmentBasicDetailsViewModel, GovUkTable> _basicMapper;
-    private readonly IMapper<List<EstablishmentGovernorViewModel>, GovUkTable> _governorMapper;
-    private readonly IMapper<List<EstablishmentHistoryViewModel>, GovUkTable> _historyMapper;
+    private readonly IMapper<EstablishmentBasicDetailsDto, GovUkTable> _basicMapper;
+    private readonly IMapper<List<EstablishmentGovernorDto>, GovUkTable> _governorMapper;
+    private readonly IMapper<List<EstablishmentHistoryDto>, GovUkTable> _historyMapper;
 
     public EstablishmentController(
-        IMapper<EstablishmentBasicDetailsViewModel, GovUkTable> basicMapper,
-        IMapper<List<EstablishmentGovernorViewModel>, GovUkTable> governorMapper,
-        IMapper<List<EstablishmentHistoryViewModel>, GovUkTable> historyMapper)
+        IMapper<EstablishmentBasicDetailsDto, GovUkTable> basicMapper,
+        IMapper<List<EstablishmentGovernorDto>, GovUkTable> governorMapper,
+        IMapper<List<EstablishmentHistoryDto>, GovUkTable> historyMapper)
     {
         _basicMapper = basicMapper;
         _governorMapper = governorMapper;
@@ -26,9 +27,9 @@ public class EstablishmentController : Controller
     {
         // Call to use case -> returns application result
         // Map application result -> View model
-        EstablishmentDetailsPageViewModel model = new()
+        EstablishmentDto applicationDtoDummy = new()
         {
-            BasicDetails = new EstablishmentBasicDetailsViewModel()
+            BasicDetails = new EstablishmentBasicDetailsDto()
             {
                 Name = "St Mary Primary",
                 Urn = urn,
@@ -44,31 +45,31 @@ public class EstablishmentController : Controller
                 PhaseOfEducation = "Primary",
                 AgeRange = "4 to 11",
                 Gender = "Mixed",
-                Religiouscharacter = "Roman Catholic",
+                ReligiousCharacter = "Roman Catholic",
                 OfstedLastReported = "reported on x date",
                 OfstedLastReportedUrl = "/"
             },
             Governors = new()
             {
-                new EstablishmentGovernorViewModel()
+                new EstablishmentGovernorDto()
                 {
                     Name = "Elena Vance (chair)",
                     GovernorId = "000001",
                     StartDate = "27 august 2025"
                 },
-                new EstablishmentGovernorViewModel()
+                new EstablishmentGovernorDto()
                 {
                     Name = "Julian Cross",
                     GovernorId = "000002",
                     StartDate = "27 september 2025"
                 },
-                new EstablishmentGovernorViewModel()
+                new EstablishmentGovernorDto()
                 {
                     Name = "Maya Sterling",
                     GovernorId = "000003",
                     StartDate = "27 october 2025"
                 },
-                new EstablishmentGovernorViewModel()
+                new EstablishmentGovernorDto()
                 {
                     Name = "Clara Whitlock",
                     GovernorId = "000001",
@@ -77,19 +78,22 @@ public class EstablishmentController : Controller
             },
             History = new()
             {
-                new EstablishmentHistoryViewModel()
+                new EstablishmentHistoryDto()
                 {
-                    HistoricName = "St marys",
-                    HistoricUrn = "001",
-                    HistoricStatus = "Maintained"
+                    Name = "St marys",
+                    Urn = "001",
+                    Status = "Maintained"
                 }
             }
         };
 
-        // Build component models
-        model.BasicDetailsTable = _basicMapper.Map(model.BasicDetails);
-        model.GovernorsTable = _governorMapper.Map(model.Governors);
-        model.HistoryTable = _historyMapper.Map(model.History);
+        EstablishmentDetailsPageViewModel model = new()
+        {
+            Heading = applicationDtoDummy.BasicDetails.Name,
+            BasicDetails = _basicMapper.Map(applicationDtoDummy.BasicDetails),
+            Governors = _governorMapper.Map(applicationDtoDummy.Governors),
+            History = _historyMapper.Map(applicationDtoDummy.History)
+        };
 
         return View(model);
     }

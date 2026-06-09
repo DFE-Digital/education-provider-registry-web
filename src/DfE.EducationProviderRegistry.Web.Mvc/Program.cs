@@ -1,9 +1,7 @@
 using DfE.Core.Libraries.CrossCutting.Mapper;
-using DfE.EducationProviderRegistry.Web.Mvc.Extensions;
+using DfE.EducationProviderRegistry.Web.Mvc.ApplicationDtos;
 using DfE.EducationProviderRegistry.Web.Mvc.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
-using DfE.EducationProviderRegistry.Web.Mvc.ViewModels.Components;
-using DfE.EducationProviderRegistry.Web.Mvc.ViewModels.Pages;
 using Microsoft.AspNetCore.CookiePolicy;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,17 +24,30 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
 
 
 builder.Services.AddScoped<
-    IMapper<EstablishmentSearchResultViewModel, GovUkTable>,
-    GovUkTableFromEstablishmentSearchResultMapper>();
+    IMapper<EstablishmentSearchResultDto, GovUkTable>,
+    SearchResultsEstablishmentSummaryTableMapper>();
 builder.Services.AddScoped<
-    IMapper<EstablishmentBasicDetailsViewModel, GovUkTable>,
-    GovUkTableFromEstablishmentBasicDetailsMapper>();
+    IMapper<EstablishmentBasicDetailsDto, GovUkTable>,
+    EstablishmentDetailsBasicDetailsTableMapper>();
 builder.Services.AddScoped<
-    IMapper<List<EstablishmentGovernorViewModel>, GovUkTable>,
-    GovUkTableFromEstablishmentGovernorMapper>();
+    IMapper<List<EstablishmentGovernorDto>, GovUkTable>,
+    EstablishmentDetailsGovernorsTableMapper>();
 builder.Services.AddScoped<
-    IMapper<List<EstablishmentHistoryViewModel>, GovUkTable>,
-    GovUkTableFromEstablishmentHistoryMapper>();
+    IMapper<List<EstablishmentHistoryDto>, GovUkTable>,
+    EstablishmentDetailsHistoryTableMapper>();
+
+builder.Services.AddScoped<
+    IMapper<GroupBasicDetailsDto, GovUkTable>,
+    GroupDetailsBasicDetailsTableMapper>();
+builder.Services.AddScoped<
+    IMapper<List<GroupAcademiesDto>, GovUkTable>,
+    GroupDetailsAcademiesTableMapper>();
+builder.Services.AddScoped<
+    IMapper<List<GroupTrusteesDto>, GovUkTable>,
+    GroupDetailsTrusteesTableMapper>();
+builder.Services.AddScoped<
+    IMapper<List<GroupMembersDto>, GovUkTable>,
+    GroupDetailsMembersTableMapper>();
 
 var app = builder.Build();
 

@@ -1,9 +1,9 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.ViewModels.Components;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.ViewModels.Pages;
 
 public class SearchResultsPageViewModel
 {
     public string Query { get; set; }
-    public List<EstablishmentSearchResultViewModel> Results { get; set; }
+    public List<GovUkTable> EstablishmentResults { get; set; }
 }

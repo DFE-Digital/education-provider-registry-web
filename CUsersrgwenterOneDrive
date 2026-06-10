@@ -1,0 +1,97 @@
+make: Nothing to be done for 'development'.
+[ "" != "true" ] && az account set -s s189-teacher-services-cloud-test || true
+az deployment sub create --name "resourcedeploy-tsc-20260603131855" \
+	-l "UK South" --template-uri "https://raw.githubusercontent.com/DFE-Digital/tra-shared-services/1.1.10/azure/resourcedeploy.json" \
+	--parameters "resourceGroupName=s189t01-eprweb-dv-rg" 'tags={"Product" : "Teacher services cloud", "Service Offering" : "Teacher services cloud"}' \
+	"tfStorageAccountName=s189t01eprwebdvtfsa" "tfStorageContainerName=terraform-state" \
+	keyVaultNames='("s189t01-eprweb-dv-app-kv", "s189t01-eprweb-dv-inf-kv")' \
+	enableDiagnostics=false logAnalyticsWorkspaceName=s189t01-eprweb-dv-log \
+	"enableKVPurgeProtection=false" \
+	--what-if
+Note: The result may contain false positive predictions (noise).
+You can help us improve the accuracy of the result by opening an issue here: https://aka.ms/WhatIfIssues
+
+Resource and property changes are indicated with this symbol:
+  + Create
+
+The deployment will update the following scopes:
+
+Scope: /subscriptions/20da9d12-7ee1-42bb-b969-3fe9112964a7
+
+  + resourceGroups/s189t01-eprweb-dv-rg [2021-04-01]
+
+      apiVersion:            "2021-04-01"
+      id:                    "/subscriptions/20da9d12-7ee1-42bb-b969-3fe9112964a7/resourceGroups/s189t01-eprweb-dv-rg"
+      location:              "uksouth"
+      name:                  "s189t01-eprweb-dv-rg"
+      tags.Environment:      "Test"
+      tags.Product:          "Teacher services cloud"
+      tags.Service Offering: "Teacher services cloud"
+      type:                  "Microsoft.Resources/resourceGroups"
+
+Scope: /subscriptions/20da9d12-7ee1-42bb-b969-3fe9112964a7/resourceGroups/s189t01-eprweb-dv-rg
+
+  + Microsoft.KeyVault/vaults/s189t01-eprweb-dv-app-kv [2021-10-01]
+
+      apiVersion:                              "2021-10-01"
+      id:                                      "/subscriptions/20da9d12-7ee1-42bb-b969-3fe9112964a7/resourceGroups/s189t01-eprweb-dv-rg/providers/Microsoft.KeyVault/vaults/s189t01-eprweb-dv-app-kv"
+      location:                                "uksouth"
+      name:                                    "s189t01-eprweb-dv-app-kv"
+      properties.enabledForTemplateDeployment: true
+      properties.enableRbacAuthorization:      true
+      properties.enableSoftDelete:             true
+      properties.sku.family:                   "A"
+      properties.sku.name:                     "standard"
+      properties.tenantId:                     "9c7d9dd3-840c-4b3f-818e-552865082e16"
+      type:                                    "Microsoft.KeyVault/vaults"
+
+  + Microsoft.KeyVault/vaults/s189t01-eprweb-dv-inf-kv [2021-10-01]
+
+      apiVersion:                              "2021-10-01"
+      id:                                      "/subscriptions/20da9d12-7ee1-42bb-b969-3fe9112964a7/resourceGroups/s189t01-eprweb-dv-rg/providers/Microsoft.KeyVault/vaults/s189t01-eprweb-dv-inf-kv"
+      location:                                "uksouth"
+      name:                                    "s189t01-eprweb-dv-inf-kv"
+      properties.enabledForTemplateDeployment: true
+      properties.enableRbacAuthorization:      true
+      properties.enableSoftDelete:             true
+      properties.sku.family:                   "A"
+      properties.sku.name:                     "standard"
+      properties.tenantId:                     "9c7d9dd3-840c-4b3f-818e-552865082e16"
+      type:                                    "Microsoft.KeyVault/vaults"
+
+  + Microsoft.Storage/storageAccounts/s189t01eprwebdvtfsa [2021-09-01]
+
+      apiVersion:                          "2021-09-01"
+      id:                                  "/subscriptions/20da9d12-7ee1-42bb-b969-3fe9112964a7/resourceGroups/s189t01-eprweb-dv-rg/providers/Microsoft.Storage/storageAccounts/s189t01eprwebdvtfsa"
+      kind:                                "StorageV2"
+      location:                            "uksouth"
+      name:                                "s189t01eprwebdvtfsa"
+      properties.allowBlobPublicAccess:    false
+      properties.minimumTlsVersion:        "TLS1_2"
+      properties.supportsHttpsTrafficOnly: true
+      sku.name:                            "Standard_ZRS"
+      type:                                "Microsoft.Storage/storageAccounts"
+
+  + Microsoft.Storage/storageAccounts/s189t01eprwebdvtfsa/blobServices/default [2021-09-01]
+
+      apiVersion:                                                     "2021-09-01"
+      id:                                                             "/subscriptions/20da9d12-7ee1-42bb-b969-3fe9112964a7/resourceGroups/s189t01-eprweb-dv-rg/providers/Microsoft.Storage/storageAccounts/s189t01eprwebdvtfsa/blobServices/default"
+      name:                                                           "default"
+      properties.containerDeleteRetentionPolicy.allowPermanentDelete: false
+      properties.containerDeleteRetentionPolicy.days:                 30
+      properties.containerDeleteRetentionPolicy.enabled:              true
+      properties.deleteRetentionPolicy.allowPermanentDelete:          false
+      properties.deleteRetentionPolicy.days:                          30
+      properties.deleteRetentionPolicy.enabled:                       true
+      properties.isVersioningEnabled:                                 true
+      type:                                                           "Microsoft.Storage/storageAccounts/blobServices"
+
+  + Microsoft.Storage/storageAccounts/s189t01eprwebdvtfsa/blobServices/default/containers/terraform-state [2021-09-01]
+
+      apiVersion:              "2021-09-01"
+      id:                      "/subscriptions/20da9d12-7ee1-42bb-b969-3fe9112964a7/resourceGroups/s189t01-eprweb-dv-rg/providers/Microsoft.Storage/storageAccounts/s189t01eprwebdvtfsa/blobServices/default/containers/terraform-state"
+      name:                    "terraform-state"
+      properties.publicAccess: "None"
+      type:                    "Microsoft.Storage/storageAccounts/blobServices/containers"
+
+Resource changes: 6 to create.

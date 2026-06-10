@@ -1,4 +1,4 @@
-using DfE.EducationProviderRegistry.Web.Mvc.Models;
+using DfE.EducationProviderRegistry.Web.Mvc.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 

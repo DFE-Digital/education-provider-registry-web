@@ -1,7 +1,64 @@
+using DfE.Core.Libraries.CrossCutting.Mapper;
+using DfE.EducationProviderRegistry.Web.Mvc.ApplicationDtos;
+using DfE.EducationProviderRegistry.Web.Mvc.Mappers;
+using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
+using DfE.EducationProviderRegistry.Web.Mvc.ViewModels.Pages;
+using Microsoft.AspNetCore.CookiePolicy;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddRouting(options =>
+{
+    options.LowercaseUrls = true;
+    options.LowercaseQueryStrings = true;
+});
+
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.MinimumSameSitePolicy = SameSiteMode.Strict;
+    options.HttpOnly = HttpOnlyPolicy.Always;
+    options.Secure = CookieSecurePolicy.Always;
+});
+
+
+builder.Services.AddTransient<
+    IMapper<List<EstablishmentSearchResultDto>, SearchResultsPageViewModel>,
+    SearchResultsPageViewModelMapper>();
+builder.Services.AddTransient<
+    IMapper<EstablishmentSearchResultDto, GovUkTable>,
+    SearchResultsEstablishmentSummaryTableMapper>();
+
+builder.Services.AddTransient<
+    IMapper<EstablishmentDto, EstablishmentDetailsPageViewModel>,
+    EstablishmentDetailsPageViewModelMapper>();
+builder.Services.AddTransient<
+    IMapper<EstablishmentBasicDetailsDto, GovUkTable>,
+    EstablishmentDetailsBasicDetailsTableMapper>();
+builder.Services.AddTransient<
+    IMapper<List<EstablishmentGovernorDto>, GovUkTable>,
+    EstablishmentDetailsGovernorsTableMapper>();
+builder.Services.AddTransient<
+    IMapper<List<EstablishmentHistoryDto>, GovUkTable>,
+    EstablishmentDetailsHistoryTableMapper>();
+
+builder.Services.AddTransient<
+    IMapper<GroupDto, GroupDetailsPageViewModel>,
+    GroupDetailsPageViewModelMapper>();
+builder.Services.AddTransient<
+    IMapper<GroupBasicDetailsDto, GovUkTable>,
+    GroupDetailsBasicDetailsTableMapper>();
+builder.Services.AddTransient<
+    IMapper<List<GroupAcademiesDto>, GovUkTable>,
+    GroupDetailsAcademiesTableMapper>();
+builder.Services.AddTransient<
+    IMapper<List<GroupTrusteesDto>, GovUkTable>,
+    GroupDetailsTrusteesTableMapper>();
+builder.Services.AddTransient<
+    IMapper<List<GroupMembersDto>, GovUkTable>,
+    GroupDetailsMembersTableMapper>();
 
 var app = builder.Build();
 
@@ -20,8 +77,28 @@ else
 app.UseStatusCodePagesWithReExecute("/not-found");
 
 app.UseHttpsRedirection();
-app.UseRouting();
 
+app.Use(async (context, next) =>
+{
+    // Remove server header
+    context.Response.Headers.Remove("Server");
+
+    // Basic hardening headers
+    context.Response.Headers["X-Frame-Options"] = "DENY";
+    context.Response.Headers["X-Content-Type-Options"] = "nosniff";
+    context.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
+
+    // Restrict browser features ect
+    context.Response.Headers["Permissions-Policy"] =
+        "geolocation=(), microphone=(), camera=(), browsing-topics=()";
+
+    await next();
+});
+
+app.UseCookiePolicy();
+
+app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();

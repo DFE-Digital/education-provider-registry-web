@@ -1,4 +1,4 @@
-﻿@model EstablishmentDetailsPageViewModel
+﻿@model GroupDetailsPageViewModel
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
@@ -12,7 +12,8 @@
 </div>
 
 <div>
-    @await Component.InvokeAsync("GovUkTable", Model.BasicDetails)
-    @await Component.InvokeAsync("GovUkTable", Model.Governors)
-    @await Component.InvokeAsync("GovUkTable", Model.History)
+    @await Component.InvokeAsync("GovUkTable", Model.BasicDetailsTable)
+    @await Component.InvokeAsync("GovUkTable", Model.AcademiesTable)
+    @await Component.InvokeAsync("GovUkTable", Model.TrusteesTable)
+    @await Component.InvokeAsync("GovUkTable", Model.MembersTable)
 </div>

@@ -25,6 +25,9 @@ on:
         type: string
         required: false
 
+permissions:
+  id-token: write
+
 env:
   SERVICE_NAME: #SERVICE_NAME#
   SERVICE_SHORT: #SERVICE_SHORT#

@@ -16,11 +16,12 @@ on:
         required: true
         type: choice
         options:
-        - review
-        - production
-        - development
-        - test
-        - preproduction
+        - enable
+        - disable
+
+permissions:
+  id-token: write
+  packages: write
 
 jobs:
   set-maintenance-mode:

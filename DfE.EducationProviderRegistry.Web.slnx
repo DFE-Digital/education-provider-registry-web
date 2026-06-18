@@ -5,7 +5,7 @@
   </Folder>
   <Folder Name="/tests/">
     <File Path="tests/Directory.Build.props" />
-    <File Path="tests/Directory.Package.props" />
+    <File Path="tests/Directory.Packages.props" />
     <Project Path="tests/DfE.EducationProviderRegistry.Web.Mvc.UnitTests/DfE.EducationProviderRegistry.Web.Mvc.UnitTests.csproj" />
   </Folder>
 </Solution>

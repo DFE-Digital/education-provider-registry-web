@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <IsTestProject>true</IsTestProject>
-    <OutputType>Exe</OutputType>	  
+    <OutputType>Exe</OutputType>
     <RootNamespace>DfE.EducationProviderRegistry.Web.Mvc.UnitTests</RootNamespace>
   </PropertyGroup>
 
@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="xunit.v3.mtp-v2" />
+	<PackageReference Include="xunit.v3.mtp-v2" />
   </ItemGroup>
 
   <ItemGroup>

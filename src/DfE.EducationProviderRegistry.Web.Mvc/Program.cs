@@ -1,15 +1,10 @@
-using DfE.Core.Libraries.CleanArchitecture.Application;
 using DfE.Core.Libraries.CrossCutting.Mapper;
-using DfE.EducationProviderRegistry.Core.Query.Search.Application.Infrastructure;
+using DfE.EducationProviderRegistry.Core.Query.Search;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Establishment;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
-using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases;
-using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Request;
-using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
 using DfE.EducationProviderRegistry.Web.Mvc.ApplicationDtos;
 using DfE.EducationProviderRegistry.Web.Mvc.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.Search.Mappers;
-using DfE.EducationProviderRegistry.Web.Mvc.Search.TempInfrastructureDELETE;
 using DfE.EducationProviderRegistry.Web.Mvc.Search.ViewModels;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewModels.Pages;
@@ -71,12 +66,11 @@ builder.Services.AddTransient<
     IMapper<List<GroupMembersDto>, GovUkTable>,
     GroupDetailsMembersTableMapper>();
 
-// Temp registratons for search.
+// Search registrations.
 builder.Services
-    .AddScoped<ISearchServiceAdapter<EstablishmentSearchResults, SearchFacets>, DummySearchServiceAdapter>()
     .AddSingleton<IMapper<EstablishmentSearchResults, SearchResultsViewModel>, SearchResultsToViewModelMapper>()
-    .AddSingleton<IMapper<EstablishmentSearchResult, GovUkTable>, SearchResultToTableViewModelMapper>()
-    .AddScoped<IUseCase<SearchRequest, UseCaseResponse<SearchResponse>>, SearchUseCase>();
+    .AddSingleton<IMapper<EstablishmentSearchResult, GovUkTable>, SearchResultToTableViewModelMapper>();
+builder.Services.AddSearchDependencies();
 
 // Bind search criteria configuration options.
 builder.Services.AddOptions<SearchCriteria>()

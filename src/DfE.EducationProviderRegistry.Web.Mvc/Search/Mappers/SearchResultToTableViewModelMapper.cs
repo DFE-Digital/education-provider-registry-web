@@ -4,21 +4,37 @@ using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Search.Mappers;
 
-public class SearchResultToTableViewModelMapper : IMapper<EstablishmentSearchResult, GovUkTable>
+public class SearchResultToTableViewModelMapper
+    : IMapper<EstablishmentSearchResult, GovUkTable>
 {
     public GovUkTable Map(EstablishmentSearchResult input)
     {
-        GovUkTable govUkTable = new ();
-
-        govUkTable.Rows.Add(new GovUkTableRow
+        GovUkTable table = new()
         {
-            Cells =
-            [
-                new GovUkTableCell { Text = "Name", IsBold = true },
-                new GovUkTableCell { Text = input.Name }
-            ]
-        });
+            Caption = input.Name.Value,
+            CaptionLinkUrl = $"establishment/{input.Urn.Value}"
+        };
 
-        return govUkTable;
+        table.AddRow("URN", input.Urn.Value);
+        table.AddRow("Type", input.Type.Value);
+
+        table.AddRow(
+            "Address",
+            $"{input.Address.Street} {input.Address.County} {input.Address.Postcode}"
+        );
+
+        table.AddRow(
+            "Local authority",
+            input.LocalAuthority.Name,
+            $"/la/{input.LocalAuthority.Code}"
+        );
+
+        table.AddRow(
+            "Part of",
+            input.Group.PartOfName,
+            $"/group/{input.Group.PartOfCode}"
+        );
+
+        return table;
     }
 }

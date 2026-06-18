@@ -16,24 +16,24 @@ public class SearchController : Controller
     }
 
 
-    [HttpGet("/search")]
-    public IActionResult Index()
-    {
-        return View(new SearchPageViewModel());
-    }
+    //[HttpGet("/search")]
+    //public IActionResult Index()
+    //{
+    //    return View(new SearchPageViewModel());
+    //}
 
-    [HttpPost("/search")]
-    public IActionResult Results(SearchPageViewModel model)
-    {
-        // Fake application DTOs for now
-        List<EstablishmentSearchResultDto> results =
-        [
-            new() { Name = "St Mary's Primary", Urn = "123456", Type = "Academy", Address = "123 Example Road", LocalAuthorityName = "Birmingham", LocalAuthorityCode = "001", PartOfName = "Erdington Trust", PartOfCode = "001" },
-            new() { Name = "St Mary's and St John's Cofe School", Urn = "123456", Type = "Independent", Address = "123 Example Road", LocalAuthorityName = "Birmingham", LocalAuthorityCode = "001" },
-            new() { Name = "St Mary's Catholic School", Urn = "123456", Type = "Maintained", Address = "123 Example Road", LocalAuthorityName = "Birmingham", LocalAuthorityCode = "001" }
-        ];
+    //[HttpPost("/search")]
+    //public IActionResult Results(SearchPageViewModel model)
+    //{
+    //    // Fake application DTOs for now
+    //    List<EstablishmentSearchResultDto> results =
+    //    [
+    //        new() { Name = "St Mary's Primary", Urn = "123456", Type = "Academy", Address = "123 Example Road", LocalAuthorityName = "Birmingham", LocalAuthorityCode = "001", PartOfName = "Erdington Trust", PartOfCode = "001" },
+    //        new() { Name = "St Mary's and St John's Cofe School", Urn = "123456", Type = "Independent", Address = "123 Example Road", LocalAuthorityName = "Birmingham", LocalAuthorityCode = "001" },
+    //        new() { Name = "St Mary's Catholic School", Urn = "123456", Type = "Maintained", Address = "123 Example Road", LocalAuthorityName = "Birmingham", LocalAuthorityCode = "001" }
+    //    ];
 
-        SearchResultsPageViewModel updatedModel = _searchResultsEstablishmentSummaryTableMapper.Map(results);
-        return View(updatedModel);
-    }
+    //    SearchResultsPageViewModel updatedModel = _searchResultsEstablishmentSummaryTableMapper.Map(results);
+    //    return View(updatedModel);
+    //}
 }

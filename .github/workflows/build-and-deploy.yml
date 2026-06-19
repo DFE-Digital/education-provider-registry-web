@@ -11,6 +11,8 @@ on:
         default: review
         options:
         - review
+        - test
+        - preproduction
         - production
       docker-image-tag:
         description: "Docker image tag to deploy (optional)"
@@ -123,7 +125,7 @@ jobs:
     strategy:
       max-parallel: 1
       matrix:
-        environment: [development,production]
+        environment: [development,test,preproduction,production]
 
     steps:
     - name: Deploy app to ${{ matrix.environment }}
@@ -204,7 +206,7 @@ jobs:
     strategy:
       max-parallel: 1
       matrix:
-        domain_environment: [development, production]
+        domain_environment: [development,test,preproduction,production]
     environment:
       name: production
     permissions:

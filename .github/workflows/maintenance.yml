@@ -7,11 +7,11 @@ on:
         required: true
         type: choice
         options:
-        - review
-        - production
         - development
         - test
+        - review
         - preproduction
+        - production
       mode:
         required: true
         type: choice

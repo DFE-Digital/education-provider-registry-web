@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <IsTestProject>true</IsTestProject>
-    <OutputType>Exe</OutputType>	  
+    <OutputType>Exe</OutputType>
     <RootNamespace>DfE.EducationProviderRegistry.Web.Mvc.UnitTests</RootNamespace>
   </PropertyGroup>
 

@@ -1,13 +1,13 @@
 ﻿using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Web.Mvc.ApplicationDtos;
+using DfE.EducationProviderRegistry.Web.Mvc.Search.ViewModels;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
-using DfE.EducationProviderRegistry.Web.Mvc.ViewModels.Pages;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Mappers;
 
 // Search results mapper
 public class SearchResultsPageViewModelMapper :
-    IMapper<List<EstablishmentSearchResultDto>, SearchResultsPageViewModel>
+    IMapper<List<EstablishmentSearchResultDto>, SearchResultsViewModel>
 {
     private readonly IMapper<EstablishmentSearchResultDto, GovUkTable> _establishmentSummaryTableMapper;
     public SearchResultsPageViewModelMapper(
@@ -15,11 +15,10 @@ public class SearchResultsPageViewModelMapper :
     {
         _establishmentSummaryTableMapper = establishmentSummaryTableMapper;
     }
-    public SearchResultsPageViewModel Map(List<EstablishmentSearchResultDto> dto)
+    public SearchResultsViewModel Map(List<EstablishmentSearchResultDto> dto)
     {
-        return new SearchResultsPageViewModel
+        return new SearchResultsViewModel
         {
-            Query = string.Empty, // The query is not part of the DTO, so we set it to an empty string or we could modify the DTO to include it if needed
             EstablishmentResults = dto.Select(_establishmentSummaryTableMapper.Map).ToList()
         };
     }

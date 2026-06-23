@@ -1,10 +1,18 @@
 using DfE.Core.Libraries.CrossCutting.Mapper;
+using DfE.EducationProviderRegistry.Core.Query.Search;
+using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Establishment;
+using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
 using DfE.EducationProviderRegistry.Web.Mvc.ApplicationDtos;
 using DfE.EducationProviderRegistry.Web.Mvc.Extensions;
-using DfE.EducationProviderRegistry.Web.Mvc.Mappers;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewModels.Pages;
 using Microsoft.AspNetCore.CookiePolicy;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,14 +37,6 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
     options.Secure = CookieSecurePolicy.Always;
 });
 
-
-builder.Services.AddTransient<
-    IMapper<List<EstablishmentSearchResultDto>, SearchResultsPageViewModel>,
-    SearchResultsPageViewModelMapper>();
-builder.Services.AddTransient<
-    IMapper<EstablishmentSearchResultDto, GovUkTable>,
-    SearchResultsEstablishmentSummaryTableMapper>();
-
 builder.Services.AddTransient<
     IMapper<EstablishmentDto, EstablishmentDetailsPageViewModel>,
     EstablishmentDetailsPageViewModelMapper>();
@@ -50,8 +50,12 @@ builder.Services.AddTransient<
     IMapper<List<EstablishmentHistoryDto>, GovUkTable>,
     EstablishmentDetailsHistoryTableMapper>();
 
-// Groups
-builder.Services.AddGroups();
+
+builder.Services
+    // Group registrations
+    .AddGroups()
+    // Search registrations.
+    .AddSearch(builder.Configuration);
 
 var app = builder.Build();
 

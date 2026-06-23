@@ -16,6 +16,7 @@
   <ItemGroup>
 	<PackageReference Include="DfE.EducationProviderRegistry.Core.Query" Version="1.0.0" />
     <PackageReference Include="DfE.Core.Libraries.CrossCutting" Version="1.0.1" />
+	<PackageReference Include="DfE.Core.Libraries.CleanArchitecture" Version="1.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
   </ItemGroup>
 

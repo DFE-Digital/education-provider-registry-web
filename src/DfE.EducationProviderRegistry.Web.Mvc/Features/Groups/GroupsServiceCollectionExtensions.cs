@@ -5,10 +5,9 @@ using DfE.EducationProviderRegistry.Core.Query.Groups.Application.Model;
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupById;
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupById.Mappers;
 using DfE.EducationProviderRegistry.Core.Query.Shared;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.Extensions;
+namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 
 public static class GroupsServiceCollectionExtensions
 {

@@ -3,7 +3,7 @@ using DfE.EducationProviderRegistry.Web.Mvc.ApplicationDtos;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewModels.Pages;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.Mappers;
+namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments;
 
 // Establishment details page mappers
 public class EstablishmentDetailsPageViewModelMapper :

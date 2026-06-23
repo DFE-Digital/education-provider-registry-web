@@ -3,6 +3,7 @@ using DfE.EducationProviderRegistry.Core.Query.Search;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Establishment;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
 using DfE.EducationProviderRegistry.Web.Mvc.ApplicationDtos;
+using DfE.EducationProviderRegistry.Web.Mvc.Extensions;
 using DfE.EducationProviderRegistry.Web.Mvc.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.Search.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.Search.ViewModels;
@@ -14,7 +15,12 @@ using Microsoft.Extensions.Options;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services
+    .AddControllersWithViews()
+    .AddRazorOptions((options) =>
+    {
+        options.ViewLocationExpanders.Add(new FeatureViewLocationExpander());
+    });
 
 builder.Services.AddRouting(options =>
 {
@@ -50,21 +56,8 @@ builder.Services.AddTransient<
     IMapper<List<EstablishmentHistoryDto>, GovUkTable>,
     EstablishmentDetailsHistoryTableMapper>();
 
-builder.Services.AddTransient<
-    IMapper<GroupDto, GroupDetailsPageViewModel>,
-    GroupDetailsPageViewModelMapper>();
-builder.Services.AddTransient<
-    IMapper<GroupBasicDetailsDto, GovUkTable>,
-    GroupDetailsBasicDetailsTableMapper>();
-builder.Services.AddTransient<
-    IMapper<List<GroupAcademiesDto>, GovUkTable>,
-    GroupDetailsAcademiesTableMapper>();
-builder.Services.AddTransient<
-    IMapper<List<GroupTrusteesDto>, GovUkTable>,
-    GroupDetailsTrusteesTableMapper>();
-builder.Services.AddTransient<
-    IMapper<List<GroupMembersDto>, GovUkTable>,
-    GroupDetailsMembersTableMapper>();
+// Groups
+builder.Services.AddGroups();
 
 // Search registrations.
 builder.Services

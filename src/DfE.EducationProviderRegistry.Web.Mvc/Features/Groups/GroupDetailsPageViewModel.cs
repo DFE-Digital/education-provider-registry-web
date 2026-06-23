@@ -1,6 +1,6 @@
 ﻿using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.ViewModels.Pages;
+namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 
 public class GroupDetailsPageViewModel
 {

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <IsTestProject>true</IsTestProject>
@@ -11,7 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
+	<PackageReference Include="Moq" />
 	<PackageReference Include="xunit.v3.mtp-v2" />
+	<PackageReference Include="DfE.Core.Libraries.Testing" />
   </ItemGroup>
 
   <ItemGroup>

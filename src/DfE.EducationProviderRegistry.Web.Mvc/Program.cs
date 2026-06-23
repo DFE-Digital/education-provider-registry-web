@@ -55,7 +55,7 @@ builder.Services
     // Group registrations
     .AddGroups()
     // Search registrations.
-    .AddSearch();
+    .AddSearch(builder.Configuration);
 
 var app = builder.Build();
 

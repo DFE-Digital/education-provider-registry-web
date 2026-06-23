@@ -1,5 +1,6 @@
 using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Web.Mvc.ApplicationDtos;
+using DfE.EducationProviderRegistry.Web.Mvc.Extensions;
 using DfE.EducationProviderRegistry.Web.Mvc.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewModels.Pages;
@@ -8,7 +9,12 @@ using Microsoft.AspNetCore.CookiePolicy;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services
+    .AddControllersWithViews()
+    .AddRazorOptions((options) =>
+    {
+        options.ViewLocationExpanders.Add(new FeatureViewLocationExpander());
+    });
 
 builder.Services.AddRouting(options =>
 {
@@ -44,21 +50,8 @@ builder.Services.AddTransient<
     IMapper<List<EstablishmentHistoryDto>, GovUkTable>,
     EstablishmentDetailsHistoryTableMapper>();
 
-builder.Services.AddTransient<
-    IMapper<GroupDto, GroupDetailsPageViewModel>,
-    GroupDetailsPageViewModelMapper>();
-builder.Services.AddTransient<
-    IMapper<GroupBasicDetailsDto, GovUkTable>,
-    GroupDetailsBasicDetailsTableMapper>();
-builder.Services.AddTransient<
-    IMapper<List<GroupAcademiesDto>, GovUkTable>,
-    GroupDetailsAcademiesTableMapper>();
-builder.Services.AddTransient<
-    IMapper<List<GroupTrusteesDto>, GovUkTable>,
-    GroupDetailsTrusteesTableMapper>();
-builder.Services.AddTransient<
-    IMapper<List<GroupMembersDto>, GovUkTable>,
-    GroupDetailsMembersTableMapper>();
+// Groups
+builder.Services.AddGroups();
 
 var app = builder.Build();
 

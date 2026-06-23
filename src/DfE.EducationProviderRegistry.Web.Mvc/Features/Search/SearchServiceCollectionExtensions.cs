@@ -11,7 +11,7 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search;
 
 internal static class SearchServiceCollectionExtensions
 {
-    internal static IServiceCollection AddSearch(this IServiceCollection services)
+    internal static IServiceCollection AddSearch(this IServiceCollection services, IConfiguration configuration)
     {
         services
             .AddSingleton<IMapper<EstablishmentSearchResults, SearchResultsViewModel>, SearchResultsToViewModelMapper>()
@@ -21,10 +21,7 @@ internal static class SearchServiceCollectionExtensions
 
         // Bind search criteria configuration options.
         services.AddOptions<SearchCriteria>()
-            .Configure<IConfiguration>((settings, configuration) =>
-                configuration
-                    .GetSection(nameof(SearchCriteria))
-                    .Bind(settings));
+            .Bind(configuration.GetSection(nameof(SearchCriteria)));
 
         // Register strongly typed configuration instances.
         services.AddSingleton((serviceProvider) =>

@@ -37,14 +37,6 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
     options.Secure = CookieSecurePolicy.Always;
 });
 
-
-builder.Services.AddTransient<
-    IMapper<List<EstablishmentSearchResultDto>, SearchResultsViewModel>,
-    SearchResultsPageViewModelMapper>();
-builder.Services.AddTransient<
-    IMapper<EstablishmentSearchResultDto, GovUkTable>,
-    SearchResultsEstablishmentSummaryTableMapper>();
-
 builder.Services.AddTransient<
     IMapper<EstablishmentDto, EstablishmentDetailsPageViewModel>,
     EstablishmentDetailsPageViewModelMapper>();

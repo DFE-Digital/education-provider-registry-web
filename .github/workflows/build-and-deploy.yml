@@ -76,11 +76,48 @@ jobs:
     - name: Check out repository
       uses: actions/checkout@v4
 
-    # - name: Run tests
-    #   shell: bash
-    #   run: |
-    #     run some tests
+    - name: .NET Tool restore
+      run: dotnet tool restore
 
+    - name: Restore Dependencies
+      run: dotnet restore --configfile NuGet.config
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_USERNAME: DFE-Digital
+        
+    - name: Run .NET Tests with coverage
+      run: |
+        dotnet test \
+          --verbosity normal \
+          --report-xunit-trx \
+          --coverage \
+          --coverage-output coverage.cobertura.xml \
+          --coverage-output-format cobertura \
+          --coverage-settings coverage.runsettings
+
+    - name: Convert coverage to SonarQube format
+      run: |
+        dotnet tool run reportgenerator \
+          -reports:**/TestResults/coverage.cobertura.xml \
+          -targetdir:coverage-sonar \
+          -reporttypes:SonarQube \
+          -sourcedirs:.
+    
+    - name: Upload Sonar coverage report
+      uses: actions/upload-artifact@v7
+      with:
+        name: sonar-coverage-report
+        path: coverage-sonar/SonarQube.xml
+
+    - name: SonarCloud scan
+      if: github.actor != 'dependabot[bot]'
+      uses: DFE-Digital/github-actions/sonarscan-dotnet@784ea93ed96957679873b1f5426d876a37f453d2
+      with:
+          sonarcloud-project-key: DFE-Digital_education-provider-registry-web
+          sonarcloud-token: ${{ secrets.SONAR_TOKEN }}
+          use-global-json: true
+          coverage-report-path: coverage-sonar/SonarQube.xml
+  
   deploy-review-app:
     name: Deployment To Review
     concurrency: deploy_review_${{ github.event.pull_request.number }}

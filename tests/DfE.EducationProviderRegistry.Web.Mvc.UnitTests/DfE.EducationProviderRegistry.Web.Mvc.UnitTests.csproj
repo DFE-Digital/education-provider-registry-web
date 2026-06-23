@@ -11,9 +11,14 @@
   </ItemGroup>
 
   <ItemGroup>
+	<PackageReference Include="coverlet.msbuild">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+	<PackageReference Include="DfE.Core.Libraries.Testing" />
+	<PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
 	<PackageReference Include="Moq" />
 	<PackageReference Include="xunit.v3.mtp-v2" />
-	<PackageReference Include="DfE.Core.Libraries.Testing" />
   </ItemGroup>
 
   <ItemGroup>

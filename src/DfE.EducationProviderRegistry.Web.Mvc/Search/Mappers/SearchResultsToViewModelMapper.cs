@@ -18,7 +18,7 @@ public class SearchResultsToViewModelMapper : IMapper<EstablishmentSearchResults
     public SearchResultsViewModel Map(EstablishmentSearchResults input) =>
         new()
         {
-            EstablishmentResults = 
+            EstablishmentResults =
                 [.. input.EstablishmentCollection.Select(
                     _searchResultToTableViewModelMapper.Map)]
         };

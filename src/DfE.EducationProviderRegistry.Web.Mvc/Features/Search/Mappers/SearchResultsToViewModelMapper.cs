@@ -1,9 +1,9 @@
 ﻿using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Establishment;
-using DfE.EducationProviderRegistry.Web.Mvc.Search.ViewModels;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.Search.Mappers;
+namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 
 public class SearchResultsToViewModelMapper : IMapper<EstablishmentSearchResults, SearchResultsViewModel>
 {

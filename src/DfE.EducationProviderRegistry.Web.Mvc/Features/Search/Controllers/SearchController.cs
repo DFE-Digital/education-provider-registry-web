@@ -4,10 +4,10 @@ using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Establi
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Sort;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Request;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
-using DfE.EducationProviderRegistry.Web.Mvc.Search.ViewModels;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.Search.Controllers;
+namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Controllers;
 
 public sealed class SearchController : Controller
 {
@@ -24,11 +24,16 @@ public sealed class SearchController : Controller
     }
 
     [HttpGet("/search")]
-    public IActionResult Index() => View("~/Search/Views/Index.cshtml", new SearchRequestViewModel());
+    public IActionResult Index() => View(new SearchRequestViewModel());
 
     [HttpPost("/search")]
     public async Task<IActionResult> Results(SearchRequestViewModel model)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         SortOrder sortOrder =
             new(
                 sortField: "TO_BE_DEFINED",
@@ -47,6 +52,6 @@ public sealed class SearchController : Controller
         SearchResultsViewModel updatedModel =
             _searchResponseToViewModelMapper.Map(establishmentSearchResults);
 
-        return View("~/Search/Views/Results.cshtml", updatedModel);
+        return View("Results", updatedModel);
     }
 }

@@ -1,6 +1,6 @@
 ﻿using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.Search.ViewModels;
+namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 
 public class SearchResultsViewModel
 {

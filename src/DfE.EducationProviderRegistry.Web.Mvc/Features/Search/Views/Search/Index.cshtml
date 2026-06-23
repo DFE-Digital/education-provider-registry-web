@@ -1,8 +1,8 @@
-﻿@using DfE.EducationProviderRegistry.Web.Mvc.Search.ViewModels
+﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels
+
 @model SearchRequestViewModel
 @{
     ViewData["Title"] = "Search";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h1 class="govuk-heading-xl">Search the register</h1>
@@ -15,7 +15,7 @@
         <div id="" class="govuk-hint">
             Enter an establishment name, group name, or an ID number
         </div>
-        <input class="govuk-input govuk-input--extra-letter-spacing" id="" name="" type="text" spellcheck="false" aria-describedby="hint-one">
+        <input class="govuk-input govuk-input--extra-letter-spacing" id="" name="SearchKeywords" type="text" spellcheck="false" aria-describedby="hint-one">
     </div>
 
     <div class="govuk-form-group">

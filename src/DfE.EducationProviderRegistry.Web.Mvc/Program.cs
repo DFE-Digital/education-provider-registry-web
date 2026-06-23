@@ -4,9 +4,9 @@ using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Establi
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
 using DfE.EducationProviderRegistry.Web.Mvc.ApplicationDtos;
 using DfE.EducationProviderRegistry.Web.Mvc.Extensions;
-using DfE.EducationProviderRegistry.Web.Mvc.Mappers;
-using DfE.EducationProviderRegistry.Web.Mvc.Search.Mappers;
-using DfE.EducationProviderRegistry.Web.Mvc.Search.ViewModels;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewModels.Pages;
 using Microsoft.AspNetCore.CookiePolicy;

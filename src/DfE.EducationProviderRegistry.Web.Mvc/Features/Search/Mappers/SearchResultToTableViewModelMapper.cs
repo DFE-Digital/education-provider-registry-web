@@ -2,7 +2,7 @@
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Establishment;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.Search.Mappers;
+namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 
 public class SearchResultToTableViewModelMapper
     : IMapper<EstablishmentSearchResult, GovUkTable>

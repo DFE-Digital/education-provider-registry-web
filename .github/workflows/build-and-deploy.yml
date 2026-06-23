@@ -79,6 +79,12 @@ jobs:
     - name: .NET Tool restore
       run: dotnet tool restore
 
+    - name: Restore Dependencies
+      run: dotnet restore --configfile NuGet.config
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_USERNAME: DFE-Digital
+        
     - name: Run .NET Tests with coverage
       run: |
         dotnet test \

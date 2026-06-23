@@ -17,15 +17,15 @@ public static class GroupsServiceCollectionExtensions
         services.AddSingleton<
             IMapper<GroupReadModel, GroupDetailsPageViewModel>,
             GroupDetailsPageViewModelMapper>();
-        
+
         services.AddSingleton<
             IMapper<IEnumerable<Academy>, GovUkTable>,
             GroupDetailsAcademiesTableMapper>();
-        
+
         services.AddSingleton<
             IMapper<IEnumerable<TrusteeReadModel>, GovUkTable>,
             GroupDetailsTrusteesTableMapper>();
-        
+
         services.AddSingleton<
             IMapper<IEnumerable<MemberReadModel>, GovUkTable>,
             GroupDetailsMembersTableMapper>();
@@ -45,7 +45,7 @@ public sealed class StubGroupsRepository : IGroupsRepository
         Group groupDummy = new(
             new GroupIdentity(new GroupId("TR3566"), new GroupUID(3566)),
             new GroupExternalIdentifiers(
-                new Ukprn("10058857"), 
+                new Ukprn("10058857"),
                 new CompaniesHouseId("07662289")),
             new GroupComposition(
                 academies: [

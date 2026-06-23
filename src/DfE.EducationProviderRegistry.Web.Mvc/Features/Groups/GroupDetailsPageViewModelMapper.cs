@@ -55,7 +55,7 @@ internal sealed class GroupDetailsPageViewModelMapper :
             {
                 Text = "Companies House No.",
                 IsBold = true
-            }, 
+            },
             new GovUkTableCell
             {
                 Text = model.CompaniesHouseId != null ? $"{model.CompaniesHouseId} (opens in new tab)" : string.Empty, // TODO hardcoded new tab text semantics

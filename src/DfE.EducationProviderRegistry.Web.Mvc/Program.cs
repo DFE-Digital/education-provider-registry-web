@@ -5,6 +5,8 @@ using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
 using DfE.EducationProviderRegistry.Web.Mvc.ApplicationDtos;
 using DfE.EducationProviderRegistry.Web.Mvc.Extensions;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
@@ -56,25 +58,12 @@ builder.Services.AddTransient<
     IMapper<List<EstablishmentHistoryDto>, GovUkTable>,
     EstablishmentDetailsHistoryTableMapper>();
 
-// Groups
-builder.Services.AddGroups();
 
-// Search registrations.
 builder.Services
-    .AddSingleton<IMapper<EstablishmentSearchResults, SearchResultsViewModel>, SearchResultsToViewModelMapper>()
-    .AddSingleton<IMapper<EstablishmentSearchResult, GovUkTable>, SearchResultToTableViewModelMapper>();
-builder.Services.AddSearchDependencies();
-
-// Bind search criteria configuration options.
-builder.Services.AddOptions<SearchCriteria>()
-    .Configure<IConfiguration>((settings, configuration) =>
-        configuration
-            .GetSection(nameof(SearchCriteria))
-            .Bind(settings));
-
-// Register strongly typed configuration instances.
-builder.Services.AddSingleton(serviceProvider =>
-    serviceProvider.GetRequiredService<IOptions<SearchCriteria>>().Value);
+    // Group registrations
+    .AddGroups()
+    // Search registrations.
+    .AddSearch();
 
 var app = builder.Build();
 

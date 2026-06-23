@@ -24,10 +24,4 @@
 	<InternalsVisibleTo Include="DfE.EducationProviderRegistry.Web.Mvc.UnitTests" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="DfE.EducationProviderRegistry.Core.Query">
-      <HintPath>TempAssembliesDELETE\DfE.EducationProviderRegistry.Core.Query.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>

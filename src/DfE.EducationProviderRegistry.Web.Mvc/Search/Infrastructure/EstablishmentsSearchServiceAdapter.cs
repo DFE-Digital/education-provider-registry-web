@@ -77,7 +77,9 @@ public sealed class EstablishmentsSearchServiceAdapter
         SearchPipelineContext context = new();
         context.Set(ids);
         context.Set(establishments);
-        context.Set(request.Facets.ToList());
+        //context.Set(request.Facets.ToList()); // TODO: pull facets crom configuration or from a provider
+        context.Set(new List<string> { "EstablishmentTypeId" });
+
 
         foreach (ISearchPipelineStep step in _pipeline)
         {

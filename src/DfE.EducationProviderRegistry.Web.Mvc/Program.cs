@@ -4,6 +4,7 @@ using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Establi
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
 using DfE.EducationProviderRegistry.Web.Mvc.ApplicationDtos;
 using DfE.EducationProviderRegistry.Web.Mvc.Mappers;
+using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure;
 using DfE.EducationProviderRegistry.Web.Mvc.Search.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.Search.ViewModels;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
@@ -28,7 +29,6 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
     options.HttpOnly = HttpOnlyPolicy.Always;
     options.Secure = CookieSecurePolicy.Always;
 });
-
 
 builder.Services.AddTransient<
     IMapper<List<EstablishmentSearchResultDto>, SearchResultsViewModel>,
@@ -82,6 +82,9 @@ builder.Services.AddOptions<SearchCriteria>()
 // Register strongly typed configuration instances.
 builder.Services.AddSingleton(serviceProvider =>
     serviceProvider.GetRequiredService<IOptions<SearchCriteria>>().Value);
+
+builder.Services.AddInfraSearchDependencies();
+builder.Services.AddInfraSearchFilterDependencies(builder.Configuration);
 
 var app = builder.Build();
 

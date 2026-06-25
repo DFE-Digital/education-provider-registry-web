@@ -26,13 +26,13 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure;
 
 public static class CompositionRoot
 {
-    public static IServiceCollection AddSearchDependencies(
+    public static IServiceCollection AddInfraSearchDependencies(
         this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
 
         string connectionString =
-            "Put Me in config";
+            "Host=localhost;Port=5440;Database=education-provider-registr-prototype-baseline;Username=postgres;Password=postgres";
 
         // ---------------------------------------------------------
         // DbContext factory 
@@ -95,13 +95,6 @@ public static class CompositionRoot
             IMapper<SearchPipelineContext, SearchResults<EstablishmentSearchResults, SearchFacets>>,
             SearchResultsFromContextMapper>();
 
-        // ---------------------------------------------------------
-        // Search service adapter
-        // ---------------------------------------------------------
-        services.TryAddScoped<
-            ISearchServiceAdapter<EstablishmentSearchResults, SearchFacets>,
-            EstablishmentsSearchServiceAdapter>();
-
         return services;
     }
 
@@ -119,7 +112,7 @@ public static class CompositionRoot
     /// The exception thrown if no valid T:Microsoft.Extensions.DependencyInjection.IServiceCollection
     /// is provisioned.
     /// </exception>
-    public static void AddSearchFilterDependencies(this IServiceCollection services, IConfiguration configuration)
+    public static void AddInfraSearchFilterDependencies(this IServiceCollection services, IConfiguration configuration)
     {
         if (services is null)
         {
@@ -193,5 +186,12 @@ public static class CompositionRoot
                         .Bind(settings))
                         .ValidateDataAnnotations()
                         .ValidateOnStart();
+
+        // ---------------------------------------------------------
+        // Search service adapter
+        // ---------------------------------------------------------
+        services.AddScoped<
+            ISearchServiceAdapter<EstablishmentSearchResults, SearchFacets>,
+            EstablishmentsSearchServiceAdapter>();
     }
 }

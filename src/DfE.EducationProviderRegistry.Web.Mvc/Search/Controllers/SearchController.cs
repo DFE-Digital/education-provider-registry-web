@@ -1,6 +1,7 @@
 ﻿using DfE.Core.Libraries.CleanArchitecture.Application;
 using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Establishment;
+using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Filter;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Sort;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Request;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
@@ -35,8 +36,15 @@ public sealed class SearchController : Controller
                 sortDirection: "ASC",
                 validSortFields: new List<string>() { "TO_BE_DEFINED" }.AsReadOnly());
 
+        List<FilterRequest> searchFilterRequests =
+        [
+            new(
+                filterName: "establishment_type_id",
+                filterValues: ["1", "2"])
+        ];
+
         SearchRequest searchRequest =
-            new(searchIndexKey: "TO_BE_DEFINED", searchKeywords: "TO_BE_DEFINED", sortOrder);
+            new(searchIndexKey: "TO_BE_DEFINED", searchKeywords: "school 1", searchFilterRequests, sortOrder);
 
         UseCaseResponse<SearchResponse> searchResponse =
             await _searchUseCase.HandleRequestAsync(searchRequest);

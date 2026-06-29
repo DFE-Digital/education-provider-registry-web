@@ -11,20 +11,31 @@ EXPOSE 8081
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
-COPY ["DfE.EducationProviderRegistry.Web.Mvc.csproj", "."]
-RUN dotnet restore "./DfE.EducationProviderRegistry.Web.Mvc.csproj"
+
+COPY ["DfE.EducationProviderRegistry.Web.Mvc/DfE.EducationProviderRegistry.Web.Mvc.csproj", "DfE.EducationProviderRegistry.Web.Mvc/"]
+
+RUN --mount=type=secret,id=nuget_config \
+    dotnet restore "DfE.EducationProviderRegistry.Web.Mvc/DfE.EducationProviderRegistry.Web.Mvc.csproj" \
+    --configfile /run/secrets/nuget_config
+
 COPY . .
-WORKDIR "/src/."
-RUN dotnet build "./DfE.EducationProviderRegistry.Web.Mvc.csproj" -c $BUILD_CONFIGURATION -o /app/build
+
+RUN dotnet build "DfE.EducationProviderRegistry.Web.Mvc/DfE.EducationProviderRegistry.Web.Mvc.csproj" -c "$BUILD_CONFIGURATION" -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
+
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./DfE.EducationProviderRegistry.Web.Mvc.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+
+RUN dotnet publish "DfE.EducationProviderRegistry.Web.Mvc/DfE.EducationProviderRegistry.Web.Mvc.csproj" \
+    -c "$BUILD_CONFIGURATION" \
+    -o /app/publish \
+    /p:UseAppHost=false
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
+
 WORKDIR /app
 COPY --from=publish /app/publish .
+
 ENTRYPOINT ["dotnet", "DfE.EducationProviderRegistry.Web.Mvc.dll"]

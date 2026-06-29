@@ -57,7 +57,8 @@ jobs:
       uses: DFE-Digital/github-actions/build-docker-image@master
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        context: .
+        dockerfile-path: ./src/DfE.EducationProviderRegistry.Web.Mvc/Dockerfile
+        context: ./src
         docker-repository: ${{ env.DOCKER_REPOSITORY }}
         max-cache: true
         reuse-cache: true

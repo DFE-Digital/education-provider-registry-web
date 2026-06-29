@@ -40,4 +40,6 @@ module "web_application" {
   enable_logit = true
 
   send_traffic_to_maintenance_page = var.send_traffic_to_maintenance_page
+
+  web_port = 8080
 }

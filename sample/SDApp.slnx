@@ -1,8 +1,0 @@
-<Solution>
-  <Folder Name="/src/">
-    <Project Path="src/SDApp.Web/SDApp.Web.csproj" />
-  </Folder>
-  <Folder Name="/tests/">
-    <Project Path="tests/SDApp.Web.Tests/SDApp.Web.Tests.csproj" />
-  </Folder>
-</Solution>

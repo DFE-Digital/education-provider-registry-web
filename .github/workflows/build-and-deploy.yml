@@ -52,17 +52,24 @@ jobs:
     - uses: actions/checkout@v4
       name: Checkout
 
+    - name: Inject token into NuGet.config
+      run: |
+        TOKEN="${{ secrets.GITHUB_TOKEN }}"
+        sed -i "s|%GITHUB_TOKEN%|$TOKEN|g" NuGet.config
+
     - name: Build and push docker image
       id: build-image
-      uses: DFE-Digital/github-actions/build-docker-image@master
+      # awaiting merge of https://github.com/DFE-Digital/github-actions/pull/224/changes for secret_files
+      uses: aahmed-dfe/github-actions/build-docker-image@patch-1
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        context: .
+        dockerfile-path: ./src/DfE.EducationProviderRegistry.Web.Mvc/Dockerfile
+        context: ./src
+        secret-files: nuget_config=./NuGet.config
         docker-repository: ${{ env.DOCKER_REPOSITORY }}
         max-cache: true
         reuse-cache: true
         snyk-token: ${{ secrets.SNYK_TOKEN }}
-
   test:
     name: Run tests
     if: ${{ github.event_name != 'workflow_dispatch' }}

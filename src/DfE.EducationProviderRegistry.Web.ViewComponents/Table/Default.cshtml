@@ -1,0 +1,64 @@
+@using DfE.EducationProviderRegistry.Web.ViewComponents.Table
+@model DfE.EducationProviderRegistry.Web.ViewComponents.Table.GovUkTable
+
+<table class="govuk-table">
+
+    @* Caption *@
+    @if (!string.IsNullOrWhiteSpace(Model.Caption))
+    {
+        string captionClass = GovUkCaptionSizeExtensions.ToCssClass(Model.CaptionSize);
+
+        <caption class="govuk-table__caption @(captionClass)">
+            @Model.Caption
+        </caption>
+    }
+
+
+    @* Head *@
+    @if (Model.Columns.Count > 0)
+    {
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                @foreach (GovUkTableColumn column in Model.Columns)
+                {
+                    <th scope="col" class="govuk-table__header @column.Classes">
+                        @column.Header
+                    </th>
+                }
+            </tr>
+        </thead>
+    }
+
+    @* Body *@
+    <tbody class="govuk-table__body">
+
+        @for (int rowIndex = 0; rowIndex < Model.Rows.Count; rowIndex++)
+        {
+            IReadOnlyList<string> row = Model.Rows[rowIndex];
+
+            <tr class="govuk-table__row">
+
+                @for (int colIndex = 0; colIndex < Model.Columns.Count; colIndex++)
+                {
+                    GovUkTableColumn column = Model.Columns[colIndex];
+                    string value = row[colIndex];
+
+                    if (column.IsRowHeader)
+                    {
+                        <th scope="row" class="govuk-table__header @column.Classes">
+                            @value
+                        </th>
+                    }
+                    else
+                    {
+                        <td class="govuk-table__cell @(column.IsNumeric ? "govuk-table__cell--numeric" : null) @column.Classes">
+                            @value
+                        </td>
+                    }
+                }
+
+            </tr>
+        }
+
+    </tbody>
+</table>

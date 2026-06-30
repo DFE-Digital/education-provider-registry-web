@@ -13,7 +13,6 @@
     <Folder Include="Establishments\Controllers\" />
     <Folder Include="Establishments\Views\" />
     <Folder Include="Establishments\ViewModels\" />
-    <Folder Include="Search\Infrastructure\Options\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 

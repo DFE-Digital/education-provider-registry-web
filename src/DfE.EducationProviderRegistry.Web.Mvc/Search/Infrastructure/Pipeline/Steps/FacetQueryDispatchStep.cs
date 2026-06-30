@@ -1,6 +1,7 @@
 ﻿using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
 using DfE.EducationProviderRegistry.Data.DatabaseModels.Models;
 using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Core.Providers;
+using System.Collections.ObjectModel;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Pipeline.Steps;
 
@@ -16,7 +17,7 @@ internal sealed class FacetQueryDispatchStep : ISearchPipelineStep
 
     public void Execute(SearchPipelineContext context, CancellationToken cancellationToken)
     {
-        IReadOnlyList<string> ids = context.Get<IReadOnlyList<string>>();
+        ReadOnlyCollection<string> ids = context.Get<ReadOnlyCollection<string>>();
         List<string> facetNames = context.Get<List<string>>();
 
         List<(string FacetName, Task<IReadOnlyList<FacetResult>> Task)> tasks =

@@ -17,6 +17,7 @@ using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Pipeline;
 using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Pipeline.Steps;
 using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Providers;
+using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Providers.Projections;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Collections.ObjectModel;
@@ -57,8 +58,8 @@ public static class CompositionRoot
         // ---------------------------------------------------------
         // Providers
         // ---------------------------------------------------------
-        services.TryAddScoped<IIdSearchProvider<Establishment>>(sp =>
-            new EstablishmentsUrnSearchProvider(
+        services.TryAddScoped<ISearchProvider<Establishment>>(sp =>
+            new EstablishmentsSearchProvider(
                 sp.GetRequiredService<IDbContextFactory<EducationProviderRegistryDbContext>>(),
                 sp.GetRequiredService<ISearchFilterExpressionsBuilder>(),
                 schemaName: "core",
@@ -75,7 +76,7 @@ public static class CompositionRoot
         services.AddScoped<ISearchPipelineStep, SearchOrderingStep>();
         services.AddScoped<ISearchPipelineStep>(sp =>
             new ParallelMappingStep(
-                sp.GetRequiredService<IMapper<Establishment, EstablishmentSearchResult>>()));
+                sp.GetRequiredService<IMapper<SearchResultProjection, EstablishmentSearchResult>>()));
 
         services.AddScoped<ISearchPipelineStep>(sp =>
             new FacetQueryDispatchStep(
@@ -88,7 +89,7 @@ public static class CompositionRoot
         // Mappers
         // ---------------------------------------------------------
         services.TryAddSingleton<
-            IMapper<Establishment, EstablishmentSearchResult>,
+            IMapper<SearchResultProjection, EstablishmentSearchResult>,
             EstablishmentToSearchResultMapper>();
 
         services.TryAddSingleton<

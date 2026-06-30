@@ -1,23 +1,23 @@
 ﻿using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Establishment;
-using DfE.EducationProviderRegistry.Data.DatabaseModels.Models;
+using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Providers.Projections;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Pipeline.Steps;
 
 internal sealed class ParallelMappingStep : ISearchPipelineStep
 {
-    private readonly IMapper<Establishment, EstablishmentSearchResult> _mapper;
+    private readonly IMapper<SearchResultProjection, EstablishmentSearchResult> _mapper;
 
     public ParallelMappingStep(
-        IMapper<Establishment, EstablishmentSearchResult> mapper)
+        IMapper<SearchResultProjection, EstablishmentSearchResult> mapper)
     {
         _mapper = mapper;
     }
 
     public void Execute(SearchPipelineContext context, CancellationToken cancellationToken)
     {
-        List<Establishment> ordered =
-            context.Get<List<Establishment>>();
+        List<SearchResultProjection> ordered =
+            context.Get<List<SearchResultProjection>>();
 
         EstablishmentSearchResult[] results =
             new EstablishmentSearchResult[ordered.Count];
@@ -29,7 +29,7 @@ internal sealed class ParallelMappingStep : ISearchPipelineStep
 
         Parallel.ForEach(
             ordered.Select((establishment, index) =>
-                new KeyValuePair<int, Establishment>(index, establishment)),
+                new KeyValuePair<int, SearchResultProjection>(index, establishment)),
             options,
             pair =>
             {

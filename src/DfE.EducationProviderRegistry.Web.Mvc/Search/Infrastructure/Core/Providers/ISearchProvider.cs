@@ -1,4 +1,5 @@
 ﻿using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Core.Filtering;
+using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Providers.Projections;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Core.Providers;
 
@@ -13,7 +14,7 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Core.Provi
 ///     parameter ensures alignment with the search pipeline and allows ID
 ///     providers to be registered per‑entity.
 /// </typeparam>
-public interface IIdSearchProvider<TEntity>
+public interface ISearchProvider<TEntity>
 {
     /// <summary>
     ///     Retrieves the identifiers of entities that match the supplied search
@@ -49,7 +50,7 @@ public interface IIdSearchProvider<TEntity>
     ///         in parallel.
     ///     </para>
     /// </remarks>
-    Task<IReadOnlyList<string>> GetMatchingIdsAsync(
+    Task<IReadOnlyList<SearchResultProjection>> GetMatchingIdsAsync(
         string searchTerm,
         int pageSize,
         int offset,

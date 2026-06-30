@@ -60,7 +60,7 @@ jobs:
     - name: Build and push docker image
       id: build-image
       # awaiting merge of https://github.com/DFE-Digital/github-actions/pull/224/changes for secret_files
-      uses: aahmed-dfe/github-actions/build-docker-image@patch-1
+      uses: DFE-Digital/github-actions/build-docker-image@master
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         dockerfile-path: ./src/DfE.EducationProviderRegistry.Web.Mvc/Dockerfile

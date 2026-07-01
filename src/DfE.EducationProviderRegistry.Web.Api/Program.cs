@@ -23,7 +23,7 @@ builder.Services.AddOpenApi();
 // Domain registrations
 builder.Services.AddEstablishmentsUseCaseDependencies();
 builder.Services.AddEstablishmentsInfrastructureDependencies();
-builder.Services.AddSingleton<IMapper<Establishment, object?>, EstablishmentModelToViewModelMapper>();
+builder.Services.AddSingleton<IMapper<EstablishmentDetailsModel, object?>, EstablishmentModelToViewModelMapper>();
 
 builder.Services.AddResponseCompression(options =>
 {

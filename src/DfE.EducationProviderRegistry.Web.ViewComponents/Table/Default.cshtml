@@ -13,7 +13,6 @@
         </caption>
     }
 
-
     @* Head *@
     @if (Model.Columns.Count > 0)
     {
@@ -34,25 +33,41 @@
 
         @for (int rowIndex = 0; rowIndex < Model.Rows.Count; rowIndex++)
         {
-            IReadOnlyList<string> row = Model.Rows[rowIndex];
+            IReadOnlyList<GovUkTableCell> row = Model.Rows[rowIndex];
 
             <tr class="govuk-table__row">
 
                 @for (int colIndex = 0; colIndex < Model.Columns.Count; colIndex++)
                 {
                     GovUkTableColumn column = Model.Columns[colIndex];
-                    string value = row[colIndex];
+                    GovUkTableCell cell = row[colIndex];
 
                     if (column.IsRowHeader)
                     {
                         <th scope="row" class="govuk-table__header @column.Classes">
-                            @value
+                            @if (!string.IsNullOrWhiteSpace(cell.Href))
+                            {
+                                <a href="@cell.Href" class="govuk-link">
+                                    @cell.Text
+                                </a>
+                            }
+                            else
+                            {
+                                @cell.Text
+                            }
                         </th>
                     }
                     else
                     {
-                        <td class="govuk-table__cell @(column.IsNumeric ? "govuk-table__cell--numeric" : null) @column.Classes">
-                            @value
+                        <td class="govuk-table__cell @(column.IsNumeric ? "govuk-table__cell--numeric" : null)">
+                            @if (!string.IsNullOrWhiteSpace(cell.Href))
+                            {
+                                <a href="@cell.Href">@cell.Text</a>
+                            }
+                            else
+                            {
+                                @cell.Text
+                            }
                         </td>
                     }
                 }

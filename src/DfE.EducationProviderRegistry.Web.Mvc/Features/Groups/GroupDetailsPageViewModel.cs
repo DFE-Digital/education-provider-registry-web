@@ -1,12 +1,28 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
+﻿namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
-
-public class GroupDetailsPageViewModel
+public sealed record GroupDetailsPageViewModel
 {
-    public string Heading { get; set; }
-    public GovUkTable BasicDetailsTable { get; set; }
-    public GovUkTable AcademiesTable { get; set; }
-    public GovUkTable TrusteesTable { get; set; }
-    public GovUkTable MembersTable { get; set; }
+    public required string Heading { get; set; }
+    public required GroupDetailsTabViewModel Details { get; set; }
+    public required GroupDetailsAcademyTabViewModel Academies { get; init; }
+    public required GroupDetailsGovernanceTabViewModel Governance { get; init; }
+}
+
+public sealed class GroupDetailsTabViewModel
+{
+    public string Tab { get; set; }
+    public Web.ViewComponents.Table.GovUkTable Details { get; set; }
+}
+
+public sealed class GroupDetailsAcademyTabViewModel
+{
+    public string Tab { get; set; }
+    public Web.ViewComponents.Table.GovUkTable Academies { get; set; }
+}
+
+public sealed class GroupDetailsGovernanceTabViewModel
+{
+    public string Tab { get; set; }
+    public Web.ViewComponents.Table.GovUkTable Trustees { get; set; }
+    public Web.ViewComponents.Table.GovUkTable Members { get; set; }
 }

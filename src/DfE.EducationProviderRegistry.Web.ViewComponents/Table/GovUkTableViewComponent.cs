@@ -8,7 +8,7 @@ public class GovUkTableViewComponent : ViewComponent
     {
         return Task.FromResult(
             View(
-                viewName: "Default", 
+                viewName: "Default",
                 model: model) as IViewComponentResult);
     }
 }

@@ -17,18 +17,6 @@ public static class GroupsServiceCollectionExtensions
             IMapper<GroupReadModel, GroupDetailsPageViewModel>,
             GroupDetailsPageViewModelMapper>();
 
-        services.AddSingleton<
-            IMapper<IEnumerable<Academy>, GovUkTable>,
-            GroupDetailsAcademiesTableMapper>();
-
-        services.AddSingleton<
-            IMapper<IEnumerable<TrusteeReadModel>, GovUkTable>,
-            GroupDetailsTrusteesTableMapper>();
-
-        services.AddSingleton<
-            IMapper<IEnumerable<MemberReadModel>, GovUkTable>,
-            GroupDetailsMembersTableMapper>();
-
         services.AddSingleton<IGroupsRepository, StubGroupsRepository>();
         services.AddGroupsUseCaseDependencies();
         services.AddGroupsInfrastructureDependencies();
@@ -39,7 +27,7 @@ public static class GroupsServiceCollectionExtensions
 // Temporary Group Repository
 public sealed class StubGroupsRepository : IGroupsRepository
 {
-    public Task<Group?> GetGroupByGroupIdAsync(GroupId groupId, CancellationToken cancellationToken = default)
+    public Task<Group?> GetGroupByGroupUidAsync(GroupUID groupId, CancellationToken cancellationToken = default)
     {
         Group groupDummy = new(
             new GroupIdentity(new GroupId("TR3566"), new GroupUID(3566)),

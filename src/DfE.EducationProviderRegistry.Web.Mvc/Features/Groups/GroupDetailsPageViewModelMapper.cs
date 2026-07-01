@@ -2,150 +2,173 @@
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.Model;
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupById;
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupById.Mappers;
-using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
+using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 
 internal sealed class GroupDetailsPageViewModelMapper :
     IMapper<GroupReadModel, GroupDetailsPageViewModel>
 {
-    private readonly IMapper<IEnumerable<Academy>, GovUkTable> _academiesMapper;
-    private readonly IMapper<IEnumerable<TrusteeReadModel>, GovUkTable> _trusteesMapper;
-    private readonly IMapper<IEnumerable<MemberReadModel>, GovUkTable> _membersMapper;
-
-    public GroupDetailsPageViewModelMapper(
-        IMapper<IEnumerable<Academy>, GovUkTable> academiesMapper,
-        IMapper<IEnumerable<TrusteeReadModel>, GovUkTable> trusteesMapper,
-        IMapper<IEnumerable<MemberReadModel>, GovUkTable> membersMapper)
-    {
-        _academiesMapper = academiesMapper;
-        _trusteesMapper = trusteesMapper;
-        _membersMapper = membersMapper;
-    }
     public GroupDetailsPageViewModel Map(GroupReadModel readModel)
     {
         return new GroupDetailsPageViewModel
         {
             Heading = readModel.Name,
-            BasicDetailsTable = CreateBasicDetails(readModel),
-            AcademiesTable = _academiesMapper.Map(readModel.Academies),
-            TrusteesTable = _trusteesMapper.Map(readModel.Trustees),
-            MembersTable = _membersMapper.Map(readModel.Members)
+            Details = CreateBasicDetails(readModel),
+            Academies = CreateAcademies(readModel),
+            Governance = CreateGovernance(readModel)
         };
     }
 
-    private static GovUkTable CreateBasicDetails(GroupReadModel model)
+    private static GroupDetailsTabViewModel CreateBasicDetails(GroupReadModel model)
     {
-        GovUkTableBuilder builder = GovUkTableBuilder.Create();
+        // TODO convert to GDSSummaryList?
+        GovUkTableColumn[] columns = [
+            new("UID") { IsRowHeader = true},
+            new("Group ID"),
+            new("UKPRN"),
+            new("Company number"),
+            new("Status"),
+            new("Address"),
+            new("Type")];
 
-        builder.AddRow(
-            new GovUkTableCell { Text = "UID", IsBold = true },
-            new GovUkTableCell { Text = model.GroupUID.ToString() });
+        GovUkTable detailsTable = new(
+            columns: columns,
+            rows: [
+                    [new GovUkTableCell() { Text = model.GroupUID.ToString() } ],
+                    [new GovUkTableCell() { Text = model.GroupId } ],
+                    [new GovUkTableCell() { Text = model.UKPRN } ],
+                    [new GovUkTableCell()
+                        {
+                            Text = string.IsNullOrWhiteSpace(model.CompaniesHouseId) ? string.Empty : $"{model.CompaniesHouseId} (opens in new tab)", // TODO 
+                            Href =  $"https://find-and-update.company-information.service.gov.uk/company/{model.CompaniesHouseId}"
+                        }
+                    ],
+                    [new GovUkTableCell() { Text = model.Status } ],
+                    [new GovUkTableCell() { Text = model.Address  } ],
+                    [new GovUkTableCell() { Text = model.Type } ]
+                ],
+            caption: "Details");
 
-        builder.AddRow(
-            new GovUkTableCell { Text = "Group ID", IsBold = true },
-            new GovUkTableCell { Text = model.GroupId });
+        return new()
+        {
+            Tab = "Details",
+            Details = detailsTable
+        };
+    }
 
-        builder.AddRow(
-            new GovUkTableCell { Text = "UKPRN", IsBold = true },
-            new GovUkTableCell { Text = model.UKPRN });
+    private static GroupDetailsAcademyTabViewModel CreateAcademies(GroupReadModel model)
+    {
+        GovUkTableColumn[] columns = [
+            new("Name") { IsRowHeader = true},
+            new("URN")
+        ];
 
-        builder.AddRow(
-            new GovUkTableCell
+        List<GovUkTableCell[]> rows = new();
+
+        foreach (Academy academy in model.Academies)
+        {
+            GovUkTableCell name = new()
             {
-                Text = "Companies House No.",
-                IsBold = true
-            },
-            new GovUkTableCell
+                Text = academy.Name.ToString(),
+                Href = $"/establishment/{academy.Id.Value}"
+            };
+
+            GovUkTableCell urn = new()
             {
-                Text = model.CompaniesHouseId != null ? $"{model.CompaniesHouseId} (opens in new tab)" : string.Empty, // TODO hardcoded new tab text semantics
-                LinkUrl = $"https://find-and-update.company-information.service.gov.uk/company/{model.CompaniesHouseId}"
-            }
-        );
+                Text = academy.Id.Value
+            };
 
-        builder.AddRow(
-            new GovUkTableCell { Text = "Status", IsBold = true },
-            new GovUkTableCell { Text = model.Status }
-        );
-
-        builder.AddRow(
-            new GovUkTableCell { Text = "Address", IsBold = true },
-            new GovUkTableCell { Text = model.Address }
-        );
-
-        builder.AddRow(
-            new GovUkTableCell { Text = "Type", IsBold = true },
-            new GovUkTableCell { Text = model.Type }
-        );
-        return builder.Build();
-    }
-}
-
-internal sealed class GroupDetailsAcademiesTableMapper :
-    IMapper<IEnumerable<Academy>, GovUkTable>
-{
-    public GovUkTable Map(IEnumerable<Academy> input)
-    {
-        GovUkTableBuilder builder = GovUkTableBuilder.Create()
-            .WithCaption("Academies")
-            .WithHeaders("Name", "URN");
-
-        foreach (Academy academy in input)
-        {
-            builder.AddRow(
-                new GovUkTableCell
-                {
-                    Text = academy.Name.ToString(),
-                    LinkUrl = $"/establishment/{academy.Id.ToString()}"
-                },
-                new GovUkTableCell
-                {
-                    Text = academy.Id.Value.ToString()
-                }
-            );
+            rows.Add([urn, name]);
         }
-        return builder.Build();
-    }
-}
 
-public class GroupDetailsTrusteesTableMapper :
-    IMapper<IEnumerable<TrusteeReadModel>, GovUkTable>
-{
-    public GovUkTable Map(IEnumerable<TrusteeReadModel> input)
-    {
-        GovUkTableBuilder builder = GovUkTableBuilder.Create()
-            .WithCaption("Trustees")
-            .WithHeaders("Name", "Governor ID", "Start date");
+        GovUkTable academiesTable = new(
+            columns: columns,
+            rows: rows,
+            caption: "Academies");
 
-        foreach (TrusteeReadModel trustee in input)
+        return new()
         {
-            builder.AddRow(
-                new GovUkTableCell { Text = $"{trustee.FullName}" },
-                new GovUkTableCell { Text = trustee.Id },
-                new GovUkTableCell { Text = trustee.StartDate.ToString("dd MMMM yyyy") } // TODO check format
-            );
-        }
-        return builder.Build();
+            Tab = $"Academies ({model.Academies.Count})",
+            Academies = academiesTable
+        };
     }
-}
 
-public class GroupDetailsMembersTableMapper :
-    IMapper<IEnumerable<MemberReadModel>, GovUkTable>
-{
-    public GovUkTable Map(IEnumerable<MemberReadModel> dto)
+
+    private static GroupDetailsGovernanceTabViewModel CreateGovernance(GroupReadModel model)
     {
-        GovUkTableBuilder builder = GovUkTableBuilder.Create()
-            .WithCaption("Members")
-            .WithHeaders("Name", "Governor ID", "Start date");
-
-        foreach (MemberReadModel member in dto)
+        return new()
         {
-            builder.AddRow(
-                new GovUkTableCell { Text = member.FullName },
-                new GovUkTableCell { Text = member.Identifier },
-                new GovUkTableCell { Text = member.StartDate.ToString("dd MMMM yyyy") } // TODO check format and align property values
-            );
+            Tab = "Governance",
+            Trustees = CreateTrusteesTable(model.Trustees),
+            Members = CreateMembersTable(model.Members)
+        };
+    }
+
+
+    private static GovUkTable CreateTrusteesTable(IEnumerable<TrusteeReadModel> trustees)
+    {
+        GovUkTableColumn[] columns = [
+            new("Name") { IsRowHeader = true},
+            new("Governor ID"),
+            new("Start date")
+        ];
+
+        List<GovUkTableCell[]> rows = [];
+
+        foreach (TrusteeReadModel trustee in trustees)
+        {
+            GovUkTableCell name = new()
+            {
+                Text = trustee.FullName,
+            };
+
+            GovUkTableCell governorId = new()
+            {
+                Text = trustee.Id
+            };
+
+            GovUkTableCell startDate = new()
+            {
+                Text = trustee.StartDate.ToString("dd MMMM yyyy")
+            };
+
+            rows.Add([name, governorId, startDate]);
         }
-        return builder.Build();
+
+        return new(columns, rows, caption: "Trustees");
+    }
+
+    private static GovUkTable CreateMembersTable(IEnumerable<MemberReadModel> members)
+    {
+        GovUkTableColumn[] columns = [
+            new("Name") { IsRowHeader = true},
+            new("Governor ID"),
+            new("Start date")
+        ];
+
+        List<GovUkTableCell[]> rows = [];
+
+        foreach (MemberReadModel member in members)
+        {
+            GovUkTableCell name = new()
+            {
+                Text = member.FullName,
+            };
+
+            GovUkTableCell governorId = new()
+            {
+                Text = member.Identifier
+            };
+
+            GovUkTableCell startDate = new()
+            {
+                Text = member.StartDate.ToString("dd MMMM yyyy")
+            };
+
+            rows.Add([name, governorId, startDate]);
+        }
+
+        return new(columns, rows, caption: "Trustees");
     }
 }

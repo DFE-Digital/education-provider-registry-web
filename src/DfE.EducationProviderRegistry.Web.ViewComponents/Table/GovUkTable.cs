@@ -3,13 +3,13 @@
 public sealed class GovUkTable
 {
     public IReadOnlyList<GovUkTableColumn> Columns { get; }
-    public IReadOnlyList<IReadOnlyList<string>> Rows { get; }
+    public IReadOnlyList<IReadOnlyList<GovUkTableCell>> Rows { get; }
     public string? Caption { get; }
     public GovUkCaptionSize CaptionSize { get; }
 
     public GovUkTable(
         IReadOnlyList<GovUkTableColumn> columns,
-        IReadOnlyList<IReadOnlyList<string>> rows,
+        IReadOnlyList<IReadOnlyList<GovUkTableCell>> rows,
         string? caption = null,
         GovUkCaptionSize captionSize = GovUkCaptionSize.Default)
     {
@@ -43,7 +43,7 @@ public sealed class GovUkTable
             throw new ArgumentException("Only one column can be marked as a row header.", nameof(columns));
         }
 
-        foreach (IReadOnlyList<string> row in rows)
+        foreach (IReadOnlyList<GovUkTableCell> row in rows)
         {
             ArgumentNullException.ThrowIfNull(row);
 
@@ -60,7 +60,6 @@ public sealed class GovUkTable
         Caption = caption;
         CaptionSize = captionSize;
     }
-
 }
 
 public class GovUkTableColumn
@@ -77,6 +76,13 @@ public class GovUkTableColumn
     // Extensibility
     public string? Classes { get; init; }
 }
+
+public sealed record GovUkTableCell
+{
+    public string? Text { get; init; }
+    public string? Href { get; init; }
+}
+
 
 
 public enum GovUkCaptionSize

@@ -6,5 +6,5 @@ namespace DfE.EducationProviderRegistry.Web.ViewComponents.UnitTests.Table;
 
 public sealed class GovUkTableModelTests
 {
-    
+
 }

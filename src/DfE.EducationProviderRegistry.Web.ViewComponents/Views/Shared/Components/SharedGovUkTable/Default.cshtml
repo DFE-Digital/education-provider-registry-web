@@ -18,10 +18,10 @@
     {
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
-                @foreach (GovUkTableColumn column in Model.Columns)
+                @foreach (TableColumn column in Model.Columns)
                 {
                     <th scope="col" class="govuk-table__header @column.Classes">
-                        @column.Header
+                        @column.Text
                     </th>
                 }
             </tr>
@@ -33,14 +33,14 @@
 
         @for (int rowIndex = 0; rowIndex < Model.Rows.Count; rowIndex++)
         {
-            IReadOnlyList<GovUkTableCell> row = Model.Rows[rowIndex];
+            IReadOnlyList<TableCell> row = Model.Rows[rowIndex];
 
             <tr class="govuk-table__row">
 
                 @for (int colIndex = 0; colIndex < Model.Columns.Count; colIndex++)
                 {
-                    GovUkTableColumn column = Model.Columns[colIndex];
-                    GovUkTableCell cell = row[colIndex];
+                    TableColumn column = Model.Columns[colIndex];
+                    TableCell cell = row[colIndex];
 
                     if (column.IsRowHeader)
                     {

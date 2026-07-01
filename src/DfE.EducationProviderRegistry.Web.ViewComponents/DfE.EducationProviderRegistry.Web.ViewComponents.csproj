@@ -5,19 +5,18 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
 	<RootNamespace>DfE.EducationProviderRegistry.Web.ViewComponents</RootNamespace>
+	<RazorCompileOnBuild>true</RazorCompileOnBuild>
+	<AddRazorSupportForMvc>true</AddRazorSupportForMvc>
   </PropertyGroup>
-
-  <ItemGroup>
-	<FrameworkReference Include="Microsoft.AspNetCore.App" />
-	<PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.3.11" />
-  </ItemGroup>
 
 
 	<ItemGroup>
-	  <Content Update="Table\Default.cshtml">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		  <Link>Views\Shared\Components\GovUkTable\Default.cshtml</Link>
-	  </Content>
+		<RazorGenerate Include="Views\**\*.cshtml" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
 
 </Project>

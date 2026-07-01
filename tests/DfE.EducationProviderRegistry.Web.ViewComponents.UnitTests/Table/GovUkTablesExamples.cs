@@ -7,22 +7,22 @@ internal static class GovUkTablesExamples
     public static GovUkTable MonthsAndRates() => new(
         columns:
         [
-            new GovUkTableColumn("Month") { IsRowHeader = true },
-            new GovUkTableColumn("Rate for vehicles") { IsNumeric = true }
+            new TableColumn("Month") { IsRowHeader = true },
+            new TableColumn("Rate for vehicles") { IsNumeric = true }
         ],
         rows:
         [
             [
-                new GovUkTableCell { Text = "January" },
-                new GovUkTableCell { Text = "£95" }
+                new TableCell { Text = "January" },
+                new TableCell { Text = "£95" }
             ],
             [
-                new GovUkTableCell { Text = "February" },
-                new GovUkTableCell { Text = "£55" }
+                new TableCell { Text = "February" },
+                new TableCell { Text = "£55" }
             ],
             [
-                new GovUkTableCell { Text = "March" },
-                new GovUkTableCell { Text = "£125" }
+                new TableCell { Text = "March" },
+                new TableCell { Text = "£125" }
             ]
         ],
         caption: "Months and rates"
@@ -31,22 +31,22 @@ internal static class GovUkTablesExamples
     public static GovUkTable DatesAndAmounts() => new(
         columns:
         [
-            new GovUkTableColumn("Date") { IsRowHeader = true },
-            new GovUkTableColumn("Amount")
+            new TableColumn("Date") { IsRowHeader = true },
+            new TableColumn("Amount")
         ],
         rows:
         [
             [
-                new GovUkTableCell { Text = "First 6 weeks" },
-                new GovUkTableCell { Text = "£109.80 per week" }
+                new TableCell { Text = "First 6 weeks" },
+                new TableCell { Text = "£109.80 per week" }
             ],
             [
-                new GovUkTableCell { Text = "Next 33 weeks" },
-                new GovUkTableCell { Text = "£109.80 per week" }
+                new TableCell { Text = "Next 33 weeks" },
+                new TableCell { Text = "£109.80 per week" }
             ],
             [
-                new GovUkTableCell { Text = "Total estimated pay" },
-                new GovUkTableCell { Text = "£4,282.20" }
+                new TableCell { Text = "Total estimated pay" },
+                new TableCell { Text = "£4,282.20" }
             ]
         ],
         caption: "Dates and amounts"
@@ -55,26 +55,26 @@ internal static class GovUkTablesExamples
     public static GovUkTable RatesComparison() => new(
         columns:
         [
-            new GovUkTableColumn("Month") { IsRowHeader = true },
-            new GovUkTableColumn("Rate for bicycles") { IsNumeric = true },
-            new GovUkTableColumn("Rate for vehicles") { IsNumeric = true }
+            new TableColumn("Month") { IsRowHeader = true },
+            new TableColumn("Rate for bicycles") { IsNumeric = true },
+            new TableColumn("Rate for vehicles") { IsNumeric = true }
         ],
         rows:
         [
             [
-                new GovUkTableCell { Text = "January" },
-                new GovUkTableCell { Text = "£85" },
-                new GovUkTableCell { Text = "£95" }
+                new TableCell { Text = "January" },
+                new TableCell { Text = "£85" },
+                new TableCell { Text = "£95" }
             ],
             [
-                new GovUkTableCell { Text = "February" },
-                new GovUkTableCell { Text = "£75" },
-                new GovUkTableCell { Text = "£55" }
+                new TableCell { Text = "February" },
+                new TableCell { Text = "£75" },
+                new TableCell { Text = "£55" }
             ],
             [
-                new GovUkTableCell { Text = "March" },
-                new GovUkTableCell { Text = "£165" },
-                new GovUkTableCell { Text = "£125" }
+                new TableCell { Text = "March" },
+                new TableCell { Text = "£165" },
+                new TableCell { Text = "£125" }
             ]
         ],
         caption: "Months and rates"
@@ -83,18 +83,18 @@ internal static class GovUkTablesExamples
     public static GovUkTable NoCaption() => new(
         columns:
         [
-            new GovUkTableColumn("City") { IsRowHeader = true },
-            new GovUkTableColumn("Population") { IsNumeric = true }
+            new TableColumn("City") { IsRowHeader = true },
+            new TableColumn("Population") { IsNumeric = true }
         ],
         rows:
         [
             [
-                new GovUkTableCell { Text = "London" },
-                new GovUkTableCell { Text = "8.9m" }
+                new TableCell { Text = "London" },
+                new TableCell { Text = "8.9m" }
             ],
             [
-                new GovUkTableCell { Text = "Manchester" },
-                new GovUkTableCell { Text = "553k" }
+                new TableCell { Text = "Manchester" },
+                new TableCell { Text = "553k" }
             ]
         ]
     );
@@ -102,21 +102,21 @@ internal static class GovUkTablesExamples
     public static GovUkTable LargeCaption() => new(
         columns:
         [
-            new GovUkTableColumn("City") { IsRowHeader = true },
-            new GovUkTableColumn("Population") { IsNumeric = true }
+            new TableColumn("City") { IsRowHeader = true },
+            new TableColumn("Population") { IsNumeric = true }
         ],
         rows:
         [
             [
-                new GovUkTableCell { Text = "London" },
-                new GovUkTableCell { Text = "8.9m" }
+                new TableCell { Text = "London" },
+                new TableCell { Text = "8.9m" }
             ],
             [
-                new GovUkTableCell { Text = "Manchester" },
-                new GovUkTableCell { Text = "553k" }
+                new TableCell { Text = "Manchester" },
+                new TableCell { Text = "553k" }
             ]
         ],
         caption: "Population",
-        captionSize: GovUkCaptionSize.Large
+        captionSize: TableCaptionSize.Large
     );
 }

@@ -2,16 +2,16 @@
 
 public sealed class GovUkTable
 {
-    public IReadOnlyList<GovUkTableColumn> Columns { get; }
-    public IReadOnlyList<IReadOnlyList<GovUkTableCell>> Rows { get; }
+    public IReadOnlyList<TableColumn> Columns { get; }
+    public IReadOnlyList<IReadOnlyList<TableCell>> Rows { get; }
     public string? Caption { get; }
-    public GovUkCaptionSize CaptionSize { get; }
+    public TableCaptionSize CaptionSize { get; }
 
     public GovUkTable(
-        IReadOnlyList<GovUkTableColumn> columns,
-        IReadOnlyList<IReadOnlyList<GovUkTableCell>> rows,
+        IReadOnlyList<TableColumn> columns,
+        IReadOnlyList<IReadOnlyList<TableCell>> rows,
         string? caption = null,
-        GovUkCaptionSize captionSize = GovUkCaptionSize.Default)
+        TableCaptionSize captionSize = TableCaptionSize.Default)
     {
         ArgumentNullException.ThrowIfNull(columns);
         ArgumentNullException.ThrowIfNull(rows);
@@ -23,11 +23,11 @@ public sealed class GovUkTable
 
         int rowHeaderCount = 0;
 
-        foreach (GovUkTableColumn column in columns)
+        foreach (TableColumn column in columns)
         {
             ArgumentNullException.ThrowIfNull(column);
 
-            if (string.IsNullOrWhiteSpace(column.Header))
+            if (string.IsNullOrWhiteSpace(column.Text))
             {
                 throw new ArgumentException("Column headers must not be empty.", nameof(columns));
             }
@@ -43,7 +43,7 @@ public sealed class GovUkTable
             throw new ArgumentException("Only one column can be marked as a row header.", nameof(columns));
         }
 
-        foreach (IReadOnlyList<GovUkTableCell> row in rows)
+        foreach (IReadOnlyList<TableCell> row in rows)
         {
             ArgumentNullException.ThrowIfNull(row);
 
@@ -59,53 +59,5 @@ public sealed class GovUkTable
         Rows = rows;
         Caption = caption;
         CaptionSize = captionSize;
-    }
-}
-
-public class GovUkTableColumn
-{
-    public GovUkTableColumn(string header)
-    {
-        Header = header;
-    }
-
-    public string Header { get; }
-    public bool IsRowHeader { get; init; }     // renders <th scope="row">
-    public bool IsNumeric { get; init; }       // adds govuk-table__cell--numeric
-
-    // Extensibility
-    public string? Classes { get; init; }
-}
-
-public sealed record GovUkTableCell
-{
-    public string? Text { get; init; }
-    public string? Href { get; init; }
-}
-
-
-
-public enum GovUkCaptionSize
-{
-    Default,
-    Small,
-    Medium,
-    Large,
-    ExtraLarge
-}
-
-
-public static class GovUkCaptionSizeExtensions
-{
-    public static string ToCssClass(GovUkCaptionSize size)
-    {
-        return size switch
-        {
-            GovUkCaptionSize.Small => "govuk-table__caption--s",
-            GovUkCaptionSize.Medium => "govuk-table__caption--m",
-            GovUkCaptionSize.Large => "govuk-table__caption--l",
-            GovUkCaptionSize.ExtraLarge => "govuk-table__caption--xl",
-            _ => string.Empty
-        };
     }
 }

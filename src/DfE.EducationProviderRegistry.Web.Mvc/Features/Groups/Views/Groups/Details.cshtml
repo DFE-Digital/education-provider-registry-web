@@ -13,8 +13,8 @@
 </div>
 
 <div>
-    @await Component.InvokeAsync("GovUkTable", Model.Details.Details)
-    @await Component.InvokeAsync("GovUkTable", Model.Academies.Academies)
-    @await Component.InvokeAsync("GovUkTable", Model.Governance.Trustees)
-    @await Component.InvokeAsync("GovUkTable", Model.Governance.Members)
+    @await Component.InvokeAsync("GovUkSummaryList", Model.Details.Summary)
+    @await Component.InvokeAsync("SharedGovUkTable", Model.Academies.Table)
+    @await Component.InvokeAsync("SharedGovUkTable", Model.Governance.TrusteesTable)
+    @await Component.InvokeAsync("SharedGovUkTable", Model.Governance.MembersTable)
 </div>

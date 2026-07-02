@@ -1,6 +1,6 @@
 ﻿using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.ViewModels.Pages;
+namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments.ViewModels;
 
 public class EstablishmentDetailsPageViewModel
 {
@@ -8,5 +8,4 @@ public class EstablishmentDetailsPageViewModel
 
     public GovUkTable BasicDetails { get; set; }
     public GovUkTable Governors { get; set; }
-    public GovUkTable History { get; set; }
 }

@@ -39,7 +39,7 @@ public static class GroupsServiceCollectionExtensions
 // Temporary Group Repository
 public sealed class StubGroupsRepository : IGroupsRepository
 {
-    public Task<Group?> GetGroupByGroupIdAsync(GroupId groupId, CancellationToken cancellationToken = default)
+    public Task<Group?> GetGroupByGroupUidAsync(GroupUID groupId, CancellationToken cancellationToken = default)
     {
         Group groupDummy = new(
             new GroupIdentity(new GroupId("TR3566"), new GroupUID(3566)),

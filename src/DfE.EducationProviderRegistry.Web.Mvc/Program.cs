@@ -1,18 +1,10 @@
-using DfE.Core.Libraries.CrossCutting.Mapper;
-using DfE.EducationProviderRegistry.Core.Query.Search;
-using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Establishment;
-using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
-using DfE.EducationProviderRegistry.Web.Mvc.ApplicationDtos;
+using DfE.EducationProviderRegistry.Data.DatabaseModels.Context;
 using DfE.EducationProviderRegistry.Web.Mvc.Extensions;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
-using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
-using DfE.EducationProviderRegistry.Web.Mvc.ViewModels.Pages;
 using Microsoft.AspNetCore.CookiePolicy;
-using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,24 +29,15 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
     options.Secure = CookieSecurePolicy.Always;
 });
 
-builder.Services.AddTransient<
-    IMapper<EstablishmentDto, EstablishmentDetailsPageViewModel>,
-    EstablishmentDetailsPageViewModelMapper>();
-builder.Services.AddTransient<
-    IMapper<EstablishmentBasicDetailsDto, GovUkTable>,
-    EstablishmentDetailsBasicDetailsTableMapper>();
-builder.Services.AddTransient<
-    IMapper<List<EstablishmentGovernorDto>, GovUkTable>,
-    EstablishmentDetailsGovernorsTableMapper>();
-builder.Services.AddTransient<
-    IMapper<List<EstablishmentHistoryDto>, GovUkTable>,
-    EstablishmentDetailsHistoryTableMapper>();
+builder.Services.AddDbContext<EducationProviderRegistryDbContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("EprDbConnection"));
+});
 
 
 builder.Services
-    // Group registrations
+    .AddEstablishments()
     .AddGroups()
-    // Search registrations.
     .AddSearch(builder.Configuration);
 
 var app = builder.Build();
@@ -104,6 +87,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
-
 
 app.Run();

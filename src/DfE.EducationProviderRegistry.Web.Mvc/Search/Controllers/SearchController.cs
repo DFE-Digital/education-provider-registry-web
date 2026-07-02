@@ -47,7 +47,7 @@ public sealed class SearchController : Controller
 
         SearchRequest searchRequest =
             new(
-                searchIndexKey: "TO_BE_DEFINED",
+                searchIndexKey: "TO_BE_REMOVED_FROM_CORE",
                 searchKeywords: model.SearchKeywords!,
                 searchFilterRequests, sortOrder);
 

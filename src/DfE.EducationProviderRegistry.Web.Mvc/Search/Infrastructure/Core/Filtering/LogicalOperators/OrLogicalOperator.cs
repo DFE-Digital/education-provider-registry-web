@@ -3,25 +3,23 @@
 namespace DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Core.Filtering.LogicalOperators;
 
 /// <summary>
-/// Creates an OData logical operator filter expression which are Boolean expressions that evaluate to true or false.
-/// This allows us to compose more complex filter expressions by writing a series of simpler filters and composing them
-/// using the logical operators from Boolean algebra. The <b>or</b> binary operator evaluates to true if either one of its
-/// left or right sub-expressions evaluates to true. For further information please visit the following link,
-/// <a href="https://learn.microsoft.com/en-us/azure/search/search-query-odata-logical-operators"> OData logical operators</a>.
+/// Represents a logical OR operator used when composing filter expressions.
+/// Logical operators allow multiple filter conditions to be combined into a
+/// single expression by applying Boolean logic.
 /// </summary>
 public sealed class OrLogicalOperator : ILogicalOperator
 {
     /// <summary>
-    /// Constant string used to compose the <b>or</b> logical operator.
+    /// Constant string used to represent the logical OR operator.
     /// </summary>
-    const string LogicOperator = "OR";
+    private const string LogicOperator = "OR";
 
     /// <summary>
-    /// Returns the configured <b>or</b> logical operator by applying default padding to
-    /// both sides of the operator. This allows the operator to be easily nested between filter expressions.
+    /// Returns the logical OR operator padded on both sides. Padding ensures
+    /// the operator can be cleanly embedded between filter expression fragments.
     /// </summary>
     /// <returns>
-    /// A string representing the configured <b>or</b> logical operator.
+    /// A padded string representing the logical OR operator.
     /// </returns>
     public string GetOperatorExpression() => LogicOperator.PadSides();
 }

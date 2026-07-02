@@ -3,75 +3,80 @@
 namespace DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Core.Filtering.Options;
 
 /// <summary>
-/// Configuration options for establishing a map to align the incoming filter request
-/// key(s) with an available filter expression and logical operator. For example, we could
-/// create a configuration section as follows,
+/// Configuration options for mapping incoming filter request keys to the
+/// corresponding filter expression and logical operator used to compose
+/// a complete filter expression. This allows callers to specify which
+/// filter expression type should be used for a given request key, along
+/// with the logical operator used to chain multiple filter expressions
+/// together.
+/// 
+/// Example configuration:
 /// <code>
 /// "FilterKeyToFilterExpressionMapOptions": {
 ///     "FilterChainingLogicalOperator": "AndLogicalOperator",
 ///     "SearchFilterToExpressionMap": {
 ///         "RELIGIOUSCHARACTERCODE": {
 ///             "FilterExpressionKey": "SearchInFilterExpression",
-///             "FilterExpressionValuesDelimiter", ","
+///             "FilterExpressionValuesDelimiter": ","
 ///         },
 ///         "OFSTEDRATINGCODE": {
 ///             "FilterExpressionKey": "SearchInFilterExpression",
-///             "FilterExpressionValuesDelimiter", ","
+///             "FilterExpressionValuesDelimiter": ","
 ///         }
 ///     }
 /// }
 /// </code>
-/// If we provide an appropriate set of filter values aligned with the keys 'RELIGIOUSCHARACTERCODE'
-/// and 'OFSTEDRATINGCODE' then the following OData filter expression string should be generated,
-/// <code>
-///     "search.in(OFSTEDRATINGCODE, '2,5,9,12') and search.in(RELIGIOUSCHARACTERCODE, '00,02')"
-/// </code>
+/// 
+/// When filter values are supplied for the keys above, the configured
+/// filter expression types and logical operator are used to construct
+/// a combined filter expression appropriate for the underlying search
+/// provider (SQL, trigram, Azure Search, or others).
 /// </summary>
 public sealed class FilterKeyToFilterExpressionMapOptions
 {
     /// <summary>
-    /// The default logical operator is specified by key as either an <b>AndLogicalOperator</b>
-    /// or an <b>OrLogicalOperator</b>. The logical operator is then used to chain together all
-    /// search filter expressions specified.
+    /// The logical operator used to chain multiple filter expressions together.
+    /// Typically configured as either <b>AndLogicalOperator</b> or
+    /// <b>OrLogicalOperator</b>.
     /// </summary>
     [Required(AllowEmptyStrings = false)]
-    public string? FilterChainingLogicalOperator { get; set;  }
+    public string? FilterChainingLogicalOperator { get; set; }
 
     /// <summary>
-    /// The dictionary used to reconcile the incoming request key with the actual search filter expression to apply.
+    /// A dictionary mapping incoming filter request keys to the filter
+    /// expression configuration that should be applied.
     /// </summary>
     [Required]
     [MinLength(1)]
-    public IDictionary<string, FilterExpressionOptions> SearchFilterToExpressionMap { get; set; } = new Dictionary<string, FilterExpressionOptions>();
+    public IDictionary<string, FilterExpressionOptions> SearchFilterToExpressionMap { get; set; }
+        = new Dictionary<string, FilterExpressionOptions>();
 }
 
 /// <summary>
-/// Configuration options for establishing the specific filter expression options that are defined
-/// under the <see cref="FilterKeyToFilterExpressionMapOptions"/>. This options section allows
-/// for the specification of the required filter expression key (i.e. the named filter expression
-/// such as 'SearchInFilterExpression' or 'LessThanOrEqualToExpression' for example, and the
-/// accompanying value delimiter if required (i.e. for search.in we generally specify a comma
-/// delimiter so an expression which encapsulates values with whitespace can be accommodated).
+/// Configuration options describing how a specific filter expression should
+/// be constructed for a given request key. This includes the filter expression
+/// type to resolve (e.g., <c>SearchInFilterExpression</c>,
+/// <c>LessThanOrEqualToExpression</c>) and an optional delimiter used when
+/// formatting multiple values within the expression.
 /// </summary>
 public sealed class FilterExpressionOptions
 {
     /// <summary>
-    /// The key to the actual filter expression instance to derive. This (by convention) is defined
-    /// by default in the DI container and uses the class name as the key to resolve the required
-    /// filter expression type, e.g. 'SearchInFilterExpression'.
+    /// The key used to resolve the filter expression type from the DI container.
+    /// By convention, this corresponds to the class name of the filter expression
+    /// implementation.
     /// </summary>
     public string FilterExpressionKey { get; set; } = string.Empty;
 
     /// <summary>
-    /// The delimiter can be applied (optionally) for those expression types that require a
-    /// delimiter to be specified between provisioned values, such as the search.in expression.
-    /// This allows the underlying Azure AI search mechanism to correctly delimiter values
-    /// even if whitespace is present.
+    /// Optional delimiter applied between multiple values when constructing
+    /// filter expressions that require value separation (e.g., comma‑separated
+    /// lists).
     /// </summary>
     public string FilterExpressionValuesDelimiter { get; set; } = string.Empty;
 
     /// <summary>
-    /// Check to determine whether a filter value delimiter has been specified.
+    /// Indicates whether a delimiter has been specified.
     /// </summary>
     public bool HasValuesDelimiter => !string.IsNullOrWhiteSpace(FilterExpressionValuesDelimiter);
 }

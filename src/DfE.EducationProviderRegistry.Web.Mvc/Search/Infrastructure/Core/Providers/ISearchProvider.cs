@@ -1,5 +1,4 @@
 ﻿using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Core.Filtering;
-using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Providers.Projections;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Core.Providers;
 
@@ -50,7 +49,7 @@ public interface ISearchProvider<TEntity>
     ///         in parallel.
     ///     </para>
     /// </remarks>
-    Task<IReadOnlyList<SearchResultProjection>> GetMatchingIdsAsync(
+    Task<IReadOnlyList<TEntity>> GetMatchingIdsAsync(
         string searchTerm,
         int pageSize,
         int offset,

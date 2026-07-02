@@ -33,7 +33,7 @@
                     "~/Search/Views/_FiltersComponentGroup.cshtml",
                     (
                         Title: "Establishment type",
-                        FacetKey: "e.establishment_type_id",
+                        FacetKey: "t.establishment_type_id",
                         Facet: establishmentTypeFacet,
                         Options: new List<(string Label, string Value)>
                         {
@@ -49,10 +49,13 @@
         <div class="govuk-grid-column-two-thirds">
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-one-half">
-                    <p class="govuk-body" id="search-results-count">
-                        @Model.SearchResultsCount @(Model.SearchResultsCount > 1 ?
-                            "results found" : "result found")
-                    </p>
+                    @if (Model.HasResults)
+                    {
+                        <p class="govuk-body" id="search-results-count">
+                            @Model.SearchResultsCount @(
+                                Model.SearchResultsCount > 1 ?"results found" : "result found")
+                        </p>
+                    }
                 </div>
             </div>
             @if (Model.HasResults)

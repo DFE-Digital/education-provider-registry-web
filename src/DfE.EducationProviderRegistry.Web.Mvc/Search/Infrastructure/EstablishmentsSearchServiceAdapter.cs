@@ -7,7 +7,6 @@ using DfE.EducationProviderRegistry.Data.DatabaseModels.Models;
 using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Core.Filtering;
 using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Core.Providers;
 using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Pipeline;
-using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Providers.Projections;
 using System.Collections.ObjectModel;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure;
@@ -15,7 +14,6 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure;
 public sealed class EstablishmentsSearchServiceAdapter
     : ISearchServiceAdapter<EstablishmentSearchResults, SearchFacets>
 {
-    private readonly IQueryable<Establishment> _rootQuery;
     private readonly ISearchProvider<Establishment> _idProvider;
     private readonly IReadOnlyList<ISearchPipelineStep> _pipeline;
     private readonly IMapper<
@@ -26,7 +24,6 @@ public sealed class EstablishmentsSearchServiceAdapter
         ReadOnlyCollection<SearchFilterRequest>> _searchRequestFiltersToCoreFiltersMapper;
 
     public EstablishmentsSearchServiceAdapter(
-        IQueryable<Establishment> rootQuery,
         ISearchProvider<Establishment> idProvider,
         IFacetProvider<Establishment> facetProvider,
         IEnumerable<ISearchPipelineStep> pipeline,
@@ -37,8 +34,6 @@ public sealed class EstablishmentsSearchServiceAdapter
             ReadOnlyCollection<FilterRequest>,
             ReadOnlyCollection<SearchFilterRequest>> searchRequestFiltersToCoreFiltersMapper)
     {
-        _rootQuery = rootQuery ??
-            throw new ArgumentNullException(nameof(rootQuery));
         _idProvider = idProvider ??
             throw new ArgumentNullException(nameof(idProvider));
         _searchResultsFromContextMapper = searchResultsFromContextMapper ??
@@ -49,7 +44,7 @@ public sealed class EstablishmentsSearchServiceAdapter
         ArgumentNullException.ThrowIfNull(pipeline);
         _pipeline = pipeline.ToList().AsReadOnly();
 
-        ArgumentNullException.ThrowIfNull(facetProvider);    
+        ArgumentNullException.ThrowIfNull(facetProvider);
     }
 
     public async Task<SearchResults<EstablishmentSearchResults, SearchFacets>> SearchAsync(
@@ -58,7 +53,7 @@ public sealed class EstablishmentsSearchServiceAdapter
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        IReadOnlyList<SearchResultProjection> establishments =                     
+        IReadOnlyList<Establishment> establishments =
             await _idProvider.GetMatchingIdsAsync(
                 searchTerm: request.SearchKeyword,
                 pageSize: 50,
@@ -67,9 +62,8 @@ public sealed class EstablishmentsSearchServiceAdapter
                     .Map(request.SearchFilterRequests.AsReadOnly()),
                 cancellationToken);
 
-        ReadOnlyCollection<string> availableEstablishmentIids =
-            establishments.Select(searchResultprojection =>
-                searchResultprojection.Id.ToString()).ToList().AsReadOnly();
+        ReadOnlyCollection<string?> availableEstablishmentIids =
+            establishments.Select(e => e.Urn).ToList().AsReadOnly();
 
         if (availableEstablishmentIids.Count == 0)
         {
@@ -79,8 +73,7 @@ public sealed class EstablishmentsSearchServiceAdapter
         SearchPipelineContext context = new();
         context.Set(availableEstablishmentIids);
         context.Set(establishments);
-        context.Set(new List<string> { "EstablishmentTypeId" }); // TODO: pull facets crom configuration or from a provider
-        //context.Set(request.Facets);
+        context.Set(new List<string> { "EstablishmentTypeId" });
 
         foreach (ISearchPipelineStep step in _pipeline)
         {

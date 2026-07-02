@@ -1,19 +1,24 @@
 ﻿namespace DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Core.Filtering.FilterExpressions;
 
 /// <summary>
-/// Provides an abstraction over which to derive Azure AI OData filter expressions. For more information on OData filter
-/// syntax in Azure AI search please see, <a href="https://learn.microsoft.com/en-us/azure/search/search-query-odata-filter">OData search query filters</a>.
+/// Defines an abstraction for producing a filter expression string from a
+/// <see cref="SearchFilterRequest"/>. Implementations may generate expressions
+/// in different syntaxes (e.g., SQL, OData, or provider‑specific formats)
+/// depending on the underlying search technology.
 /// </summary>
 public interface ISearchFilterExpression
 {
     /// <summary>
-    /// Allows a filter expression to be derived in string format based on the requirements specified in the <see cref="SearchFilterRequest"/>.
+    /// Produces a filter expression string based on the details supplied in the
+    /// <see cref="SearchFilterRequest"/>. The concrete implementation determines
+    /// the syntax and semantics of the resulting expression.
     /// </summary>
     /// <param name="searchFilterRequest">
-    /// The <see cref="SearchFilterRequest"/> object used to encapsulate filter request details which includes the filter key and associated values.
+    /// Encapsulates the filter key and associated values used to construct the
+    /// filter expression.
     /// </param>
     /// <returns>
-    /// A configured OData Azure AI filter expression in string format.
+    /// A filter expression string appropriate for the target search provider.
     /// </returns>
     string GetFilterExpression(SearchFilterRequest searchFilterRequest);
 }

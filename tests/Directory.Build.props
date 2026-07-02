@@ -12,11 +12,6 @@
 
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(IsTestProject)' == 'true'">
-    <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" Condition="Exists('xunit.runner.json')" />
-  </ItemGroup>
-
-
   <ItemGroup>
     <!-- Common appsettings pattern -->
     <Content Include="appsettings*.json" CopyToOutputDirectory="PreserveNewest" Condition="Exists('appsettings.json')" />

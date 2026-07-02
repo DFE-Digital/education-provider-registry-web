@@ -1,50 +1,56 @@
 ﻿namespace DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Core.Filtering.FilterExpressions.Factories;
 
 /// <summary>
-/// Provides a factory implementation over which to derive Azure AI OData filter
-/// expressions. This factory leverages dependency injection which necessitates
-/// setup of a dictionary of <see cref="ISearchFilterExpression"/> delegates
-/// responsible for handling the creation of concrete <see cref="ISearchFilterExpression"/>
-/// instances. Typical container setup/registrations are as follows,
+/// Factory responsible for creating concrete <see cref="ISearchFilterExpression"/> instances.
+///
+/// This factory is configured via dependency injection. The container supplies a dictionary
+/// mapping filter expression names to delegates that construct the corresponding
+/// <see cref="ISearchFilterExpression"/>. Each delegate resolves the expression from a DI
+/// scope, ensuring correct lifetime management.
+///
+/// Typical registration:
 /// <code>
 /// services.TryAddSingleton&lt;ISearchFilterExpressionFactory&gt;(provider =>
 /// {
-///    var scopedSearchFilterExpressionProvider = provider.CreateScope();
-///    var searchFilterExpressions =
-///    new Dictionary&lt;string, Func&lt;ISearchFilterExpression&gt;&gt;()
-///    {
-///        ["SearchInFilterExpression"] = () =>
-///            scopedSearchFilterExpressionProvider
-///                .ServiceProvider.GetRequiredService&lt;SearchInFilterExpression&gt;(),
-///        ["LessThanOrEqualToExpression"] = () =>
-///            scopedSearchFilterExpressionProvider
-///                .ServiceProvider.GetRequiredService&lt;LessThanOrEqualToExpression&gt;(),
-///        ["SearchGeoLocationFilterExpression"] = () =>
-///            scopedSearchFilterExpressionProvider.
-///                ServiceProvider.GetRequiredService&lt;SearchGeoLocationFilterExpression&gt;()
-///    };
-///    return new SearchFilterExpressionFactory(searchFilterExpressions);
-///});
+///     using var scope = provider.CreateScope();
+///
+///     var expressions = new Dictionary&lt;string, Func&lt;ISearchFilterExpression&gt;&gt;
+///     {
+///         ["SearchInFilterExpression"] = () =>
+///             scope.ServiceProvider.GetRequiredService&lt;SearchInFilterExpression&gt;(),
+///
+///         ["LessThanOrEqualToExpression"] = () =>
+///             scope.ServiceProvider.GetRequiredService&lt;LessThanOrEqualToExpression&gt;(),
+///
+///         ["SearchGeoLocationFilterExpression"] = () =>
+///             scope.ServiceProvider.GetRequiredService&lt;SearchGeoLocationFilterExpression&gt;()
+///     };
+///
+///     return new SearchFilterExpressionFactory(expressions);
+/// });
 /// </code>
 /// </summary>
 public sealed class SearchFilterExpressionFactory : ISearchFilterExpressionFactory
 {
-    private readonly Dictionary<string, Func<ISearchFilterExpression>> _filterExpressionfactory;
+    private readonly Dictionary<string, Func<ISearchFilterExpression>> _filterExpressionFactory;
 
     /// <summary>
-    /// The <see cref="SearchFilterExpressionFactory"/> uses a dictionary of delegates injected via the IOC
-    /// container which allows management of object lifetime and scope to be managed via this composition root.
+    /// Initializes a new instance of the <see cref="SearchFilterExpressionFactory"/> class.
+    /// The factory uses a dictionary of delegates injected via the IOC container, allowing
+    /// object lifetime and scope to be managed at the composition root.
     /// </summary>
     /// <param name="filterExpressionFactory">
-    /// Provides a dictionary of delegates used to derive the requested type.
+    /// A dictionary mapping filter names to delegates that construct the requested
+    /// <see cref="ISearchFilterExpression"/> implementation.
     /// </param>
-    public SearchFilterExpressionFactory(Dictionary<string, Func<ISearchFilterExpression>> filterExpressionFactory)
+    public SearchFilterExpressionFactory(
+        Dictionary<string, Func<ISearchFilterExpression>> filterExpressionFactory)
     {
-        _filterExpressionfactory = filterExpressionFactory;
+        _filterExpressionFactory = filterExpressionFactory;
     }
 
     /// <summary>
-    /// Allows creation of an <see cref="ISearchFilterExpression"/> instance based on the generic type specified.
+    /// Creates an <see cref="ISearchFilterExpression"/> instance based on the generic type specified.
     /// </summary>
     /// <typeparam name="TSearchFilterExpression">
     /// The concrete type of <see cref="ISearchFilterExpression"/> requested.
@@ -53,10 +59,11 @@ public sealed class SearchFilterExpressionFactory : ISearchFilterExpressionFacto
     /// The configured instance of the <see cref="ISearchFilterExpression"/> type.
     /// </returns>
     public ISearchFilterExpression CreateFilter<TSearchFilterExpression>()
-        where TSearchFilterExpression : ISearchFilterExpression => CreateFilter(typeof(TSearchFilterExpression));
+        where TSearchFilterExpression : ISearchFilterExpression =>
+        CreateFilter(typeof(TSearchFilterExpression));
 
     /// <summary>
-    /// Allows creation of an <see cref="ISearchFilterExpression"/> instance based on the type requested.
+    /// Creates an <see cref="ISearchFilterExpression"/> instance based on the type requested.
     /// </summary>
     /// <param name="filterType">
     /// The concrete implementation type of <see cref="ISearchFilterExpression"/> requested.
@@ -64,31 +71,36 @@ public sealed class SearchFilterExpressionFactory : ISearchFilterExpressionFacto
     /// <returns>
     /// The configured instance of the <see cref="ISearchFilterExpression"/> type.
     /// </returns>
-    public ISearchFilterExpression CreateFilter(Type filterType) => CreateFilter(filterName: filterType.Name);
+    public ISearchFilterExpression CreateFilter(Type filterType) =>
+        CreateFilter(filterName: filterType.Name);
 
     /// <summary>
-    /// Allows creation of an <see cref="ISearchFilterExpression"/> instance based on the type name requested.
+    /// Creates an <see cref="ISearchFilterExpression"/> instance based on the type name requested.
     /// </summary>
     /// <param name="filterName">
-    /// The name of the concrete implementation type <see cref="ISearchFilterExpression"/> requested.
+    /// The name of the concrete implementation type of <see cref="ISearchFilterExpression"/> requested.
     /// </param>
     /// <returns>
     /// The configured instance of the <see cref="ISearchFilterExpression"/> type.
     /// </returns>
-    /// <exception cref="ArgumentNullException">
-    /// Exception thrown if an invalid filter name string is provisioned.
+    /// <exception cref="ArgumentException">
+    /// Thrown if an invalid filter name string is provided.
     /// </exception>
     /// <exception cref="ArgumentOutOfRangeException">
-    /// Exception thrown if a request is made to derive an unknown
-    /// <see cref="ISearchFilterExpression"/> instance from the underlying IOC managed dictionary.
+    /// Thrown if a request is made to derive an unknown
+    /// <see cref="ISearchFilterExpression"/> instance from the underlying dictionary.
     /// </exception>
     public ISearchFilterExpression CreateFilter(string filterName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(filterName);
 
-        return (!_filterExpressionfactory
-            .TryGetValue(filterName, out var searchExpressionFilter) || searchExpressionFilter is null) ?
-                throw new ArgumentOutOfRangeException(
-                    $"Search expression filter of type {filterName} is not registered.") : searchExpressionFilter();
+        if (!_filterExpressionFactory.TryGetValue(filterName, out Func<ISearchFilterExpression>? factory) ||
+            factory is null)
+        {
+            throw new ArgumentOutOfRangeException(
+                $"Search expression filter of type {filterName} is not registered.");
+        }
+
+        return factory();
     }
 }

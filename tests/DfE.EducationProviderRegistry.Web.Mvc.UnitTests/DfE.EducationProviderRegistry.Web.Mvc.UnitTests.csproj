@@ -1,21 +1,28 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <IsTestProject>true</IsTestProject>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>DfE.EducationProviderRegistry.Web.Mvc.UnitTests</RootNamespace>
-  </PropertyGroup>
+	<PropertyGroup>
+		<IsTestProject>true</IsTestProject>
+		<OutputType>Exe</OutputType>
+		<RootNamespace>DfE.EducationProviderRegistry.Web.Mvc.UnitTests</RootNamespace>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Using Include="Xunit" />
-  </ItemGroup>
+	<ItemGroup>
+		<Using Include="Xunit" />
+		<Using Include="Xunit.v3" />
+	</ItemGroup>
 
-  <ItemGroup>
-	  <PackageReference Include="xunit.v3" Version="3.2.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="xunit.v3.mtp-v2" />
+		<PackageReference Include="Moq" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\DfE.EducationProviderRegistry.Web.Mvc\DfE.EducationProviderRegistry.Web.Mvc.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\DfE.EducationProviderRegistry.Web.Mvc\DfE.EducationProviderRegistry.Web.Mvc.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Search\Mappers\" />
+	  <Folder Include="Search\ViewModels\" />
+	</ItemGroup>
 
 </Project>

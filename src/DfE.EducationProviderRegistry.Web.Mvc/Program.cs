@@ -53,7 +53,6 @@ builder.Services.AddTransient<
 builder.Services.AddTransient<
     IMapper<List<EstablishmentHistoryDto>, GovUkTable>,
     EstablishmentDetailsHistoryTableMapper>();
-
 builder.Services.AddTransient<
     IMapper<GroupDto, GroupDetailsPageViewModel>,
     GroupDetailsPageViewModelMapper>();

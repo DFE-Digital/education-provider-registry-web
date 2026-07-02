@@ -12,6 +12,8 @@ using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Core.Filtering
 using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Core.Filtering.LogicalOperators;
 using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Core.Filtering.Options;
 using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Core.Providers;
+using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Core.Providers.SearchOrchestrators;
+using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Core.Providers.SearchOrchestrators.EFMetadataResolver;
 using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.FilterExpressions;
 using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Pipeline;
@@ -45,15 +47,21 @@ public static class CompositionRoot
                    .LogTo(Console.WriteLine, LogLevel.Information));
 
         // ---------------------------------------------------------
-        // Root IQueryable<Establishment>
+        // Search orchestrator (trigram)
         // ---------------------------------------------------------
-        services.TryAddScoped<IQueryable<Establishment>>(sp =>
-        {
-            var factory = sp.GetRequiredService<IDbContextFactory<EducationProviderRegistryDbContext>>();
-            var db = factory.CreateDbContext();
+        services.TryAddScoped<ISearchOrchestrator<Establishment>, TrigramSearchOrchestrator<Establishment>>();
 
-            return db.Establishment.AsNoTracking();
-        });
+        // ---------------------------------------------------------
+        // Projection builder
+        // ---------------------------------------------------------
+        services.TryAddScoped<ISearchProjectionBuilder<Establishment>,
+            EstablishmentSearchProjectionBuilder>();
+
+        // ---------------------------------------------------------
+        // Search orchestration
+        // ---------------------------------------------------------
+        services.AddSingleton(typeof(CachedEntityMetadataResolver<>));
+        services.AddScoped(typeof(ISearchOrchestrator<>), typeof(TrigramSearchOrchestrator<>));
 
         // ---------------------------------------------------------
         // Providers
@@ -61,10 +69,10 @@ public static class CompositionRoot
         services.TryAddScoped<ISearchProvider<Establishment>>(sp =>
             new EstablishmentsSearchProvider(
                 sp.GetRequiredService<IDbContextFactory<EducationProviderRegistryDbContext>>(),
+                sp.GetRequiredService<ISearchOrchestrator<Establishment>>(),
+                sp.GetRequiredService<ISearchProjectionBuilder<Establishment>>(),
                 sp.GetRequiredService<ISearchFilterExpressionsBuilder>(),
-                schemaName: "core",
-                tableName: "establishment", // TODO: This lot needs to come from config, but for now we can hardcode it for now.
-                searchColumn: "name"
+                searchColumn: "name" // TODO: move to config
             ));
 
         services.TryAddScoped<IFacetProvider<Establishment>, EstablishmentFacetProvider>();
@@ -76,7 +84,7 @@ public static class CompositionRoot
         services.AddScoped<ISearchPipelineStep, SearchOrderingStep>();
         services.AddScoped<ISearchPipelineStep>(sp =>
             new ParallelMappingStep(
-                sp.GetRequiredService<IMapper<SearchResultProjection, EstablishmentSearchResult>>()));
+                sp.GetRequiredService<IMapper<Establishment, EstablishmentSearchResult>>()));
 
         services.AddScoped<ISearchPipelineStep>(sp =>
             new FacetQueryDispatchStep(
@@ -89,7 +97,7 @@ public static class CompositionRoot
         // Mappers
         // ---------------------------------------------------------
         services.TryAddSingleton<
-            IMapper<SearchResultProjection, EstablishmentSearchResult>,
+            IMapper<Establishment, EstablishmentSearchResult>,
             EstablishmentToSearchResultMapper>();
 
         services.TryAddSingleton<
@@ -99,45 +107,26 @@ public static class CompositionRoot
         return services;
     }
 
-    /// <summary>
-    /// Extension method which provides all the pre-registrations required to
-    /// access azure search filter services, and perform filtered searches across provisioned indexes.
-    /// </summary>
-    /// <param name="services">
-    /// The originating application services onto which to register the search dependencies.
-    /// </param>
-    /// <param name="configuration">
-    /// The originating configuration block from which to derive search service settings.
-    /// </param>
-    /// <exception cref="ArgumentNullException">
-    /// The exception thrown if no valid T:Microsoft.Extensions.DependencyInjection.IServiceCollection
-    /// is provisioned.
-    /// </exception>
     public static void AddInfraSearchFilterDependencies(this IServiceCollection services, IConfiguration configuration)
     {
-        if (services is null)
-        {
-            throw new ArgumentNullException(nameof(services),
-                "A service collection is required to configure the azure cognitive search filter dependencies.");
-        }
+        ArgumentNullException.ThrowIfNull(services);
 
         services.TryAddScoped<IFilterExpressionFormatter, DefaultFilterExpressionFormatter>();
         services.TryAddScoped<AndLogicalOperator>();
         services.TryAddScoped<OrLogicalOperator>();
         services.TryAddScoped<SingleOrMultiValueEqualsExpression>();
         services.TryAddScoped<ISearchFilterExpressionsBuilder, SearchFilterExpressionsBuilder>();
+
         services.TryAddSingleton<ISearchFilterExpressionFactory>(provider =>
         {
-            var scopedSearchFilterExpressionProvider = provider.CreateScope();
-            var searchFilterExpressions =
-                new Dictionary<string, Func<ISearchFilterExpression>>()
-                {
-                    ["SingleOrMultiValueEqualsExpression"] = () =>
-                        scopedSearchFilterExpressionProvider
-                            .ServiceProvider.GetRequiredService<SingleOrMultiValueEqualsExpression>()
-                };
+            var scoped = provider.CreateScope();
+            var map = new Dictionary<string, Func<ISearchFilterExpression>>
+            {
+                ["SingleOrMultiValueEqualsExpression"] = () =>
+                    scoped.ServiceProvider.GetRequiredService<SingleOrMultiValueEqualsExpression>()
+            };
 
-            return new SearchFilterExpressionFactory(searchFilterExpressions);
+            return new SearchFilterExpressionFactory(map);
         });
 
         // ---------------------------------------------------------
@@ -148,45 +137,37 @@ public static class CompositionRoot
             ReadOnlyCollection<SearchFilterRequest>>, SearchRequestFiltersToCoreFiltersMapper>();
 
         // ---------------------------------------------------------
-        // Facet selectors - we could do more with this going 
-        // forward (build this dynamically via config), but for now
-        // we just need to be able to map the facet name to the
-        // property on the Establishment entity.
+        // Facet selectors
         // ---------------------------------------------------------
         services.AddSingleton<
             Dictionary<string, Expression<Func<Establishment, object>>>>
             (
                 new Dictionary<string, Expression<Func<Establishment, object>>>(StringComparer.OrdinalIgnoreCase)
                 {
-                    { "establishmenttypeid", establishment => establishment.EstablishmentTypeId }
+                    { "establishmenttypeid", e => e.EstablishmentTypeId }
                 }
             );
 
         services.TryAddSingleton<ILogicalOperatorFactory>(provider =>
         {
-            var scopedLogicalOperatorExpressionProvider = provider.CreateScope();
-            var logicalOperators =
-                new Dictionary<string, Func<ILogicalOperator>>()
-                {
-                    ["AndLogicalOperator"] = () =>
-                           scopedLogicalOperatorExpressionProvider
-                               .ServiceProvider.GetRequiredService<AndLogicalOperator>(),
-                    ["OrLogicalOperator"] = () =>
-                        scopedLogicalOperatorExpressionProvider
-                            .ServiceProvider.GetRequiredService<OrLogicalOperator>()
-                };
+            var scoped = provider.CreateScope();
+            var map = new Dictionary<string, Func<ILogicalOperator>>
+            {
+                ["AndLogicalOperator"] = () =>
+                    scoped.ServiceProvider.GetRequiredService<AndLogicalOperator>(),
+                ["OrLogicalOperator"] = () =>
+                    scoped.ServiceProvider.GetRequiredService<OrLogicalOperator>()
+            };
 
-            return new LogicalOperatorFactory(logicalOperators);
+            return new LogicalOperatorFactory(map);
         });
 
         services.AddOptions<FilterKeyToFilterExpressionMapOptions>()
             .Configure<IConfiguration>(
-                (settings, configuration) =>
-                    configuration
-                        .GetSection("FilterKeyToFilterExpressionMapOptions")
-                        .Bind(settings))
-                        .ValidateDataAnnotations()
-                        .ValidateOnStart();
+                (settings, cfg) =>
+                    cfg.GetSection("FilterKeyToFilterExpressionMapOptions").Bind(settings))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
 
         // ---------------------------------------------------------
         // Search service adapter
@@ -196,3 +177,4 @@ public static class CompositionRoot
             EstablishmentsSearchServiceAdapter>();
     }
 }
+

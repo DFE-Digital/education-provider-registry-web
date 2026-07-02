@@ -1,18 +1,13 @@
 using DfE.Core.Libraries.CrossCutting.Mapper;
-using DfE.EducationProviderRegistry.Core.Query.Search;
-using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Establishment;
-using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
+using DfE.EducationProviderRegistry.Data.DatabaseModels.Context;
 using DfE.EducationProviderRegistry.Web.Mvc.ApplicationDtos;
 using DfE.EducationProviderRegistry.Web.Mvc.Extensions;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
-using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewModels.Pages;
 using Microsoft.AspNetCore.CookiePolicy;
-using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +17,9 @@ builder.Services
     .AddRazorOptions((options) =>
     {
         options.ViewLocationExpanders.Add(new FeatureViewLocationExpander());
-    });
+    })
+    .AddApplicationPart(typeof(DfE.EducationProviderRegistry.Web.ViewComponents.Table.SharedGovUkTableViewComponent).Assembly);
+
 
 builder.Services.AddRouting(options =>
 {
@@ -41,15 +38,25 @@ builder.Services.AddTransient<
     IMapper<EstablishmentDto, EstablishmentDetailsPageViewModel>,
     EstablishmentDetailsPageViewModelMapper>();
 builder.Services.AddTransient<
-    IMapper<EstablishmentBasicDetailsDto, GovUkTable>,
+    IMapper<EstablishmentBasicDetailsDto, DfE.EducationProviderRegistry.Web.Mvc.ViewComponents.GovUkTable>,
     EstablishmentDetailsBasicDetailsTableMapper>();
 builder.Services.AddTransient<
-    IMapper<List<EstablishmentGovernorDto>, GovUkTable>,
+    IMapper<List<EstablishmentGovernorDto>, DfE.EducationProviderRegistry.Web.Mvc.ViewComponents.GovUkTable>,
     EstablishmentDetailsGovernorsTableMapper>();
 builder.Services.AddTransient<
-    IMapper<List<EstablishmentHistoryDto>, GovUkTable>,
+    IMapper<List<EstablishmentHistoryDto>, DfE.EducationProviderRegistry.Web.Mvc.ViewComponents.GovUkTable>,
     EstablishmentDetailsHistoryTableMapper>();
 
+
+builder.Services.AddDbContext<EducationProviderRegistryDbContext>(
+    (options) =>
+    {
+        string connectionString = builder.Configuration["eprweb-eprdat-dotnet-db-connection"]
+            ?? throw new InvalidOperationException(
+                "Database connection string not configured.");
+
+        options.UseNpgsql(connectionString);
+    });
 
 builder.Services
     // Group registrations

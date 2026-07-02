@@ -9,12 +9,12 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 public class GroupsController : Controller
 {
     private readonly ILogger<GroupsController> _logger;
-    private readonly IUseCase<GetGroupByGroupIdRequest, UseCaseResponse<GroupReadModel>> _useCase;
+    private readonly IUseCase<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModel>> _useCase;
     private readonly IMapper<GroupReadModel, GroupDetailsPageViewModel> _groupDetailsPageMapper;
 
     public GroupsController(
         ILogger<GroupsController> logger,
-        IUseCase<GetGroupByGroupIdRequest, UseCaseResponse<GroupReadModel>> useCase,
+        IUseCase<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModel>> useCase,
         IMapper<GroupReadModel, GroupDetailsPageViewModel> mapper)
     {
         ArgumentNullException.ThrowIfNull(logger);
@@ -39,7 +39,7 @@ public class GroupsController : Controller
 
         UseCaseResponse<GroupReadModel> response =
             await _useCase.HandleRequestAsync(
-                new GetGroupByGroupIdRequest(groupId));
+                new GetGroupByGroupUniqueIdentifierRequest(groupId));
 
         if (!response.SuccessfulRequest)
         {

@@ -25,4 +25,11 @@
     <ProjectReference Include="..\..\src\DfE.EducationProviderRegistry.Web.ViewComponents\DfE.EducationProviderRegistry.Web.ViewComponents.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+	<Content Include="..\..\src\DfE.EducationProviderRegistry.Web.ViewComponents\Views\**\*.cshtml">
+	  <Link>Views\%(RecursiveDir)%(Filename)%(Extension)</Link>
+		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</Content>
+  </ItemGroup>
+	
 </Project>

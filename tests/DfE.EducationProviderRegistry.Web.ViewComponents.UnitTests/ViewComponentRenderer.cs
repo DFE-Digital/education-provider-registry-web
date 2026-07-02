@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using DfE.EducationProviderRegistry.Web.ViewComponents.SummaryList;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
@@ -25,7 +26,7 @@ internal sealed class ViewComponentRenderer : IDisposable
 
         services.AddSingleton<IWebHostEnvironment>(new TestHostingEnvironment
         {
-            ApplicationName = typeof(ViewComponentRenderer).Assembly.FullName!,
+            ApplicationName = typeof(GovUkSummaryListViewComponent).Assembly.FullName!,
             ContentRootPath = AppContext.BaseDirectory,
             WebRootPath = AppContext.BaseDirectory,
             ContentRootFileProvider = new PhysicalFileProvider(AppContext.BaseDirectory),

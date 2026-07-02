@@ -1,4 +1,5 @@
 ﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups
+@using DfE.EducationProviderRegistry.Web.ViewComponents.Tabs
 @model GroupDetailsPageViewModel
 
 <div class="govuk-grid-row">
@@ -13,8 +14,45 @@
 </div>
 
 <div>
-    @await Component.InvokeAsync("GovUkSummaryList", Model.Details.Summary)
-    @await Component.InvokeAsync("SharedGovUkTable", Model.Academies.Table)
-    @await Component.InvokeAsync("SharedGovUkTable", Model.Governance.TrusteesTable)
-    @await Component.InvokeAsync("SharedGovUkTable", Model.Governance.MembersTable)
+    @await Component.InvokeAsync("GovUkTabs", new GovUkTabs([
+        new()
+            {
+                Id = "details",
+                Title = "Details",
+                Contents = [
+                    new(){
+                        ViewComponentName = "GovUkSummaryList",
+                        Model = Model.Details.Summary
+                    }
+                ]
+            },
+            new()
+            {
+                Id = "academies",
+                Title = Model.Academies.Tab,
+                Contents = [
+                    new()
+                    {
+                        ViewComponentName = "SharedGovUkTable",
+                        Model = Model.Academies.Table
+                    }
+                ]
+            },
+            new()
+            {
+                Id = "trustees",
+                Title = "Governance",
+                Contents = [
+                    new(){
+                        ViewComponentName = "SharedGovUkTable",
+                        Model = Model.Governance.TrusteesTable
+                    },   
+                    new(){
+                        ViewComponentName = "SharedGovUkTable",
+                        Model = Model.Governance.MembersTable
+                    }
+                ]
+            }
+        ])
+    )
 </div>

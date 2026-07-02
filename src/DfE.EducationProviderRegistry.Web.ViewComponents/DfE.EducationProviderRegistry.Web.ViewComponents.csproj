@@ -9,14 +9,11 @@
 	<AddRazorSupportForMvc>true</AddRazorSupportForMvc>
   </PropertyGroup>
 
+  <ItemGroup>
+	<RazorGenerate Include="Views\**\*.cshtml" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<RazorGenerate Include="Views\**\*.cshtml" />
-	</ItemGroup>
-
-
-	<ItemGroup>
-		<FrameworkReference Include="Microsoft.AspNetCore.App" />
-	</ItemGroup>
-
+  <ItemGroup>
+	<FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
 </Project>

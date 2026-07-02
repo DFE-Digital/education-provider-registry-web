@@ -1,0 +1,48 @@
+@using DfE.EducationProviderRegistry.Web.ViewComponents.Tabs
+@model GovUkTabs
+
+<div class="govuk-tabs" data-module="govuk-tabs">
+
+    <h2 class="govuk-tabs__title">
+        Contents
+    </h2>
+
+    <ul class="govuk-tabs__list">
+
+        @{
+            bool first = true;
+        }
+
+        @foreach (Tab tab in Model.Tabs)
+        {
+            <li class="govuk-tabs__list-item @(first ? "govuk-tabs__list-item--selected" : string.Empty)">
+                <a class="govuk-tabs__tab"
+                   href="#@tab.Id">
+                    @tab.Title
+                </a>
+            </li>
+
+            first = false;
+        }
+
+    </ul>
+
+    @{
+        bool isFirstPanel = true;
+    }
+
+    @foreach (Tab tab in Model.Tabs)
+    {
+        <div class="govuk-tabs__panel @(isFirstPanel ? string.Empty : "govuk-tabs__panel--hidden")"
+             id="@tab.Id">
+
+            @foreach (TabContent content in tab.Contents)
+            {
+                @await Component.InvokeAsync(content.ViewComponentName, content.Model)
+            }
+        </div>
+
+        isFirstPanel = false;
+    }
+
+</div>

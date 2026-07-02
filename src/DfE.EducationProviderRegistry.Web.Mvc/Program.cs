@@ -1,4 +1,5 @@
 using DfE.Core.Libraries.CrossCutting.Mapper;
+using DfE.EducationProviderRegistry.Data.DatabaseModels.Context;
 using DfE.EducationProviderRegistry.Web.Mvc.ApplicationDtos;
 using DfE.EducationProviderRegistry.Web.Mvc.Extensions;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments;
@@ -6,6 +7,7 @@ using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewModels.Pages;
 using Microsoft.AspNetCore.CookiePolicy;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +47,16 @@ builder.Services.AddTransient<
     IMapper<List<EstablishmentHistoryDto>, DfE.EducationProviderRegistry.Web.Mvc.ViewComponents.GovUkTable>,
     EstablishmentDetailsHistoryTableMapper>();
 
+
+builder.Services.AddDbContext<EducationProviderRegistryDbContext>(
+    (options) =>
+    {
+        string connectionString = builder.Configuration["eprweb-eprdat-dotnet-db-connection"]
+            ?? throw new InvalidOperationException(
+                "Database connection string not configured.");
+
+        options.UseNpgsql(connectionString);
+    });
 
 builder.Services
     // Group registrations

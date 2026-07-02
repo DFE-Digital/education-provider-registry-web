@@ -15,7 +15,7 @@ public sealed class ComponentSnapshotTests
         // Act
         string html =
             await renderer.RenderAsync(
-                viewPath: "/Views/Shared/Components/GovUkTable/Default.cshtml", model);
+                viewPath: "/Views/Shared/Components/SharedGovUkTable/Default.cshtml", model);
 
         // Assert
         await VerifyHtml.Verify(html);

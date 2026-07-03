@@ -30,8 +30,8 @@ public class EstablishmentController : Controller
         UseCaseResponse<EstablishmentDetailsModel> response = await _getEstablishmentByIdUseCase
             .HandleRequestAsync(new GetEstablishmentByIdRequest(urn));
 
-        // TODO: how do we handle unsuccessful requests?
-        if (!response.SuccessfulRequest)
+        // TODO: how do we want to handle unsuccessful responses vs null models?
+        if (!response.SuccessfulRequest || response.Model is null)
         {
             return NotFound();
         }

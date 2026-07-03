@@ -41,7 +41,7 @@ public class EstablishmentDetailsBasicDetailsTableMapper :
         builder.AddRow(new GovUkTableCell { Text = "URN", IsBold = true },
                        new GovUkTableCell { Text = dto.Urn.Value });
 
-        builder.AddRow(new GovUkTableCell { Text = "DfE number", IsBold = true },
+        builder.AddRow(new GovUkTableCell { Text = "Number", IsBold = true },
                        new GovUkTableCell { Text = dto.Number.Value });
 
         builder.AddRow(new GovUkTableCell { Text = "Status", IsBold = true },
@@ -52,6 +52,18 @@ public class EstablishmentDetailsBasicDetailsTableMapper :
 
         builder.AddRow(new GovUkTableCell { Text = "Phase of education", IsBold = true },
                        new GovUkTableCell { Text = dto.Phase.Value });
+
+        builder.AddRow(new GovUkTableCell { Text = "Open date", IsBold = true },
+                       new GovUkTableCell { Text = dto.LifecycleEventOpened?.EventDate.ToShortDateString() });
+
+        builder.AddRow(new GovUkTableCell { Text = "Open reason", IsBold = true },
+                       new GovUkTableCell { Text = dto.LifecycleEventOpened?.Reason.Reason });
+
+        builder.AddRow(new GovUkTableCell { Text = "Closed date", IsBold = true },
+                       new GovUkTableCell { Text = dto.LifecycleEventClosed?.EventDate.ToShortDateString() });
+
+        builder.AddRow(new GovUkTableCell { Text = "Closed reason", IsBold = true },
+                       new GovUkTableCell { Text = dto.LifecycleEventClosed?.Reason.Reason });
 
         return builder.Build();
     }

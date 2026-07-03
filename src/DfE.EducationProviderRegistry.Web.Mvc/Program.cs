@@ -30,10 +30,12 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
 });
 
 builder.Services.AddDbContext<EducationProviderRegistryDbContext>(options =>
-{
-    options.UseNpgsql(builder.Configuration.GetConnectionString("EprDbConnection"));
-});
+    {
+        string connectionString = builder.Configuration["eprweb-eprdat-dotnet-db-connection"]
+            ?? throw new InvalidOperationException("Database connection string not configured.");
 
+        options.UseNpgsql(connectionString);
+    });
 
 builder.Services
     .AddEstablishments()

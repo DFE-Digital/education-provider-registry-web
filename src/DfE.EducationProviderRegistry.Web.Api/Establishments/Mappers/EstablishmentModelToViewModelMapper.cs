@@ -11,7 +11,7 @@ namespace DfE.EducationProviderRegistry.Web.Api.Establishments.Mappers;
 /// This mapper constructs a strongly typed <see cref="EstablishmentViewModel"/>.
 /// </summary>
 public sealed class EstablishmentModelToViewModelMapper
-    : IMapper<Establishment, EstablishmentViewModel?>
+    : IMapper<EstablishmentDetailsModel, EstablishmentViewModel?>
 {
     /// <summary>
     /// Maps an <see cref="Establishment"/> domain model into a dynamic view model.
@@ -24,7 +24,7 @@ public sealed class EstablishmentModelToViewModelMapper
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="input"/> is <c>null</c>.
     /// </exception>
-    public EstablishmentViewModel Map(Establishment input)
+    public EstablishmentViewModel Map(EstablishmentDetailsModel input)
     {
         ArgumentNullException.ThrowIfNull(input);
 

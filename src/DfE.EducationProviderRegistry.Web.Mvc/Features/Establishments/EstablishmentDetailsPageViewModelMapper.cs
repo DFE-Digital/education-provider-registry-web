@@ -65,6 +65,18 @@ public class EstablishmentDetailsBasicDetailsTableMapper :
         builder.AddRow(new GovUkTableCell { Text = "Closed reason", IsBold = true },
                        new GovUkTableCell { Text = dto.LifecycleEventClosed?.Reason.Reason });
 
+        builder.AddRow(new GovUkTableCell { Text = "Uid", IsBold = true },
+                       new GovUkTableCell { Text = dto.Uid });
+
+        builder.AddRow(new GovUkTableCell { Text = "Grope name", IsBold = true },
+                       new GovUkTableCell { Text = dto.GroupName });
+
+        builder.AddRow(new GovUkTableCell { Text = "Group type", IsBold = true },
+                       new GovUkTableCell { Text = dto.GroupType });
+
+        builder.AddRow(new GovUkTableCell { Text = "Group open date", IsBold = true },
+                       new GovUkTableCell { Text = dto.GroupOpenDate.ToString() });
+
         return builder.Build();
     }
 }

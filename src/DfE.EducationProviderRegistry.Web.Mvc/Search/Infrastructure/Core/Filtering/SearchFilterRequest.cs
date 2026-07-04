@@ -50,7 +50,7 @@ public sealed class SearchFilterRequest
         }
 
         FilterKey = filterKey;
-        FilterValues = filterValues.ToArray();
+        FilterValues = [.. filterValues];
     }
 
     /// <summary>

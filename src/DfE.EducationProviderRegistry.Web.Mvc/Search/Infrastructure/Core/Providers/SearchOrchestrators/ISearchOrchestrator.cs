@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Core.Providers.SearchOrchestrators;
 
-public interface ISearchOrchestrator<TProjection> //:  where TProjection : class
+public interface ISearchOrchestrator<TProjection> where TProjection : class
 {
     Task<IReadOnlyList<TProjection>> ExecuteAsync(
         DbContext db,
@@ -11,6 +11,5 @@ public interface ISearchOrchestrator<TProjection> //:  where TProjection : class
         SearchOrchestratorContext context,
         string searchFilters = "",
         CancellationToken cancellationToken = default);
-       
 }
 

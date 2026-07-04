@@ -27,9 +27,11 @@ public sealed class EstablishmentToSearchResultMapper : IMapper<Establishment, E
 
         EstablishmentType type = new(input.EstablishmentType.Name);
 
+        GroupRecord groupRecord = input.EstablishmentGroupMembership.FirstOrDefault().Group;
+
         GroupDetail group = new(
-            partOfName:"TEST", //input.EstablishmentGroupMembership..GroupName,
-            partOfCode: "TEST"//input.GroupCode
+            partOfName: groupRecord.Name,
+            partOfCode: groupRecord.Code
         );
 
         LocalAuthority localAuthority = new(

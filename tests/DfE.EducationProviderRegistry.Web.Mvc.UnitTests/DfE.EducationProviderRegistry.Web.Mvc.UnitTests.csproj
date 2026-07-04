@@ -21,6 +21,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
+	</ItemGroup>
+	
+	<ItemGroup>
 	  <Folder Include="Search\Mappers\" />
 	  <Folder Include="Search\ViewModels\" />
 	</ItemGroup>

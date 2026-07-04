@@ -53,7 +53,6 @@ public sealed class EstablishmentsSearchProvider : ISearchProvider<Establishment
                 Filters = filters
             };
 
-
         return await _orchestrator.ExecuteAsync(
             db,
             baseQuery,

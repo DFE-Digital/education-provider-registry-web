@@ -60,8 +60,13 @@ public static class CompositionRoot
         // ---------------------------------------------------------
         // Search orchestration
         // ---------------------------------------------------------
-        services.AddSingleton(typeof(CachedEntityMetadataResolver<>));
+        services.AddSingleton(typeof(IEntityMetadataResolver<>), typeof(CachedEntityMetadataResolver<>));
         services.AddScoped(typeof(ISearchOrchestrator<>), typeof(TrigramSearchOrchestrator<>));
+
+        // ---------------------------------------------------------
+        // SQL executor (required for trigram orchestrator)
+        // ---------------------------------------------------------
+        services.AddScoped(typeof(ISqlExecutor<>), typeof(SqlExecutor<>));
 
         // ---------------------------------------------------------
         // Providers

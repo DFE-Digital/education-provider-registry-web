@@ -9,33 +9,37 @@ using System.Text;
 namespace DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Core.Filtering;
 
 /// <summary>
-/// Used to compose and build Azure AI OData filter expression(s) based on the incoming request keys and values,
-/// which are used to reconcile to the underlying search filter expressions and apply the associated values.
-/// For example, if we create a request as follows,
+/// Composes and builds filter expression strings based on incoming request keys and values.
+/// These keys are mapped to configured filter expression types, which determine how values
+/// are formatted and combined into a final filter expression.
+/// 
+/// For example, given:
 /// <code>
-/// List&lt;SearchFilterRequest&gt;searchFilterRequests =
+/// List&lt;SearchFilterRequest&gt; searchFilterRequests =
 ///     SearchFilterRequestBuilder.Create().BuildSearchFilterRequestsWith(
 ///         ("OFSTEDRATINGCODE", new List&lt;object&gt; { "2", "5", "9", "12" }),
 ///         ("RELIGIOUSCHARACTERCODE", new List&lt;object&gt; { "00", "02" }))
 ///            .BuildSearchFilterRequests();
 /// </code>
-/// and we have the following configuration section,
+/// 
+/// And configuration:
 /// <code>
 /// "FilterKeyToFilterExpressionMapOptions": {
 ///     "FilterChainingLogicalOperator": "AndLogicalOperator",
 ///     "SearchFilterToExpressionMap": {
 ///         "RELIGIOUSCHARACTERCODE": {
 ///             "FilterExpressionKey": "SearchInFilterExpression",
-///             "FilterExpressionValuesDelimiter", ","
+///             "FilterExpressionValuesDelimiter": ","
 ///         },
 ///         "OFSTEDRATINGCODE": {
 ///             "FilterExpressionKey": "SearchInFilterExpression",
-///             "FilterExpressionValuesDelimiter", ","
+///             "FilterExpressionValuesDelimiter": ","
 ///         }
 ///     }
 /// }
 /// </code>
-/// then the following OData filter expression string should be generated,
+/// 
+/// The resulting filter expression string would be:
 /// <code>
 ///     "search.in(OFSTEDRATINGCODE, '2,5,9,12') and search.in(RELIGIOUSCHARACTERCODE, '00,02')"
 /// </code>
@@ -48,30 +52,12 @@ public sealed class SearchFilterExpressionsBuilder : ISearchFilterExpressionsBui
     private readonly FilterKeyToFilterExpressionMapOptions _filterKeyToFilterExpressionMapOptions;
 
     /// <summary>
-    /// The <see cref="SearchFilterExpressionsBuilder"/> uses a <see cref="ISearchFilterExpressionFactory"/>
-    /// to derive all available search filter expressions available. Likewise, the <see cref="ILogicalOperatorFactory"/>
-    /// is used to derive all available logical operators available. The <see cref="FilterKeyToFilterExpressionMapOptions"/>
-    /// is used to derive the map of the incoming key to actual OData filter expression type to apply through-out the
-    /// composition and build process.
+    /// Constructs a <see cref="SearchFilterExpressionsBuilder"/> using:
+    /// - a <see cref="ISearchFilterExpressionFactory"/> to resolve filter expression types,
+    /// - a <see cref="ILogicalOperatorFactory"/> to resolve logical operators,
+    /// - and <see cref="FilterKeyToFilterExpressionMapOptions"/> to map incoming filter keys
+    ///   to specific filter expression configurations.
     /// </summary>
-    /// <param name="searchFilterExpressionFactory">
-    /// Provides a factory implementation of <see cref="ISearchFilterExpressionFactory"/> over which to derive Azure AI OData filter
-    /// expressions. This factory leverages dependency injection which necessitates
-    /// setup of a dictionary of <see cref="ISearchFilterExpression"/> delegates.
-    /// responsible for handling the creation of concrete <see cref="ISearchFilterExpression"/>
-    /// instances.
-    /// </param>
-    /// <param name="logicalOperatorFactory">
-    /// Provides a factory implementation of <see cref="ILogicalOperatorFactory"/> over which to derive Azure AI OData logical
-    /// operator expressions. This factory leverages dependency injection which necessitates
-    /// setup of a dictionary of <see cref="ILogicalOperator"/> delegates.
-    /// responsible for handling the creation of concrete <see cref="ILogicalOperator"/>
-    /// instances.
-    /// </param>
-    /// <param name="filterKeyToFilterExpressionMapOptions">
-    /// Provides configuration options for establishing a map to align the incoming filter request
-    /// key(s) with an available filter expression and logical operator.
-    /// </param>
     public SearchFilterExpressionsBuilder(
         ISearchFilterExpressionFactory searchFilterExpressionFactory,
         ILogicalOperatorFactory logicalOperatorFactory,
@@ -84,15 +70,10 @@ public sealed class SearchFilterExpressionsBuilder : ISearchFilterExpressionsBui
     }
 
     /// <summary>
-    /// Allows the construction of an OData filter expression(s) composition in string format.
+    /// Builds a composed filter expression string based on the incoming filter requests.
+    /// Each request is mapped to a configured filter expression type and combined using
+    /// the configured logical operator.
     /// </summary>
-    /// <param name="searchFilterRequests">
-    /// The collection of <see cref="SearchFilterRequest"/> types which are used to reconcile
-    /// to the underlying OData filter expressions.
-    /// </param>
-    /// <returns>
-    /// A string which represents the formatted OData filter expression(s) composition.
-    /// </returns>
     public string BuildSearchFilterExpressions(IEnumerable<SearchFilterRequest> searchFilterRequests)
     {
         IEnumerable<string> searchFilters = GetValidSearchFilterExpression(searchFilterRequests);
@@ -104,22 +85,13 @@ public sealed class SearchFilterExpressionsBuilder : ISearchFilterExpressionsBui
     }
 
     /// <summary>
-    /// Allows for the extraction of OData filter expression types based on the incoming filter key which
-    /// is reconciled with the configuration filter expression map to derive the required <see cref="ISearchFilterExpression"/>
-    /// type from the factory provisioned.
+    /// Resolves filter expression types based on incoming filter keys. Only keys present
+    /// in the configured filter expression map are processed.
     /// </summary>
-    /// <param name="searchFilterRequests">
-    /// The collection of incoming <see cref="SearchFilterRequest"/> objects which carry the search filter and
-    /// values which are to be reconciled to the underlying OData search filter expression.
-    /// </param>
-    /// <returns>
-    /// A collection of configured OData search filter expressions and values in string format.
-    /// </returns>
     private ReadOnlyCollection<string> GetValidSearchFilterExpression(IEnumerable<SearchFilterRequest> searchFilterRequests)
     {
         List<string> searchFilters = [];
 
-        // Only derive search expressions that are recognised through the filter key to expression map.
         foreach (SearchFilterRequest searchFilterRequest in searchFilterRequests
             .Where(searchFilterRequest =>
                 _filterKeyToFilterExpressionMapOptions
@@ -128,8 +100,8 @@ public sealed class SearchFilterExpressionsBuilder : ISearchFilterExpressionsBui
             FilterExpressionOptions filterExpressionOptions =
                 _filterKeyToFilterExpressionMapOptions.SearchFilterToExpressionMap[searchFilterRequest.FilterKey];
 
-            // Assign the configured value delimiter if one is present.
-            if (filterExpressionOptions.HasValuesDelimiter){
+            if (filterExpressionOptions.HasValuesDelimiter)
+            {
                 searchFilterRequest.SetFilterValuesDelimiter(filterExpressionOptions.FilterExpressionValuesDelimiter);
             }
 
@@ -143,21 +115,14 @@ public sealed class SearchFilterExpressionsBuilder : ISearchFilterExpressionsBui
     }
 
     /// <summary>
-    /// Allows for the extraction of an <see cref="ILogicalOperator"/> based on the
-    /// key value specified in the configuration filter expression map.
+    /// Resolves the logical operator used to chain multiple filter expressions together.
     /// </summary>
-    /// <returns>
-    /// A configured <see cref="ILogicalOperator"/> instance of the type specified.
-    /// </returns>
-    /// <exception cref="ArgumentException">
-    /// Exception thrown if the requested <see cref="ILogicalOperator"/> cannot be derived via the factory provisioned.
-    /// </exception>
     private ILogicalOperator GetFilterChainingLogicalOperator()
     {
         string filterChainingLogicalOperatorKey =
-            !string.IsNullOrWhiteSpace(_filterKeyToFilterExpressionMapOptions.FilterChainingLogicalOperator) ?
-            _filterKeyToFilterExpressionMapOptions.FilterChainingLogicalOperator :
-                throw new ArgumentException("Unable to assign a null or empty logical operator to the search expression chain.");
+            !string.IsNullOrWhiteSpace(_filterKeyToFilterExpressionMapOptions.FilterChainingLogicalOperator)
+                ? _filterKeyToFilterExpressionMapOptions.FilterChainingLogicalOperator
+                : throw new ArgumentException("Unable to assign a null or empty logical operator to the search expression chain.");
 
         return _logicalOperatorFactory.CreateLogicalOperator(filterChainingLogicalOperatorKey);
     }

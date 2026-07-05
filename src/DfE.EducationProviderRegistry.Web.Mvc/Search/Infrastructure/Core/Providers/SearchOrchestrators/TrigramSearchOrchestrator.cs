@@ -2,11 +2,11 @@
 using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Core.Providers.SearchOrchestrators.Context;
 using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Core.Providers.SearchOrchestrators.EFMetadataResolver;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
 
 /// <summary>
-/// Executes a PostgreSQL trigram-based search against an EF Core entity,
-/// returning a projected result set based on a LINQ <see cref="IQueryable{TProjection}"/>.
+/// Orchestrates a PostgreSQL trigram-based search using <c>pg_trgm</c>,
+/// retrieving primary key values via raw SQL and rehydrating full entity or
+/// projection instances using a LINQ <see cref="IQueryable{TProjection}"/>.
 /// </summary>
 /// <typeparam name="TProjection">
 /// The entity or projection type being queried. Must be a reference type.
@@ -14,31 +14,20 @@ using System.Reflection;
 public sealed class TrigramSearchOrchestrator<TProjection> : ISearchOrchestrator<TProjection>
     where TProjection : class
 {
-    /// <summary>
-    /// Resolves EF Core metadata such as table name, schema, and primary key
-    /// for the entity associated with <typeparamref name="TProjection"/>.
-    /// </summary>
     private readonly IEntityMetadataResolver<TProjection> _metadataResolver;
-
-    /// <summary>
-    /// Executes raw SQL queries used to retrieve primary key values for trigram matches.
-    /// Abstracting SQL execution behind this interface allows unit tests to avoid
-    /// invoking <see cref="RelationalQueryableExtensions.FromSqlRaw{TEntity}(IQueryable{TEntity}, string, object[])"/>,
-    /// which cannot be mocked and is unsupported by non-relational EF providers.
-    /// </summary>
     private readonly ISqlExecutor<TProjection> _sqlExecutor;
 
     /// <summary>
     /// Creates a new instance of the trigram search orchestrator.
     /// </summary>
     /// <param name="metadataResolver">
-    /// The metadata resolver used to obtain table, schema, and primary key information
-    /// for the EF Core entity associated with <typeparamref name="TProjection"/>.
+    /// Resolves EF Core metadata such as schema, table name, and primary key
+    /// for the entity associated with <typeparamref name="TProjection"/>.
     /// </param>
     /// <param name="sqlExecutor">
-    /// The SQL executor responsible for running the raw PostgreSQL trigram query.
-    /// This abstraction enables pure unit testing by allowing SQL execution to be mocked,
-    /// avoiding EF Core provider limitations when using <c>FromSqlRaw</c>.
+    /// Executes raw SQL queries used to retrieve primary key values for trigram matches.
+    /// Abstracting SQL execution enables pure unit testing without invoking EF Core's
+    /// relational <c>FromSqlRaw</c> pipeline.
     /// </param>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="metadataResolver"/> or <paramref name="sqlExecutor"/> is null.
@@ -47,15 +36,18 @@ public sealed class TrigramSearchOrchestrator<TProjection> : ISearchOrchestrator
         IEntityMetadataResolver<TProjection> metadataResolver,
         ISqlExecutor<TProjection> sqlExecutor)
     {
-        _metadataResolver = metadataResolver;
-        _sqlExecutor = sqlExecutor;
+        _metadataResolver = metadataResolver
+            ?? throw new ArgumentNullException(nameof(metadataResolver));
+
+        _sqlExecutor = sqlExecutor
+            ?? throw new ArgumentNullException(nameof(sqlExecutor));
     }
 
     /// <summary>
     /// Executes a trigram similarity search using PostgreSQL <c>pg_trgm</c> operators,
     /// returning a filtered and ordered result set based on the provided search context.
     /// </summary>
-    /// <param name="dbContext">The EF Core <see cref="DbContext"/> used to execute the query.</param>
+    /// <param name="dbContext">The EF Core <see cref="DbContext"/> used to execute the SQL query.</param>
     /// <param name="baseQuery">
     /// The base LINQ query used to rehydrate full entity or projection instances
     /// after primary key values have been retrieved via raw SQL.
@@ -90,60 +82,66 @@ public sealed class TrigramSearchOrchestrator<TProjection> : ISearchOrchestrator
         ArgumentNullException.ThrowIfNull(dbContext);
         ArgumentNullException.ThrowIfNull(context);
 
-        EntityMetadata metadata = _metadataResolver.Resolve(dbContext);
+        var metadata = _metadataResolver.Resolve(dbContext);
 
-        string searchColumn = context.SearchColumn;
-
-        bool columnExists =
-            metadata.EntityType
-                .GetProperties()
+        if (!metadata.EntityType
+            .GetProperties()
                 .Any(property =>
-                    property.GetColumnName() == searchColumn);
-
-        if (!columnExists){
+                    property.GetColumnName() == context.SearchColumn))
+        {
             throw new InvalidOperationException(
-                $"Column '{searchColumn}' does not exist on entity {typeof(TProjection).Name}.");
+                $"Column '{context.SearchColumn}' does not exist on entity {typeof(TProjection).Name}.");
         }
 
+        // Build trigram SQL
         string sql =
             $@"
             SELECT t.""{metadata.PrimaryKeyColumn}""
             FROM {metadata.Schema}.""{metadata.TableName}"" t
-            WHERE t.""{searchColumn}"" % CAST('{context.SearchTerm}' AS text)
+            WHERE t.""{context.SearchColumn}"" % CAST('{context.SearchTerm}' AS text)
             {searchFilters}
-            ORDER BY similarity(t.""{searchColumn}"", CAST('{context.SearchTerm}' AS text)) DESC
+            ORDER BY similarity(t.""{context.SearchColumn}"", CAST('{context.SearchTerm}' AS text)) DESC
             LIMIT {context.PageSize} OFFSET {context.Offset}
             ";
 
-        List<object> ids =
-            await _sqlExecutor.ExecuteIdsAsync(
-                dbContext,
-                sql,
-                metadata.PrimaryKeyProperty.Name,
-                cancellationToken);
+        List<object> ids = await _sqlExecutor.ExecuteIdsAsync(
+            dbContext,
+            sql,
+            metadata.PrimaryKeyProperty.Name,
+            cancellationToken);
 
         return [
             .. baseQuery
                 .AsEnumerable()
-                .Where(parameter =>
-                {
-                    if (parameter is null){
-                        throw new InvalidOperationException(
-                            $"Entity instance is null when evaluating primary key '{metadata.PrimaryKeyProperty.Name}'.");
-                    }
+                .Where(projection =>
+                    ids.Contains(GetPrimaryKeyValue(
+                        projection, metadata.PrimaryKeyProperty.Name)))
+            ];
+    }
 
-                    PropertyInfo? pkProp =
-                        parameter.GetType().GetProperty(metadata.PrimaryKeyProperty.Name) ??
-                            throw new InvalidOperationException(
-                                $"Primary key property '{metadata.PrimaryKeyProperty.Name}' not found on type '{parameter.GetType().Name}'.");
+    /// <summary>
+    /// Extracts the primary key value from an entity instance using reflection,
+    /// with full null-guarding and descriptive exceptions.
+    /// </summary>
+    /// <param name="entity">The entity instance from which to extract the primary key value.</param>
+    /// <param name="pkName">The name of the primary key property.</param>
+    /// <returns>The non-null primary key value.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when the entity instance is null, the primary key property does not exist,
+    /// or the primary key value is null.
+    /// </exception>
+    private static object GetPrimaryKeyValue(TProjection entity, string pkName)
+    {
+        if (entity is null)
+            throw new InvalidOperationException(
+                $"Entity instance is null when evaluating primary key '{pkName}'.");
 
-                    object? pkValue = pkProp.GetValue(parameter);
+        var pkProp = entity.GetType().GetProperty(pkName)
+            ?? throw new InvalidOperationException(
+                $"Primary key property '{pkName}' not found on type '{entity.GetType().Name}'.");
 
-                    return pkValue is null
-                        ? throw new InvalidOperationException(
-                            $"Primary key value for '{metadata.PrimaryKeyProperty.Name}' is null on entity '{parameter.GetType().Name}'.")
-                        : ids.Contains(pkValue);
-                })
-        ];
+        return pkProp.GetValue(entity)
+            ?? throw new InvalidOperationException(
+                $"Primary key value for '{pkName}' is null on entity '{entity.GetType().Name}'.");
     }
 }

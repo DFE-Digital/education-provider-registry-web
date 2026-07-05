@@ -5,17 +5,34 @@ using System.Collections.ObjectModel;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Mappers;
 
+/// <summary>
+/// Maps MVC <see cref="FilterRequest"/> objects into core <see cref="SearchFilterRequest"/> objects
+/// used by the search pipeline.
+/// </summary>
+/// <remarks>
+/// Filters with null or empty values are ignored.  
+/// Values are copied to avoid leaking read-only wrappers.
+/// </remarks>
 public sealed class SearchRequestFiltersToCoreFiltersMapper :
     IMapper<ReadOnlyCollection<FilterRequest>, ReadOnlyCollection<SearchFilterRequest>>
 {
+    /// <summary>
+    /// Converts a collection of <see cref="FilterRequest"/> into a read-only collection of
+    /// <see cref="SearchFilterRequest"/> suitable for the core search engine.
+    /// </summary>
+    /// <param name="input">The incoming filter requests.</param>
+    /// <returns>
+    /// A read-only collection of mapped <see cref="SearchFilterRequest"/> objects.
+    /// Returns an empty collection when no valid filters exist.
+    /// </returns>
     public ReadOnlyCollection<SearchFilterRequest> Map(ReadOnlyCollection<FilterRequest> input)
     {
         if (input == null || input.Count == 0)
         {
-            return [];
+            return new List<SearchFilterRequest>().AsReadOnly();
         }
 
-        List<SearchFilterRequest> results = new(input.Count);
+        List<SearchFilterRequest> results = new List<SearchFilterRequest>(input.Count);
 
         foreach (FilterRequest filter in input)
         {
@@ -24,11 +41,16 @@ public sealed class SearchRequestFiltersToCoreFiltersMapper :
                 continue;
             }
 
-            // Copy values to avoid leaking the read-only wrapper
-            object[] copiedValues = [.. filter.FilterValues];
+            if (string.IsNullOrWhiteSpace(filter.FilterName))
+            {
+                continue;
+            }
+
+            object[] copiedValues = new object[filter.FilterValues.Count];
+            filter.FilterValues.CopyTo(copiedValues, 0);
 
             SearchFilterRequest mapped =
-                new(
+                new SearchFilterRequest(
                     filterKey: filter.FilterName,
                     filterValues: copiedValues);
 

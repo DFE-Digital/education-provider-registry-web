@@ -36,7 +36,7 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
 builder.Services.AddDbContext<EducationProviderRegistryDbContext>(
     (options) =>
     {
-        string connectionString = builder.Configuration["eprweb-eprdat-dotnet-db-connection"]
+        string connectionString = builder.Configuration["eprweb_eprdat_dotnet_db_connection"]
             ?? throw new InvalidOperationException(
                 "Database connection string not configured.");
 

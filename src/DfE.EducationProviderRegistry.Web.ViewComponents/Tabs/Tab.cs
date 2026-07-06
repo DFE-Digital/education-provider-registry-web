@@ -2,7 +2,23 @@
 
 public sealed record Tab
 {
-    public required string Id { get; init; }
-    public required string Title { get; init; }
-    public required IReadOnlyCollection<TabContent> Contents { get; init; }
+    public Tab(
+        string id,
+        string title,
+        IReadOnlyCollection<TabContent> contents)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(id);
+        ArgumentException.ThrowIfNullOrWhiteSpace(title);
+        ArgumentNullException.ThrowIfNull(contents);
+
+        Id = id;
+        Title = title;
+        Contents = contents;
+    }
+
+    public string Id { get; }
+
+    public string Title { get; }
+
+    public IReadOnlyCollection<TabContent> Contents { get; }
 }

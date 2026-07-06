@@ -1,14 +1,31 @@
 ﻿namespace DfE.EducationProviderRegistry.Web.ViewComponents.UnitTests;
 
-public static class VerifyHtml
+public static class HtmlMarkupVerify
 {
-    public static Task Verify(string html)
+    public static async Task VerifyAsync(
+        string testName,
+        string viewPath,
+        object? viewModel,
+        string? outputArtifactDirectory = null)
     {
+        using ViewComponentRenderer renderer = new();
+
+        string html = await renderer.RenderAsync(
+            viewPath,
+            viewModel);
+
         VerifySettings settings = new();
 
-        html = FormatHtml(html);
+        settings
+            .UseFileName(testName);
 
-        return Verifier.Verify(html, extension: "html", settings);
+        settings
+            .UseDirectory(string.IsNullOrWhiteSpace(outputArtifactDirectory) ? "snapshots" : outputArtifactDirectory);
+
+        await Verifier.Verify(
+            target: FormatHtml(html),
+            extension: "html",
+            settings);
     }
 
     private static string FormatHtml(string html)

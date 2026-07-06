@@ -49,7 +49,7 @@ internal sealed class ViewComponentRenderer : IDisposable
         _services.Dispose();
     }
 
-    public async Task<string> RenderAsync<TModel>(string viewPath, TModel model) where TModel : class
+    public async Task<string> RenderAsync<TModel>(string viewPath, TModel? model) where TModel : class
     {
         DefaultHttpContext httpContext = new()
         {
@@ -64,9 +64,8 @@ internal sealed class ViewComponentRenderer : IDisposable
             new ActionDescriptor()
         );
 
-        var viewEngine = _services.GetRequiredService<ICompositeViewEngine>();
-
-        var result = viewEngine.GetView(null, viewPath, false);
+        ICompositeViewEngine viewEngine = _services.GetRequiredService<ICompositeViewEngine>();
+        ViewEngineResult result = viewEngine.GetView(null, viewPath, false);
 
         if (!result.Success)
         {
@@ -74,7 +73,7 @@ internal sealed class ViewComponentRenderer : IDisposable
                 $"View not found: {string.Join(", ", result.SearchedLocations ?? [])}");
         }
 
-        var viewContext = new ViewContext(
+        ViewContext viewContext = new(
             actionContext,
             result.View,
             new ViewDataDictionary(

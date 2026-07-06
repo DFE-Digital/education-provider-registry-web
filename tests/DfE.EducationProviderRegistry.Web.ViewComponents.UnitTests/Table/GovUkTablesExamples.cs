@@ -52,32 +52,51 @@ internal static class GovUkTablesExamples
         caption: "Dates and amounts"
     );
 
-    public static GovUkTable RatesComparison() => new(
+    public static GovUkTable CaseStatistics() => new(
         columns:
         [
-            new TableColumn("Month") { IsRowHeader = true },
-            new TableColumn("Rate for bicycles") { IsNumeric = true },
-            new TableColumn("Rate for vehicles") { IsNumeric = true }
+            new TableColumn("Case manager") { IsRowHeader = true },
+            new TableColumn("Cases opened") { IsNumeric = true },
+            new TableColumn("Cases closed") { IsNumeric = true }
         ],
         rows:
         [
             [
-                new TableCell { Text = "January" },
-                new TableCell { Text = "£85" },
-                new TableCell { Text = "£95" }
+                new TableCell { Text = "David Francis" },
+                new TableCell { Text = "3" },
+                new TableCell { Text = "0" }
             ],
             [
-                new TableCell { Text = "February" },
-                new TableCell { Text = "£75" },
-                new TableCell { Text = "£55" }
+                new TableCell { Text = "Paul Farmer" },
+                new TableCell { Text = "1" },
+                new TableCell { Text = "0" }
             ],
             [
-                new TableCell { Text = "March" },
-                new TableCell { Text = "£165" },
-                new TableCell { Text = "£125" }
+                new TableCell { Text = "Rita Patel" },
+                new TableCell { Text = "2" },
+                new TableCell { Text = "0" }
+            ]
+        ]
+    );
+
+    public static GovUkTable NoRowHeaders() => new(
+        columns:
+        [
+            new TableColumn("City"),
+            new TableColumn("Population") { IsNumeric = true }
+        ],
+        rows:
+        [
+            [
+                new TableCell { Text = "London" },
+                new TableCell { Text = "8.9" }
+            ],
+            [
+                new TableCell { Text = "Manchester" },
+                new TableCell { Text = "553" }
             ]
         ],
-        caption: "Months and rates"
+        caption: "Cities and population"
     );
 
     public static GovUkTable NoCaption() => new(

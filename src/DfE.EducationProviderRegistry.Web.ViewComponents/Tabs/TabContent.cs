@@ -2,6 +2,16 @@
 
 public sealed record TabContent
 {
-    public required string ViewComponentName { get; init; }
-    public object? Model { get; init; }
+    public TabContent(
+        string viewComponentName,
+        object? model = null)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(viewComponentName);
+
+        ViewComponentName = viewComponentName;
+        Model = model;
+    }
+
+    public string ViewComponentName { get; }
+    public object? Model { get; }
 }

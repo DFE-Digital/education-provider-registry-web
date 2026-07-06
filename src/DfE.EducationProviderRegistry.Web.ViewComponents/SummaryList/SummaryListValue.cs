@@ -2,6 +2,22 @@
 
 public sealed record SummaryListValue
 {
-    public string? Text { get; init; }
-    public string? Href { get; init; }
+    public SummaryListValue(
+        string? text = null,
+        string? href = null)
+    {
+        if (string.IsNullOrWhiteSpace(text) &&
+            string.IsNullOrWhiteSpace(href))
+        {
+            throw new ArgumentException(
+                "Either text or href must be provided.");
+        }
+
+        Text = text;
+        Href = href;
+    }
+
+    public string? Text { get; }
+
+    public string? Href { get; }
 }

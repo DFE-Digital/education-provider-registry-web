@@ -23,57 +23,32 @@ internal sealed class GroupDetailsPageViewModelMapper :
 
     private static GroupDetailsTabViewModel CreateBasicDetails(GroupReadModel model)
     {
-        // TODO convert to GDSSummaryList?
         GovUkSummaryList details = new(
         [
             new(
                 "UID",
-                new SummaryListValue
-                {
-                    Text = model.GroupUID.ToString()
-                }),
+                new SummaryListValue(model.GroupUID.ToString())),
 
             new(
                 "Group ID",
-                new SummaryListValue
-                {
-                    Text = model.GroupId
-                }),
+                new SummaryListValue(model.GroupId)),
 
             new(
                 "UKPRN",
-                new SummaryListValue
-                {
-                    Text = model.UKPRN
-                }),
-
+                new SummaryListValue(model.UKPRN)),
             new(
                 "Company number",
-                new SummaryListValue
-                {
-                    Text = $"{model.CompaniesHouseId} (opens in new tab)",
-                    Href = $"https://find-and-update.company-information.service.gov.uk/company/{model.CompaniesHouseId}"
-                }),
-
+                new SummaryListValue(text: $"{model.CompaniesHouseId} (opens in new tab)", href: $"https://find-and-update.company-information.service.gov.uk/company/{model.CompaniesHouseId}")),
             new(
                 "Status",
-                new SummaryListValue
-                {
-                    Text = model.Status
-                }),
-
+                new SummaryListValue(text: model.Status)),
             new(
                 "Address",
-                new SummaryListValue
-                {
-                    Text = model.Address
-                }),
+                new SummaryListValue(text:  model.Address)),
             new(
                 "Type",
-                new SummaryListValue
-                {
-                    Text = model.Type
-                })
+                new SummaryListValue(model.Type))
+
         ]);
 
         return new()

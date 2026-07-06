@@ -14,45 +14,42 @@
 </div>
 
 <div>
-    @await Component.InvokeAsync("GovUkTabs", new GovUkTabs([
-        new()
-            {
-                Id = "details",
-                Title = "Details",
-                Contents = [
-                    new(){
-                        ViewComponentName = "GovUkSummaryList",
-                        Model = Model.Details.Summary
-                    }
-                ]
-            },
-            new()
-            {
-                Id = "academies",
-                Title = Model.Academies.Tab,
-                Contents = [
-                    new()
-                    {
-                        ViewComponentName = "SharedGovUkTable",
-                        Model = Model.Academies.Table
-                    }
-                ]
-            },
-            new()
-            {
-                Id = "governance",
-                Title = "Governance",
-                Contents = [
-                    new(){
-                        ViewComponentName = "SharedGovUkTable",
-                        Model = Model.Governance.TrusteesTable
-                    },   
-                    new(){
-                        ViewComponentName = "SharedGovUkTable",
-                        Model = Model.Governance.MembersTable
-                    }
-                ]
-            }
-        ])
-    )
+    @await Component.InvokeAsync(
+        "GovUkTabs",
+        new GovUkTabs(
+        [
+            new Tab(
+                id: "details",
+                title: "Details",
+                contents:
+                [
+                    new TabContent(
+                        viewComponentName: "GovUkSummaryList",
+                        model: Model.Details.Summary)
+                ]),
+
+            new Tab(
+                id: "academies",
+                title: Model.Academies.Tab,
+                contents:
+                [
+                    new TabContent(
+                        viewComponentName: "SharedGovUkTable",
+                        model: Model.Academies.Table)
+                ]),
+
+            new Tab(
+                id: "governance",
+                title: "Governance",
+                contents:
+                [
+                    new TabContent(
+                        viewComponentName: "SharedGovUkTable",
+                        model: Model.Governance.TrusteesTable),
+
+                    new TabContent(
+                        viewComponentName: "SharedGovUkTable",
+                        model: Model.Governance.MembersTable)
+                ])
+        ]))
 </div>

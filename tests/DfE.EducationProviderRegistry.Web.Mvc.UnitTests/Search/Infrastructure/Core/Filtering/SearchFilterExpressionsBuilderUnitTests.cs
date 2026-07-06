@@ -10,7 +10,7 @@ using Moq;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Search.Infrastructure.Core.Filtering;
 
-public sealed class SearchFilterExpressionsBuilderTests
+public sealed class SearchFilterExpressionsBuilderUnitTests
 {
     private SearchFilterExpressionsBuilder CreateBuilder(
         IOptions<FilterKeyToFilterExpressionMapOptions> options,

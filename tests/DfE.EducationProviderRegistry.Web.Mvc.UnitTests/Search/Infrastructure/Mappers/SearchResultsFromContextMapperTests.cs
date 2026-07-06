@@ -4,7 +4,7 @@ using DfE.EducationProviderRegistry.Core.Query.Shared;
 using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Pipeline;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Search.Mappers;
+namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Search.Infrastructure.Mappers;
 
 public sealed class SearchResultsFromContextMapperTests
 {

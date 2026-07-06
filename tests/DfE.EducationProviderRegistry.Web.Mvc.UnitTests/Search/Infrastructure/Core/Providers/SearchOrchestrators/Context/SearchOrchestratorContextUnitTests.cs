@@ -3,7 +3,7 @@ using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Core.Providers
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Search.Infrastructure.Core.Providers.SearchOrchestrators.Context
 {
-    public sealed class SearchOrchestratorContextTests
+    public sealed class SearchOrchestratorContextUnitTests
     {
         [Fact]
         public void Constructor_WithValidArguments_SetsPropertiesCorrectly()

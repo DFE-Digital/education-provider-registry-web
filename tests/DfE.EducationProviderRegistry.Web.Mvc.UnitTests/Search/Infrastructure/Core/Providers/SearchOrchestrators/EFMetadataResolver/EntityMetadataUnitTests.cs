@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Search.Infrastructure.Core.Providers.SearchOrchestrators.EFMetadataResolver;
 
-public sealed class EntityMetadataTests
+public sealed class EntityMetadataUnitTests
 {
     private static (IEntityType entityType, IProperty pkProperty) BuildEfMetadata()
     {

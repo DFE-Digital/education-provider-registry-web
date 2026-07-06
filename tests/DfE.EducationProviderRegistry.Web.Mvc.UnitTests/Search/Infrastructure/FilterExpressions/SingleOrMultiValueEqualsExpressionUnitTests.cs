@@ -3,7 +3,7 @@ using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.FilterExpressi
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Search.Infrastructure.FilterExpressions;
 
-public sealed class SingleOrMultiValueEqualsExpressionTests
+public sealed class SingleOrMultiValueEqualsExpressionUnitTests
 {
     private static SearchFilterRequest Req(string key, params object[] values) => new(key, values);
 

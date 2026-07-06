@@ -7,7 +7,7 @@ using Moq;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Search.Infrastructure.Core.Providers.SearchOrchestrators;
 
-public sealed class TrigramSearchOrchestratorTests
+public sealed class TrigramSearchOrchestratorUnitTests
 {
     public sealed class TestEntity
     {

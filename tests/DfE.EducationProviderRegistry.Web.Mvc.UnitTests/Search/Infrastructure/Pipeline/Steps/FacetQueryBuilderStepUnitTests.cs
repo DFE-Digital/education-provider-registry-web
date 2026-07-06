@@ -4,7 +4,7 @@ using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Pipeline.Steps
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Search.Infrastructure.Pipeline.Steps;
 
-public sealed class FacetQueryBuilderStepTests
+public sealed class FacetQueryBuilderStepUnitTests
 {
     private static SearchPipelineContext BuildContext(
         params (string FacetName, Task<IReadOnlyList<FacetResult>> Task)[] tasks)

@@ -40,7 +40,6 @@ builder.Services.AddTransient<
 builder.Services.AddTransient<
     IMapper<EstablishmentSearchResultDto, GovUkTable>,
     SearchResultsEstablishmentSummaryTableMapper>();
-
 builder.Services.AddTransient<
     IMapper<EstablishmentDto, EstablishmentDetailsPageViewModel>,
     EstablishmentDetailsPageViewModelMapper>();

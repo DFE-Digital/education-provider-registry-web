@@ -3,7 +3,7 @@ using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Core.Filtering
 using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure.Mappers;
 using System.Collections.ObjectModel;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Search.Mappers;
+namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Search.Infrastructure.Mappers;
 
 public sealed class SearchRequestFiltersToCoreFiltersMapperTests
 {

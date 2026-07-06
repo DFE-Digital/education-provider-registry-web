@@ -2,7 +2,7 @@
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Search.Infrastructure.Core.Providers.SearchOrchestrators.EFMetadataResolver;
 
-public sealed class CachedEntityMetadataResolverTests
+public sealed class CachedEntityMetadataResolverUnitTests
 {
     [Fact]
     public void Resolve_WithNullDbContext_ThrowsArgumentNullException()

@@ -115,7 +115,13 @@ public sealed class GroupsControllerTests
     public async Task Details_ReturnsView_WithMappedModel_WhenSuccessful()
     {
         // Arrange
-        GroupDetailsPageViewModel viewModel = new();
+        GroupDetailsPageViewModel viewModel = new()
+        {
+            Academies = new(),
+            Details = new(),
+            Governance = new(),
+            Heading = "heading"
+        };
 
         Mock<IMapper<GroupReadModel, GroupDetailsPageViewModel>> mapperMock =
             IMapperTestDouble.Map<GroupReadModel, GroupDetailsPageViewModel>(viewModel);

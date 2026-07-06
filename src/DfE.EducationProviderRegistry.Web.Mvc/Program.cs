@@ -1,6 +1,8 @@
+using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Data.DatabaseModels.Context;
 using DfE.EducationProviderRegistry.Web.Mvc.Extensions;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments.ViewModels;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search;
 using Microsoft.AspNetCore.CookiePolicy;
@@ -14,7 +16,9 @@ builder.Services
     .AddRazorOptions((options) =>
     {
         options.ViewLocationExpanders.Add(new FeatureViewLocationExpander());
-    });
+    })
+    .AddApplicationPart(typeof(DfE.EducationProviderRegistry.Web.ViewComponents.Table.SharedGovUkTableViewComponent).Assembly);
+
 
 builder.Services.AddRouting(options =>
 {
@@ -29,10 +33,12 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
     options.Secure = CookieSecurePolicy.Always;
 });
 
-builder.Services.AddDbContext<EducationProviderRegistryDbContext>(options =>
+builder.Services.AddDbContext<EducationProviderRegistryDbContext>(
+    (options) =>
     {
         string connectionString = builder.Configuration["eprweb-eprdat-dotnet-db-connection"]
-            ?? throw new InvalidOperationException("Database connection string not configured.");
+            ?? throw new InvalidOperationException(
+                "Database connection string not configured.");
 
         options.UseNpgsql(connectionString);
     });

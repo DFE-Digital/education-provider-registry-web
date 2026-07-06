@@ -25,4 +25,8 @@
 	<InternalsVisibleTo Include="DfE.EducationProviderRegistry.Web.Mvc.UnitTests" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DfE.EducationProviderRegistry.Web.ViewComponents\DfE.EducationProviderRegistry.Web.ViewComponents.csproj" />
+  </ItemGroup>
+
 </Project>

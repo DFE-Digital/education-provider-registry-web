@@ -117,7 +117,7 @@ jobs:
 
     - name: SonarCloud scan
       if: github.actor != 'dependabot[bot]'
-      uses: DFE-Digital/github-actions/sonarscan-dotnet@9d8ee99d6564851c28500859a0740c3928ad50e3
+      uses: DFE-Digital/github-actions/sonarscan-dotnet@f55be113b82625ba997c4960aa93fd10ffa043ad
       with:
           sonarcloud-project-key: DFE-Digital_education-provider-registry-web
           sonarcloud-token: ${{ secrets.SONAR_TOKEN }}

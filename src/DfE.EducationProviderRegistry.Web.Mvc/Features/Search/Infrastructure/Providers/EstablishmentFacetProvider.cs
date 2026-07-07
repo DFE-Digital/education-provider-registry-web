@@ -18,7 +18,7 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.P
 /// grouping and counting. Facet selectors must be valid LINQ expressions that
 /// EF Core can translate into SQL.
 /// </remarks>
-public sealed class EstablishmentFacetProvider : IFacetProvider<Establishment>
+public sealed class EstablishmentFacetProvider : IFacetProvider
 {
     private readonly IDbContextFactory<EducationProviderRegistryDbContext> _contextFactory;
 

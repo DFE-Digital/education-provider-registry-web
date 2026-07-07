@@ -168,9 +168,8 @@ public sealed class CompositionRootUnitTests
         using IServiceScope scope = provider.CreateScope();
 
         // act
-        IFacetProvider<Establishment> facetProvider =
-            scope.ServiceProvider.GetRequiredService<
-                IFacetProvider<Establishment>>();
+        IFacetProvider facetProvider =
+            scope.ServiceProvider.GetRequiredService<IFacetProvider>();
 
         // assert
         Assert.IsType<EstablishmentFacetProvider>(facetProvider);

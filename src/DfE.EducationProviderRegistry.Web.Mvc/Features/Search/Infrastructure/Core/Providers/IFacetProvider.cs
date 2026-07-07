@@ -8,13 +8,7 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.C
 ///     and returns aggregated facet buckets representing counts or groupings
 ///     relevant to the search domain (e.g., categories, brands, types).
 /// </summary>
-/// <typeparam name="TEntity">
-///     The entity type for which facet information is being retrieved.
-///     This type parameter ensures alignment with the search pipeline and
-///     allows facet providers to operate on domain‑specific entity models.
-/// </typeparam>
-public interface IFacetProvider<TEntity>
-    where TEntity : class
+public interface IFacetProvider
 {
     /// <summary>
     ///     Retrieves facet buckets for the specified facet name, based on the

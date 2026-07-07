@@ -40,7 +40,7 @@ public sealed class EstablishmentsSearchServiceAdapterTests
         EstablishmentsSearchServiceAdapter adapter =
             new(
                 searchProvider.Object,
-                Mock.Of<IFacetProvider<Establishment>>(),
+                Mock.Of<IFacetProvider>(),
                 [],
                 resultsMapper.Object,
                 filterMapper.Object);
@@ -98,7 +98,7 @@ public sealed class EstablishmentsSearchServiceAdapterTests
         EstablishmentsSearchServiceAdapter adapter =
             new(
                 provider.Object,
-                Mock.Of<IFacetProvider<Establishment>>(),
+                Mock.Of<IFacetProvider>(),
                 [step1.Object, step2.Object],
                 resultsMapper.Object,
                 filterMapper.Object);
@@ -154,7 +154,7 @@ public sealed class EstablishmentsSearchServiceAdapterTests
         EstablishmentsSearchServiceAdapter adapter =
             new(
                 provider.Object,
-                Mock.Of<IFacetProvider<Establishment>>(),
+                Mock.Of<IFacetProvider>(),
                 [],
                 resultsMapper.Object,
                 filterMapper.Object);
@@ -225,7 +225,7 @@ public sealed class EstablishmentsSearchServiceAdapterTests
         EstablishmentsSearchServiceAdapter adapter =
             new(
                 provider.Object,
-                Mock.Of<IFacetProvider<Establishment>>(),
+                Mock.Of<IFacetProvider>(),
                 [step.Object],
                 resultsMapper.Object,
                 filterMapper.Object);

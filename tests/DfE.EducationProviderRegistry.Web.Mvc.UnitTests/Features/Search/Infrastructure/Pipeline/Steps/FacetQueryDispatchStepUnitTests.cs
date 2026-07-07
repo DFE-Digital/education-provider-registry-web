@@ -15,7 +15,7 @@ public sealed class FacetQueryDispatchStepUnitTests
     public async Task Execute_Throws_WhenIdsMissing()
     {
         // arrange
-        Mock<IFacetProvider<Establishment>> providerMock =
+        Mock<IFacetProvider> providerMock =
             FacetProviderTestDouble.Mock();
         FacetQueryDispatchStep step = new(providerMock.Object);
 
@@ -35,7 +35,7 @@ public sealed class FacetQueryDispatchStepUnitTests
     public async Task Execute_Throws_WhenFacetNamesMissing()
     {
         // arrange
-        Mock<IFacetProvider<Establishment>> providerMock =
+        Mock<IFacetProvider> providerMock =
             FacetProviderTestDouble.Mock();
         FacetQueryDispatchStep step = new(providerMock.Object);
         ReadOnlyCollection<string> ids = new(["10001"]);
@@ -55,7 +55,7 @@ public sealed class FacetQueryDispatchStepUnitTests
     public async Task Execute_Throws_WhenFacetNameIsEmpty()
     {
         // arrange
-        Mock<IFacetProvider<Establishment>> providerMock =
+        Mock<IFacetProvider> providerMock =
             FacetProviderTestDouble.Mock();
         FacetQueryDispatchStep step = new(providerMock.Object);
         ReadOnlyCollection<string> ids = new(["10001"]);
@@ -76,7 +76,7 @@ public sealed class FacetQueryDispatchStepUnitTests
     public async Task Execute_Throws_WhenCancellationRequested()
     {
         // arrange
-        Mock<IFacetProvider<Establishment>> providerMock =
+        Mock<IFacetProvider> providerMock =
             FacetProviderTestDouble.Mock();
         FacetQueryDispatchStep step = new(providerMock.Object);
         ReadOnlyCollection<string> ids = new(["10001"]);
@@ -98,7 +98,7 @@ public sealed class FacetQueryDispatchStepUnitTests
     public async Task Execute_SetsEmptyTaskList_WhenFacetNamesEmpty()
     {
         // arrange
-        Mock<IFacetProvider<Establishment>> providerMock =
+        Mock<IFacetProvider> providerMock =
             FacetProviderTestDouble.Mock();
         FacetQueryDispatchStep step = new(providerMock.Object);
         ReadOnlyCollection<string> ids = new(["10001"]);
@@ -123,7 +123,7 @@ public sealed class FacetQueryDispatchStepUnitTests
     public async Task Execute_DispatchesFacetTasksCorrectly()
     {
         // arrange
-        Mock<IFacetProvider<Establishment>> providerMock =
+        Mock<IFacetProvider> providerMock =
             FacetProviderTestDouble.MockFor([new FacetResult("Primary", 10)]);
         FacetQueryDispatchStep step = new(providerMock.Object);
         ReadOnlyCollection<string> ids = new(["10001"]);

@@ -67,7 +67,7 @@ public sealed class EstablishmentsSearchServiceAdapter
     /// </exception>
     public EstablishmentsSearchServiceAdapter(
         ISearchProvider<Establishment> idProvider,
-        IFacetProvider<Establishment> facetProvider,
+        IFacetProvider facetProvider,
         IEnumerable<ISearchPipelineStep> pipeline,
         IMapper<
             SearchPipelineContext,

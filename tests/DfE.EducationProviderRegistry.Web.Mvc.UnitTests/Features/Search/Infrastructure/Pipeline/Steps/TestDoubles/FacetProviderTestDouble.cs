@@ -1,5 +1,4 @@
 ﻿using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
-using DfE.EducationProviderRegistry.Data.DatabaseModels.Models;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.Core.Providers;
 using Moq;
 using System.Collections.ObjectModel;
@@ -10,13 +9,13 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Infras
 [ExcludeFromCodeCoverage]
 internal class FacetProviderTestDouble
 {
-    public static Mock<IFacetProvider<Establishment>> Mock() =>
+    public static Mock<IFacetProvider> Mock() =>
         new(MockBehavior.Strict);
 
-    public static Mock<IFacetProvider<Establishment>>
+    public static Mock<IFacetProvider>
         MockFor(IReadOnlyList<FacetResult> facetResults)
     {
-        Mock<IFacetProvider<Establishment>> facetProviderMock = Mock();
+        Mock<IFacetProvider> facetProviderMock = Mock();
 
         facetProviderMock
             .Setup(facetProvider => facetProvider.GetFacetsAsync(

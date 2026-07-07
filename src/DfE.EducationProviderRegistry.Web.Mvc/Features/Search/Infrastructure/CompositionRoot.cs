@@ -146,7 +146,7 @@ public static class CompositionRoot
         /// Registers the facet provider responsible for computing facet
         /// aggregations over filtered establishment result sets.
         /// </summary>
-        services.TryAddScoped<IFacetProvider<Establishment>, EstablishmentFacetProvider>();
+        services.TryAddScoped<IFacetProvider, EstablishmentFacetProvider>();
 
         // ---------------------------------------------------------
         // Pipeline steps
@@ -165,7 +165,7 @@ public static class CompositionRoot
 
         services.AddScoped<ISearchPipelineStep>(sp =>
             new FacetQueryDispatchStep(
-                sp.GetRequiredService<IFacetProvider<Establishment>>()));
+                sp.GetRequiredService<IFacetProvider>()));
 
         services.AddScoped<ISearchPipelineStep, FacetQueryResolverStep>();
         services.AddScoped<ISearchPipelineStep, FacetQueryBuilderStep>();

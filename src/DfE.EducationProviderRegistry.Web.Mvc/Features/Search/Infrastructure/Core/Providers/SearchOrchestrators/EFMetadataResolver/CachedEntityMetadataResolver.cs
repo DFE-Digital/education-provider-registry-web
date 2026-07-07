@@ -9,6 +9,10 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.C
 /// key information.
 /// </summary>
 /// <typeparam name="TProjection">The EF‑mapped entity type.</typeparam>
+[System.Diagnostics.CodeAnalysis.SuppressMessage(
+    "Usage",
+    "CA2214:DoNotCallOverridableMethodsInConstructors",
+    Justification = "Static cache is intentional and thread-safe.")]
 public sealed class CachedEntityMetadataResolver<TProjection> : IEntityMetadataResolver<TProjection>
     where TProjection : class
 {

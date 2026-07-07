@@ -17,14 +17,14 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.P
 /// </remarks>
 internal sealed class FacetQueryDispatchStep : ISearchPipelineStep
 {
-    private readonly IFacetProvider<Establishment> _facetProvider;
+    private readonly IFacetProvider _facetProvider;
 
     /// <summary>
     /// Creates a new instance of <see cref="FacetQueryDispatchStep"/>.
     /// </summary>
     /// <param name="facetProvider">The facet provider used to execute facet queries.</param>
     public FacetQueryDispatchStep(
-        IFacetProvider<Establishment> facetProvider)
+        IFacetProvider facetProvider)
     {
         _facetProvider = facetProvider;
     }

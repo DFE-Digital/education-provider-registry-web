@@ -1,7 +1,8 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.Core.Providers.SearchOrchestrators;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.Core.Providers.SearchOrchestrators.Context;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.Core.Providers.SearchOrchestrators.Context;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.Core.Providers.SearchOrchestrators.EFMetadataResolver;
 using Microsoft.EntityFrameworkCore;
+
+namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.Core.Providers.SearchOrchestrators;
 
 /// <summary>
 /// Orchestrates a PostgreSQL trigram-based search using <c>pg_trgm</c>,

@@ -1,10 +1,23 @@
+using Microsoft.AspNetCore.Mvc.Testing;
+using System.Net;
+
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests;
 
-public class UnitTest1
+public class IntegrationTestExample
 {
-    [Fact]
-    public void Test1()
+    private readonly CancellationToken _ct;
+    public IntegrationTestExample()
     {
-        Assert.True(true);
+        _ct = TestContext.Current.CancellationToken;
+    }
+
+    [Fact]
+    public async Task ExampleIntegrationTest()
+    {
+        using WebApplicationFactory<Program> factory = new();
+        using HttpClient client = factory.CreateClient();
+        HttpResponseMessage response = await client.GetAsync("/", _ct);
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 }

@@ -7,6 +7,7 @@
   <Folder Name="/tests/">
     <File Path="tests/Directory.Build.props" />
     <File Path="tests/Directory.Packages.props" />
+    <Project Path="tests/DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests/DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.csproj" />
     <Project Path="tests/DfE.EducationProviderRegistry.Web.Mvc.UnitTests/DfE.EducationProviderRegistry.Web.Mvc.UnitTests.csproj" />
     <Project Path="tests/DfE.EducationProviderRegistry.Web.ViewComponents.UnitTests/DfE.EducationProviderRegistry.Web.ViewComponents.UnitTests.csproj" />
   </Folder>

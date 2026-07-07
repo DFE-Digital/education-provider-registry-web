@@ -24,7 +24,7 @@ public class EstablishmentController : Controller
         _getEstablishmentByIdUseCase = getEstablishmentByIdUseCase;
     }
 
-    [HttpGet("/establishment/{urn}")]
+    [HttpGet("/establishments/{urn}")]
     public async Task<IActionResult> Details(string urn)
     {
         UseCaseResponse<EstablishmentDetailsModel> response = await _getEstablishmentByIdUseCase

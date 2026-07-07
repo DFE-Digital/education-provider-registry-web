@@ -1,6 +1,4 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.Core.Filtering.FilterExpressions;
-
-namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.Core.Filtering.FilterExpressions.Factories;
+﻿namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.Core.Filtering.FilterExpressions.Factories;
 
 /// <summary>
 /// Provides an abstraction over which to derive Azure AI OData filter

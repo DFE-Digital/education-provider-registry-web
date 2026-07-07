@@ -1,5 +1,4 @@
 ﻿using DfE.EducationProviderRegistry.Data.DatabaseModels.Models;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.Pipeline;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.Pipeline.Steps;
 

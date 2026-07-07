@@ -1,6 +1,4 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.Core.Filtering.FilterExpressions;
-
-namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.Core.Filtering.FilterExpressions.Factories;
+﻿namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.Core.Filtering.FilterExpressions.Factories;
 
 /// <summary>
 /// Factory responsible for creating concrete <see cref="ISearchFilterExpression"/> instances.

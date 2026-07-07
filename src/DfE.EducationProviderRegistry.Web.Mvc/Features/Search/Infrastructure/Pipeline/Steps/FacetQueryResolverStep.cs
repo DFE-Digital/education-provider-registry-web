@@ -1,5 +1,4 @@
 ﻿using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.Pipeline;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.Pipeline.Steps;
 

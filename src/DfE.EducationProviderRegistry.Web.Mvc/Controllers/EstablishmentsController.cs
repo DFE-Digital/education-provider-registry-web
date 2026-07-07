@@ -7,14 +7,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Controllers;
 
-public class EstablishmentController : Controller
+[Route("establishments")]
+public class EstablishmentsController : Controller
 {
     private readonly IMapper<EstablishmentDetailsModel, EstablishmentDetailsPageViewModel>
         _establishmentDetailsPageMapper;
     private readonly IUseCase<GetEstablishmentByIdRequest, UseCaseResponse<EstablishmentDetailsModel>>
         _getEstablishmentByIdUseCase;
 
-    public EstablishmentController(
+    public EstablishmentsController(
         IMapper<EstablishmentDetailsModel, EstablishmentDetailsPageViewModel> basicMapper,
         IUseCase<GetEstablishmentByIdRequest, UseCaseResponse<EstablishmentDetailsModel>> getEstablishmentByIdUseCase)
     {
@@ -24,7 +25,7 @@ public class EstablishmentController : Controller
         _getEstablishmentByIdUseCase = getEstablishmentByIdUseCase;
     }
 
-    [HttpGet("/establishments/{urn}")]
+    [HttpGet("{urn}")]
     public async Task<IActionResult> Details(string urn)
     {
         UseCaseResponse<EstablishmentDetailsModel> response = await _getEstablishmentByIdUseCase

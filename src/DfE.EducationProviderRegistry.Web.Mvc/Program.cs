@@ -5,21 +5,30 @@ using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Establi
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Filter;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
-using DfE.EducationProviderRegistry.Web.Mvc.ApplicationDtos;
-using DfE.EducationProviderRegistry.Web.Mvc.Mappers;
-using DfE.EducationProviderRegistry.Web.Mvc.Search.Infrastructure;
-using DfE.EducationProviderRegistry.Web.Mvc.Search.Mappers;
-using DfE.EducationProviderRegistry.Web.Mvc.Search.ViewModels;
+using DfE.EducationProviderRegistry.Data.DatabaseModels.Context;
+using DfE.EducationProviderRegistry.Web.Mvc.Extensions;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
-using DfE.EducationProviderRegistry.Web.Mvc.ViewModels.Pages;
 using Microsoft.AspNetCore.CookiePolicy;
-using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services
+    .AddControllersWithViews()
+    .AddRazorOptions((options) =>
+    {
+        options.ViewLocationExpanders.Add(new FeatureViewLocationExpander());
+    })
+    .AddApplicationPart(typeof(
+        DfE.EducationProviderRegistry.Web.ViewComponents.Table.SharedGovUkTableViewComponent).Assembly);
+
 
 builder.Services.AddRouting(options =>
 {
@@ -34,46 +43,28 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
     options.Secure = CookieSecurePolicy.Always;
 });
 
-builder.Services.AddTransient<
-    IMapper<List<EstablishmentSearchResultDto>, SearchResultsViewModel>,
-    SearchResultsPageViewModelMapper>();
-builder.Services.AddTransient<
-    IMapper<EstablishmentSearchResultDto, GovUkTable>,
-    SearchResultsEstablishmentSummaryTableMapper>();
-builder.Services.AddTransient<
-    IMapper<EstablishmentDto, EstablishmentDetailsPageViewModel>,
-    EstablishmentDetailsPageViewModelMapper>();
-builder.Services.AddTransient<
-    IMapper<EstablishmentBasicDetailsDto, GovUkTable>,
-    EstablishmentDetailsBasicDetailsTableMapper>();
-builder.Services.AddTransient<
-    IMapper<List<EstablishmentGovernorDto>, GovUkTable>,
-    EstablishmentDetailsGovernorsTableMapper>();
-builder.Services.AddTransient<
-    IMapper<List<EstablishmentHistoryDto>, GovUkTable>,
-    EstablishmentDetailsHistoryTableMapper>();
-builder.Services.AddTransient<
-    IMapper<GroupDto, GroupDetailsPageViewModel>,
-    GroupDetailsPageViewModelMapper>();
-builder.Services.AddTransient<
-    IMapper<GroupBasicDetailsDto, GovUkTable>,
-    GroupDetailsBasicDetailsTableMapper>();
-builder.Services.AddTransient<
-    IMapper<List<GroupAcademiesDto>, GovUkTable>,
-    GroupDetailsAcademiesTableMapper>();
-builder.Services.AddTransient<
-    IMapper<List<GroupTrusteesDto>, GovUkTable>,
-    GroupDetailsTrusteesTableMapper>();
-builder.Services.AddTransient<
-    IMapper<List<GroupMembersDto>, GovUkTable>,
-    GroupDetailsMembersTableMapper>();
+builder.Services.AddDbContextFactory<EducationProviderRegistryDbContext>(options =>
+{
+    string connectionString = builder.Configuration["eprweb_eprdat_dotnet_db_connection"]
+            ?? throw new InvalidOperationException(
+                "Database connection string not configured.");
+
+    options.UseNpgsql(connectionString)
+           .EnableSensitiveDataLogging()
+           .EnableDetailedErrors()
+           .LogTo(Console.WriteLine, LogLevel.Information);
+});
 
 // Search registrations.
 builder.Services
-    .AddSingleton<IMapper<UseCaseResponse<SearchResponse>, SearchResultsViewModel>, SearchResultsToViewModelMapper>()
-    .AddSingleton<IMapper<IReadOnlyCollection<SearchFacet>, List<FacetViewModel>>, FacetResultsToViewModelMapper>()
-    .AddSingleton<IMapper<IReadOnlyCollection<EstablishmentSearchResult>, List<GovUkTable>>, EstablishmentSearchResultsToViewModelMapper>()
-    .AddSingleton<IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>, SelectedFacetsToFilterRequestsMapper>();
+    .AddSingleton<IMapper<
+        UseCaseResponse<SearchResponse>, SearchResultsViewModel>, SearchResultsToViewModelMapper>()
+    .AddSingleton<IMapper<
+        IReadOnlyCollection<SearchFacet>, List<FacetViewModel>>, FacetResultsToViewModelMapper>()
+    .AddSingleton<IMapper<
+        IReadOnlyCollection<EstablishmentSearchResult>, List<GovUkTable>>, EstablishmentSearchResultsToViewModelMapper>()
+    .AddSingleton<IMapper<
+        Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>, SelectedFacetsToFilterRequestsMapper>();
 builder.Services.AddSearchDependencies();
 
 // Bind search criteria configuration options.
@@ -83,12 +74,12 @@ builder.Services.AddOptions<SearchCriteria>()
             .GetSection(nameof(SearchCriteria))
             .Bind(settings));
 
-// Register strongly typed configuration instances.
-builder.Services.AddSingleton(serviceProvider =>
-    serviceProvider.GetRequiredService<IOptions<SearchCriteria>>().Value);
-
-builder.Services.AddInfraSearchDependencies();
-builder.Services.AddInfraSearchFilterDependencies(builder.Configuration);
+builder.Services
+    .AddEstablishments()
+    .AddGroups()
+    .AddSearchDependencies()
+    .AddInfraSearchDependencies(builder.Configuration)
+    .AddInfraSearchFilterDependencies(builder.Configuration);
 
 var app = builder.Build();
 
@@ -137,6 +128,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
-
 
 app.Run();

@@ -2,10 +2,16 @@
   <Folder Name="/src/">
     <Project Path="src/DfE.EducationProviderRegistry.Web.Api/DfE.EducationProviderRegistry.Web.Api.csproj" Id="c7a463ad-27aa-453d-adc2-e8ed0bb85d73" />
     <Project Path="src/DfE.EducationProviderRegistry.Web.Mvc/DfE.EducationProviderRegistry.Web.Mvc.csproj" />
+    <Project Path="src/DfE.EducationProviderRegistry.Web.ViewComponents/DfE.EducationProviderRegistry.Web.ViewComponents.csproj">
+      <Build Solution="Debug|*" Project="false" />
+    </Project>
   </Folder>
   <Folder Name="/tests/">
     <File Path="tests/Directory.Build.props" />
     <File Path="tests/Directory.Packages.props" />
     <Project Path="tests/DfE.EducationProviderRegistry.Web.Mvc.UnitTests/DfE.EducationProviderRegistry.Web.Mvc.UnitTests.csproj" />
+    <Project Path="tests/DfE.EducationProviderRegistry.Web.ViewComponents.UnitTests/DfE.EducationProviderRegistry.Web.ViewComponents.UnitTests.csproj">
+      <Build Solution="Debug|*" Project="false" />
+    </Project>
   </Folder>
 </Solution>

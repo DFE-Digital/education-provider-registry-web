@@ -1,0 +1,296 @@
+﻿using DfE.Core.Libraries.CrossCutting.Mapper;
+using DfE.EducationProviderRegistry.Core.Query.Search.Application.Infrastructure;
+using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Establishment;
+using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Filter;
+using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
+using DfE.EducationProviderRegistry.Data.DatabaseModels.Context;
+using DfE.EducationProviderRegistry.Data.DatabaseModels.Models;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.Core.Filtering;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.Core.Filtering.FilterExpressions;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.Core.Filtering.FilterExpressions.Factories;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.Core.Filtering.FilterExpressions.Formatters;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.Core.Filtering.LogicalOperators;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.Core.Filtering.LogicalOperators.Factories;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.Core.Filtering.Options;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.Core.Providers;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.Core.Providers.SearchOrchestrators;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.Core.Providers.SearchOrchestrators.EFMetadataResolver;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.FilterExpressions;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.Mappers;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.Pipeline;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.Pipeline.Steps;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.Providers;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure.Providers.Projections;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Collections.ObjectModel;
+using System.Linq.Expressions;
+
+namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure;
+
+/// <summary>
+/// Provides dependency‑injection registration for all infrastructure‑level
+/// search components used by the MVC application. This includes orchestrators,
+/// providers, pipeline steps, mappers, filter expression builders, and
+/// supporting metadata resolvers.
+/// </summary>
+/// <remarks>
+/// This composition root is responsible for wiring together the complete
+/// search pipeline, including trigram search orchestration, facet providers,
+/// projection builders, SQL execution, filter expression factories, and
+/// logical operator factories. All registrations are scoped or singleton
+/// depending on their intended usage within the search pipeline.
+/// </remarks>
+public static class CompositionRoot
+{
+    /// <summary>
+    /// Registers all infrastructure‑level search dependencies required for
+    /// executing establishment search operations. This includes orchestrators,
+    /// providers, pipeline steps, and mappers.
+    /// </summary>
+    /// <param name="services">
+    /// The DI service collection to which search dependencies will be added.
+    /// </param>
+    /// <returns>
+    /// The updated <see cref="IServiceCollection"/> containing all search
+    /// infrastructure registrations.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="services"/> is <c>null</c>.
+    /// </exception>
+    public static IServiceCollection AddInfraSearchDependencies(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        // ---------------------------------------------------------
+        // DbContext factory 
+        // ---------------------------------------------------------
+        if (!services.Any(serviceDescriptor =>
+            serviceDescriptor.ServiceType == typeof(IDbContextFactory<EducationProviderRegistryDbContext>)))
+        {
+            services.AddDbContextFactory<EducationProviderRegistryDbContext>(options =>
+            {
+                string connectionString = configuration["eprweb_eprdat_dotnet_db_connection"]
+                    ?? throw new InvalidOperationException(
+                        "Database connection string not configured.");
+
+                options.UseNpgsql(connectionString)
+                       .EnableSensitiveDataLogging()
+                       .EnableDetailedErrors()
+                       .LogTo(Console.WriteLine, LogLevel.Information);
+            });
+        }
+
+        // ---------------------------------------------------------
+        // Search orchestrator (trigram)
+        // ---------------------------------------------------------
+        /// <summary>
+        /// Registers the trigram‑based search orchestrator responsible for
+        /// executing similarity search queries against the database.
+        /// </summary>
+        services.TryAddScoped<ISearchOrchestrator<Establishment>, TrigramSearchOrchestrator<Establishment>>();
+
+        // ---------------------------------------------------------
+        // Projection builder
+        // ---------------------------------------------------------
+        /// <summary>
+        /// Registers the projection builder used to construct
+        /// <see cref="EstablishmentSearchResult"/> projections from
+        /// <see cref="Establishment"/> entities.
+        /// </summary>
+        services.TryAddScoped<ISearchProjectionBuilder<Establishment>,
+            EstablishmentSearchProjectionBuilder>();
+
+        // ---------------------------------------------------------
+        // Search orchestration metadata
+        // ---------------------------------------------------------
+        /// <summary>
+        /// Registers metadata resolvers used by the search orchestrator to
+        /// inspect EF Core entity metadata and optimise SQL generation.
+        /// </summary>
+        services.AddSingleton(typeof(IEntityMetadataResolver<>), typeof(CachedEntityMetadataResolver<>));
+        services.AddScoped(typeof(ISearchOrchestrator<>), typeof(TrigramSearchOrchestrator<>));
+
+        // ---------------------------------------------------------
+        // SQL executor
+        // ---------------------------------------------------------
+        /// <summary>
+        /// Registers the SQL executor used by trigram search to execute raw
+        /// SQL queries and retrieve results.
+        /// </summary>
+        services.AddScoped(typeof(ISqlExecutor<>), typeof(SqlExecutor<>));
+
+        // ---------------------------------------------------------
+        // Search provider
+        // ---------------------------------------------------------
+        /// <summary>
+        /// Registers the establishment search provider responsible for
+        /// orchestrating search execution, projection building, and filter
+        /// expression evaluation.
+        /// </summary>
+        services.TryAddScoped<ISearchProvider<Establishment>>(sp =>
+            new EstablishmentsSearchProvider(
+                sp.GetRequiredService<IDbContextFactory<EducationProviderRegistryDbContext>>(),
+                sp.GetRequiredService<ISearchOrchestrator<Establishment>>(),
+                sp.GetRequiredService<ISearchProjectionBuilder<Establishment>>(),
+                sp.GetRequiredService<ISearchFilterExpressionsBuilder>(),
+                searchColumn: "name" // TODO: move to config
+            ));
+
+        // ---------------------------------------------------------
+        // Facet provider
+        // ---------------------------------------------------------
+        /// <summary>
+        /// Registers the facet provider responsible for computing facet
+        /// aggregations over filtered establishment result sets.
+        /// </summary>
+        services.TryAddScoped<IFacetProvider<Establishment>, EstablishmentFacetProvider>();
+
+        // ---------------------------------------------------------
+        // Pipeline steps
+        // ---------------------------------------------------------
+        /// <summary>
+        /// Registers all search pipeline steps used to transform search
+        /// requests into executable queries and map results back into
+        /// response models.
+        /// </summary>
+        services.AddScoped<ISearchPipelineStep, SearchOrderMapStep>();
+        services.AddScoped<ISearchPipelineStep, SearchOrderingStep>();
+
+        services.AddScoped<ISearchPipelineStep>(sp =>
+            new ParallelMappingStep(
+                sp.GetRequiredService<IMapper<Establishment, EstablishmentSearchResult>>()));
+
+        services.AddScoped<ISearchPipelineStep>(sp =>
+            new FacetQueryDispatchStep(
+                sp.GetRequiredService<IFacetProvider<Establishment>>()));
+
+        services.AddScoped<ISearchPipelineStep, FacetQueryResolverStep>();
+        services.AddScoped<ISearchPipelineStep, FacetQueryBuilderStep>();
+
+        // ---------------------------------------------------------
+        // Mappers
+        // ---------------------------------------------------------
+        /// <summary>
+        /// Registers mappers used to convert domain entities and pipeline
+        /// contexts into search result DTOs.
+        /// </summary>
+        services.TryAddSingleton<
+            IMapper<Establishment, EstablishmentSearchResult>,
+            EstablishmentToSearchResultMapper>();
+
+        services.TryAddSingleton<
+            IMapper<SearchPipelineContext, SearchResults<EstablishmentSearchResults, SearchFacets>>,
+            SearchResultsFromContextMapper>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers all filter‑related dependencies required for constructing
+    /// search filter expressions, logical operators, and filter expression
+    /// factories.
+    /// </summary>
+    /// <param name="services">
+    /// The DI service collection to which filter dependencies will be added.
+    /// </param>
+    /// <param name="configuration">
+    /// The application configuration used to bind filter expression options.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="services"/> is <c>null</c>.
+    /// </exception>
+    public static void AddInfraSearchFilterDependencies(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        // ---------------------------------------------------------
+        // Filter expression formatter
+        // ---------------------------------------------------------
+        services.TryAddScoped<IFilterExpressionFormatter, DefaultFilterExpressionFormatter>();
+
+        // ---------------------------------------------------------
+        // Logical operators
+        // ---------------------------------------------------------
+        services.TryAddScoped<AndLogicalOperator>();
+        services.TryAddScoped<OrLogicalOperator>();
+
+        // ---------------------------------------------------------
+        // Filter expressions
+        // ---------------------------------------------------------
+        services.TryAddScoped<SingleOrMultiValueEqualsExpression>();
+        services.TryAddScoped<ISearchFilterExpressionsBuilder, SearchFilterExpressionsBuilder>();
+
+        // ---------------------------------------------------------
+        // Filter expression factory
+        // ---------------------------------------------------------
+        services.TryAddSingleton<ISearchFilterExpressionFactory>(provider =>
+        {
+            var scoped = provider.CreateScope();
+            var map = new Dictionary<string, Func<ISearchFilterExpression>>
+            {
+                ["SingleOrMultiValueEqualsExpression"] = () =>
+                    scoped.ServiceProvider.GetRequiredService<SingleOrMultiValueEqualsExpression>()
+            };
+
+            return new SearchFilterExpressionFactory(map);
+        });
+
+        // ---------------------------------------------------------
+        // Filter request mappers
+        // ---------------------------------------------------------
+        services.TryAddSingleton<IMapper<
+            ReadOnlyCollection<FilterRequest>,
+            ReadOnlyCollection<SearchFilterRequest>>, SearchRequestFiltersToCoreFiltersMapper>();
+
+        // ---------------------------------------------------------
+        // Facet selectors
+        // ---------------------------------------------------------
+        services.AddSingleton<
+            Dictionary<string, Expression<Func<Establishment, object>>>>
+            (
+                new Dictionary<string, Expression<Func<Establishment, object>>>(StringComparer.OrdinalIgnoreCase)
+                {
+                    { "establishmenttypeid", e => e.EstablishmentTypeId }
+                }
+            );
+
+        // ---------------------------------------------------------
+        // Logical operator factory
+        // ---------------------------------------------------------
+        services.TryAddSingleton<ILogicalOperatorFactory>(provider =>
+        {
+            var scoped = provider.CreateScope();
+            var map = new Dictionary<string, Func<ILogicalOperator>>
+            {
+                ["AndLogicalOperator"] = () =>
+                    scoped.ServiceProvider.GetRequiredService<AndLogicalOperator>(),
+                ["OrLogicalOperator"] = () =>
+                    scoped.ServiceProvider.GetRequiredService<OrLogicalOperator>()
+            };
+
+            return new LogicalOperatorFactory(map);
+        });
+
+        // ---------------------------------------------------------
+        // Filter expression map options
+        // ---------------------------------------------------------
+        services.AddOptions<FilterKeyToFilterExpressionMapOptions>()
+            .Configure<IConfiguration>(
+                (settings, cfg) =>
+                    cfg.GetSection("FilterKeyToFilterExpressionMapOptions").Bind(settings))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        // ---------------------------------------------------------
+        // Search service adapter
+        // ---------------------------------------------------------
+        services.AddScoped<
+            ISearchServiceAdapter<EstablishmentSearchResults, SearchFacets>,
+            EstablishmentsSearchServiceAdapter>();
+    }
+}

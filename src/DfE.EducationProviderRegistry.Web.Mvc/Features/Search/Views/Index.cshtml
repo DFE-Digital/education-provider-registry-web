@@ -1,0 +1,24 @@
+﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels
+@model SearchRequestViewModel
+@{
+    ViewData["Title"] = "Search";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="govuk-heading-xl">Search the register</h1>
+<form asp-action="Search" asp-controller="Search" method="post">
+    <div class="govuk-form-group">
+        <label class="govuk-label" for="">
+            Establishment
+        </label>
+        <div id="" class="govuk-hint">
+            Enter an establishment name
+        </div>
+        <input 
+            asp-for="SearchKeywords"
+            class="govuk-input govuk-input--extra-letter-spacing"
+            id="SearchKeywords"
+            name="SearchKeywords" />
+    </div>
+    <button class="govuk-button" type="submit">Search</button>
+</form>

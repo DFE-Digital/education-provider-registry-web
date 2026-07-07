@@ -20,8 +20,8 @@ public sealed class EstablishmentsController : ControllerBase
     private readonly ILogger<EstablishmentsController> _logger;
     private readonly IUseCase<
         GetEstablishmentsRequest,
-        UseCaseResponse<IReadOnlyCollection<Establishment>>> _getEstablishmentsUseCase;
-    private readonly IMapper<Establishment, EstablishmentViewModel?> _modelToViewModelMapper;
+        UseCaseResponse<IReadOnlyCollection<EstablishmentDetailsModel>>> _getEstablishmentsUseCase;
+    private readonly IMapper<EstablishmentDetailsModel, EstablishmentViewModel?> _modelToViewModelMapper;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="EstablishmentsController"/> class.
@@ -38,8 +38,8 @@ public sealed class EstablishmentsController : ControllerBase
         ILogger<EstablishmentsController> logger,
         IUseCase<
             GetEstablishmentsRequest,
-            UseCaseResponse<IReadOnlyCollection<Establishment>>> getEstablishmentsUseCase,
-        IMapper<Establishment, EstablishmentViewModel?> modelToViewModelMapper)
+            UseCaseResponse<IReadOnlyCollection<EstablishmentDetailsModel>>> getEstablishmentsUseCase,
+        IMapper<EstablishmentDetailsModel, EstablishmentViewModel?> modelToViewModelMapper)
     {
         _logger = logger;
         _getEstablishmentsUseCase = getEstablishmentsUseCase;
@@ -79,7 +79,7 @@ public sealed class EstablishmentsController : ControllerBase
     public async Task<IActionResult> Get(
         CancellationToken cancellationToken = default)
     {
-        UseCaseResponse<IReadOnlyCollection<Establishment>> result =
+        UseCaseResponse<IReadOnlyCollection<EstablishmentDetailsModel>> result =
             await _getEstablishmentsUseCase
                 .HandleRequestAsync(
                     GetEstablishmentsRequest.Create(),
@@ -110,7 +110,7 @@ public sealed class EstablishmentsController : ControllerBase
         async IAsyncEnumerable<object?> StreamResults(
             [EnumeratorCancellation] CancellationToken ct = default)
         {
-            foreach (Establishment establishment in result.Model!)
+            foreach (EstablishmentDetailsModel establishment in result.Model!)
             {
                 ct.ThrowIfCancellationRequested();
                 yield return _modelToViewModelMapper.Map(establishment);

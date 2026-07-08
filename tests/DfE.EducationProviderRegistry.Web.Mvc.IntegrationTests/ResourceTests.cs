@@ -18,10 +18,9 @@ public sealed class ResourceTests
     [Theory]
 
     // *** CSS ***
-    // GOVUK
-    [InlineData("/css/govuk-frontend.min.css", "text/css")]
-    // MOJ
-    [InlineData("/css/moj-frontend.min.css", "text/css")]
+    // SITE
+    [InlineData("/css/site.css", "text/css")]
+
     // *** Javascript ***
     // GOVUK
     [InlineData("/js/govuk-frontend.min.js", "text/javascript")]

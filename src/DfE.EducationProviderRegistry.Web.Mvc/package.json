@@ -7,15 +7,13 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "build": "npm run govuk:css && npm run govuk:js && npm run govuk:fonts && npm run govuk:images && npm run govuk:manifest && npm run moj:css && npm run moj:js && npm run dfe:css",
-    "govuk:css": "copyfiles -f node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.css wwwroot/css",
+    "build": "npm run site:sass && npm run govuk:js && npm run govuk:fonts && npm run govuk:images && npm run govuk:manifest && npm run moj:js",
+    "site:sass": "sass --style=compressed --load-path=. --load-path=node_modules Styles/site.scss:wwwroot/css/site.css",
     "govuk:js": "copyfiles -f node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.js wwwroot/js",
     "govuk:fonts": "copyfiles -f node_modules/govuk-frontend/dist/govuk/assets/fonts/* wwwroot/assets/fonts",
     "govuk:images": "copyfiles -f node_modules/govuk-frontend/dist/govuk/assets/images/* wwwroot/assets/images",
     "govuk:manifest": "copyfiles -f node_modules/govuk-frontend/dist/govuk/assets/manifest.json wwwroot/assets",
-    "moj:css": "copyfiles -f node_modules/@ministryofjustice/frontend/moj/moj-frontend.min.css wwwroot/css",
-    "moj:js": "copyfiles -f node_modules/@ministryofjustice/frontend/moj/moj-frontend.min.js wwwroot/js",
-    "dfe:css": "copyfiles -f node_modules/dfe-frontend/dist/dfefrontend.css wwwroot/css",
+    "moj:js": "copyfiles -f node_modules/@ministryofjustice/frontend/moj/moj-frontend.min.js wwwroot/js"
   },
   "dependencies": {
     "@ministryofjustice/frontend": "^9.0.0",

@@ -34,7 +34,7 @@ public sealed class SearchControllerUnitTests
 
         // assert
         ViewResult view = Assert.IsType<ViewResult>(result);
-        Assert.Equal("~/Features/Search/Views/Index.cshtml", view.ViewName);
+        Assert.Equal("Index", view.ViewName);
         Assert.IsType<SearchRequestViewModel>(view.Model);
     }
 
@@ -87,7 +87,7 @@ public sealed class SearchControllerUnitTests
         Assert.Equal("academy", mappedViewModel.PrimarySearchTerms);
 
         ViewResult view = Assert.IsType<ViewResult>(result);
-        Assert.Equal("~/Features/Search/Views/Results.cshtml", view.ViewName);
+        Assert.Equal("Results", view.ViewName);
         Assert.Equal(mappedViewModel, view.Model);
     }
 
@@ -127,6 +127,6 @@ public sealed class SearchControllerUnitTests
         searchFacetsResultsMapper.Verify(mapper => mapper.Map(null), Times.Once);
 
         ViewResult view = Assert.IsType<ViewResult>(result);
-        Assert.Equal("~/Features/Search/Views/Results.cshtml", view.ViewName);
+        Assert.Equal("Results", view.ViewName);
     }
 }

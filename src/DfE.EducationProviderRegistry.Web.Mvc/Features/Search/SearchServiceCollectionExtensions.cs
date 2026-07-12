@@ -12,7 +12,7 @@ using System.Collections.ObjectModel;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search;
 
-internal static class ServiceCollectionExtensions
+internal static class SearchServiceCollectionExtensions
 {
     internal static IServiceCollection AddSearch(this IServiceCollection services, IConfiguration configuration)
     {

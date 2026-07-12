@@ -1,21 +1,10 @@
-using DfE.Core.Libraries.CleanArchitecture.Application;
-using DfE.Core.Libraries.CrossCutting.Mapper;
-using DfE.EducationProviderRegistry.Core.Query.Search;
-using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Establishment;
-using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Filter;
-using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
-using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
 using DfE.EducationProviderRegistry.Data.DatabaseModels.Context;
 using DfE.EducationProviderRegistry.Web.Mvc.Extensions;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Infrastructure;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
-using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.ObjectModel;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,9 +34,12 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
 
 builder.Services.AddDbContextFactory<EducationProviderRegistryDbContext>(options =>
 {
-    string connectionString = builder.Configuration["eprweb_eprdat_dotnet_db_connection"]
-            ?? throw new InvalidOperationException(
-                "Database connection string not configured.");
+    string? connectionString = builder.Configuration["eprweb_eprdat_dotnet_db_connection"];
+
+    if (string.IsNullOrWhiteSpace(connectionString))
+    {
+        throw new ArgumentException("Database connection string not configured.");
+    }
 
     options.UseNpgsql(connectionString)
            .EnableSensitiveDataLogging()
@@ -55,31 +47,11 @@ builder.Services.AddDbContextFactory<EducationProviderRegistryDbContext>(options
            .LogTo(Console.WriteLine, LogLevel.Information);
 });
 
-// Search registrations.
-builder.Services
-    .AddSingleton<IMapper<
-        UseCaseResponse<SearchResponse>, SearchResultsViewModel>, SearchResultsToViewModelMapper>()
-    .AddSingleton<IMapper<
-        IReadOnlyCollection<SearchFacet>, List<FacetViewModel>>, FacetResultsToViewModelMapper>()
-    .AddSingleton<IMapper<
-        IReadOnlyCollection<EstablishmentSearchResult>, List<GovUkTable>>, EstablishmentSearchResultsToViewModelMapper>()
-    .AddSingleton<IMapper<
-        Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>, SelectedFacetsToFilterRequestsMapper>();
-builder.Services.AddSearchDependencies();
-
-// Bind search criteria configuration options.
-builder.Services.AddOptions<SearchCriteria>()
-    .Configure<IConfiguration>((settings, configuration) =>
-        configuration
-            .GetSection(nameof(SearchCriteria))
-            .Bind(settings));
 
 builder.Services
     .AddEstablishments()
     .AddGroups()
-    .AddSearchDependencies()
-    .AddInfraSearchDependencies(builder.Configuration)
-    .AddInfraSearchFilterDependencies(builder.Configuration);
+    .AddSearch(builder.Configuration);
 
 var app = builder.Build();
 

@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests</RootNamespace>
+	<IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<PackageReference Include="coverlet.msbuild">
+		<PrivateAssets>all</PrivateAssets>
+		<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+	<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+	<PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
+	<PackageReference Include="xunit.v3.mtp-v2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\DfE.EducationProviderRegistry.Web.Mvc\DfE.EducationProviderRegistry.Web.Mvc.csproj" />
+  </ItemGroup>
+
+</Project>

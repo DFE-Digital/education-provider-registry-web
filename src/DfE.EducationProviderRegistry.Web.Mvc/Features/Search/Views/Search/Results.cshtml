@@ -2,10 +2,6 @@
 @using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents
 @model SearchResultsViewModel
 
-@{
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
-
 <h1 class="govuk-heading-xl">Search results</h1>
 
 <form method="post" asp-controller="Search" asp-action="Search">
@@ -30,7 +26,7 @@
                 </button>
 
                 @await Html.PartialAsync(
-                    "~/Features/Search/Views/_FiltersComponentGroup.cshtml",
+                    "_FiltersComponentGroup.cshtml",
                     (
                         Title: "Establishment type",
                         FacetKey: "t.establishment_type_id",

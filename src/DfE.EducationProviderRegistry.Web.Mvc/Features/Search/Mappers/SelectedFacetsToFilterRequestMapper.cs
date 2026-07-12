@@ -4,24 +4,6 @@ using System.Collections.ObjectModel;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 
-/// <summary>
-/// Maps the posted facet selections from the MVC search UI into a collection of
-/// <see cref="FilterRequest"/> objects used by the search pipeline.
-/// </summary>
-/// <remarks>
-/// The MVC UI posts selected facet values as a dictionary:
-/// <c>Dictionary&lt;string, List&lt;string&gt;&gt;</c>,
-/// where the key is the facet name and the list contains the selected values.
-/// 
-/// This mapper converts that structure into a read‑only collection of
-/// <see cref="FilterRequest"/> instances, each containing:
-/// <list type="bullet">
-/// <item><description>The facet name</description></item>
-/// <item><description>An array of selected values, cast to <see cref="object"/></description></item>
-/// </list>
-/// 
-/// If the dictionary is <c>null</c> or empty, an empty read‑only collection is returned.
-/// </remarks>
 public sealed class SelectedFacetsToFilterRequestsMapper :
     IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>
 {

@@ -1,23 +1,5 @@
 ﻿namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 
-/// <summary>
-/// Represents the user‑submitted search request from the MVC UI, including
-/// keywords, selected facet filters, paging information, and filter‑reset
-/// behaviour.
-/// </summary>
-/// <remarks>
-/// This view model is populated via model binding from the search form POST.
-/// It contains:
-/// <list type="bullet">
-/// <item><description>The search keywords entered by the user.</description></item>
-/// <item><description>The selected facet values grouped by facet name.</description></item>
-/// <item><description>Paging information (page number and page size).</description></item>
-/// <item><description>A flag indicating whether the user pressed “Clear filters”.</description></item>
-/// </list>
-/// 
-/// When <see cref="ClearFilters"/> is <c>true</c>, the <see cref="SelectedFacets"/>
-/// getter automatically returns <c>null</c>, ensuring that no filters are applied.
-/// </remarks>
 public sealed class SearchRequestViewModel
 {
     private Dictionary<string, List<string>>? _selectedFacets;

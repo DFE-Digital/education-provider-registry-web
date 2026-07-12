@@ -15,7 +15,7 @@
                             facetValue.Value == option.Value);
 
                 @await Html.PartialAsync(
-                    "~/Features/Search/Views/_FiltersComponent.cshtml",
+                    "_FiltersComponent.cshtml",
                     (Model.FacetKey, option.Label, option.Value, facetValue)
                 )
             }

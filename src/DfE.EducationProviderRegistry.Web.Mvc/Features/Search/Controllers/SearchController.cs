@@ -21,9 +21,10 @@ public sealed class SearchController : Controller
         IMapper<UseCaseResponse<SearchResponse>, SearchResultsViewModel> searchResponseToViewModelMapper,
         IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>> facetResultToViewModelMapper)
     {
-       ArgumentNullException.ThrowIfNull(searchUseCase);
-       ArgumentNullException.ThrowIfNull(searchResponseToViewModelMapper);
-       ArgumentNullException.ThrowIfNull(facetResultToViewModelMapper);
+        ArgumentNullException.ThrowIfNull(searchUseCase);
+        ArgumentNullException.ThrowIfNull(searchResponseToViewModelMapper);
+        ArgumentNullException.ThrowIfNull(facetResultToViewModelMapper);
+
         _searchUseCase = searchUseCase;
         _searchResponseToViewModelMapper = searchResponseToViewModelMapper;
         _facetResultToViewModelMapper = facetResultToViewModelMapper;

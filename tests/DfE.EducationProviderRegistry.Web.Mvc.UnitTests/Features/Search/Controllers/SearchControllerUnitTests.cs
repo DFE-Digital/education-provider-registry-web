@@ -16,6 +16,48 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Contro
 public sealed class SearchControllerUnitTests
 {
     [Fact]
+    public void Constructor_Throws_When_SearchUseCaseIsNull()
+    {
+        // arrange
+        Func<SearchController> construct = () =>
+            new(
+                searchUseCase: null!,
+                searchResponseToViewModelMapper: SearchResultsMapperTestDouble.Mock().Object,
+                facetResultToViewModelMapper: SearchFacetsResultsMapperTestDouble.Mock().Object);
+
+        // act & assert
+        Assert.Throws<ArgumentNullException>(construct);
+    }
+
+    [Fact]
+    public void Constructor_Throws_When_SearchResponseToViewModelMapperIsNull()
+    {
+        // arrange
+        Func<SearchController> construct = () =>
+            new(
+                searchUseCase: SearchUseCaseTestDouble.Mock().Object,
+                searchResponseToViewModelMapper: null!,
+                facetResultToViewModelMapper: SearchFacetsResultsMapperTestDouble.Mock().Object);
+
+        // act & assert
+        Assert.Throws<ArgumentNullException>(construct);
+    }
+
+    [Fact]
+    public void Constructor_Throws_When_FacetResultToViewModelMapperIsNull()
+    {
+        // arrange
+        Func<SearchController> construct = () =>
+            new(
+                searchUseCase: SearchUseCaseTestDouble.Mock().Object,
+                searchResponseToViewModelMapper: SearchResultsMapperTestDouble.Mock().Object,
+                facetResultToViewModelMapper: null!);
+
+        // act & assert
+        Assert.Throws<ArgumentNullException>(construct);
+    }
+
+    [Fact]
     public void Index_ReturnsCorrectViewAndModel()
     {
         // arrange

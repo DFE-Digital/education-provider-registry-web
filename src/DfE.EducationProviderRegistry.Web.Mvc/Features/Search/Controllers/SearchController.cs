@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Controllers;
 
+[Route("search")]
 public sealed class SearchController : Controller
 {
     private readonly IUseCase<SearchRequest, UseCaseResponse<SearchResponse>> _searchUseCase;
@@ -30,11 +31,11 @@ public sealed class SearchController : Controller
         _facetResultToViewModelMapper = facetResultToViewModelMapper;
     }
 
-    [HttpGet("/search")]
+    [HttpGet("")]
     public IActionResult Index() =>
         View("Index", new SearchRequestViewModel());
 
-    [HttpPost("/search")]
+    [HttpPost("")]
     public async Task<IActionResult> Search(SearchRequestViewModel model)
     {
         if (!ModelState.IsValid)

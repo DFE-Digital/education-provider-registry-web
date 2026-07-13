@@ -4,154 +4,68 @@
 
 <h1 class="govuk-heading-xl">Search results</h1>
 
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-one-third">
-        <div class="moj-filter" data-module="moj-filter">
-            <div class="moj-filter__header">
-                <div class="moj-filter__header-title">
-                    <h2 class="govuk-heading-m">Filter</h2>
-                </div>
-                <div class="moj-filter__header-action">
-                </div>
-            </div>
-            <div class="moj-filter__content">
-                <div class="moj-filter__selected">
-                    <div class="moj-filter__selected-heading">
-                        <div class="moj-filter__heading-title">
-                            <h2 class="govuk-heading-m">Selected filters</h2>
-                        </div>
-                        <div class="moj-filter__heading-action">
-                            <p><a class="govuk-link govuk-link--no-visited-state" href="">Clear filters</a></p>
-                        </div>
-                    </div>
-                    <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Type</h3>
-                    <ul class="moj-filter-tags">
-                        <li><a class="moj-filter__tag" href="/path/to/remove/this"><span class="govuk-visually-hidden">Remove this filter</span> Blue</a></li>
-                        <li><a class="moj-filter__tag" href="/path/to/remove/this"><span class="govuk-visually-hidden">Remove this filter</span> Yellow</a></li>
-                    </ul>
-                    <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Status</h3>
-                    <ul class="moj-filter-tags">
-                        <li><a class="moj-filter__tag" href="/path/to/remove/this"><span class="govuk-visually-hidden">Remove this filter</span> Completed</a></li>
-                    </ul>
-                </div>
-                <div class="moj-filter__options">
-                    <button type="submit" class="govuk-button" data-module="govuk-button" data-test-id="submit-button">
-                        Apply filters
-                    </button>
-                    <div class="govuk-form-group">
-                        <fieldset class="govuk-fieldset">
-                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-                                Type
-                            </legend>
-                            <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="type" name="type" type="checkbox" value="1" checked>
-                                    <label class="govuk-label govuk-checkboxes__label" for="type">
-                                        Blue (18)
-                                    </label>
-                                </div>
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="type-2" name="type" type="checkbox" value="2" checked>
-                                    <label class="govuk-label govuk-checkboxes__label" for="type-2">
-                                        Yellow (5)
-                                    </label>
-                                </div>
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="type-3" name="type" type="checkbox" value="3">
-                                    <label class="govuk-label govuk-checkboxes__label" for="type-3">
-                                        Red (2)
-                                    </label>
-                                </div>
-                            </div>
-                        </fieldset>
-                    </div>
-                    <div class="govuk-form-group">
-                        <fieldset class="govuk-fieldset">
-                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-                                Status
-                            </legend>
-                            <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="status" name="status" type="checkbox" value="complete" checked>
-                                    <label class="govuk-label govuk-checkboxes__label" for="status">
-                                        Completed (2)
-                                    </label>
-                                </div>
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="status-2" name="status" type="checkbox" value="incomplete">
-                                    <label class="govuk-label govuk-checkboxes__label" for="status-2">
-                                        Incomplete (5)
-                                    </label>
-                                </div>
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="status-3" name="status" type="checkbox" value="inprogress">
-                                    <label class="govuk-label govuk-checkboxes__label" for="status-3">
-                                        In progress (3)
-                                    </label>
-                                </div>
-                            </div>
-                        </fieldset>
-                    </div>
-                </div>
-            </div>
-        </div>
+<form method="post" asp-controller="Search" asp-action="Search">
 
-    </div>
+    <!-- Hidden fields to preserve search state -->
+    <input type="hidden" name="SearchKeywords" value="@Model.PrimarySearchTerms" />
 
-    <div class="govuk-grid-column-two-thirds">
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-one-half">
-                <p class="govuk-body">X results found</p>
-            </div>
-            <div class="govuk-grid-column-one-half">
-                <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button">
-                    Download results
-                </button>
-            </div>
-        </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-third">
 
-        @if (Model.EstablishmentResults.Any())
-        {
-            @foreach (GovUkTable result in Model.EstablishmentResults)
-            {
-                @await Component.InvokeAsync("GovUkTable", result)
+            @{
+                FacetViewModel establishmentTypeFacet =
+                    Model.Facets?.FirstOrDefault(facetViewModel =>
+                        facetViewModel.Name == "EstablishmentTypeId")!;
             }
 
-            <nav class="govuk-pagination" aria-label="Pagination">
-                <ul class="govuk-pagination__list">
-                    <li class="govuk-pagination__item govuk-pagination__item--current">
-                        <a class="govuk-link govuk-pagination__link" href="#" aria-label="Page 1" aria-current="page">
-                            1
-                        </a>
-                    </li>
-                    <li class="govuk-pagination__item">
-                        <a class="govuk-link govuk-pagination__link" href="#" aria-label="Page 2">
-                            2
-                        </a>
-                    </li>
-                    <li class="govuk-pagination__item">
-                        <a class="govuk-link govuk-pagination__link" href="#" aria-label="Page 3">
-                            3
-                        </a>
-                    </li>
-                </ul>
-                <div class="govuk-pagination__next">
-                    <a class="govuk-link govuk-pagination__link" href="#" rel="next">
-                        <span class="govuk-pagination__link-title">
-                            Next<span class="govuk-visually-hidden"> page</span>
-                        </span>
-                        <svg class="govuk-pagination__icon govuk-pagination__icon--next" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
-                            <path d="m8.107-0.0078125-1.4136 1.414 4.2926 4.293h-12.986v2h12.896l-4.1855 3.9766 1.377 1.4492 6.7441-6.4062-6.7246-6.7266z"></path>
-                        </svg>
-                    </a>
+            <div class="moj-filter__options">
+                <button type="submit"
+                        class="govuk-button"
+                        data-module="govuk-button">
+                    Apply filters
+                </button>
+
+                @await Html.PartialAsync(
+                    "_FiltersComponentGroup.cshtml",
+                    (
+                        Title: "Establishment type",
+                        FacetKey: "t.establishment_type_id",
+                        Facet: establishmentTypeFacet,
+                        Options: new List<(string Label, string Value)>
+                        {
+                            ("Primary School", "1"),
+                            ("Secondary School", "2"),
+                            ("Multi-Academy Trust", "3")
+                        }
+                    )
+                )
+            </div>
+        </div>
+
+        <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-one-half">
+                    @if (Model.HasResults)
+                    {
+                        <p class="govuk-body" id="search-results-count">
+                            @Model.SearchResultsCount @(
+                                Model.SearchResultsCount > 1 ?"results found" : "result found")
+                        </p>
+                    }
                 </div>
-            </nav>
-        }
-        else
-        {
-            <p class="govuk-body">No results found.</p>
-        }
+            </div>
+            @if (Model.HasResults)
+            {
+                @foreach (GovUkTable result in Model.EstablishmentResults)
+                {
+                    @await Component.InvokeAsync("GovUkTable", result)
+                }
+            }
+            else
+            {
+                <p class="govuk-body">No results found.</p>
+            }
+        </div>
     </div>
-</div>
 
-
+</form>

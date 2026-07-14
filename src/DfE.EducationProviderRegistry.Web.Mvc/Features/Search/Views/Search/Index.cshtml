@@ -5,6 +5,19 @@
     ViewData["Title"] = "Search";
 }
 
+@{
+    var breadcrumbs = new List<Breadcrumb>
+    {
+        new("Home", "Home", "Index"),
+    };
+}
+
+@section Breadcrumbs
+{
+    <partial name="_Breadcrumbs" model="breadcrumbs" />
+}
+
+
 <h1 class="govuk-heading-xl">Search the register</h1>
 
 <form method="post" asp-action="Results">

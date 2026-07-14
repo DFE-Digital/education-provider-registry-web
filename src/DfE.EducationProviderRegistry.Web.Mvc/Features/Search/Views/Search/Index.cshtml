@@ -1,23 +1,30 @@
-﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels
+﻿@using DfE.EducationProviderRegistry.Web.Mvc.Extensions
+@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels
 @model SearchRequestViewModel
 @{
     ViewData["Title"] = "Search";
+    bool hasSearchKeywordsError = ViewData.HasErrorFor(nameof(Model.SearchKeywords));
 }
 
 <h1 class="govuk-heading-xl">Search the register</h1>
 <form asp-action="Search" asp-controller="Search" method="post">
-    <div class="govuk-form-group">
+
+    <div class="govuk-form-group @(hasSearchKeywordsError ? "govuk-form-group--error" : "")">
+
         <label class="govuk-label" asp-for="SearchKeywords">
             Establishment
         </label>
-        <div id="" class="govuk-hint">
+
+        <div class="govuk-hint">
             Enter an establishment name
         </div>
-        <input 
-            asp-for="SearchKeywords"
-            class="govuk-input govuk-input--extra-letter-spacing"
-            id="SearchKeywords"
-            name="SearchKeywords" />
+
+        <span asp-validation-for="SearchKeywords"
+              class="govuk-error-message"></span>
+
+        <input asp-for="SearchKeywords"
+               class="govuk-input @(hasSearchKeywordsError ? "govuk-input--error" : "")" />
     </div>
+
     <button class="govuk-button" type="submit">Search</button>
 </form>

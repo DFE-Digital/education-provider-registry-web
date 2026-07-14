@@ -1,4 +1,6 @@
-﻿namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 
 public sealed class SearchRequestViewModel
 {
@@ -33,6 +35,7 @@ public sealed class SearchRequestViewModel
     /// <remarks>
     /// This value is typically used to perform text‑based search across establishments.
     /// </remarks>
+    [Required(ErrorMessage = "Enter an establishment name")]
     public string? SearchKeywords { get; set; }
 
     /// <summary>

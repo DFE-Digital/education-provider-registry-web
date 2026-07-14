@@ -1,23 +1,38 @@
 ﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels
+@using System.Linq
 @model SearchRequestViewModel
 @{
     ViewData["Title"] = "Search";
+
+    bool hasSearchError =
+        ViewData.ModelState.TryGetValue(nameof(Model.SearchKeywords), out var entry)
+        && entry.Errors.Any();
 }
 
 <h1 class="govuk-heading-xl">Search the register</h1>
 <form asp-action="Search" asp-controller="Search" method="post">
-    <div class="govuk-form-group">
+    <div class="govuk-form-group @(hasSearchError ? "govuk-form-group--error" : "")">
+
         <label class="govuk-label" asp-for="SearchKeywords">
             Establishment
         </label>
-        <div id="" class="govuk-hint">
+
+        <div id="SearchKeywords-hint" class="govuk-hint">
             Enter an establishment name
         </div>
-        <input 
-            asp-for="SearchKeywords"
-            class="govuk-input govuk-input--extra-letter-spacing"
-            id="SearchKeywords"
-            name="SearchKeywords" />
+
+        @if (hasSearchError)
+        {
+            <p id="SearchKeywords-error" class="govuk-error-message">
+                <span class="govuk-visually-hidden">Error:</span>
+                @Html.ValidationMessageFor(m => m.SearchKeywords, "", new { @class = "" })
+            </p>
+        }
+
+        <input asp-for="SearchKeywords"
+               class="govuk-input @(hasSearchError ? "govuk-input--error" : "")"
+               aria-describedby="SearchKeywords-hint @(hasSearchError ? "SearchKeywords-error" : "")" />
     </div>
+
     <button class="govuk-button" type="submit">Search</button>
 </form>

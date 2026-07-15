@@ -54,7 +54,7 @@
     </header>
 
     <div class="govuk-width-container app-width-container">
-        @RenderSectionAsync("Breadcrumbs", required: false)
+        @await RenderSectionAsync("Breadcrumbs", required: false)
         <main class="govuk-main-wrapper app-main-class" id="main-content">
             @RenderBody()
         </main>

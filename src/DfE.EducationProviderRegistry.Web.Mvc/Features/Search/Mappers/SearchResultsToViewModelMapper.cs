@@ -1,25 +1,49 @@
-﻿using DfE.Core.Libraries.CrossCutting.Mapper;
+﻿using DfE.Core.Libraries.CleanArchitecture.Application;
+using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Establishment;
+using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
+using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 
-public class SearchResultsToViewModelMapper : IMapper<EstablishmentSearchResults, SearchResultsViewModel>
+public class SearchResultsToViewModelMapper :
+    IMapper<UseCaseResponse<SearchResponse>, SearchResultsViewModel>
 {
-    private readonly IMapper<EstablishmentSearchResult, GovUkTable> _searchResultToTableViewModelMapper;
+    private readonly IMapper<IReadOnlyCollection<EstablishmentSearchResult>, List<GovUkTable>> _establishmentSearchResultsToViewModelMapper;
+    private readonly IMapper<IReadOnlyCollection<SearchFacet>, List<FacetViewModel>> _facetResultsToFacetsViewModelMapper;
 
     public SearchResultsToViewModelMapper(
-        IMapper<EstablishmentSearchResult, GovUkTable> searchResultToTableViewModelMapper)
+        IMapper<IReadOnlyCollection<EstablishmentSearchResult>, List<GovUkTable>> establishmentSearchResultsToViewModelMapper,
+        IMapper<IReadOnlyCollection<SearchFacet>, List<FacetViewModel>> facetResultsToFacetsViewModelMapper)
     {
-        _searchResultToTableViewModelMapper = searchResultToTableViewModelMapper;
+        _establishmentSearchResultsToViewModelMapper = establishmentSearchResultsToViewModelMapper;
+        _facetResultsToFacetsViewModelMapper = facetResultsToFacetsViewModelMapper;
     }
 
-    public SearchResultsViewModel Map(EstablishmentSearchResults input) =>
-        new()
+    public SearchResultsViewModel Map(UseCaseResponse<SearchResponse> input)
+    {
+        ArgumentNullException.ThrowIfNull(input);
+
+        if (input.Model == null)
+        {
+            throw new ArgumentException("SearchResponse model cannot be null.", nameof(input));
+        }
+
+        return new()
         {
             EstablishmentResults =
-                [.. input.EstablishmentCollection.Select(
-                    _searchResultToTableViewModelMapper.Map)]
+                (input.Model.EstablishmentResults != null)
+                    ? _establishmentSearchResultsToViewModelMapper.Map(
+                        input.Model.EstablishmentResults.EstablishmentCollection)
+                    : [],
+
+            Facets =
+                (input.Model.FacetedResults != null)
+                    ? _facetResultsToFacetsViewModelMapper.Map(
+                        input.Model.FacetedResults.Facets)
+                    : []
         };
+    }
 }

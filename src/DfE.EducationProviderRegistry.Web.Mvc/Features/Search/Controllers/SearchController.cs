@@ -1,60 +1,71 @@
 ﻿using DfE.Core.Libraries.CleanArchitecture.Application;
 using DfE.Core.Libraries.CrossCutting.Mapper;
-using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Establishment;
+using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Filter;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Sort;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Request;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.ObjectModel;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Controllers;
 
-[Route("[controller]")]
+[Route("search")]
 public sealed class SearchController : Controller
 {
     private readonly IUseCase<SearchRequest, UseCaseResponse<SearchResponse>> _searchUseCase;
-    private readonly IMapper<
-        EstablishmentSearchResults, SearchResultsViewModel> _searchResponseToViewModelMapper;
+    private readonly IMapper<UseCaseResponse<SearchResponse>, SearchResultsViewModel> _searchResponseToViewModelMapper;
+    private readonly IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>> _facetResultToViewModelMapper;
 
     public SearchController(
         IUseCase<SearchRequest, UseCaseResponse<SearchResponse>> searchUseCase,
-        IMapper<EstablishmentSearchResults, SearchResultsViewModel> searchResponseToViewModelMapper)
+        IMapper<UseCaseResponse<SearchResponse>, SearchResultsViewModel> searchResponseToViewModelMapper,
+        IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>> facetResultToViewModelMapper)
     {
         ArgumentNullException.ThrowIfNull(searchUseCase);
         ArgumentNullException.ThrowIfNull(searchResponseToViewModelMapper);
+        ArgumentNullException.ThrowIfNull(facetResultToViewModelMapper);
 
         _searchUseCase = searchUseCase;
         _searchResponseToViewModelMapper = searchResponseToViewModelMapper;
+        _facetResultToViewModelMapper = facetResultToViewModelMapper;
     }
 
     [HttpGet("")]
-    public IActionResult Index() => View(new SearchRequestViewModel());
+    public IActionResult Index() =>
+        View("Index", new SearchRequestViewModel());
 
-    [HttpPost("results")]
-    public async Task<IActionResult> Results(SearchRequestViewModel model)
+    [HttpPost("")]
+    public async Task<IActionResult> Search(SearchRequestViewModel model)
     {
         if (!ModelState.IsValid)
         {
-            return BadRequest(ModelState);
+            return View("Index", model);
         }
 
         SortOrder sortOrder =
             new(
                 sortField: "TO_BE_DEFINED",
                 sortDirection: "ASC",
-                validSortFields: new List<string>() { "TO_BE_DEFINED" }.AsReadOnly());
+                validSortFields: new List<string> { "TO_BE_DEFINED" }.AsReadOnly());
+
+        ReadOnlyCollection<FilterRequest> searchFilterRequests =
+            _facetResultToViewModelMapper.Map(model.SelectedFacets);
 
         SearchRequest searchRequest =
-            new(searchIndexKey: "TO_BE_DEFINED", searchKeywords: "TO_BE_DEFINED", sortOrder);
+            new(
+                searchIndexKey: "TO_BE_REMOVED_FROM_CORE",
+                searchKeywords: model.SearchKeywords!,
+                searchFilterRequests,
+                sortOrder);
 
         UseCaseResponse<SearchResponse> searchResponse =
             await _searchUseCase.HandleRequestAsync(searchRequest);
 
-        EstablishmentSearchResults establishmentSearchResults =
-            searchResponse.Model.EstablishmentResults;
-
         SearchResultsViewModel updatedModel =
-            _searchResponseToViewModelMapper.Map(establishmentSearchResults);
+            _searchResponseToViewModelMapper.Map(searchResponse);
+
+        updatedModel.PrimarySearchTerms = model.SearchKeywords!;
 
         return View("Results", updatedModel);
     }

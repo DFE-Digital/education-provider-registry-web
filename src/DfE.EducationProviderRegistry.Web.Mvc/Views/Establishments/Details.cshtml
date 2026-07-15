@@ -1,0 +1,62 @@
+﻿@model EstablishmentDetailsPageViewModel
+
+<nav class="govuk-breadcrumbs" aria-label="Breadcrumb">
+    <ol class="govuk-breadcrumbs__list">
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="/">Home</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="/search">Search</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="/search/results">Search results</a>
+        </li>
+    </ol>
+</nav>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-l">@Model.Heading</h1>
+    </div>
+    <div class="govuk-grid-column-one-third">
+        <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+            Download information
+        </button>
+    </div>
+</div>
+
+<div>
+    <div class="govuk-tabs" data-module="govuk-tabs">
+        <h2 class="govuk-tabs__title">
+            Contents
+        </h2>
+        <ul class="govuk-tabs__list">
+            <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+                <a class="govuk-tabs__tab" href="#details">
+                    Details
+                </a>
+            </li>
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#governance">
+                    Governance
+                </a>
+            </li>
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#history">
+                    History
+                </a>
+            </li>
+        </ul>
+        <div class="govuk-tabs__panel" id="details">
+            <h2 class="govuk-heading-l">Details</h2>
+            @await Component.InvokeAsync("GovUkTable", Model.BasicDetails)
+        </div>
+        <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="governance">
+            <h2 class="govuk-heading-l">Governance</h2>
+            @await Component.InvokeAsync("GovUkTable", Model.Governors)
+        </div>
+        <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="history">
+            <h2 class="govuk-heading-l">History</h2>
+        </div>
+    </div>
+</div>

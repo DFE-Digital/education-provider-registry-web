@@ -1,11 +1,14 @@
-﻿using DfE.Core.Libraries.CrossCutting.Mapper;
+﻿using DfE.Core.Libraries.CleanArchitecture.Application;
+using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Search;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Establishment;
+using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Filter;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
+using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
-using Microsoft.Extensions.Options;
+using System.Collections.ObjectModel;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search;
 
@@ -13,19 +16,25 @@ internal static class SearchServiceCollectionExtensions
 {
     internal static IServiceCollection AddSearch(this IServiceCollection services, IConfiguration configuration)
     {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(configuration);
+
+        // Core
         services
-            .AddSingleton<IMapper<EstablishmentSearchResults, SearchResultsViewModel>, SearchResultsToViewModelMapper>()
-            .AddSingleton<IMapper<EstablishmentSearchResult, GovUkTable>, SearchResultToTableViewModelMapper>();
+            .AddApplicationSearchDependencies(configuration)
+            .AddInfraSearchDependencies(configuration)
+            .AddInfraSearchFilterDependencies(configuration);
 
-        services.AddSearchDependencies();
-
-        // Bind search criteria configuration options.
-        services.AddOptions<SearchCriteria>()
-            .Bind(configuration.GetSection(nameof(SearchCriteria)));
-
-        // Register strongly typed configuration instances.
-        services.AddSingleton((serviceProvider) =>
-            serviceProvider.GetRequiredService<IOptions<SearchCriteria>>().Value);
+        // Presentation
+        services
+            .AddSingleton<IMapper<
+                UseCaseResponse<SearchResponse>, SearchResultsViewModel>, SearchResultsToViewModelMapper>()
+            .AddSingleton<IMapper<
+                IReadOnlyCollection<SearchFacet>, List<FacetViewModel>>, FacetResultsToViewModelMapper>()
+            .AddSingleton<IMapper<
+                IReadOnlyCollection<EstablishmentSearchResult>, List<GovUkTable>>, EstablishmentSearchResultsToViewModelMapper>()
+            .AddSingleton<IMapper<
+                Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>, SelectedFacetsToFilterRequestsMapper>();
 
         return services;
     }

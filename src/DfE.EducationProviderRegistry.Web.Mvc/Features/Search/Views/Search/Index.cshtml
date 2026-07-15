@@ -1,8 +1,9 @@
-﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels
-
+﻿@using DfE.EducationProviderRegistry.Web.Mvc.Extensions
+@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels
 @model SearchRequestViewModel
 @{
     ViewData["Title"] = "Search";
+    bool hasSearchKeywordsError = ViewData.HasErrorFor(nameof(Model.SearchKeywords));
 }
 
 @{
@@ -25,27 +26,37 @@
         Use one or both fields to search.
     </label>
 
-    <form method="post" asp-action="Results">
+    <form asp-action="Search" asp-controller="Search" method="post">
         <div class="search-form-row">
-            <div class="govuk-form-group">
+            <div class="govuk-form-group @(hasSearchKeywordsError ? "govuk-form-group--error" : "")">
                 <label class="govuk-label govuk-!-font-weight-bold" for="">
                     What
                 </label>
                 <div id="" class="govuk-hint">
                     Enter a name or ID number
                 </div>
-                <input class="govuk-input govuk-input govuk-!-width-full" id="" name="SearchKeywords" type="text" spellcheck="false" aria-describedby="hint-one">
+
+                <span asp-validation-for="SearchKeywords"
+                      class="govuk-error-message"></span>
+
+                <input asp-for="SearchKeywords"
+                       class="govuk-input @(hasSearchKeywordsError ? "govuk-input--error" : "")" />
             </div>
 
             
-            <div class="govuk-form-group">
+            <div class="govuk-form-group" @(hasSearchKeywordsError ? "govuk-form-group--error" : "")">
                 <label class="govuk-label govuk-!-font-weight-bold" for="">
                     Where
                 </label>
                 <div id="" class="govuk-hint">
                     Enter a postcode, local authority, town or city
                 </div>
-                <input class="govuk-input govuk-input govuk-!-width-full" id="" name="" type="text" spellcheck="false" aria-describedby="hint-two">
+
+                <span asp-validation-for="SearchKeywords"
+                      class="govuk-error-message"></span>
+
+                <input asp-for="SearchKeywords"
+                       class="govuk-input @(hasSearchKeywordsError ? "govuk-input--error" : "")" />
             </div>
         </div>
 

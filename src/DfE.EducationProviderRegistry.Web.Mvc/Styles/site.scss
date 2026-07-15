@@ -1,0 +1,7 @@
+@use "govuk-frontend/dist/govuk" as *;
+@use "features/search";
+
+@forward "@ministryofjustice/frontend/moj/all";
+
+@import 'dfe-frontend/packages/dfefrontend';
+@import "@x-govuk/govuk-prototype-components/src/x-govuk";

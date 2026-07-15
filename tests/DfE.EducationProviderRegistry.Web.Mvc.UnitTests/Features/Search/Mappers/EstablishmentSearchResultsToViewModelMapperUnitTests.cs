@@ -96,7 +96,7 @@ public sealed class EstablishmentSearchResultsToViewModelMapperTests
 
         // assert
         Assert.Equal("My School", table.Caption);
-        Assert.Equal("establishment/999999", table.CaptionLinkUrl);
+        Assert.Equal("establishments/999999", table.CaptionLinkUrl);
     }
 
     [Fact]
@@ -175,6 +175,6 @@ public sealed class EstablishmentSearchResultsToViewModelMapperTests
         GovUkTableRow row = table.Rows.Single(tableRow => tableRow.Cells[0].Text == "Part of");
 
         Assert.Equal("Group Name", row.Cells[1].Text);
-        Assert.Equal("/group/G123", row.Cells[1].LinkUrl);
+        Assert.Equal("/groups/G123", row.Cells[1].LinkUrl);
     }
 }

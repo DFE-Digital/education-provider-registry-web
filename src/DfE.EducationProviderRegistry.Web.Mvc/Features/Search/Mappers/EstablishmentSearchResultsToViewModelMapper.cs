@@ -37,7 +37,7 @@ public sealed class EstablishmentSearchResultsToViewModelMapper :
         GovUkTable table = new()
         {
             Caption = input.Name.Value,
-            CaptionLinkUrl = "establishment/" + input.Urn.Value
+            CaptionLinkUrl = "establishments/" + input.Urn.Value
         };
 
         return table;
@@ -46,25 +46,25 @@ public sealed class EstablishmentSearchResultsToViewModelMapper :
     private static void AddRows(GovUkTable table, EstablishmentSearchResult input)
     {
         table.AddRow("URN", input.Urn.Value);
-        table.AddRow("Type", input.Type.Value);
+        table.AddRow("Type", input?.Type?.Value);
 
         table.AddRow(
             "Address",
-            input.Address.Street + " " +
-            input.Address.County + " " +
-            input.Address.Postcode
+            input?.Address?.Street + " " +
+            input?.Address?.County + " " +
+            input?.Address?.Postcode
         );
 
         table.AddRow(
             "Local authority",
-            input.LocalAuthority.Name,
-            "/la/" + input.LocalAuthority.Code
+            input?.LocalAuthority?.Name,
+            "/la/" + input?.LocalAuthority?.Code
         );
 
         table.AddRow(
             "Part of",
-            input.Group.PartOfName,
-            "/group/" + input.Group.PartOfCode
+            input?.Group?.PartOfName,
+            "/groups/" + input?.Group?.PartOfCode
         );
     }
 }

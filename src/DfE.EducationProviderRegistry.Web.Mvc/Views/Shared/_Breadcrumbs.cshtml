@@ -1,0 +1,26 @@
+﻿@model IReadOnlyList<BreadcrumbViewModel>
+@if (Model.Count > 0)
+{
+    <nav class="govuk-breadcrumbs" aria-label="Breadcrumb">
+        <ol class="govuk-breadcrumbs__list">
+            @foreach (var breadcrumb in Model)
+            {
+                <li class="govuk-breadcrumbs__list-item">
+                    @if (breadcrumb.Controller is not null &&
+                         breadcrumb.Action is not null)
+                    {
+                        <a class="govuk-breadcrumbs__link"
+                           asp-controller="@breadcrumb.Controller"
+                           asp-action="@breadcrumb.Action">
+                            @breadcrumb.Text
+                        </a>
+                    }
+                    else
+                    {
+                        @breadcrumb.Text
+                    }
+                </li>
+            }
+        </ol>
+    </nav>
+}

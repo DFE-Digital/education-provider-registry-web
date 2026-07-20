@@ -1,10 +1,5 @@
-﻿@using DfE.EducationProviderRegistry.Web.Mvc.Extensions
-@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels
+﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels
 @model SearchRequestViewModel
-@{
-    ViewData["Title"] = "Search";
-    bool hasSearchKeywordsError = ViewData.HasErrorFor(nameof(Model.SearchKeywords));
-}
 
 @{
     var breadcrumbs = new List<BreadcrumbViewModel>
@@ -20,66 +15,11 @@
 
 <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">Search the register</h1>
 
-<div class="search-panel">
 
-    <p>
-        Use one or both fields to search.
-    </p>
 
-    <form asp-action="Search" asp-controller="Search" method="post">
-        <div class="search-form-row">
-            <div class="govuk-form-group @(hasSearchKeywordsError ? "govuk-form-group--error" : "")">
-                <label class="govuk-label govuk-!-font-weight-bold" for="SearchKeywords">
-                    What
-                </label>
-                <div id="" class="govuk-hint">
-                    Enter a name or ID number
-                </div>
-
-                <span asp-validation-for="SearchKeywords"
-                      class="govuk-error-message"></span>
-
-                <input asp-for="SearchKeywords"
-                       class="govuk-input @(hasSearchKeywordsError ? "govuk-input--error" : "")" />
-            </div>
-
-            
-            <div class="govuk-form-group" @(hasSearchKeywordsError ? "govuk-form-group--error" : "")">
-                <label class="govuk-label govuk-!-font-weight-bold" for="">
-                    Where
-                </label>
-                <div id="" class="govuk-hint">
-                    Enter a postcode, local authority, town or city
-                </div>
-
-                <span asp-validation-for="SearchKeywords"
-                      class="govuk-error-message"></span>
-
-                <input asp-for="SearchKeywords"
-                       class="govuk-input @(hasSearchKeywordsError ? "govuk-input--error" : "")" />
-            </div>
-        </div>
-
-        <div class="search-action-row">
-            <div class="govuk-form-group">
-                <fieldset class="govuk-fieldset">
-                    <div class="govuk-checkboxes" data-module="govuk-checkboxes">
-                        <div class="govuk-checkboxes__item">
-                            <input class="govuk-checkboxes__input" id="open_establishments" name="open_establishments" type="checkbox" value="open_establishments">
-                            <label class="govuk-label govuk-checkboxes__label" for="open_establishments">
-                                Show open establishments only
-                            </label>
-                        </div>
-                    </div>
-                </fieldset>
-            </div>
-
-            <button class="govuk-button" type="submit">
-                Search
-            </button>
-        </div>
-    </form>
-</div>
+<form asp-action="Search" asp-controller="Search" method="post">
+    @await Html.PartialAsync("_SearchPanel", Model)
+</form>
 
 
 <div>

@@ -1,13 +1,27 @@
 ﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels
 @using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents
+@using DfE.EducationProviderRegistry.Web.ViewComponents.Tabs
 @model SearchResultsViewModel
 
-<h1 class="govuk-heading-xl">Search results</h1>
+<h1 class="govuk-heading-xl">
+    @if (!string.IsNullOrWhiteSpace(Model.PrimarySearchTerms))
+    {
+        <span>
+            Search results for "@Model.PrimarySearchTerms"
 
-<form method="post" asp-controller="Search" asp-action="Search">
+            @if (!string.IsNullOrWhiteSpace(Model.SecondarySearchTerms))
+            {
+                <text> "@Model.SecondarySearchTerms"</text>
+            }
+        </span>
+    }
+</h1>
 
-    <!-- Hidden fields to preserve search state -->
-    <input type="hidden" name="SearchKeywords" value="@Model.PrimarySearchTerms" />
+<form asp-action="Search"
+      asp-controller="Search"
+      method="post">
+
+    @await Html.PartialAsync("_SearchPanel", Model.SearchRequest)
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-third">
@@ -18,54 +32,111 @@
                         facetViewModel.Name == "EstablishmentTypeId")!;
             }
 
-            <div class="moj-filter__options">
-                <button type="submit"
-                        class="govuk-button"
-                        data-module="govuk-button">
-                    Apply filters
-                </button>
+            <div class="filter-panel">
 
-                @await Html.PartialAsync(
-                    "_FiltersComponentGroup.cshtml",
-                    (
-                        Title: "Establishment type",
-                        FacetKey: "t.establishment_type_id",
-                        Facet: establishmentTypeFacet,
-                        Options: new List<(string Label, string Value)>
-                        {
-                            ("Primary School", "1"),
-                            ("Secondary School", "2"),
-                            ("Multi-Academy Trust", "3")
-                        }
-                    )
-                )
-            </div>
-        </div>
+                <div class="filter-panel__title">
+                    <h2 class="govuk-heading-m govuk-!-margin-bottom-0">
+                        Filters
+                    </h2>
+                </div>
 
-        <div class="govuk-grid-column-two-thirds">
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-one-half">
-                    @if (Model.HasResults)
-                    {
-                        <p class="govuk-body" id="search-results-count">
-                            @Model.SearchResultsCount @(
-                                Model.SearchResultsCount > 1 ?"results found" : "result found")
-                        </p>
-                    }
+                <div class="moj-filter__options">
+
+                    @await Html.PartialAsync(
+    "_SelectedFilter",
+    Model.SelectedFilters)
+
+                    <details class="govuk-details filter-section" open>
+                        <summary class="govuk-details__summary">
+                            <span class="govuk-details__summary-text">
+                                Establishment type
+                            </span>
+                        </summary>
+
+                        <div class="govuk-details__text">
+                            @await Html.PartialAsync(
+                                "_FiltersComponentGroup.cshtml",
+                                (
+                                    Title: "",
+                                    FacetKey: "t.establishment_type_id",
+                                    Facet: establishmentTypeFacet,
+                                    Options: new List<(string Label, string Value)>
+                                    {
+                        ("Primary School", "1"),
+                        ("Secondary School", "2"),
+                        ("Multi-Academy Trust", "3")
+                                    }
+                                )
+                            )
+                        </div>
+                    </details>
+
+                    <button type="submit"
+                            class="govuk-button"
+                            data-module="govuk-button">
+                        Apply filters
+                    </button>
                 </div>
             </div>
-            @if (Model.HasResults)
-            {
-                @foreach (GovUkTable result in Model.EstablishmentResults)
-                {
-                    @await Component.InvokeAsync("GovUkTable", result)
-                }
-            }
-            else
-            {
-                <p class="govuk-body">No results found.</p>
-            }
         </div>
+
+        @if (Model.HasResults)
+        {
+            <div class="results-header">
+                <p class="govuk-body">
+                    @Model.EstablishmentResults.Count results
+                </p>
+
+                <div class="results-actions">
+                    <div class="sort-controls">
+                        <label class="govuk-label sort-controls__label" for="sort">
+                            Sort results
+                        </label>
+
+                        <select class="govuk-select" id="sort" name="sort">
+                            <option value="published">A to Z</option>
+                            <option value="comments">Option</option>
+                        </select>
+                    </div>
+
+                    <a href="#" class="govuk-link">
+                        Download results
+                    </a>
+                </div>
+            </div>
+
+            {
+                <div class="govuk-grid-column-two-thirds">
+                    <div class="govuk-grid-row search-results">
+                        @await Component.InvokeAsync("GovUkTabs",
+                        new GovUkTabs(
+                        [
+                            new Tab(
+                                id: "establishments",
+                                title: $"Establishments ({Model.EstablishmentResults.Count})",
+                                contents:
+                                Model.EstablishmentResults.Select(result => new TabContent(
+                                    viewComponentName: "GovUkTable",
+                                    model: result)).ToList()
+                            ),
+                                new Tab(
+                                id: "establishmentsGroups",
+                                title: "Establishments groups",
+                                contents:
+                                [
+                                    new TabContent("GovUkTable",  new GovUkTable())
+                                ]
+                            )
+                ]))
+                    </div>
+                </div>
+
+            }
+        }
+        else
+        {
+            <p class="govuk-body">No results found.</p>
+        }
     </div>
 
 </form>

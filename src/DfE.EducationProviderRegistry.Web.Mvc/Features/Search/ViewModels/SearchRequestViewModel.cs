@@ -38,6 +38,13 @@ public sealed class SearchRequestViewModel
     [Required(ErrorMessage = "Enter an establishment name")]
     public string? SearchKeywords { get; set; }
 
+
+    /// <summary>
+    ///     Gets or sets address location entered by user -- Temp wiring
+    /// </summary>
+    //[Required(ErrorMessage = "Enter an address name")]
+    public string? Address { get; set; }
+
     /// <summary>
     /// Gets or sets the number of records to display per page.
     /// </summary>

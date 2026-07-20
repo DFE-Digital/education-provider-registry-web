@@ -1,6 +1,9 @@
-﻿.search-panel {
-    background-color: #D2E2F1;
-    padding: 30px 30px 0px 30px;
+﻿/* Search panel */
+
+.search-panel {
+    background-color: #d2e2f1;
+    padding: 30px 30px 0;
+    margin-bottom: 30px;
 }
 
 .search-form-row {
@@ -9,9 +12,9 @@
     margin-top: 30px;
 }
 
-.search-form-row .govuk-form-group {
-    flex: 1;
-}
+    .search-form-row .govuk-form-group {
+        flex: 1;
+    }
 
 .search-action-row {
     display: flex;
@@ -20,4 +23,81 @@
 
 .search-panel .govuk-checkboxes__label::before {
     background-color: #fff;
+}
+
+/* Results */
+
+.results-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.results-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.search-results .govuk-table {
+    margin-bottom: 20px;
+}
+
+    .search-results .govuk-table:last-child {
+        margin-bottom: 0;
+    }
+
+/* Sorting */
+
+.sort-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.sort-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sort-controls__label {
+    margin-bottom: 0;
+    white-space: nowrap;
+}
+
+.sort-controls .govuk-select {
+    width: 7ch;
+    min-width: 0;
+}
+
+/* Filters */
+
+.filter-panel {
+    border: 1px solid #b1b4b6;
+}
+
+.filter-panel__title {
+    background-color: #b1b4b6;
+    padding: 15px 20px;
+    border-bottom: 1px solid #b1b4b6;
+}
+
+.filter-panel__content {
+    padding: 20px;
+}
+
+.selected-filters {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #b1b4b6;
+}
+
+.selected-filter {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
 }

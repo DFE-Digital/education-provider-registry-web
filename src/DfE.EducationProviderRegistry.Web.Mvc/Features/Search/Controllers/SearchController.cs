@@ -66,7 +66,10 @@ public sealed class SearchController : Controller
             _searchResponseToViewModelMapper.Map(searchResponse);
 
         updatedModel.PrimarySearchTerms = model.SearchKeywords!;
+        updatedModel.SecondarySearchTerms = model.Address!;
+        updatedModel.SearchRequest = model;
 
+        ModelState.Clear();
         return View("Results", updatedModel);
     }
 }

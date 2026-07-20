@@ -35,11 +35,12 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
 builder.Services.AddDbContextFactory<EducationProviderRegistryDbContext>(options =>
 {
     string? connectionString = builder.Configuration["eprweb_eprdat_dotnet_db_connection"];
-
     if (string.IsNullOrWhiteSpace(connectionString))
     {
         throw new ArgumentException("Database connection string not configured.");
     }
+
+    connectionString.CheckConnectionStringValue();
 
     options.UseNpgsql(connectionString)
            .EnableSensitiveDataLogging()

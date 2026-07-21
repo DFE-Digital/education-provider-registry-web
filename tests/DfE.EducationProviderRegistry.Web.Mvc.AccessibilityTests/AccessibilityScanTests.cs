@@ -26,6 +26,7 @@ public sealed class AccessibilityScanTests
     [MemberData(nameof(AccessibilityScanConfigurationKeys))]
     public async Task Scanned_Page_For_Accessibility_Violations(string configurationKey)
     {
+        // TODO capture container logs and output to xunit3, which outputs to console for ci?
         await _hostedEnvironment.InitialiseAsync(_ct);
 
         if (!_accessibilityTestOptions.Scans.TryGetValue(configurationKey, out AccessibilityTest? test))
@@ -42,9 +43,16 @@ public sealed class AccessibilityScanTests
 
         await driver!.Navigate().GoToUrlAsync(absoluteScanUri);
 
-        AxeResult accessibilityResults =
-            new AxeBuilder(driver)
-                .Analyze();
+        // TODO Verify request successful and not on error page
+
+        AxeBuilder axeBuilder = new(driver);
+
+        if (_accessibilityTestOptions.WcagTags != null && _accessibilityTestOptions.WcagTags.Length > 0)
+        {
+            axeBuilder.WithTags(_accessibilityTestOptions.WcagTags);
+        }
+
+        AxeResult accessibilityResults = axeBuilder.Analyze();
 
         string outputDirectory = GetScanOutputDirectory(_accessibilityTestOptions, configurationKey);
 

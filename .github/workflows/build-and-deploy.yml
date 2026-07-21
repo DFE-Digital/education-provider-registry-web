@@ -59,7 +59,7 @@ jobs:
 
     - name: Build and push docker image
       id: build-image
-      uses: DFE-Digital/github-actions/build-docker-image@f55be113b82625ba997c4960aa93fd10ffa043ad
+      uses: DFE-Digital/github-actions/build-docker-image@0e3ff9f87329e3d8ace1fc4f175ddd1ea13c7af0
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         dockerfile-path: ./src/DfE.EducationProviderRegistry.Web.Mvc/Dockerfile

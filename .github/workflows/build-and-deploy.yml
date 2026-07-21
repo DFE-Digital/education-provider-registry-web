@@ -160,7 +160,7 @@ jobs:
 
     - name: Upload Accessibility Results
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: accessibility-results
         path: artifacts

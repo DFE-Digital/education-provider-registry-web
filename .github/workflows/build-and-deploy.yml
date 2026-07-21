@@ -91,11 +91,26 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_USERNAME: DFE-Digital
 
-    - name: Run .NET Tests with coverage
+    - name: Run MVC UnitTests with coverage
       run: |
-        dotnet test \
-          --verbosity normal \
-          --report-xunit-trx \
+        dotnet test tests/DfE.EducationProviderRegistry.Web.Mvc.UnitTests \
+          --coverage \
+          --coverage-output coverage.cobertura.xml \
+          --coverage-output-format cobertura \
+          --coverage-settings coverage.runsettings
+
+
+    - name: Run ViewComponent UnitTests with coverage
+      run: |
+        dotnet test tests/DfE.EducationProviderRegistry.Web.Mvc.UnitTests \
+          --coverage \
+          --coverage-output coverage.cobertura.xml \
+          --coverage-output-format cobertura \
+          --coverage-settings coverage.runsettings
+
+    - name: Run MVC IntegrationTests with coverage
+      run: |
+        dotnet test tests/DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests \
           --coverage \
           --coverage-output coverage.cobertura.xml \
           --coverage-output-format cobertura \
@@ -124,6 +139,10 @@ jobs:
           use-global-json: true
           coverage-report-path: coverage-sonar/SonarQube.xml
 
+    - name: Run Accessibility Tests
+      run: |
+        dotnet test tests/DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests
+  
   deploy-review-app:
     name: Deployment To Review
     concurrency: deploy_review_${{ github.event.pull_request.number }}

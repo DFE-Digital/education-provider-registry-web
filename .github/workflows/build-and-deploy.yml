@@ -143,7 +143,17 @@ jobs:
 
     - name: Run Accessibility Tests
       run: |
-        dotnet test tests/DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests
+        dotnet test tests/DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests      
+      env:
+        AccessibilityTestOptions__ArtifactsOutputDirectory: ${{ github.workspace }}/artifacts
+
+    - name: Upload Accessibility Results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: accessibility-results
+        path: artifacts
+
   
   deploy-review-app:
     name: Deployment To Review

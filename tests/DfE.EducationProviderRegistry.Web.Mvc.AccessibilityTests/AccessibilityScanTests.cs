@@ -2,6 +2,7 @@
 using Deque.AxeCore.Selenium;
 using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Options;
 using Docker.DotNet.Models;
+using Microsoft.Extensions.Options;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using System.Security.AccessControl;
@@ -91,6 +92,8 @@ public sealed class AccessibilityScanTests
         AxeResult results = ExecuteScan(driver, _accessibilityTestOptions);
 
         string outputDirectory = GetScanOutputDirectory(_accessibilityTestOptions, configurationKey);
+
+        TestContext.Current.SendDiagnosticMessage($"Artifact output directory: {outputDirectory}");
 
         TestContext.Current.AddAttachment(configurationKey, results.ToString());
 

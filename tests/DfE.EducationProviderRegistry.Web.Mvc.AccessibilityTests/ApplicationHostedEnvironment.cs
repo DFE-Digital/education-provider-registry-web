@@ -27,9 +27,9 @@ public sealed class ApplicationHostedEnvironment
     {
         _database = await _databaseFactory.CreateAsync(ct);
 
-        _applicationContainer = 
+        _applicationContainer =
             new ContainerBuilder(_options.Container.Image)
-                .WithExposedPorts<ContainerBuilder,IContainer, IContainerConfiguration>(_options.Container.PortMappings ?? [])
+                .WithExposedPorts<ContainerBuilder, IContainer, IContainerConfiguration>(_options.Container.PortMappings ?? [])
                 .WithEnvironment("eprweb_eprdat_dotnet_db_connection", _database.ConnectionString)
                 .WithWaitStrategy(Wait.ForUnixContainer().UntilHttpRequestIsSucceeded(r => r.ForPort((ushort)_options.Container.PortMappings!.First().ContainerPort)))
                 .Build();
@@ -40,7 +40,7 @@ public sealed class ApplicationHostedEnvironment
 
     public Uri GetApplicationUrl()
     {
-        if(_applicationContainer == null)
+        if (_applicationContainer == null)
         {
             throw new ArgumentException($"Host environment has not been started with {nameof(InitialiseAsync)}");
         }

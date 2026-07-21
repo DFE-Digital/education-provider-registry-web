@@ -1,8 +1,10 @@
 ﻿using Deque.AxeCore.Commons;
 using Deque.AxeCore.Selenium;
 using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Options;
+using Docker.DotNet.Models;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using System.Security.AccessControl;
 using System.Text;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests;
@@ -10,6 +12,7 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests;
 public sealed class AccessibilityScanTests
 {
     private readonly CancellationToken _ct;
+    private readonly ChromeOptions _chromeOptions;
     private readonly AccessibilityTestOptions _accessibilityTestOptions;
     private readonly ApplicationHostedEnvironment _hostedEnvironment;
 
@@ -20,25 +23,10 @@ public sealed class AccessibilityScanTests
         _accessibilityTestOptions = options;
         _hostedEnvironment = hostedEnvironment;
         _ct = TestContext.Current.CancellationToken;
-    }
 
-    [Theory]
-    [MemberData(nameof(AccessibilityScanConfigurationKeys))]
-    public async Task Scanned_Page_For_Accessibility_Violations(string configurationKey)
-    {
-        // TODO write a test that should fail with violations
+        _chromeOptions = new();
 
-        // TODO capture container logs and output to xunit3, which outputs to console for ci?
-        await _hostedEnvironment.InitialiseAsync(_ct);
-
-        if (!_accessibilityTestOptions.Scans.TryGetValue(configurationKey, out AccessibilityTest? test))
-        {
-            throw new ArgumentException($"Unable to find {configurationKey} in {nameof(AccessibilityTestOptions)}");
-        }
-
-        using ChromeDriverService service = ChromeDriverService.CreateDefaultService();
-        ChromeOptions options = new();
-        options.AddArguments(
+        _chromeOptions.AddArguments(
             "--incognito",
             // https://github.com/SeleniumHQ/selenium/issues/6049 observed on ubuntu 22.04 runners
             "--disable-dev-shm-usage",
@@ -51,8 +39,46 @@ public sealed class AccessibilityScanTests
             "--headless=new",
             // Bypass localhost certificate errors in CI
             "--allow-insecure-localhost");
+    }
 
-        using IWebDriver? driver = new ChromeDriver(service, options);
+    [Fact]
+    public void Axe_Detects_Known_Violation()
+    {
+        using ChromeDriverService service = ChromeDriverService.CreateDefaultService();
+        using IWebDriver driver = new ChromeDriver(service, _chromeOptions);
+
+        driver.Navigate().GoToUrl(
+            "data:text/html;charset=utf-8," +
+            Uri.EscapeDataString("""
+                <!DOCTYPE html>
+                <html>
+                <body>
+                    <img src="logo.png"></img>
+                </body>
+                </html>
+                """));
+
+        AxeResult results = ExecuteScan(driver, _accessibilityTestOptions);
+
+        Assert.Contains(
+            results.Violations,
+            violation => violation.Id == "image-alt");
+    }
+
+    [Theory]
+    [MemberData(nameof(AccessibilityScanConfigurationKeys))]
+    public async Task Scanned_Page_For_Accessibility_Violations(string configurationKey)
+    {
+        // TODO capture container logs and output to xunit3, which outputs to console for ci?
+        await _hostedEnvironment.InitialiseAsync(_ct);
+
+        if (!_accessibilityTestOptions.Scans.TryGetValue(configurationKey, out AccessibilityTest? test))
+        {
+            throw new ArgumentException($"Unable to find {configurationKey} in {nameof(AccessibilityTestOptions)}");
+        }
+
+        using ChromeDriverService service = ChromeDriverService.CreateDefaultService();
+        using IWebDriver? driver = new ChromeDriver(service, _chromeOptions);
 
         Uri absoluteScanUri = new(
             baseUri: _hostedEnvironment.GetApplicationUrl(),
@@ -62,34 +88,40 @@ public sealed class AccessibilityScanTests
 
         // TODO Verify request successful and not on error page
 
-        AxeBuilder axeBuilder = new(driver);
-
-        if (_accessibilityTestOptions.WcagTags != null && _accessibilityTestOptions.WcagTags.Length > 0)
-        {
-            axeBuilder.WithTags(_accessibilityTestOptions.WcagTags);
-        }
-
-        AxeResult accessibilityResults = axeBuilder.Analyze();
+        AxeResult results = ExecuteScan(driver, _accessibilityTestOptions);
 
         string outputDirectory = GetScanOutputDirectory(_accessibilityTestOptions, configurationKey);
 
-        TestContext.Current.AddAttachment(configurationKey, accessibilityResults.ToString());
+        TestContext.Current.AddAttachment(configurationKey, results.ToString());
 
-        byte[] content = Encoding.UTF8.GetBytes(accessibilityResults.ToString());
+        byte[] content = Encoding.UTF8.GetBytes(results.ToString());
 
         await File.WriteAllBytesAsync(
             Path.Combine(outputDirectory, "axe-result.json"),
             content,
             _ct);
 
-        if (accessibilityResults.Violations.Length != 0)
+        if (results.Violations.Length != 0)
         {
             ((ITakesScreenshot)driver)
                 .GetScreenshot()
                 .SaveAsFile(Path.Combine(outputDirectory, $"{configurationKey}-screenshot"));
         }
 
-        Assert.True(accessibilityResults.Violations.Length == 0, $"Route {absoluteScanUri} has violations.");
+        Assert.True(results.Violations.Length == 0, $"Route {absoluteScanUri} has violations.");
+    }
+
+    private static AxeResult ExecuteScan(IWebDriver driver, AccessibilityTestOptions options)
+    {
+        AxeBuilder axeBuilder = new(driver);
+
+        if (options.WcagTags != null && options.WcagTags.Length > 0)
+        {
+            axeBuilder.WithTags(options.WcagTags);
+        }
+
+        AxeResult accessibilityResults = axeBuilder.Analyze();
+        return accessibilityResults;
     }
 
     private static string GetScanOutputDirectory(AccessibilityTestOptions options, string scanName)

@@ -122,6 +122,7 @@ jobs:
           sonarcloud-project-key: DFE-Digital_education-provider-registry-web
           sonarcloud-token: ${{ secrets.SONAR_TOKEN }}
           use-global-json: true
+          java-version: 21
           coverage-report-path: coverage-sonar/SonarQube.xml
 
   deploy-review-app:

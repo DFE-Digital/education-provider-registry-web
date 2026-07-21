@@ -1,12 +1,11 @@
-﻿using MartinCostello.Logging.XUnit;
+﻿using DfE.Core.Libraries.IntegrationTests.Database.Postgres.Extensions;
+using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Options;
+using MartinCostello.Logging.XUnit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Xunit.DependencyInjection.Logging;
-using DfE.Core.Libraries.IntegrationTests.Database.Postgres.Extensions;
-using DfE.Core.Libraries.IntegrationTests.Database.Abstractions;
-using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Options;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests;
 
@@ -21,6 +20,7 @@ public sealed class Startup
                 {
                     builder.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
                     builder.AddJsonFile($"appsettings.{context.HostingEnvironment}.json", optional: true, reloadOnChange: true);
+                    builder.AddEnvironmentVariables();
                 });
 
     public void ConfigureServices(IServiceCollection services, HostBuilderContext context)

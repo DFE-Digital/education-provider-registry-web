@@ -4,8 +4,9 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Options;
 
 public sealed class AccessibilityTestOptions
 {
+    public string ArtifactOutputDirectory { get; set; } = "artifacts";
     public string DefaultMinimumWcag { get; set; } = string.Empty;
-    public Dictionary<string, AccessibilityTest> Tests { get; set; } = [];
+    public Dictionary<string, AccessibilityTest> Scans { get; set; } = [];
 }
 
 public sealed class AccessibilityTest

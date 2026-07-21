@@ -26,6 +26,8 @@ public sealed class AccessibilityScanTests
     [MemberData(nameof(AccessibilityScanConfigurationKeys))]
     public async Task Scanned_Page_For_Accessibility_Violations(string configurationKey)
     {
+        // TODO write a test that should fail with violations
+
         // TODO capture container logs and output to xunit3, which outputs to console for ci?
         await _hostedEnvironment.InitialiseAsync(_ct);
 
@@ -35,7 +37,22 @@ public sealed class AccessibilityScanTests
         }
 
         using ChromeDriverService service = ChromeDriverService.CreateDefaultService();
-        using IWebDriver? driver = new ChromeDriver(service, new ChromeOptions());
+        ChromeOptions options = new();
+        options.AddArguments(
+            "--incognito",
+            // https://github.com/SeleniumHQ/selenium/issues/6049 observed on ubuntu 22.04 runners
+            "--disable-dev-shm-usage",
+            "--disable-gpu",
+            // screen size setting
+            "--window-size=1920,1080",
+            "--start-maximized",
+            "--start-fullscreen",
+            // see https://www.selenium.dev/blog/2023/headless-is-going-away/
+            "--headless=new",
+            // Bypass localhost certificate errors in CI
+            "--allow-insecure-localhost");
+
+        using IWebDriver? driver = new ChromeDriver(service, options);
 
         Uri absoluteScanUri = new(
             baseUri: _hostedEnvironment.GetApplicationUrl(),

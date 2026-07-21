@@ -1,13 +1,16 @@
-﻿using DfE.Core.Libraries.IntegrationTests.Database.Abstractions;
+﻿using DfE.Core.Libraries.IntegrationTests.Abstractions;
+using DfE.Core.Libraries.IntegrationTests.Database.Abstractions;
 using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Options;
 using DotNet.Testcontainers.Builders;
+using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
-using DotNet.Testcontainers.Networks;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests;
 
 public sealed class ApplicationHostedEnvironment
 {
+    private IDatabase? _database;
+    private IContainer? _applicationContainer;
     private readonly IDatabaseFactory _databaseFactory;
     private readonly ApplicationHostOptions _options;
 
@@ -19,29 +22,29 @@ public sealed class ApplicationHostedEnvironment
         _options = options;
     }
 
-    public IDatabase Database { get; private set; } = null!;
-    public IContainer Application { get; private set; } = null!;
-
     public async Task InitialiseAsync(
         CancellationToken ct = default)
     {
-        Database = await _databaseFactory.CreateAsync(ct);
+        _database = await _databaseFactory.CreateAsync(ct);
 
-        INetwork network = new NetworkBuilder()
-            .Build();
-
-        // TODO tests - share same Web container - Startup instead of ICollectionFixture to run in parallel?
-        Application = new ContainerBuilder(_options.Container.Image)
-          .WithPortBinding(8080, true)
-          // Wait until the HTTP endpoint of the container is available. // TODO check Health
-          .WithWaitStrategy(Wait.ForUnixContainer().UntilHttpRequestIsSucceeded(r => r.ForPort(8080)))
-          .WithEnvironment("eprweb_eprdat_dotnet_db_connection", Database.ConnectionString)
-          // Build the container configuration.
-          .Build();
+        _applicationContainer = 
+            new ContainerBuilder(_options.Container.Image)
+                .WithExposedPorts<ContainerBuilder,IContainer, IContainerConfiguration>(_options.Container.PortMappings ?? [])
+                .WithEnvironment("eprweb_eprdat_dotnet_db_connection", _database.ConnectionString)
+                .WithWaitStrategy(Wait.ForUnixContainer().UntilHttpRequestIsSucceeded(r => r.ForPort((ushort)_options.Container.PortMappings!.First().ContainerPort)))
+                .Build();
 
         // Start the container.
-        await Application.StartAsync(ct);
+        await _applicationContainer.StartAsync(ct);
     }
 
-    public Uri GetApplicationUrl() => new($"http://localhost:{Application.GetMappedPublicPort(8080)}");
+    public Uri GetApplicationUrl()
+    {
+        if(_applicationContainer == null)
+        {
+            throw new ArgumentException($"Host environment has not been started with {nameof(InitialiseAsync)}");
+        }
+
+        return new($"http://localhost:{_applicationContainer.GetMappedPublicPort(8080)}");
+    }
 }

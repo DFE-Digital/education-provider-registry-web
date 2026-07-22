@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using System.Text;
+using Xunit.Sdk;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests;
 
@@ -169,13 +170,42 @@ public sealed class AccessibilityScanTests
                     scan.Key,
                     scan.Value)));
     }
+}
 
-
-    public sealed record AccessibilityScanTestCase(
-        string Name,
-        AccessibilityTest Scan)
+public sealed class AccessibilityScanTestCase : IXunitSerializable
+{
+    public AccessibilityScanTestCase()
     {
-        public override string ToString() => Name;
     }
 
+    public AccessibilityScanTestCase(
+        string name,
+        AccessibilityTest scan)
+    {
+        Name = name ?? string.Empty;
+        Scan = scan;
+    }
+
+    public string Name { get; private set; } = string.Empty;
+
+    public AccessibilityTest Scan { get; private set; } = null!;
+
+    public void Serialize(IXunitSerializationInfo info)
+    {
+        info.AddValue(nameof(Name), Name);
+        info.AddValue(nameof(Scan.Route), Scan.Route);
+    }
+
+    public void Deserialize(IXunitSerializationInfo info)
+    {
+        Name = info.GetValue<string>(nameof(Name)) ?? string.Empty;
+
+        Scan = new AccessibilityTest
+        {
+            Route = info.GetValue<string>(nameof(Scan.Route))
+                ?? string.Empty
+        };
+    }
+
+    public override string ToString() => Name;
 }

@@ -1,9 +1,11 @@
 ﻿using Deque.AxeCore.Commons;
 using Deque.AxeCore.Selenium;
 using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Options;
+using Microsoft.Extensions.Configuration;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using System.Text;
+using Xunit.Sdk;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests;
 
@@ -64,34 +66,35 @@ public sealed class AccessibilityScanTests
     }
 
     [Theory]
-    [MemberData(nameof(AccessibilityScanConfigurationKeys))]
-    public async Task Scanned_Page_For_Accessibility_Violations(string configurationKey)
+    [MemberData(nameof(AccessibilityScans))]
+    public async Task Scanned_Page_For_Accessibility_Violations(
+        AccessibilityScanTestCase testCase)
     {
-        // TODO capture container logs and output to xunit3, which outputs to console for ci?
         await _hostedEnvironment.InitialiseAsync(_ct);
 
-        if (!_accessibilityTestOptions.Scans.TryGetValue(configurationKey, out AccessibilityTest? test))
-        {
-            throw new ArgumentException($"Unable to find {configurationKey} in {nameof(AccessibilityTestOptions)}");
-        }
-
         using ChromeDriverService service = ChromeDriverService.CreateDefaultService();
-        using IWebDriver? driver = new ChromeDriver(service, _chromeOptions);
+        using IWebDriver driver = new ChromeDriver(service, _chromeOptions);
 
         Uri absoluteScanUri = new(
             baseUri: _hostedEnvironment.GetApplicationUrl(),
-            relativeUri: test.Route);
+            relativeUri: testCase.Scan.Route);
 
-        await driver!.Navigate().GoToUrlAsync(absoluteScanUri);
+        await driver.Navigate().GoToUrlAsync(absoluteScanUri);
 
         // TODO Verify request successful and not on error page
 
         AxeResult results = ExecuteScan(driver, _accessibilityTestOptions);
 
-        string outputDirectory = GetScanOutputDirectory(_accessibilityTestOptions, configurationKey);
+        string outputDirectory = GetScanOutputDirectory(
+            _accessibilityTestOptions,
+            testCase.Name);
 
-        TestContext.Current.SendDiagnosticMessage($"Artifact output directory: {outputDirectory}");
-        TestContext.Current.AddAttachment(configurationKey, results.ToString());
+        TestContext.Current.SendDiagnosticMessage(
+            $"Artifact output directory: {outputDirectory}");
+
+        TestContext.Current.AddAttachment(
+            testCase.Name,
+            results.ToString());
 
         byte[] content = Encoding.UTF8.GetBytes(results.ToString());
 
@@ -104,11 +107,18 @@ public sealed class AccessibilityScanTests
         {
             ((ITakesScreenshot)driver)
                 .GetScreenshot()
-                .SaveAsFile(Path.Combine(outputDirectory, $"{configurationKey}-screenshot"));
+                .SaveAsFile(
+                    Path.Combine(
+                        outputDirectory,
+                        $"{testCase.Name}-screenshot"));
         }
 
-        Assert.True(results.Violations.Length == 0, $"Route {absoluteScanUri} has violations.");
+        Assert.True(
+            results.Violations.Length == 0,
+            $"Route {absoluteScanUri} has violations.");
     }
+
+
 
     private static AxeResult ExecuteScan(IWebDriver driver, AccessibilityTestOptions options)
     {
@@ -134,9 +144,68 @@ public sealed class AccessibilityScanTests
         return path;
     }
 
-    public static TheoryData<string> AccessibilityScanConfigurationKeys = [
-        "Home",
-        "Group_ById",
-        "Establishment_ById"
-    ];
+    // Note: cannot consume Options from DI as XUnit.DI is not available at compile time.
+    public static IEnumerable<TheoryDataRow<AccessibilityScanTestCase>>
+        AccessibilityScans()
+    {
+        AccessibilityTestOptions options = new();
+
+        IConfiguration config = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json")
+            .AddEnvironmentVariables()
+            .Build();
+
+        config
+            .GetRequiredSection(nameof(AccessibilityTestOptions))
+            .Bind(options);
+
+        if (options.Scans == null || options.Scans.Count == 0)
+        {
+            throw new ArgumentException("No scan configurations exist in AccessibilityTestOptions");
+        }
+
+        return options.Scans.Select(scan =>
+            new TheoryDataRow<AccessibilityScanTestCase>(
+                new(
+                    scan.Key,
+                    scan.Value)));
+    }
+}
+
+public sealed class AccessibilityScanTestCase : IXunitSerializable
+{
+    public AccessibilityScanTestCase()
+    {
+    }
+
+    public AccessibilityScanTestCase(
+        string name,
+        AccessibilityTest scan)
+    {
+        Name = name ?? string.Empty;
+        Scan = scan;
+    }
+
+    public string Name { get; private set; } = string.Empty;
+
+    public AccessibilityTest Scan { get; private set; } = null!;
+
+    public void Serialize(IXunitSerializationInfo info)
+    {
+        info.AddValue(nameof(Name), Name);
+        info.AddValue(nameof(Scan.Route), Scan.Route);
+    }
+
+    public void Deserialize(IXunitSerializationInfo info)
+    {
+        Name = info.GetValue<string>(nameof(Name)) ?? string.Empty;
+
+        Scan = new AccessibilityTest
+        {
+            Route = info.GetValue<string>(nameof(Scan.Route))
+                ?? string.Empty
+        };
+    }
+
+    public override string ToString() => Name;
 }

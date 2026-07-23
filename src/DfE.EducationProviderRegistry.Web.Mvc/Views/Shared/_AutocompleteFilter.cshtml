@@ -1,0 +1,39 @@
+﻿@model AutocompleteFilterViewModel
+
+@{
+    var selectId = $"facet-{Model.Name}";
+    var hintId = $"{selectId}-hint";
+    var hasHint = !string.IsNullOrWhiteSpace(Model.Hint);
+}
+
+<div class="govuk-form-group">
+    <label class="govuk-label"
+           for="@selectId">
+        @Model.Label
+    </label>
+
+    @if (hasHint)
+    {
+        <div id="@hintId"
+             class="govuk-hint">
+            @Model.Hint
+        </div>
+    }
+
+    <select class="govuk-select"
+            id="@selectId"
+            name="@Model.BindingName"
+            aria-describedby="@(hasHint ? hintId : null)"
+            data-module="app-autocomplete">
+
+        <option value=""></option>
+
+        @foreach (var option in Model.Options)
+        {
+            <option value="@option.Value"
+                    selected="@(option.Value == Model.SelectedValue)">
+                @option.Text
+            </option>
+        }
+    </select>
+</div>

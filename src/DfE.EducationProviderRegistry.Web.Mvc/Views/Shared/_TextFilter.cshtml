@@ -1,0 +1,32 @@
+﻿@model TextFilterViewModel
+
+@{
+    var inputId = $"facet-{Model.Name}";
+    var hintId = $"{inputId}-hint";
+    var inputName = $"SelectedFacets[{Model.Name}]";
+}
+
+<div class="govuk-form-group">
+    <label class="govuk-label"
+           for="@inputId">
+        @Model.Label
+    </label>
+
+    @if (!string.IsNullOrWhiteSpace(Model.Hint))
+    {
+        <div id="@hintId"
+             class="govuk-hint">
+            @Model.Hint
+        </div>
+    }
+
+    <input class="govuk-input"
+           id="@inputId"
+           name="@inputName"
+           type="text"
+           value="@Model.Value"
+           aria-describedby="@(
+           string.IsNullOrWhiteSpace(Model.Hint)
+               ? null
+               : hintId)" />
+</div>

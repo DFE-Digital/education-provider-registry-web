@@ -1,0 +1,50 @@
+﻿@using DfE.EducationProviderRegistry.Web.Mvc.ViewModels
+@model SearchFiltersViewModel
+
+<div class="moj-filter">
+    <div class="moj-filter__content">
+        <div class="moj-filter__options">
+
+            @foreach (var filter in Model.Filters)
+            {
+                <details class="govuk-details filter-section"
+                         open>
+                    <summary class="govuk-details__summary">
+                        <span class="govuk-details__summary-text">
+                            @filter.Label
+                        </span>
+                    </summary>
+
+                    <div class="govuk-details__text">
+                        @switch (filter)
+                        {
+                            case TextFilterViewModel textFilter:
+                                @await Html.PartialAsync(
+                                    "_TextFilter",
+                                    textFilter)
+                                break;
+
+                            case AutocompleteFilterViewModel autocompleteFilter:
+                                @await Html.PartialAsync(
+                                    "_AutocompleteFilter",
+                                    autocompleteFilter)
+                                break;
+
+                            case CheckboxFilterViewModel checkboxFilter:
+                                @await Html.PartialAsync(
+                                    "_FiltersCheckboxComponent",
+                                    checkboxFilter)
+                                break;
+                        }
+                    </div>
+                </details>
+            }
+
+            <button type="submit"
+                    class="govuk-button"
+                    data-module="govuk-button">
+                Apply filters
+            </button>
+        </div>
+    </div>
+</div>

@@ -40,43 +40,11 @@
                     </h2>
                 </div>
 
-                <div class="moj-filter__options">
+                @await Html.PartialAsync(
+    "_SearchFilters",
+    Model.SearchFilters)
 
-                    @await Html.PartialAsync(
-    "_SelectedFilter",
-    Model.SelectedFilters)
 
-                    <details class="govuk-details filter-section" open>
-                        <summary class="govuk-details__summary">
-                            <span class="govuk-details__summary-text">
-                                Establishment type
-                            </span>
-                        </summary>
-
-                        <div class="govuk-details__text">
-                            @await Html.PartialAsync(
-                                "_FiltersComponentGroup.cshtml",
-                                (
-                                    Title: "",
-                                    FacetKey: "t.establishment_type_id",
-                                    Facet: establishmentTypeFacet,
-                                    Options: new List<(string Label, string Value)>
-                                    {
-                        ("Primary School", "1"),
-                        ("Secondary School", "2"),
-                        ("Multi-Academy Trust", "3")
-                                    }
-                                )
-                            )
-                        </div>
-                    </details>
-
-                    <button type="submit"
-                            class="govuk-button"
-                            data-module="govuk-button">
-                        Apply filters
-                    </button>
-                </div>
             </div>
         </div>
 

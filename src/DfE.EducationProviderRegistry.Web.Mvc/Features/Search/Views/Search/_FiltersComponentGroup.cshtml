@@ -1,24 +1,30 @@
 ﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels
-@model (string Title, string FacetKey, FacetViewModel? Facet, List<(string Label, string Value)> Options)
 
-<div class="govuk-form-group">
-    <fieldset class="govuk-fieldset">
-        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-            @Model.Title
-        </legend>
-        <div class="govuk-checkboxes govuk-checkboxes--small">
-            @foreach (var option in Model.Options)
-            {
-                FacetValueViewModel? facetValue =
-                    Model.Facet?.Values
-                        .FirstOrDefault(facetValue =>
-                            facetValue.Value == option.Value);
+@model (string BindingName, FacetValueViewModel FacetValue)
 
-                @await Html.PartialAsync(
-                    "_FiltersComponent.cshtml",
-                    (Model.FacetKey, option.Label, option.Value, facetValue)
-                )
-            }
-        </div>
-    </fieldset>
+@{
+    var id = $"filter-{Model.BindingName}-{Model.FacetValue.Value}"
+        .Replace("[", "-")
+        .Replace("]", string.Empty);
+}
+
+<div class="govuk-checkboxes__item">
+    <input class="govuk-checkboxes__input"
+           id="@id"
+           name="@Model.BindingName"
+           type="checkbox"
+           value="@Model.FacetValue.Value"
+           checked="@Model.FacetValue.IsSelected" />
+
+    <label class="govuk-label govuk-checkboxes__label"
+           for="@id">
+        @Model.BindingName
+
+        @if (Model.FacetValue.Count is not null)
+        {
+            <span class="govuk-hint">
+                (@Model.FacetValue.Count)
+            </span>
+        }
+    </label>
 </div>

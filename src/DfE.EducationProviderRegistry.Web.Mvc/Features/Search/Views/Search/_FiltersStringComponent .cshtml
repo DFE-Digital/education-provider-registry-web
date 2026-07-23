@@ -1,0 +1,36 @@
+﻿@model AutocompleteFilterViewModel
+
+@{
+    var id = $"filter-{Model.Name}";
+    var hintId = $"{id}-hint";
+}
+
+<div class="govuk-form-group">
+    <label class="govuk-label" for="@id">
+        @Model.Label
+    </label>
+
+    @if (!string.IsNullOrWhiteSpace(Model.Hint))
+    {
+        <div id="@hintId" class="govuk-hint">
+            @Model.Hint
+        </div>
+    }
+
+    <select id="@id"
+            name="@Model.BindingName"
+            class="govuk-select"
+            data-module="app-autocomplete"
+            aria-describedby="@(string.IsNullOrWhiteSpace(Model.Hint) ? null : hintId)">
+
+        <option value="">Select an option</option>
+
+        @foreach (var option in Model.Options)
+        {
+            <option value="@option.Value"
+                    selected="@(option.Value == Model.SelectedValue)">
+                @option.Text
+            </option>
+        }
+    </select>
+</div>

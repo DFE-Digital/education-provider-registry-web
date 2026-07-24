@@ -8,6 +8,7 @@ using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Respo
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
+using DfE.EducationProviderRegistry.Web.Mvc.ViewModels;
 using System.Collections.ObjectModel;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search;
@@ -28,13 +29,15 @@ internal static class SearchServiceCollectionExtensions
         // Presentation
         services
             .AddSingleton<IMapper<
-                UseCaseResponse<SearchResponse>, SearchResultsViewModel>, SearchResultsToViewModelMapper>()
+                SearchResultsMappingContext, SearchResultsViewModel>, SearchResultsToViewModelMapper>()
             .AddSingleton<IMapper<
                 IReadOnlyCollection<SearchFacet>, List<FacetViewModel>>, FacetResultsToViewModelMapper>()
             .AddSingleton<IMapper<
                 IReadOnlyCollection<EstablishmentSearchResult>, List<GovUkTable>>, EstablishmentSearchResultsToViewModelMapper>()
             .AddSingleton<IMapper<
-                Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>, SelectedFacetsToFilterRequestsMapper>();
+                Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>, SelectedFacetsToFilterRequestsMapper>()
+            .AddSingleton<IMapper<
+                SearchFiltersMappingContext, SearchFiltersViewModel>, SearchResponseToSearchFiltersViewModelMapper>();
 
         return services;
     }

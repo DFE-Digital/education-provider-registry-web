@@ -174,13 +174,6 @@ public sealed class SearchController : Controller
 
         FilterViewModel[] filters =
         [
-            new TextFilterViewModel
-        {
-            Name = nameof(SearchRequestViewModel.SearchKeywords),
-            BindingName = nameof(SearchRequestViewModel.SearchKeywords),
-            Label = "Establishment name or reference",
-            Value = searchRequest.SearchKeywords
-        },
 
         new AutocompleteFilterViewModel
         {

@@ -72,7 +72,7 @@ public sealed class SearchRequestViewModel
     /// <summary>
     /// Remove a specific filter
     /// </summary>
-    public string? RemoveFilter { get; init; }
+    public string? RemoveFilter { get; set; }
 
     /// <summary>
     /// Gets the number of records to skip when retrieving paged search results.

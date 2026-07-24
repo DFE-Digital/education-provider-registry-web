@@ -1,48 +1,82 @@
-﻿using DfE.Core.Libraries.CleanArchitecture.Application;
-using DfE.Core.Libraries.CrossCutting.Mapper;
+﻿using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Establishment;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
-using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 
-public class SearchResultsToViewModelMapper :
-    IMapper<UseCaseResponse<SearchResponse>, SearchResultsViewModel>
+public sealed class SearchResultsToViewModelMapper :
+    IMapper<SearchResultsMappingContext, SearchResultsViewModel>
 {
-    private readonly IMapper<IReadOnlyCollection<EstablishmentSearchResult>, List<GovUkTable>> _establishmentSearchResultsToViewModelMapper;
-    private readonly IMapper<IReadOnlyCollection<SearchFacet>, List<FacetViewModel>> _facetResultsToFacetsViewModelMapper;
+    private readonly IMapper<
+        IReadOnlyCollection<EstablishmentSearchResult>,
+        List<GovUkTable>>
+        _establishmentSearchResultsToViewModelMapper;
+
+    private readonly IMapper<
+        IReadOnlyCollection<SearchFacet>,
+        List<FacetViewModel>>
+        _facetResultsToFacetsViewModelMapper;
 
     public SearchResultsToViewModelMapper(
-        IMapper<IReadOnlyCollection<EstablishmentSearchResult>, List<GovUkTable>> establishmentSearchResultsToViewModelMapper,
-        IMapper<IReadOnlyCollection<SearchFacet>, List<FacetViewModel>> facetResultsToFacetsViewModelMapper)
+        IMapper<
+            IReadOnlyCollection<EstablishmentSearchResult>,
+            List<GovUkTable>>
+            establishmentSearchResultsToViewModelMapper,
+        IMapper<
+            IReadOnlyCollection<SearchFacet>,
+            List<FacetViewModel>>
+            facetResultsToFacetsViewModelMapper)
     {
-        _establishmentSearchResultsToViewModelMapper = establishmentSearchResultsToViewModelMapper;
-        _facetResultsToFacetsViewModelMapper = facetResultsToFacetsViewModelMapper;
+        ArgumentNullException.ThrowIfNull(
+            establishmentSearchResultsToViewModelMapper);
+
+        ArgumentNullException.ThrowIfNull(
+            facetResultsToFacetsViewModelMapper);
+
+        _establishmentSearchResultsToViewModelMapper =
+            establishmentSearchResultsToViewModelMapper;
+
+        _facetResultsToFacetsViewModelMapper =
+            facetResultsToFacetsViewModelMapper;
     }
 
-    public SearchResultsViewModel Map(UseCaseResponse<SearchResponse> input)
+    public SearchResultsViewModel Map(
+        SearchResultsMappingContext input)
     {
         ArgumentNullException.ThrowIfNull(input);
 
-        if (input.Model == null)
-        {
-            throw new ArgumentException("SearchResponse model cannot be null.", nameof(input));
-        }
+        var searchResponse = input.SearchResponse.Model
+            ?? throw new ArgumentException(
+                "SearchResponse model cannot be null.",
+                nameof(input));
 
-        return new()
+        return new SearchResultsViewModel
         {
+            PrimarySearchTerms =
+                input.SearchRequest.SearchKeywords!,
+
+            SecondarySearchTerms =
+                input.SearchRequest.Address,
+
+            SearchRequest =
+                input.SearchRequest,
+
             EstablishmentResults =
-                (input.Model.EstablishmentResults != null)
+                searchResponse.EstablishmentResults is not null
                     ? _establishmentSearchResultsToViewModelMapper.Map(
-                        input.Model.EstablishmentResults.EstablishmentCollection)
+                        searchResponse
+                            .EstablishmentResults
+                            .EstablishmentCollection)
                     : [],
 
             Facets =
-                (input.Model.FacetedResults != null)
+                searchResponse.FacetedResults is not null
                     ? _facetResultsToFacetsViewModelMapper.Map(
-                        input.Model.FacetedResults.Facets)
+                        searchResponse
+                            .FacetedResults
+                            .Facets)
                     : []
         };
     }

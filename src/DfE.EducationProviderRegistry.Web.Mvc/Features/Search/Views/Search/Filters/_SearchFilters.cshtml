@@ -56,12 +56,6 @@
                     <div class="govuk-details__text">
                         @switch (filter)
                         {
-                            case TextFilterViewModel textFilter:
-                                @await Html.PartialAsync(
-                                    "_TextFilter",
-                                    textFilter)
-                                break;
-
                             case AutocompleteFilterViewModel autocompleteFilter:
                                 @await Html.PartialAsync(
                                     "_AutocompleteFilter",

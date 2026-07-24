@@ -25,6 +25,7 @@ public class FeatureViewLocationExpander : IViewLocationExpander
     [
         $"/Features/{controller}/Views/{{1}}/{{0}}.cshtml",
         $"/Features/{controller}/Views/Shared/{{0}}.cshtml",
+        $"/Features/{controller}/Views/Search/Filters/{{0}}.cshtml",
         
         // Explicit fallback
         "/Views/Shared/{0}.cshtml",

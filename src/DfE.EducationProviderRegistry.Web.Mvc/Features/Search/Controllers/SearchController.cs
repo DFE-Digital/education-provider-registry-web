@@ -69,6 +69,8 @@ public sealed class SearchController : Controller
                 "TO_BE_DEFINED"
             }.AsReadOnly());
 
+        HandleFilterSelection(model);
+
         ReadOnlyCollection<FilterRequest> searchFilterRequests =
             _facetResultToViewModelMapper.Map(
                 model.SelectedFacets);
@@ -105,6 +107,40 @@ public sealed class SearchController : Controller
         return View("Results", updatedModel);
     }
 
+    private void HandleFilterSelection(
+        SearchRequestViewModel model)
+    {
+        if (model.ClearFilters)
+        {
+            model.SelectedFacets.Clear();
+        }
+
+        if (!string.IsNullOrWhiteSpace(model.RemoveFilter))
+        {
+            var parts = model.RemoveFilter.Split('|', 2);
+
+            if (parts.Length == 2)
+            {
+                var bindingName = parts[0];
+                var value = parts[1];
+
+                var facetName = bindingName
+                    .Replace("SelectedFacets[", "")
+                    .Replace("]", "");
+
+                if (model.SelectedFacets.TryGetValue(facetName, out var values))
+                {
+                    values.Remove(value);
+
+                    if (values.Count == 0)
+                    {
+                        model.SelectedFacets.Remove(facetName);
+                    }
+                }
+            }
+        }
+    }
+
     private static SearchFiltersViewModel BuildFilters(
         ReadOnlyCollection<FilterRequest> requests,
         SearchRequestViewModel searchRequest,
@@ -124,76 +160,111 @@ public sealed class SearchController : Controller
                 .ToString();
         }
 
+        IReadOnlyCollection<string> selectedEstablishmentTypes = [];
+
+        if (searchRequest != null && searchRequest.SelectedFacets != null)
+        {
+            if (searchRequest.SelectedFacets.TryGetValue(
+                    "EstablishmentType",
+                    out var selectedValues))
+            {
+                selectedEstablishmentTypes = selectedValues;
+            }
+        }
+
         FilterViewModel[] filters =
         [
             new TextFilterViewModel
-            {
-                Name =
-                    nameof(SearchRequestViewModel.SearchKeywords),
+        {
+            Name = nameof(SearchRequestViewModel.SearchKeywords),
+            BindingName = nameof(SearchRequestViewModel.SearchKeywords),
+            Label = "Establishment name or reference",
+            Value = searchRequest.SearchKeywords
+        },
 
-                BindingName =
-                    nameof(SearchRequestViewModel.SearchKeywords),
+        new AutocompleteFilterViewModel
+        {
+            Name = "LocalAuthority",
+            BindingName = "SelectedFacets[LocalAuthority]",
+            Label = "Local authority",
+            Hint = "Start typing a local authority name",
+            SelectedValue = GetFirstValue("LocalAuthority"),
 
-                Label = "Establishment name or reference",
+            Options =
+            [
+                .. searchResponse.Model.EstablishmentResults.EstablishmentCollection
+                    .Where(result =>
+                        !string.IsNullOrWhiteSpace(
+                            result.LocalAuthority.Name))
+                    .Select(result =>
+                        result.LocalAuthority.Name)
+                    .Distinct(
+                        StringComparer.OrdinalIgnoreCase)
+                    .OrderBy(name => name)
+                    .Select(name => new SelectListItem
+                    {
+                        Text = name,
+                        Value = name
+                    })
+            ]
+        },
 
-                Value = searchRequest.SearchKeywords
-            },
+        new CheckboxFilterViewModel
+        {
+            Name = "EstablishmentType",
+            BindingName =
+                "SelectedFacets[EstablishmentType]",
+            Label = "Establishment type",
 
-            new AutocompleteFilterViewModel
-            {
-                Name = "LocalAuthority",
-
-                BindingName =
-                    "SelectedFacets[LocalAuthority]",
-
-                Label = "Local authority",
-
-                Hint =
-                    "Start typing a local authority name",
-
-                SelectedValue =
-                    GetFirstValue("LocalAuthority"),
-
-                Options =
-                [.. searchResponse.Model.EstablishmentResults.EstablishmentCollection.Where(result =>
-                        !string.IsNullOrWhiteSpace(result.LocalAuthority.Name))
-                        .Select(result => result.LocalAuthority.Name)
-                        .Distinct(StringComparer.OrdinalIgnoreCase)
-                        .OrderBy(name => name)
-                        .Select(name => new SelectListItem
-                        {
-                            Text = name,
-                            Value = name
-                        })]
-            },
-
-            new CheckboxFilterViewModel
-            {
-                    Name = "EstablishmentType",
-                    BindingName = "SelectedFacets[EstablishmentType]",
-                    Label = "Establishment type",
-
-                Facet = new FacetViewModel
-                (
-                    "EstablishmentType",
-                [.. searchResponse.Model.EstablishmentResults.EstablishmentCollection
-                        .Where(result => !string.IsNullOrWhiteSpace(result.Type.Value))
+            Facet = new FacetViewModel(
+                "EstablishmentType",
+                [
+                    .. searchResponse.Model.EstablishmentResults.EstablishmentCollection
+                        .Where(result =>
+                            !string.IsNullOrWhiteSpace(
+                                result.Type.Value))
                         .GroupBy(
                             result => result.Type.Value!,
                             StringComparer.OrdinalIgnoreCase)
                         .OrderBy(group => group.Key)
-                        .Select(group => new FacetValueViewModel(
-                            group.Key,
-                            group.Count(),
-                            false))
-                ]
-            )
-            }
+                        .Select(group =>
+                            new FacetValueViewModel(
+                                group.Key,
+                                group.Count(),
+                                selectedEstablishmentTypes.Contains(
+                                    group.Key,
+                                    StringComparer.OrdinalIgnoreCase)))
+                ])
+        }
         ];
+
+        SelectedFilterViewModel[] selectedFilters = filters
+            .OfType<CheckboxFilterViewModel>()
+            .SelectMany(filter =>
+                filter.Facet.Values
+                    .Where(value => value.IsSelected)
+                    .Select(value =>
+                        new SelectedFilterViewModel(
+                            Label: value.Value,
+                            BindingName: filter.BindingName,
+                            Value: value.Value)))
+            .Concat(
+                filters
+                    .OfType<AutocompleteFilterViewModel>()
+                    .Where(filter =>
+                        !string.IsNullOrWhiteSpace(
+                            filter.SelectedValue))
+                    .Select(filter =>
+                        new SelectedFilterViewModel(
+                            Label: filter.SelectedValue!,
+                            BindingName: filter.BindingName,
+                            Value: filter.SelectedValue!)))
+            .ToArray();
 
         return new SearchFiltersViewModel
         {
-            Filters = filters
+            Filters = filters,
+            SelectedFilters = selectedFilters
         };
     }
 }

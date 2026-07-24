@@ -1,5 +1,4 @@
-﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels
-@using DfE.EducationProviderRegistry.Web.Mvc.ViewModels
+﻿@using DfE.EducationProviderRegistry.Web.Mvc.ViewModels
 
 @model CheckboxFilterViewModel
 
@@ -15,7 +14,7 @@
                 @await Html.PartialAsync(
                     "_FiltersComponentGroup.cshtml",
                     (
-                        Model.Facet.Values.First(),
+                        Model.BindingName,
                         facetValue
                     ))
             }

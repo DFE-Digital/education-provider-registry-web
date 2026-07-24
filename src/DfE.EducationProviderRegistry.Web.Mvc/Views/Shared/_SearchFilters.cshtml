@@ -5,10 +5,48 @@
     <div class="moj-filter__content">
         <div class="moj-filter__options">
 
+            @if (Model.SelectedFilters.Any())
+            {
+                <div class="moj-filter__selected app-selected-filters">
+                    <div class="app-selected-filters__header">
+                        <h1 class="govuk-heading-s">
+                            Selected filters
+                        </h1>
+
+                        <button type="submit"
+                                name="ClearFilters"
+                                value="true"
+                                class="govuk-link app-selected-filters__clear">
+                            Clear filters
+                        </button>
+                    </div>
+
+                    <ul class="app-selected-filters__list">
+                        @foreach (var filter in Model.SelectedFilters)
+                        {
+                            <li>
+                                <button type="submit"
+                                        class="app-selected-filter"
+                                        name="RemoveFilter"
+                                        value="@($"{filter.BindingName}|{filter.Value}")">
+
+                                    @filter.Label
+
+                                    <span aria-hidden="true">&times;</span>
+
+                                    <span class="govuk-visually-hidden">
+                                        Remove @filter.Label filter
+                                    </span>
+                                </button>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+
             @foreach (var filter in Model.Filters)
             {
-                <details class="govuk-details filter-section"
-                         open>
+                <details class="govuk-details filter-section" open>
                     <summary class="govuk-details__summary">
                         <span class="govuk-details__summary-text">
                             @filter.Label
@@ -45,6 +83,7 @@
                     data-module="govuk-button">
                 Apply filters
             </button>
+
         </div>
     </div>
 </div>

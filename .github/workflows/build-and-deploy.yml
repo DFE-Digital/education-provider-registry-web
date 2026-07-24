@@ -49,7 +49,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
       name: Checkout
 
     - name: Setup .NET
@@ -86,7 +86,7 @@ jobs:
 
     steps:
     - name: Check out repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v6

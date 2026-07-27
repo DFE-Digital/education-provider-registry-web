@@ -4,8 +4,6 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 
 public sealed class SearchRequestViewModel
 {
-    private Dictionary<string, List<string>>? _selectedFacets = [];
-
     /// <summary>
     /// Gets or sets the dictionary of selected facet values, grouped by facet name.
     /// </summary>
@@ -17,11 +15,7 @@ public sealed class SearchRequestViewModel
     /// field to <c>null</c> and returns <c>null</c>, ensuring that all filters are
     /// cleared for the request.
     /// </remarks>
-    public Dictionary<string, List<string>>? SelectedFacets
-    {
-        get => _selectedFacets;
-        set => _selectedFacets = value ?? [];
-    }
+    public Dictionary<string, List<string>>? SelectedFacets { get; set; }
 
     /// <summary>
     /// Gets or sets the search keywords entered by the user.

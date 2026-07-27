@@ -74,7 +74,7 @@ public sealed class SearchResultsToViewModelMapperTests
             new(establishmentMapper.Object, facetsMapper.Object);
 
         // UseCaseResponse<T>.Failure creates a response with Model = null
-        var input = UseCaseResponse<SearchResponse>.Failure("error");
+        SearchResultsMappingContext input = new(new SearchRequestViewModel(), UseCaseResponse<SearchResponse>.Failure("error"));
 
         // act + assert
         Assert.Throws<ArgumentException>(() => mapper.Map(input));
@@ -105,7 +105,7 @@ public sealed class SearchResultsToViewModelMapperTests
                 new EstablishmentSearchResults(establishmentResults),
                 null);
 
-        var input = UseCaseResponse<SearchResponse>.Success(response);
+        SearchResultsMappingContext input = new(new SearchRequestViewModel(), UseCaseResponse<SearchResponse>.Success(response));
 
         // act
         SearchResultsViewModel vm = mapper.Map(input);
@@ -145,7 +145,7 @@ public sealed class SearchResultsToViewModelMapperTests
                 null!,
                 new SearchFacets(facets));
 
-        var input = UseCaseResponse<SearchResponse>.Success(response);
+        SearchResultsMappingContext input = new(new SearchRequestViewModel(), UseCaseResponse<SearchResponse>.Success(response));
 
         // act
         SearchResultsViewModel vm = mapper.Map(input);
@@ -174,7 +174,7 @@ public sealed class SearchResultsToViewModelMapperTests
             new(establishmentMapper.Object, facetsMapper.Object);
 
         var response = new SearchResponse(null!, null);
-        var input = UseCaseResponse<SearchResponse>.Success(response);
+        SearchResultsMappingContext input = new(new SearchRequestViewModel(), UseCaseResponse<SearchResponse>.Success(response));
 
         // act
         SearchResultsViewModel vm = mapper.Map(input);

@@ -26,7 +26,7 @@ public sealed class SearchController : Controller
 
     private readonly IMapper<
         Dictionary<string, List<string>>?,
-        ReadOnlyCollection<FilterRequest>> _facetResultToViewModelMapper;
+        ReadOnlyCollection<FilterRequest>> _selectedFacetsToFilterRequestsMapper;
 
     private readonly IMapper<
         SearchFiltersMappingContext,
@@ -36,25 +36,17 @@ public sealed class SearchController : Controller
         _searchFilterSelectionHandler;
 
     public SearchController(
-        IUseCase<
-            SearchRequest,
-            UseCaseResponse<SearchResponse>> searchUseCase,
-        IMapper<
-            SearchResultsMappingContext,
-            SearchResultsViewModel> searchResponseToViewModelMapper,
-        IMapper<
-            Dictionary<string, List<string>>?,
-            ReadOnlyCollection<FilterRequest>> facetResultToViewModelMapper,
-        IMapper<
-            SearchFiltersMappingContext,
-            SearchFiltersViewModel> searchFiltersViewModelMapper,
+        IUseCase<SearchRequest, UseCaseResponse<SearchResponse>> searchUseCase,
+        IMapper<SearchResultsMappingContext, SearchResultsViewModel> searchResponseToViewModelMapper,
+        IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>> selectedFacetsToFilterRequestsMapper,
+        IMapper<SearchFiltersMappingContext, SearchFiltersViewModel> searchFiltersViewModelMapper,
         ISearchFilterSelectionHandler searchFilterSelectionHandler)
     {
         ArgumentNullException.ThrowIfNull(searchUseCase);
         ArgumentNullException.ThrowIfNull(
             searchResponseToViewModelMapper);
         ArgumentNullException.ThrowIfNull(
-            facetResultToViewModelMapper);
+            selectedFacetsToFilterRequestsMapper);
         ArgumentNullException.ThrowIfNull(
             searchFiltersViewModelMapper);
         ArgumentNullException.ThrowIfNull(
@@ -63,8 +55,8 @@ public sealed class SearchController : Controller
         _searchUseCase = searchUseCase;
         _searchResponseToViewModelMapper =
             searchResponseToViewModelMapper;
-        _facetResultToViewModelMapper =
-            facetResultToViewModelMapper;
+        _selectedFacetsToFilterRequestsMapper =
+            selectedFacetsToFilterRequestsMapper;
         _searchFiltersViewModelMapper =
             searchFiltersViewModelMapper;
         _searchFilterSelectionHandler =
@@ -99,7 +91,7 @@ public sealed class SearchController : Controller
         _searchFilterSelectionHandler.Handle(model);
 
         ReadOnlyCollection<FilterRequest> searchFilterRequests =
-            _facetResultToViewModelMapper.Map(
+            _selectedFacetsToFilterRequestsMapper.Map(
                 model.SelectedFacets);
 
         SearchRequest searchRequest = new(

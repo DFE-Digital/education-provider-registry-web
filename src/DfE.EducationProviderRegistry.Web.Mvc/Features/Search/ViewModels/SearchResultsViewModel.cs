@@ -42,7 +42,7 @@ public sealed class SearchResultsViewModel
     /// </summary>
     public bool HasFilters => Facets?.Count > 0;
 
-    public SearchFiltersViewModel SearchFilters { get; set; }
+    public SearchFiltersViewModel? SearchFilters { get; set; }
 
     public SearchRequestViewModel SearchRequest { get; set; } = new();
 }

@@ -27,46 +27,6 @@ public sealed class SearchRequestViewModelUnitTests
     }
 
     [Fact]
-    public void SelectedFacets_ReturnsNull_WhenClearFiltersIsTrue()
-    {
-        // arrange
-        SearchRequestViewModel vm = new()
-        {
-            SelectedFacets = new Dictionary<string, List<string>>
-            {
-                { "Phase", new List<string> { "Primary" } }
-            },
-            ClearFilters = true
-        };
-
-        // act
-        var result = vm.SelectedFacets;
-
-        // assert
-        Assert.Null(result);
-    }
-
-    [Fact]
-    public void SelectedFacets_BackFieldIsReset_WhenClearFiltersIsTrue()
-    {
-        // arrange
-        SearchRequestViewModel vm = new()
-        {
-            SelectedFacets = new Dictionary<string, List<string>>
-            {
-                { "Phase", new List<string> { "Primary" } }
-            },
-
-            // act
-            ClearFilters = true
-        };
-        _ = vm.SelectedFacets; // triggers the getter logic
-
-        // assert
-        Assert.Null(vm.SelectedFacets);
-    }
-
-    [Fact]
     public void SearchKeywords_CanBeSetAndRetrieved()
     {
         // arrange

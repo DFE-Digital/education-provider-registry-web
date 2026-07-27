@@ -1,5 +1,5 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
-using DfE.EducationProviderRegistry.Web.Mvc.ViewModels;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.FilterViewModels;
+using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 

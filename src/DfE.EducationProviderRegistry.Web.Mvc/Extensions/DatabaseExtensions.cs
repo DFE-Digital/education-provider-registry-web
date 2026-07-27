@@ -6,6 +6,8 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Extensions
     {
         public static void CheckConnectionStringValue(this string connectionString)
         {
+            ArgumentNullException.ThrowIfNull(connectionString);
+
             try
             {
                 _ = new NpgsqlConnectionStringBuilder(connectionString);

@@ -9,9 +9,11 @@
     <DockerfileContext>.</DockerfileContext>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="wwwroot\" />
-  </ItemGroup>
+	<PropertyGroup>
+		<SonarQubeSetting Include="sonar.exclusions">
+			<Value>**/wwwroot/css/**</Value>
+		</SonarQubeSetting>
+	</PropertyGroup>
 
   <ItemGroup>
 	<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.11" />

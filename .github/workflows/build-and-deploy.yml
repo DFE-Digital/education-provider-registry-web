@@ -123,6 +123,7 @@ jobs:
           sonarcloud-token: ${{ secrets.SONAR_TOKEN }}
           use-global-json: true
           coverage-report-path: coverage-sonar/SonarQube.xml
+          sonarscan-args: /d:sonar.exclusions="**/wwwroot/css/**"
 
   deploy-review-app:
     name: Deployment To Review

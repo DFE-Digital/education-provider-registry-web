@@ -64,6 +64,13 @@ public sealed class SearchResponseToSearchFiltersViewModelMapper :
         SearchRequestViewModel searchRequest,
         string facetName)
     {
+        ArgumentNullException.ThrowIfNull(searchRequest);
+
+        if (searchRequest.SelectedFacets is null)
+        {
+            return [];
+        }
+
         if (searchRequest.SelectedFacets.TryGetValue(
                 facetName,
                 out List<string>? selectedValues))

@@ -168,7 +168,9 @@ jobs:
         name: accessibility-results
         path: artifacts
 
-  
+    - name: Validate formatting
+      run: dotnet format --verify-no-changes --verbosity diagnostic
+      
   deploy-review-app:
     name: Deployment To Review
     concurrency: deploy_review_${{ github.event.pull_request.number }}

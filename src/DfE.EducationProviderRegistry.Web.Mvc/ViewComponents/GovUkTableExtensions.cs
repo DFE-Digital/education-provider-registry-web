@@ -36,13 +36,13 @@ public static class GovUkTableExtensions
         {
             Cells =
             [
-                new GovUkTableCell { 
-                    Text = label, 
-                    IsBold = true 
+                new GovUkTableCell {
+                    Text = label,
+                    IsBold = true
                 },
                 new GovUkTableCell {
-                    Text = value ?? string.Empty, 
-                    LinkUrl = linkUrl 
+                    Text = value ?? string.Empty,
+                    LinkUrl = linkUrl
                 }
             ]
         });

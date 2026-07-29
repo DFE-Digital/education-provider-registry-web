@@ -117,12 +117,14 @@ jobs:
 
     - name: SonarCloud scan
       if: github.actor != 'dependabot[bot]'
-      uses: DFE-Digital/github-actions/sonarscan-dotnet@f55be113b82625ba997c4960aa93fd10ffa043ad
+      uses: aahmed-dfe/github-actions/sonarscan-dotnet@d9e442885ed5812c42795fb565199e5e7081b40e
       with:
           sonarcloud-project-key: DFE-Digital_education-provider-registry-web
           sonarcloud-token: ${{ secrets.SONAR_TOKEN }}
           use-global-json: true
           coverage-report-path: coverage-sonar/SonarQube.xml
+          sonarscan-exclusions: "src/**/wwwroot/css/site.css"
+
 
   deploy-review-app:
     name: Deployment To Review

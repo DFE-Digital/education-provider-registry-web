@@ -4,5 +4,5 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Filte
 
 public class CheckboxFilterViewModel : FilterViewModel
 {
-    public FacetViewModel Facet { get; init; }
+    public required FacetViewModel Facet { get; init; }
 }

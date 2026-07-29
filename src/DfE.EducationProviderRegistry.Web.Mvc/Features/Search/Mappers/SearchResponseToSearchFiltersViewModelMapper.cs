@@ -87,6 +87,20 @@ public sealed class SearchResponseToSearchFiltersViewModelMapper :
                 searchResponse,
         string? selectedValue)
     {
+        IReadOnlyCollection<SelectListItem> options =
+        searchResponse?.Model?.EstablishmentResults?.EstablishmentCollection?
+            .Where(result =>
+                !string.IsNullOrWhiteSpace(result.LocalAuthority?.Name))
+            .Select(result => result.LocalAuthority!.Name!)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(name => name)
+            .Select(name => new SelectListItem
+            {
+                Text = name,
+                Value = name
+            })
+            .ToArray() ?? [];
+
         return new AutocompleteFilterViewModel
         {
             Name = "LocalAuthority",
@@ -95,24 +109,7 @@ public sealed class SearchResponseToSearchFiltersViewModelMapper :
             Hint = "Start typing a local authority name",
             SelectedValue = selectedValue,
 
-            Options =
-            [
-                .. searchResponse.Model.EstablishmentResults
-                    .EstablishmentCollection
-                    .Where(result =>
-                        !string.IsNullOrWhiteSpace(
-                            result.LocalAuthority.Name))
-                    .Select(result =>
-                        result.LocalAuthority.Name)
-                    .Distinct(
-                        StringComparer.OrdinalIgnoreCase)
-                    .OrderBy(name => name)
-                    .Select(name => new SelectListItem
-                    {
-                        Text = name,
-                        Value = name
-                    })
-            ]
+            Options = options
         };
     }
 
@@ -122,23 +119,15 @@ public sealed class SearchResponseToSearchFiltersViewModelMapper :
                 searchResponse,
         IReadOnlyCollection<string> selectedValues)
     {
-        return new CheckboxFilterViewModel
-        {
-            Name = "EstablishmentType",
-            BindingName =
-                "SelectedFacets[EstablishmentType]",
-            Label = "Establishment type",
 
-            Facet = new FacetViewModel(
-                "EstablishmentType",
-                [
-                    .. searchResponse.Model.EstablishmentResults
+        List<FacetValueViewModel> facetValueViewModels =
+                    searchResponse?.Model?.EstablishmentResults?
                         .EstablishmentCollection
                         .Where(result =>
                             !string.IsNullOrWhiteSpace(
-                                result.Type.Value))
+                                result.Type?.Value))
                         .GroupBy(
-                            result => result.Type.Value!,
+                            result => result.Type?.Value!,
                             StringComparer.OrdinalIgnoreCase)
                         .OrderBy(group => group.Key)
                         .Select(group =>
@@ -148,7 +137,18 @@ public sealed class SearchResponseToSearchFiltersViewModelMapper :
                                 selectedValues.Contains(
                                     group.Key,
                                     StringComparer.OrdinalIgnoreCase)))
-                ])
+                .ToList() ?? [];
+
+        return new CheckboxFilterViewModel
+        {
+            Name = "EstablishmentType",
+            BindingName =
+                "SelectedFacets[EstablishmentType]",
+            Label = "Establishment type",
+
+            Facet = new FacetViewModel(
+                "EstablishmentType",
+                facetValueViewModels)
         };
     }
 

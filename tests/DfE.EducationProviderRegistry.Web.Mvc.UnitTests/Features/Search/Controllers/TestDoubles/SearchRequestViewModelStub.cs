@@ -20,6 +20,6 @@ internal static class SearchRequestViewModelStub
         new()
         {
             SearchKeywords = "academy",
-            SelectedFacets = null
+            SelectedFacets = []
         };
 }

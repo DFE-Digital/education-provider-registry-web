@@ -24,7 +24,7 @@ public class SearchFilterSelectionHandler :
     private static void ClearFilters(
         SearchRequestViewModel request)
     {
-        request.SelectedFacets.Clear();
+        request.SelectedFacets?.Clear();
         request.ClearFilters = false;
         request.RemoveFilter = null;
     }

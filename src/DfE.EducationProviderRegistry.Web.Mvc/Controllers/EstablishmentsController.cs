@@ -12,12 +12,12 @@ public class EstablishmentsController : Controller
 {
     private readonly IMapper<EstablishmentDetailsModel, EstablishmentDetailsPageViewModel>
         _establishmentDetailsPageMapper;
-    private readonly IUseCase<GetEstablishmentByIdRequest, UseCaseResponse<EstablishmentDetailsModel>>
+    private readonly IUseCase<GetEstablishmentByIdRequest, UseCaseResponse<EstablishmentDetailsModel?>>
         _getEstablishmentByIdUseCase;
 
     public EstablishmentsController(
         IMapper<EstablishmentDetailsModel, EstablishmentDetailsPageViewModel> basicMapper,
-        IUseCase<GetEstablishmentByIdRequest, UseCaseResponse<EstablishmentDetailsModel>> getEstablishmentByIdUseCase)
+        IUseCase<GetEstablishmentByIdRequest, UseCaseResponse<EstablishmentDetailsModel?>> getEstablishmentByIdUseCase)
     {
         ArgumentNullException.ThrowIfNull(basicMapper);
         ArgumentNullException.ThrowIfNull(getEstablishmentByIdUseCase);
@@ -28,7 +28,7 @@ public class EstablishmentsController : Controller
     [HttpGet("{urn}")]
     public async Task<IActionResult> Details(string urn)
     {
-        UseCaseResponse<EstablishmentDetailsModel> response = await _getEstablishmentByIdUseCase
+        UseCaseResponse<EstablishmentDetailsModel?> response = await _getEstablishmentByIdUseCase
             .HandleRequestAsync(new GetEstablishmentByIdRequest(urn));
 
         // TODO: how do we want to handle unsuccessful responses vs null models?

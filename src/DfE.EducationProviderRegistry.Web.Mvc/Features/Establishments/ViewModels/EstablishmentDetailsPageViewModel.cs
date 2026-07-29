@@ -4,8 +4,8 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments.ViewMode
 
 public class EstablishmentDetailsPageViewModel
 {
-    public string Heading { get; set; }
+    public string? Heading { get; set; }
 
-    public GovUkTable BasicDetails { get; set; }
-    public GovUkTable Governors { get; set; }
+    public GovUkTable? BasicDetails { get; set; }
+    public GovUkTable? Governors { get; set; }
 }

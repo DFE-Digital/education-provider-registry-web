@@ -12,19 +12,19 @@ public sealed record GroupDetailsPageViewModel
 
 public sealed class GroupDetailsTabViewModel
 {
-    public string Tab { get; set; }
-    public GovUkSummaryList Summary { get; set; }
+    public string? Tab { get; set; }
+    public GovUkSummaryList? Summary { get; set; }
 }
 
 public sealed class GroupDetailsAcademyTabViewModel
 {
-    public string Tab { get; set; }
-    public Web.ViewComponents.Table.GovUkTable Table { get; set; }
+    public string? Tab { get; set; }
+    public Web.ViewComponents.Table.GovUkTable? Table { get; set; }
 }
 
 public sealed class GroupDetailsGovernanceTabViewModel
 {
-    public string Tab { get; set; }
-    public Web.ViewComponents.Table.GovUkTable TrusteesTable { get; set; }
-    public Web.ViewComponents.Table.GovUkTable MembersTable { get; set; }
+    public string? Tab { get; set; }
+    public Web.ViewComponents.Table.GovUkTable? TrusteesTable { get; set; }
+    public Web.ViewComponents.Table.GovUkTable? MembersTable { get; set; }
 }

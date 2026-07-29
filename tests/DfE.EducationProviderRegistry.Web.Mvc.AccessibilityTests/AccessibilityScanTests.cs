@@ -1,0 +1,211 @@
+﻿using Deque.AxeCore.Commons;
+using Deque.AxeCore.Selenium;
+using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Options;
+using Microsoft.Extensions.Configuration;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
+using System.Text;
+using Xunit.Sdk;
+
+namespace DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests;
+
+public sealed class AccessibilityScanTests
+{
+    private readonly CancellationToken _ct;
+    private readonly ChromeOptions _chromeOptions;
+    private readonly AccessibilityTestOptions _accessibilityTestOptions;
+    private readonly ApplicationHostedEnvironment _hostedEnvironment;
+
+    public AccessibilityScanTests(AccessibilityTestOptions options, ApplicationHostedEnvironment hostedEnvironment)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(hostedEnvironment);
+        _accessibilityTestOptions = options;
+        _hostedEnvironment = hostedEnvironment;
+        _ct = TestContext.Current.CancellationToken;
+
+        _chromeOptions = new();
+
+        _chromeOptions.AddArguments(
+            "--incognito",
+            // https://github.com/SeleniumHQ/selenium/issues/6049 observed on ubuntu 22.04 runners
+            "--disable-dev-shm-usage",
+            "--disable-gpu",
+            // screen size setting
+            "--window-size=1920,1080",
+            "--start-maximized",
+            "--start-fullscreen",
+            // see https://www.selenium.dev/blog/2023/headless-is-going-away/
+            "--headless=new",
+            // Bypass localhost certificate errors in CI
+            "--allow-insecure-localhost");
+    }
+
+    [Fact]
+    public void Axe_Detects_Known_Violation()
+    {
+        using ChromeDriverService service = ChromeDriverService.CreateDefaultService();
+        using IWebDriver driver = new ChromeDriver(service, _chromeOptions);
+
+        driver.Navigate().GoToUrl(
+            "data:text/html;charset=utf-8," +
+            Uri.EscapeDataString("""
+                <!DOCTYPE html>
+                <html>
+                <body>
+                    <img src="logo.png"></img>
+                </body>
+                </html>
+                """));
+
+        AxeResult results = ExecuteScan(driver, _accessibilityTestOptions);
+
+        Assert.Contains(
+            results.Violations,
+            violation => violation.Id == "image-alt");
+    }
+
+    [Theory]
+    [MemberData(nameof(AccessibilityScans))]
+    public async Task Scanned_Page_For_Accessibility_Violations(
+        AccessibilityScanTestCase testCase)
+    {
+        await _hostedEnvironment.InitialiseAsync(_ct);
+
+        using ChromeDriverService service = ChromeDriverService.CreateDefaultService();
+        using IWebDriver driver = new ChromeDriver(service, _chromeOptions);
+
+        Uri absoluteScanUri = new(
+            baseUri: _hostedEnvironment.GetApplicationUrl(),
+            relativeUri: testCase.Scan.Route);
+
+        await driver.Navigate().GoToUrlAsync(absoluteScanUri);
+
+        // TODO Verify request successful and not on error page
+
+        AxeResult results = ExecuteScan(driver, _accessibilityTestOptions);
+
+        string outputDirectory = GetScanOutputDirectory(
+            _accessibilityTestOptions,
+            testCase.Name);
+
+        TestContext.Current.SendDiagnosticMessage(
+            $"Artifact output directory: {outputDirectory}");
+
+        TestContext.Current.AddAttachment(
+            testCase.Name,
+            results.ToString());
+
+        byte[] content = Encoding.UTF8.GetBytes(results.ToString());
+
+        await File.WriteAllBytesAsync(
+            Path.Combine(outputDirectory, "axe-result.json"),
+            content,
+            _ct);
+
+        if (results.Violations.Length != 0)
+        {
+            ((ITakesScreenshot)driver)
+                .GetScreenshot()
+                .SaveAsFile(
+                    Path.Combine(
+                        outputDirectory,
+                        $"{testCase.Name}-screenshot"));
+        }
+
+        Assert.True(
+            results.Violations.Length == 0,
+            $"Route {absoluteScanUri} has violations.");
+    }
+
+
+
+    private static AxeResult ExecuteScan(IWebDriver driver, AccessibilityTestOptions options)
+    {
+        AxeBuilder axeBuilder = new(driver);
+
+        if (options.WcagTags != null && options.WcagTags.Length > 0)
+        {
+            axeBuilder.WithTags(options.WcagTags);
+        }
+
+        AxeResult accessibilityResults = axeBuilder.Analyze();
+        return accessibilityResults;
+    }
+
+    private static string GetScanOutputDirectory(AccessibilityTestOptions options, string scanName)
+    {
+        string path = Path.Combine(
+            options.ArtifactsOutputDirectory,
+            scanName);
+
+        Directory.CreateDirectory(path);
+
+        return path;
+    }
+
+    // Note: cannot consume Options from DI as XUnit.DI is not available at compile time.
+    public static IEnumerable<TheoryDataRow<AccessibilityScanTestCase>>
+        AccessibilityScans()
+    {
+        AccessibilityTestOptions options = new();
+
+        IConfiguration config = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json")
+            .AddEnvironmentVariables()
+            .Build();
+
+        config
+            .GetRequiredSection(nameof(AccessibilityTestOptions))
+            .Bind(options);
+
+        if (options.Scans == null || options.Scans.Count == 0)
+        {
+            throw new ArgumentException("No scan configurations exist in AccessibilityTestOptions");
+        }
+
+        return options.Scans.Select(scan =>
+            new TheoryDataRow<AccessibilityScanTestCase>(
+                new(
+                    scan.Key,
+                    scan.Value)));
+    }
+}
+
+public sealed class AccessibilityScanTestCase : IXunitSerializable
+{
+    public AccessibilityScanTestCase()
+    {
+    }
+
+    public AccessibilityScanTestCase(
+        string name,
+        AccessibilityTest scan)
+    {
+        Name = name ?? string.Empty;
+        Scan = scan;
+    }
+
+    public string Name { get; private set; } = string.Empty;
+
+    public AccessibilityTest Scan { get; private set; } = null!;
+
+    public void Serialize(IXunitSerializationInfo info)
+    {
+        info.AddValue(nameof(Name), Name);
+        info.AddValue(nameof(Scan.Route), Scan.Route);
+    }
+
+    public void Deserialize(IXunitSerializationInfo info)
+    {
+        Name = info.GetValue<string>(nameof(Name)) ?? string.Empty;
+
+        Scan = new AccessibilityTest
+        {
+            Route = info.GetValue<string>(nameof(Scan.Route))
+                ?? string.Empty
+        };
+    }
+
+    public override string ToString() => Name;
+}

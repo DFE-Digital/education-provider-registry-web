@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests</RootNamespace>
+	<IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Deque.AxeCore.Selenium" />
+	<PackageReference Include="DfE.Core.Libraries.Testing" />
+	<PackageReference Include="DfE.Core.Libraries.IntegrationTests" />
+	<PackageReference Include="DfE.Core.Libraries.IntegrationTests.Database.Postgres" />
+    <PackageReference Include="DotNetSeleniumExtras.PageObjects" />
+    <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" />
+    <PackageReference Include="Selenium.WebDriver" />
+    <PackageReference Include="Testcontainers" />
+    <PackageReference Include="Xunit.DependencyInjection" />
+    <PackageReference Include="Xunit.DependencyInjection.Logging" />
+    <PackageReference Include="xunit.v3.mtp-v2" />
+  </ItemGroup>
+
+</Project>

@@ -135,6 +135,17 @@
     font: inherit;
     color: govuk-functional-colour("link");
 }
+    .app-selected-filters__clear:hover {
+        color: #003078; /* GOV.UK hover blue */
+    }
+
+    .app-selected-filters__clear:focus {
+        color: govuk-functional-colour("focus-text");
+        background-color: govuk-functional-colour("focus");
+        outline: 3px solid transparent;
+        box-shadow: 0 -2px govuk-functional-colour("focus"), 0 4px govuk-functional-colour("focus-text");
+        text-decoration: none;
+    }
 
 .app-selected-filters__list {
     display: flex;
@@ -162,26 +173,4 @@
 
     .app-selected-filter span[aria-hidden] {
         font-weight: bold;
-    }
-
-.app-selected-filters__clear {
-    background: none;
-    border: 0;
-    padding: 0;
-    font: inherit;
-    color: #1d70b8; /* GOV.UK link blue */
-    text-decoration: underline;
-    cursor: pointer;
-}
-
-    .app-selected-filters__clear:hover {
-        color: #003078; /* GOV.UK hover blue */
-    }
-
-    .app-selected-filters__clear:focus {
-        color: govuk-functional-colour("focus-text");
-        background-color: govuk-functional-colour("focus");
-        outline: 3px solid transparent;
-        box-shadow: 0 -2px govuk-functional-colour("focus"), 0 4px govuk-functional-colour("focus-text");
-        text-decoration: none;
     }

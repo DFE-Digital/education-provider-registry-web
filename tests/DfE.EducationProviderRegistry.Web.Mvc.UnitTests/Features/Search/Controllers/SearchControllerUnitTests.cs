@@ -229,7 +229,7 @@ public sealed class SearchControllerUnitTests
         IActionResult result = await sut.Search(model);
 
         // assert
-        searchFacetsResultsMapper.Verify(mapper => mapper.Map(null), Times.Once);
+        searchFacetsResultsMapper.Verify(mapper => mapper.Map(new ()), Times.Once);
 
         ViewResult view = Assert.IsType<ViewResult>(result);
         Assert.Equal("Results", view.ViewName);

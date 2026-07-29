@@ -52,6 +52,12 @@ jobs:
     - uses: actions/checkout@v4
       name: Checkout
 
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v6
+      with:
+        global-json-file: global.json
+
+
     - name: Inject token into NuGet.config
       run: |
         TOKEN="${{ secrets.GITHUB_TOKEN }}"
@@ -59,7 +65,7 @@ jobs:
 
     - name: Build and push docker image
       id: build-image
-      uses: DFE-Digital/github-actions/build-docker-image@f55be113b82625ba997c4960aa93fd10ffa043ad
+      uses: DFE-Digital/github-actions/build-docker-image@0e3ff9f87329e3d8ace1fc4f175ddd1ea13c7af0
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         dockerfile-path: ./src/DfE.EducationProviderRegistry.Web.Mvc/Dockerfile
@@ -82,6 +88,11 @@ jobs:
     - name: Check out repository
       uses: actions/checkout@v4
 
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v6
+      with:
+        global-json-file: global.json
+
     - name: .NET Tool restore
       run: dotnet tool restore
 
@@ -91,11 +102,26 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_USERNAME: DFE-Digital
 
-    - name: Run .NET Tests with coverage
+    - name: Run MVC UnitTests with coverage
       run: |
-        dotnet test \
-          --verbosity normal \
-          --report-xunit-trx \
+        dotnet test tests/DfE.EducationProviderRegistry.Web.Mvc.UnitTests \
+          --coverage \
+          --coverage-output coverage.cobertura.xml \
+          --coverage-output-format cobertura \
+          --coverage-settings coverage.runsettings
+
+
+    - name: Run ViewComponent UnitTests with coverage
+      run: |
+        dotnet test tests/DfE.EducationProviderRegistry.Web.Mvc.UnitTests \
+          --coverage \
+          --coverage-output coverage.cobertura.xml \
+          --coverage-output-format cobertura \
+          --coverage-settings coverage.runsettings
+
+    - name: Run MVC IntegrationTests with coverage
+      run: |
+        dotnet test tests/DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests \
           --coverage \
           --coverage-output coverage.cobertura.xml \
           --coverage-output-format cobertura \
@@ -123,10 +149,26 @@ jobs:
           sonarcloud-project-key: DFE-Digital_education-provider-registry-web
           sonarcloud-token: ${{ secrets.SONAR_TOKEN }}
           use-global-json: true
+          # awaiting completion of https://github.com/DFE-Digital/github-actions/pull/236/changes then defaults handle
+          java-version: 21
           coverage-report-path: coverage-sonar/SonarQube.xml
           sonarscan-exclusions: "src/**/wwwroot/css/site.css"
 
 
+    - name: Run Accessibility Tests
+      run: |
+        dotnet test tests/DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests      
+      env:
+        AccessibilityTestOptions__ArtifactsOutputDirectory: ${{ github.workspace }}/artifacts
+
+    - name: Upload Accessibility Results
+      if: always()
+      uses: actions/upload-artifact@v7
+      with:
+        name: accessibility-results
+        path: artifacts
+
+  
   deploy-review-app:
     name: Deployment To Review
     concurrency: deploy_review_${{ github.event.pull_request.number }}

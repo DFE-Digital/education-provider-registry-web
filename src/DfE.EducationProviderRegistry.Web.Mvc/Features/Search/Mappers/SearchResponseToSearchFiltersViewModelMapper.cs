@@ -60,7 +60,7 @@ public sealed class SearchResponseToSearchFiltersViewModelMapper :
             .ToString();
     }
 
-    private static IReadOnlyCollection<string> GetSelectedValues(
+    private static List<string> GetSelectedValues(
         SearchRequestViewModel searchRequest,
         string facetName)
     {
@@ -155,27 +155,29 @@ public sealed class SearchResponseToSearchFiltersViewModelMapper :
     private static SelectedFilterViewModel[] BuildSelectedFilters(
         IEnumerable<FilterViewModel> filters)
     {
-        return filters
-            .OfType<CheckboxFilterViewModel>()
-            .SelectMany(filter =>
-                filter.Facet.Values
-                    .Where(value => value.IsSelected)
-                    .Select(value =>
-                        new SelectedFilterViewModel(
-                            Label: value.Value,
-                            BindingName: filter.BindingName,
-                            Value: value.Value)))
-            .Concat(
-                filters
-                    .OfType<AutocompleteFilterViewModel>()
-                    .Where(filter =>
-                        !string.IsNullOrWhiteSpace(
-                            filter.SelectedValue))
-                    .Select(filter =>
-                        new SelectedFilterViewModel(
-                            Label: filter.SelectedValue!,
-                            BindingName: filter.BindingName,
-                            Value: filter.SelectedValue!)))
-            .ToArray();
+        return
+        [
+            .. filters
+                        .OfType<CheckboxFilterViewModel>()
+                        .SelectMany(filter =>
+                            filter.Facet.Values
+                                .Where(value => value.IsSelected)
+                                .Select(value =>
+                                    new SelectedFilterViewModel(
+                                        Label: value.Value,
+                                        BindingName: filter.BindingName,
+                                        Value: value.Value)))
+,
+            .. filters
+                .OfType<AutocompleteFilterViewModel>()
+                .Where(filter =>
+                    !string.IsNullOrWhiteSpace(
+                        filter.SelectedValue))
+                .Select(filter =>
+                    new SelectedFilterViewModel(
+                        Label: filter.SelectedValue!,
+                        BindingName: filter.BindingName,
+                        Value: filter.SelectedValue!)),
+        ];
     }
 }

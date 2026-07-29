@@ -20,12 +20,17 @@ public sealed class ResourceTests
     // *** CSS ***
     // SITE
     [InlineData("/css/site.css", "text/css")]
+    [InlineData("/css/accessible-autocomplete.min.css", "text/css")]
 
     // *** Javascript ***
     // GOVUK
     [InlineData("/js/govuk-frontend.min.js", "text/javascript")]
     // MOJ
     [InlineData("/js/moj-frontend.min.js", "text/javascript")]
+    // Autocomplete
+    [InlineData("/js/accessible-autocomplete.min.js", "text/javascript")]
+    // Site javascript
+    [InlineData("/js/site.js", "text/javascript")]
     // *** Fonts ***
     // GOVUK
     [InlineData("/assets/fonts/bold-b542beb274-v2.woff2", "font/woff2")]

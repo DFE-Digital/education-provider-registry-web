@@ -1,18 +1,19 @@
-﻿@model CheckboxFilterViewModel
+﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels
+@model FacetViewModel
 
 <div class="govuk-form-group">
     <fieldset class="govuk-fieldset">
         <legend class="govuk-fieldset__legend govuk-visually-hidden">
-            @Model.Label
+            @Model.Name
         </legend>
 
         <div class="govuk-checkboxes govuk-checkboxes--small">
-            @foreach (var facetValue in Model.Facet.Values)
+            @foreach (var facetValue in Model.Values)
             {
                 @await Html.PartialAsync(
                     "_FiltersComponentGroup.cshtml",
                     (
-                        Model.BindingName,
+                        Model.Name,
                         facetValue
                     ))
             }

@@ -33,12 +33,7 @@
                         Filters
                     </h2>
                 </div>
-
-                @await Html.PartialAsync(
-    "_SearchFilters",
-    Model.SearchFilters)
-
-
+                @await Html.PartialAsync("_SearchFilters", Model)
             </div>
         </div>
 
@@ -61,9 +56,11 @@
                         </select>
                     </div>
 
-                    <a href="#" class="govuk-link">
+                    <button type="button"
+                            class="govuk-button govuk-button--secondary"
+                            data-module="govuk-button">
                         Download results
-                    </a>
+                    </button>
                 </div>
             </div>
 

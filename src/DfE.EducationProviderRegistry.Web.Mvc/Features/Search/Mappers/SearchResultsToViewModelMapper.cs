@@ -52,6 +52,16 @@ public sealed class SearchResultsToViewModelMapper :
                 "SearchResponse model cannot be null.",
                 nameof(input));
 
+        List<FacetViewModel> facets =
+            searchResponse.FacetedResults is not null
+                ? _facetResultsToFacetsViewModelMapper.Map(
+                    searchResponse.FacetedResults.Facets)
+                : [];
+
+        MarkSelectedFacetValues(
+            facets,
+            input.SearchRequest.SelectedFacets);
+
         return new SearchResultsViewModel
         {
             PrimarySearchTerms =
@@ -71,13 +81,44 @@ public sealed class SearchResultsToViewModelMapper :
                             .EstablishmentCollection)
                     : [],
 
-            Facets =
-                searchResponse.FacetedResults is not null
-                    ? _facetResultsToFacetsViewModelMapper.Map(
-                        searchResponse
-                            .FacetedResults
-                            .Facets)
-                    : []
+            Facets = facets
         };
+    }
+
+    private static void MarkSelectedFacetValues(
+        List<FacetViewModel> facets,
+        Dictionary<string, List<string>>? selectedFacets)
+    {
+        if (selectedFacets is null)
+        {
+            return;
+        }
+
+        foreach (FacetViewModel facet in facets)
+        {
+            if (!selectedFacets.TryGetValue(facet.Name, out List<string>? selectedValues))
+            {
+                continue;
+            }
+
+            UpdateFacetSelections(facet, selectedValues);
+        }
+    }
+
+    private static void UpdateFacetSelections(
+        FacetViewModel facet,
+        List<string> selectedValues)
+    {
+        for (int index = 0; index < facet.Values.Count; index++)
+        {
+            FacetValueViewModel value = facet.Values[index];
+
+            facet.Values[index] = value with
+            {
+                IsSelected = selectedValues.Contains(
+                    value.Value,
+                    StringComparer.OrdinalIgnoreCase)
+            };
+        }
     }
 }

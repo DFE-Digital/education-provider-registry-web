@@ -105,7 +105,7 @@ public sealed class SearchFilterSelectionHandlerTests
         SearchRequestViewModel request = new()
         {
             RemoveFilter =
-                "SelectedFacets[EstablishmentType]|Academy",
+                "EstablishmentType|Academy",
 
             SelectedFacets = new Dictionary<string, List<string>>
             {
@@ -135,7 +135,7 @@ public sealed class SearchFilterSelectionHandlerTests
         SearchRequestViewModel request = new()
         {
             RemoveFilter =
-                "SelectedFacets[EstablishmentType]|academy",
+                "EstablishmentType|academy",
 
             SelectedFacets = new Dictionary<string, List<string>>
             {
@@ -165,7 +165,7 @@ public sealed class SearchFilterSelectionHandlerTests
         SearchRequestViewModel request = new()
         {
             RemoveFilter =
-                "SelectedFacets[EstablishmentType]|Academy",
+                "EstablishmentType|Academy",
 
             SelectedFacets = new Dictionary<string, List<string>>
             {
@@ -194,7 +194,7 @@ public sealed class SearchFilterSelectionHandlerTests
         SearchRequestViewModel request = new()
         {
             RemoveFilter =
-                "SelectedFacets[EstablishmentType]|Academy",
+                "EstablishmentType|Academy",
 
             SelectedFacets = new Dictionary<string, List<string>>
             {
@@ -344,7 +344,7 @@ public sealed class SearchFilterSelectionHandlerTests
         SearchRequestViewModel request = new()
         {
             RemoveFilter =
-                "SelectedFacets[LocalAuthority]|TestLocalAuthority1",
+                "LocalAuthority|TestLocalAuthority1",
 
             SelectedFacets = new Dictionary<string, List<string>>
             {
@@ -373,7 +373,7 @@ public sealed class SearchFilterSelectionHandlerTests
         SearchRequestViewModel request = new()
         {
             RemoveFilter =
-                "SelectedFacets[EstablishmentType]|Free school",
+                "EstablishmentType|Free school",
 
             SelectedFacets = new Dictionary<string, List<string>>
             {
@@ -404,7 +404,7 @@ public sealed class SearchFilterSelectionHandlerTests
         SearchRequestViewModel request = new()
         {
             RemoveFilter =
-                " SelectedFacets[EstablishmentType] | Academy ",
+                " EstablishmentType | Academy ",
 
             SelectedFacets = new Dictionary<string, List<string>>
             {
@@ -436,7 +436,7 @@ public sealed class SearchFilterSelectionHandlerTests
             ClearFilters = true,
 
             RemoveFilter =
-                "SelectedFacets[EstablishmentType]|Academy",
+                "EstablishmentType|Academy",
 
             SelectedFacets = new Dictionary<string, List<string>>
             {

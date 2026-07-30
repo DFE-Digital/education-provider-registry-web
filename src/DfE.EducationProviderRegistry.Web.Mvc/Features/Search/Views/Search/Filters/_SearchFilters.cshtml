@@ -1,11 +1,25 @@
-﻿@using DfE.EducationProviderRegistry.Web.Mvc.ViewModels
-@model SearchFiltersViewModel
+﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels
+@model SearchResultsViewModel
+
+@{
+    var selectedFilters = (Model.Facets ?? [])
+        .SelectMany(facet =>
+            facet.Values
+                .Where(value => value.IsSelected)
+                .Select(value => new
+                {
+                    FacetName = facet.Name,
+                    Value = value.Value,
+                    Label = value.Value
+                }))
+        .ToList();
+}
 
 <div class="moj-filter">
     <div class="moj-filter__content">
         <div class="moj-filter__options">
 
-            @if (Model.SelectedFilters.Any())
+            @if (selectedFilters.Any())
             {
                 <div class="moj-filter__selected app-selected-filters">
                     <div class="app-selected-filters__header">
@@ -22,13 +36,13 @@
                     </div>
 
                     <ul class="app-selected-filters__list">
-                        @foreach (var filter in Model.SelectedFilters)
+                        @foreach (var filter in selectedFilters)
                         {
                             <li>
                                 <button type="submit"
                                         class="app-selected-filter"
                                         name="RemoveFilter"
-                                        value="@($"{filter.BindingName}|{filter.Value}")">
+                                        value="@($"{filter.FacetName}|{filter.Value}")">
 
                                     @filter.Label
 
@@ -44,34 +58,31 @@
                 </div>
             }
 
-            @foreach (var filter in Model.Filters)
+            @foreach (var facet in Model.Facets ?? [])
             {
                 <details class="govuk-details filter-section" open>
                     <summary class="govuk-details__summary">
                         <span class="govuk-details__summary-text">
-                            @filter.Label
+                            @facet.Name
                         </span>
                     </summary>
 
                     <div class="govuk-details__text">
-                        @switch (filter)
+                        @if (facet.Name == "LocalAuthority")
                         {
-                            case AutocompleteFilterViewModel autocompleteFilter:
-                                @await Html.PartialAsync(
-                                    "_AutocompleteFilter",
-                                    autocompleteFilter)
-                                break;
-
-                            case CheckboxFilterViewModel checkboxFilter:
-                                @await Html.PartialAsync(
-                                    "_FiltersCheckboxComponent",
-                                    checkboxFilter)
-                                break;
+                            @await Html.PartialAsync(
+                                "_AutocompleteFilter",
+                                facet)
+                        }
+                        else
+                        {
+                            @await Html.PartialAsync(
+                                "_FiltersCheckboxComponent",
+                                facet)
                         }
                     </div>
                 </details>
             }
-
             <button type="submit"
                     class="govuk-button"
                     data-module="govuk-button">

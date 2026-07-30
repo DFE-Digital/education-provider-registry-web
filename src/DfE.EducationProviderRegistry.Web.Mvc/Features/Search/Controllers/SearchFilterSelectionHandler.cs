@@ -2,12 +2,9 @@
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Services;
 
-public class SearchFilterSelectionHandler :
+public sealed class SearchFilterSelectionHandler :
     ISearchFilterSelectionHandler
 {
-    private const string SelectedFacetsPrefix = "SelectedFacets[";
-    private const string SelectedFacetsSuffix = "]";
-
     public void Handle(SearchRequestViewModel request)
     {
         ArgumentNullException.ThrowIfNull(request);
@@ -34,13 +31,16 @@ public class SearchFilterSelectionHandler :
     {
         if (!TryParseRemoveFilter(
                 request.RemoveFilter,
-                out string? facetName,
-                out string? value))
+                out string facetName,
+                out string value))
         {
             return;
         }
 
-        if (!request.SelectedFacets.TryGetValue(
+        request.RemoveFilter = null;
+
+        if (request.SelectedFacets is null ||
+            !request.SelectedFacets.TryGetValue(
                 facetName,
                 out List<string>? selectedValues))
         {
@@ -57,8 +57,6 @@ public class SearchFilterSelectionHandler :
         {
             request.SelectedFacets.Remove(facetName);
         }
-
-        request.RemoveFilter = null;
     }
 
     private static bool TryParseRemoveFilter(
@@ -86,32 +84,7 @@ public class SearchFilterSelectionHandler :
             return false;
         }
 
-        string bindingName = parts[0];
-
-        if (!bindingName.StartsWith(
-                SelectedFacetsPrefix,
-                StringComparison.Ordinal) ||
-            !bindingName.EndsWith(
-                SelectedFacetsSuffix,
-                StringComparison.Ordinal))
-        {
-            return false;
-        }
-
-        int facetNameLength =
-            bindingName.Length -
-            SelectedFacetsPrefix.Length -
-            SelectedFacetsSuffix.Length;
-
-        if (facetNameLength <= 0)
-        {
-            return false;
-        }
-
-        facetName = bindingName.Substring(
-            SelectedFacetsPrefix.Length,
-            facetNameLength);
-
+        facetName = parts[0];
         value = parts[1];
 
         return true;

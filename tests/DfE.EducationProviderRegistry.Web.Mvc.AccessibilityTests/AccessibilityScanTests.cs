@@ -19,14 +19,14 @@ public sealed class AccessibilityScanTests
     private readonly Dictionary<string, Func<IAccessibilityScanActionHandler>> _handlersFactory;
 
     public AccessibilityScanTests(
-        AccessibilityTestOptions options, 
+        AccessibilityTestOptions options,
         ApplicationHostedEnvironment hostedEnvironment,
         Dictionary<string, Func<IAccessibilityScanActionHandler>> handlersFactory)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(hostedEnvironment);
         ArgumentNullException.ThrowIfNull(handlersFactory);
-        
+
         _accessibilityTestOptions = options;
         _hostedEnvironment = hostedEnvironment;
         _handlersFactory = handlersFactory;
@@ -93,7 +93,7 @@ public sealed class AccessibilityScanTests
                 Action = action
             };
 
-            if(!_handlersFactory.TryGetValue(action.Name, out Func<IAccessibilityScanActionHandler>? handlerFactory))
+            if (!_handlersFactory.TryGetValue(action.Name, out Func<IAccessibilityScanActionHandler>? handlerFactory))
             {
                 throw new ArgumentException($"Action is not registered {action.Name}");
             }

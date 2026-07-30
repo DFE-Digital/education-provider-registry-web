@@ -66,7 +66,7 @@ public sealed class Startup
         });
 
         // application-container to postgres-container network
-        INetwork network = 
+        INetwork network =
             new NetworkBuilder()
                 .WithName($"test-network-{Guid.NewGuid():N}")
                 .Build();

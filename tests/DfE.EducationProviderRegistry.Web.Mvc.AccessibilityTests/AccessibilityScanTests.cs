@@ -1,5 +1,7 @@
 ﻿using Deque.AxeCore.Commons;
 using Deque.AxeCore.Selenium;
+using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Actions;
+using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Actions.Handlers;
 using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Options;
 using Microsoft.Extensions.Configuration;
 using OpenQA.Selenium;
@@ -75,11 +77,21 @@ public sealed class AccessibilityScanTests
         using ChromeDriverService service = ChromeDriverService.CreateDefaultService();
         using IWebDriver driver = new ChromeDriver(service, _chromeOptions);
 
-        Uri absoluteScanUri = new(
-            baseUri: _hostedEnvironment.GetApplicationUrl(),
-            relativeUri: testCase.Scan.Route);
+        foreach (AccessibilityScanAction action in testCase.Scan.Actions)
+        {
+            AccessibilityScanContext context = new()
+            {
+                BaseUri = _hostedEnvironment.GetApplicationUrl(),
+                WebDriver = driver,
+                CancellationToken = _ct,
+                Action = action
+            };
 
-        await driver.Navigate().GoToUrlAsync(absoluteScanUri);
+            IAccessibilityScanActionHandler handler =
+                GetHandler(action.Name);
+
+            await handler.ExecuteAsync(context);
+        }
 
         // TODO Verify request successful and not on error page
 
@@ -115,7 +127,7 @@ public sealed class AccessibilityScanTests
 
         Assert.True(
             results.Violations.Length == 0,
-            $"Route {absoluteScanUri} has violations.");
+            $"Accessibility scan '{testCase.Name}' has {results.Violations.Length} violations.");
     }
 
 

@@ -32,7 +32,6 @@ public sealed class ApplicationHostedEnvironment
                 .WithExposedPorts<ContainerBuilder, IContainer, IContainerConfiguration>(_options.Container.PortMappings ?? [])
                 .WithEnvironment("eprweb_eprdat_dotnet_db_connection", _database.ConnectionString)
                 .WithWaitStrategy(Wait.ForUnixContainer().UntilHttpRequestIsSucceeded(r => r.ForPort((ushort)_options.Container.PortMappings!.First().ContainerPort)))
-                .WithOutputConsumer(Consume.RedirectStdoutAndStderrToConsole())
                 .Build();
 
         // Start the container.
@@ -49,17 +48,17 @@ public sealed class ApplicationHostedEnvironment
         return new($"http://localhost:{_applicationContainer.GetMappedPublicPort(8080)}");
     }
 
-    //public async Task<string> GetLogsAsync()
-    //{
-    //    (string stdout, string stderr) logs =
-    //        await _applicationContainer!.GetLogsAsync();
+    public async Task<string> GetLogsAsync()
+    {
+        (string stdout, string stderr) logs =
+            await _applicationContainer!.GetLogsAsync();
 
-    //    return $"""
-    //    === STDOUT ===
-    //    {logs.stdout}
+        return $"""
+        === STDOUT ===
+        {logs.stdout}
 
-    //    === STDERR ===
-    //    {logs.stderr}
-    //    """;
-    //}
+        === STDERR ===
+        {logs.stderr}
+        """;
+    }
 }

@@ -1,7 +1,10 @@
-﻿using DfE.Core.Libraries.IntegrationTests.Database.Postgres.Extensions;
+﻿using DfE.Core.Libraries.IntegrationTests.Abstractions;
+using DfE.Core.Libraries.IntegrationTests.Database.Postgres.Extensions;
 using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Actions;
 using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Actions.Handlers;
 using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Options;
+using DotNet.Testcontainers.Builders;
+using DotNet.Testcontainers.Networks;
 using MartinCostello.Logging.XUnit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -50,7 +53,7 @@ public sealed class Startup
                 // TODO filter logging
             }));
 
-        services.AddSingleton<ApplicationHostedEnvironment>();
+        services.AddScoped<ApplicationHostedEnvironment>();
 
         services.AddScoped<Dictionary<string, Func<IAccessibilityScanActionHandler>>>((sp) =>
         {
@@ -59,6 +62,22 @@ public sealed class Startup
                 { "click", () => new ClickActionHandler() },
                 { "enter", () => new SendKeysActionHandler() },
                 { "navigate", () => new NavigateActionHandler() }
+            };
+        });
+
+        // application-container to postgres-container network
+        INetwork network = 
+            new NetworkBuilder()
+                .WithName($"test-network-{Guid.NewGuid():N}")
+                .Build();
+
+        services.AddSingleton<INetwork>(network);
+
+        services.AddScoped<ContainerRuntimeOptions>(sp =>
+        {
+            return new()
+            {
+                Network = network
             };
         });
     }

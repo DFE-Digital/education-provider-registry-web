@@ -133,8 +133,8 @@ public sealed class AccessibilityScanTests
                         $"{testCase.Name}-screenshot"));
         }
 
-        Console.WriteLine(driver.PageSource); 
-        Console.WriteLine(await _hostedEnvironment.GetLogsAsync());
+        TestContext.Current.TestOutputHelper!.WriteLine(driver.PageSource);
+        TestContext.Current.TestOutputHelper!.WriteLine(await _hostedEnvironment.GetLogsAsync());
 
         Assert.True(
             results.Violations.Length == 0,

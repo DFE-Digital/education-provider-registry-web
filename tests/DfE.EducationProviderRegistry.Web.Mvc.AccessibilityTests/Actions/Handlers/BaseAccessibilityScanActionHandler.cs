@@ -21,6 +21,6 @@ internal abstract class BaseAccessibilityScanActionHandler
             driver =>
                 driver.FindElement(
                     By.CssSelector(
-                        context.Action.GetRequiredOption("selector"))));
+                        context.Action.GetRequiredOption("target"))));
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Deque.AxeCore.Commons;
 using Deque.AxeCore.Selenium;
 using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Actions;
-using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Actions.Handlers;
 using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Options;
 using Microsoft.Extensions.Configuration;
 using OpenQA.Selenium;
@@ -17,13 +16,20 @@ public sealed class AccessibilityScanTests
     private readonly ChromeOptions _chromeOptions;
     private readonly AccessibilityTestOptions _accessibilityTestOptions;
     private readonly ApplicationHostedEnvironment _hostedEnvironment;
+    private readonly Dictionary<string, Func<IAccessibilityScanActionHandler>> _handlersFactory;
 
-    public AccessibilityScanTests(AccessibilityTestOptions options, ApplicationHostedEnvironment hostedEnvironment)
+    public AccessibilityScanTests(
+        AccessibilityTestOptions options,
+        ApplicationHostedEnvironment hostedEnvironment,
+        Dictionary<string, Func<IAccessibilityScanActionHandler>> handlersFactory)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(hostedEnvironment);
+        ArgumentNullException.ThrowIfNull(handlersFactory);
+
         _accessibilityTestOptions = options;
         _hostedEnvironment = hostedEnvironment;
+        _handlersFactory = handlersFactory;
         _ct = TestContext.Current.CancellationToken;
 
         _chromeOptions = new();
@@ -87,10 +93,12 @@ public sealed class AccessibilityScanTests
                 Action = action
             };
 
-            IAccessibilityScanActionHandler handler =
-                GetHandler(action.Name);
+            if (!_handlersFactory.TryGetValue(action.Name, out Func<IAccessibilityScanActionHandler>? handlerFactory))
+            {
+                throw new ArgumentException($"Action is not registered {action.Name}");
+            }
 
-            await handler.ExecuteAsync(context);
+            await handlerFactory!().ExecuteAsync(context);
         }
 
         // TODO Verify request successful and not on error page
@@ -205,18 +213,11 @@ public sealed class AccessibilityScanTestCase : IXunitSerializable
     public void Serialize(IXunitSerializationInfo info)
     {
         info.AddValue(nameof(Name), Name);
-        info.AddValue(nameof(Scan.Route), Scan.Route);
     }
 
     public void Deserialize(IXunitSerializationInfo info)
     {
         Name = info.GetValue<string>(nameof(Name)) ?? string.Empty;
-
-        Scan = new AccessibilityTest
-        {
-            Route = info.GetValue<string>(nameof(Scan.Route))
-                ?? string.Empty
-        };
     }
 
     public override string ToString() => Name;

@@ -1,4 +1,6 @@
 ﻿using DfE.Core.Libraries.IntegrationTests.Database.Postgres.Extensions;
+using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Actions;
+using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Actions.Handlers;
 using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Options;
 using MartinCostello.Logging.XUnit;
 using Microsoft.Extensions.Configuration;
@@ -32,14 +34,13 @@ public sealed class Startup
             .Bind(context.Configuration.GetSection(nameof(AccessibilityTestOptions)))
             .ValidateDataAnnotations()
             .ValidateOnStart();
-        services.AddSingleton<AccessibilityTestOptions>(t => t.GetRequiredService<IOptions<AccessibilityTestOptions>>().Value);
+        services.AddSingleton(t => t.GetRequiredService<IOptions<AccessibilityTestOptions>>().Value);
 
         services.AddOptions<ApplicationHostOptions>()
             .Bind(context.Configuration.GetSection(nameof(ApplicationHostOptions)))
             .ValidateDataAnnotations()
             .ValidateOnStart();
-
-        services.AddSingleton<ApplicationHostOptions>(t => t.GetRequiredService<IOptions<ApplicationHostOptions>>().Value);
+        services.AddSingleton(t => t.GetRequiredService<IOptions<ApplicationHostOptions>>().Value);
 
         services.AddPostgresDatabase(context.Configuration.GetSection("DatabaseContainerOptions"));
 
@@ -50,5 +51,15 @@ public sealed class Startup
             }));
 
         services.AddSingleton<ApplicationHostedEnvironment>();
+
+        services.AddScoped<Dictionary<string, Func<IAccessibilityScanActionHandler>>>((sp) =>
+        {
+            return new()
+            {
+                { "click", () => new ClickActionHandler() },
+                { "enter", () => new SendKeysActionHandler() },
+                { "navigate", () => new NavigateActionHandler() }
+            };
+        });
     }
 }

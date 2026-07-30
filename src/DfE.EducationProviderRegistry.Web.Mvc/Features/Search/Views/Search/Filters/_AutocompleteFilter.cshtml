@@ -1,38 +1,29 @@
-﻿@model AutocompleteFilterViewModel
+﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels
+@model FacetViewModel
 
 @{
     var selectId = $"facet-{Model.Name}";
-    var hintId = $"{selectId}-hint";
-    var hasHint = !string.IsNullOrWhiteSpace(Model.Hint);
+    var bindingName = $"SelectedFacets[{Model.Name}]";
 }
 
 <div class="govuk-form-group">
     <label class="govuk-label"
            for="@selectId">
-        @Model.Label
+        @Model.Name
     </label>
-
-    @if (hasHint)
-    {
-        <div id="@hintId"
-             class="govuk-hint">
-            @Model.Hint
-        </div>
-    }
 
     <select class="govuk-select"
             id="@selectId"
-            name="@Model.BindingName"
-            aria-describedby="@(hasHint ? hintId : null)"
+            name="@bindingName"
             data-module="app-autocomplete">
 
         <option value=""></option>
 
-        @foreach (var option in Model.Options)
+        @foreach (var option in Model.Values)
         {
             <option value="@option.Value"
-                    selected="@(option.Value == Model.SelectedValue)">
-                @option.Text
+                    selected="@(option.IsSelected ? "selected" : null)">
+                @option.Value
             </option>
         }
     </select>

@@ -33,12 +33,7 @@
                         Filters
                     </h2>
                 </div>
-
-                @await Html.PartialAsync(
-    "_SearchFilters",
-    Model.SearchFilters)
-
-
+                @await Html.PartialAsync("_SearchFilters", Model)
             </div>
         </div>
 

@@ -1,5 +1,4 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.FilterViewModels;
-using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 
@@ -41,8 +40,6 @@ public sealed class SearchResultsViewModel
     /// Determines whether there are filters in the results
     /// </summary>
     public bool HasFilters => Facets?.Count > 0;
-
-    public SearchFiltersViewModel? SearchFilters { get; set; }
 
     public SearchRequestViewModel SearchRequest { get; set; } = new();
 }

@@ -7,7 +7,6 @@ using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Respo
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Services;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.FilterViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.ObjectModel;
 
@@ -28,10 +27,6 @@ public sealed class SearchController : Controller
         Dictionary<string, List<string>>?,
         ReadOnlyCollection<FilterRequest>> _selectedFacetsToFilterRequestsMapper;
 
-    private readonly IMapper<
-        SearchFiltersMappingContext,
-        SearchFiltersViewModel> _searchFiltersViewModelMapper;
-
     private readonly ISearchFilterSelectionHandler
         _searchFilterSelectionHandler;
 
@@ -39,7 +34,6 @@ public sealed class SearchController : Controller
         IUseCase<SearchRequest, UseCaseResponse<SearchResponse>> searchUseCase,
         IMapper<SearchResultsMappingContext, SearchResultsViewModel> searchResponseToViewModelMapper,
         IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>> selectedFacetsToFilterRequestsMapper,
-        IMapper<SearchFiltersMappingContext, SearchFiltersViewModel> searchFiltersViewModelMapper,
         ISearchFilterSelectionHandler searchFilterSelectionHandler)
     {
         ArgumentNullException.ThrowIfNull(searchUseCase);
@@ -48,8 +42,6 @@ public sealed class SearchController : Controller
         ArgumentNullException.ThrowIfNull(
             selectedFacetsToFilterRequestsMapper);
         ArgumentNullException.ThrowIfNull(
-            searchFiltersViewModelMapper);
-        ArgumentNullException.ThrowIfNull(
             searchFilterSelectionHandler);
 
         _searchUseCase = searchUseCase;
@@ -57,8 +49,6 @@ public sealed class SearchController : Controller
             searchResponseToViewModelMapper;
         _selectedFacetsToFilterRequestsMapper =
             selectedFacetsToFilterRequestsMapper;
-        _searchFiltersViewModelMapper =
-            searchFiltersViewModelMapper;
         _searchFilterSelectionHandler =
             searchFilterSelectionHandler;
     }
@@ -107,13 +97,6 @@ public sealed class SearchController : Controller
         SearchResultsViewModel updatedModel =
             _searchResponseToViewModelMapper.Map(
                 new SearchResultsMappingContext(
-                    model,
-                    searchResponse));
-
-        updatedModel.SearchFilters =
-            _searchFiltersViewModelMapper.Map(
-                new SearchFiltersMappingContext(
-                    searchFilterRequests,
                     model,
                     searchResponse));
 

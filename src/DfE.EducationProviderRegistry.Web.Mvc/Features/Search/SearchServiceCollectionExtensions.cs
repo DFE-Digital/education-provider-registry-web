@@ -6,7 +6,6 @@ using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Services;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.FilterViewModels;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 using System.Collections.ObjectModel;
 
@@ -35,8 +34,6 @@ internal static class SearchServiceCollectionExtensions
                 IReadOnlyCollection<EstablishmentSearchResult>, List<GovUkTable>>, EstablishmentSearchResultsToViewModelMapper>()
             .AddSingleton<IMapper<
                 Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>, SelectedFacetsToFilterRequestsMapper>()
-            .AddSingleton<IMapper<
-                SearchFiltersMappingContext, SearchFiltersViewModel>, SearchResponseToSearchFiltersViewModelMapper>()
             .AddSingleton<ISearchFilterSelectionHandler, SearchFilterSelectionHandler>();
 
         return services;

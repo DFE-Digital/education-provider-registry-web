@@ -1,5 +1,6 @@
 ﻿using Deque.AxeCore.Commons;
 using Deque.AxeCore.Selenium;
+using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Actions;
 using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Options;
 using Microsoft.Extensions.Configuration;
 using OpenQA.Selenium;
@@ -15,13 +16,20 @@ public sealed class AccessibilityScanTests
     private readonly ChromeOptions _chromeOptions;
     private readonly AccessibilityTestOptions _accessibilityTestOptions;
     private readonly ApplicationHostedEnvironment _hostedEnvironment;
+    private readonly Dictionary<string, Func<IAccessibilityScanActionHandler>> _handlersFactory;
 
-    public AccessibilityScanTests(AccessibilityTestOptions options, ApplicationHostedEnvironment hostedEnvironment)
+    public AccessibilityScanTests(
+        AccessibilityTestOptions options,
+        ApplicationHostedEnvironment hostedEnvironment,
+        Dictionary<string, Func<IAccessibilityScanActionHandler>> handlersFactory)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(hostedEnvironment);
+        ArgumentNullException.ThrowIfNull(handlersFactory);
+
         _accessibilityTestOptions = options;
         _hostedEnvironment = hostedEnvironment;
+        _handlersFactory = handlersFactory;
         _ct = TestContext.Current.CancellationToken;
 
         _chromeOptions = new();
@@ -75,11 +83,23 @@ public sealed class AccessibilityScanTests
         using ChromeDriverService service = ChromeDriverService.CreateDefaultService();
         using IWebDriver driver = new ChromeDriver(service, _chromeOptions);
 
-        Uri absoluteScanUri = new(
-            baseUri: _hostedEnvironment.GetApplicationUrl(),
-            relativeUri: testCase.Scan.Route);
+        foreach (AccessibilityScanAction action in testCase.Scan.Actions)
+        {
+            AccessibilityScanContext context = new()
+            {
+                BaseUri = _hostedEnvironment.GetApplicationUrl(),
+                WebDriver = driver,
+                CancellationToken = _ct,
+                Action = action
+            };
 
-        await driver.Navigate().GoToUrlAsync(absoluteScanUri);
+            if (!_handlersFactory.TryGetValue(action.Name, out Func<IAccessibilityScanActionHandler>? handlerFactory))
+            {
+                throw new ArgumentException($"Action is not registered {action.Name}");
+            }
+
+            await handlerFactory!().ExecuteAsync(context);
+        }
 
         // TODO Verify request successful and not on error page
 
@@ -103,6 +123,16 @@ public sealed class AccessibilityScanTests
             content,
             _ct);
 
+        await File.WriteAllTextAsync(
+            Path.Combine(outputDirectory, "source.html"),
+            driver.PageSource,
+            _ct);
+
+        await File.WriteAllTextAsync(
+            Path.Combine(outputDirectory, "application.log"),
+            await _hostedEnvironment.GetLogsAsync(),
+            _ct);
+
         if (results.Violations.Length != 0)
         {
             ((ITakesScreenshot)driver)
@@ -115,7 +145,7 @@ public sealed class AccessibilityScanTests
 
         Assert.True(
             results.Violations.Length == 0,
-            $"Route {absoluteScanUri} has violations.");
+            $"Accessibility scan '{testCase.Name}' has {results.Violations.Length} violations.");
     }
 
 
@@ -193,18 +223,11 @@ public sealed class AccessibilityScanTestCase : IXunitSerializable
     public void Serialize(IXunitSerializationInfo info)
     {
         info.AddValue(nameof(Name), Name);
-        info.AddValue(nameof(Scan.Route), Scan.Route);
     }
 
     public void Deserialize(IXunitSerializationInfo info)
     {
         Name = info.GetValue<string>(nameof(Name)) ?? string.Empty;
-
-        Scan = new AccessibilityTest
-        {
-            Route = info.GetValue<string>(nameof(Scan.Route))
-                ?? string.Empty
-        };
     }
 
     public override string ToString() => Name;

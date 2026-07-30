@@ -185,4 +185,165 @@ public sealed class SearchResultsToViewModelMapperTests
         establishmentMapper.Verify(mapper => mapper.Map(It.IsAny<IReadOnlyCollection<EstablishmentSearchResult>>()), Times.Never);
         facetsMapper.Verify(mapper => mapper.Map(It.IsAny<IReadOnlyCollection<SearchFacet>>()), Times.Never);
     }
+
+    [Fact]
+    public void Map_MarksSelectedFacetValuesAsSelected()
+    {
+        // arrange
+        List<SearchFacet> facets =
+        [
+            MakeFacet("EstablishmentType")
+        ];
+
+        List<FacetViewModel> facetViewModels =
+        [
+            new FacetViewModel(
+            "EstablishmentType",
+            [
+                new FacetValueViewModel(
+                    "Primary",
+                    10,
+                    false),
+
+                new FacetValueViewModel(
+                    "Secondary",
+                    20,
+                    false)
+            ])
+        ];
+
+        Mock<IMapper<
+            IReadOnlyCollection<EstablishmentSearchResult>,
+            List<GovUkTable>>> establishmentMapper =
+                EstablishmentsMapperTestDouble.Mock();
+
+        Mock<IMapper<
+            IReadOnlyCollection<SearchFacet>,
+            List<FacetViewModel>>> facetsMapper =
+                FacetsMapperTestDouble.MockFor(
+                    facets,
+                    facetViewModels);
+
+        SearchResultsToViewModelMapper mapper =
+            new(
+                establishmentMapper.Object,
+                facetsMapper.Object);
+
+        SearchRequestViewModel searchRequest = new()
+        {
+            SelectedFacets = new Dictionary<string, List<string>>
+            {
+                ["EstablishmentType"] =
+                [
+                    "primary"
+                ]
+            }
+        };
+
+        SearchResponse response =
+            new(
+                null!,
+                new SearchFacets(facets));
+
+        SearchResultsMappingContext input =
+            new(
+                searchRequest,
+                UseCaseResponse<SearchResponse>.Success(response));
+
+        // act
+        SearchResultsViewModel result = mapper.Map(input);
+
+        // assert
+        FacetViewModel phaseFacet =
+            Assert.Single(result.Facets!);
+
+        FacetValueViewModel primary =
+            Assert.Single(
+                phaseFacet.Values,
+                value => value.Value == "Primary");
+
+        FacetValueViewModel secondary =
+            Assert.Single(
+                phaseFacet.Values,
+                value => value.Value == "Secondary");
+
+        Assert.True(primary.IsSelected);
+        Assert.False(secondary.IsSelected);
+    }
+
+    [Fact]
+    public void Map_LeavesFacetValuesUnselected_WhenFacetHasNotBeenSelected()
+    {
+        // arrange
+        List<SearchFacet> facets =
+        [
+            MakeFacet("Phase")
+        ];
+
+        List<FacetViewModel> facetViewModels =
+        [
+            new FacetViewModel(
+            "Phase",
+            [
+                new FacetValueViewModel(
+                    "Primary",
+                    10,
+                    false),
+
+                new FacetValueViewModel(
+                    "Secondary",
+                    20,
+                    false)
+            ])
+        ];
+
+        Mock<IMapper<
+            IReadOnlyCollection<EstablishmentSearchResult>,
+            List<GovUkTable>>> establishmentMapper =
+                EstablishmentsMapperTestDouble.Mock();
+
+        Mock<IMapper<
+            IReadOnlyCollection<SearchFacet>,
+            List<FacetViewModel>>> facetsMapper =
+                FacetsMapperTestDouble.MockFor(
+                    facets,
+                    facetViewModels);
+
+        SearchResultsToViewModelMapper mapper =
+            new(
+                establishmentMapper.Object,
+                facetsMapper.Object);
+
+        SearchRequestViewModel searchRequest = new()
+        {
+            SelectedFacets = new Dictionary<string, List<string>>
+            {
+                ["EstablishmentType"] =
+                [
+                    "Academy"
+                ]
+            }
+        };
+
+        SearchResponse response =
+            new(
+                null!,
+                new SearchFacets(facets));
+
+        SearchResultsMappingContext input =
+            new(
+                searchRequest,
+                UseCaseResponse<SearchResponse>.Success(response));
+
+        // act
+        SearchResultsViewModel result = mapper.Map(input);
+
+        // assert
+        FacetViewModel phaseFacet =
+            Assert.Single(result.Facets!);
+
+        Assert.All(
+            phaseFacet.Values,
+            value => Assert.False(value.IsSelected));
+    }
 }

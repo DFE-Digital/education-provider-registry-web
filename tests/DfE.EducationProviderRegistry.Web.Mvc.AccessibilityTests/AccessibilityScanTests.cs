@@ -19,14 +19,14 @@ public sealed class AccessibilityScanTests
     private readonly Dictionary<string, Func<IAccessibilityScanActionHandler>> _handlersFactory;
 
     public AccessibilityScanTests(
-        AccessibilityTestOptions options,
+        AccessibilityTestOptions options, 
         ApplicationHostedEnvironment hostedEnvironment,
         Dictionary<string, Func<IAccessibilityScanActionHandler>> handlersFactory)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(hostedEnvironment);
         ArgumentNullException.ThrowIfNull(handlersFactory);
-
+        
         _accessibilityTestOptions = options;
         _hostedEnvironment = hostedEnvironment;
         _handlersFactory = handlersFactory;
@@ -93,7 +93,7 @@ public sealed class AccessibilityScanTests
                 Action = action
             };
 
-            if (!_handlersFactory.TryGetValue(action.Name, out Func<IAccessibilityScanActionHandler>? handlerFactory))
+            if(!_handlersFactory.TryGetValue(action.Name, out Func<IAccessibilityScanActionHandler>? handlerFactory))
             {
                 throw new ArgumentException($"Action is not registered {action.Name}");
             }
@@ -123,6 +123,16 @@ public sealed class AccessibilityScanTests
             content,
             _ct);
 
+        await File.WriteAllTextAsync(
+            Path.Combine(outputDirectory, "source.html"),
+            driver.PageSource,
+            _ct);
+
+        await File.WriteAllTextAsync(
+            Path.Combine(outputDirectory, "application.log"),
+            await _hostedEnvironment.GetLogsAsync(),
+            _ct);
+
         if (results.Violations.Length != 0)
         {
             ((ITakesScreenshot)driver)
@@ -132,9 +142,6 @@ public sealed class AccessibilityScanTests
                         outputDirectory,
                         $"{testCase.Name}-screenshot"));
         }
-
-        TestContext.Current.TestOutputHelper!.WriteLine(driver.PageSource);
-        TestContext.Current.TestOutputHelper!.WriteLine(await _hostedEnvironment.GetLogsAsync());
 
         Assert.True(
             results.Violations.Length == 0,

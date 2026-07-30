@@ -5,7 +5,6 @@ using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Reque
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Controllers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.FilterViewModels;
 using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Controllers.TestDoubles;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -24,7 +23,6 @@ public sealed class SearchControllerUnitTests
                 searchUseCase: null!,
                 searchResponseToViewModelMapper: SearchResultsMapperTestDouble.Mock().Object,
                 selectedFacetsToFilterRequestsMapper: SearchFacetsResultsMapperTestDouble.Mock().Object,
-                searchFiltersViewModelMapper: SearchFiltersViewModelMapperStub.Mock().Object,
                 searchFilterSelectionHandler: SearchFilterSelectionHandlerStub.Mock().Object);
 
         // act & assert
@@ -40,7 +38,6 @@ public sealed class SearchControllerUnitTests
                 searchUseCase: SearchUseCaseTestDouble.Mock().Object,
                 searchResponseToViewModelMapper: null!,
                 selectedFacetsToFilterRequestsMapper: SearchFacetsResultsMapperTestDouble.Mock().Object,
-                searchFiltersViewModelMapper: SearchFiltersViewModelMapperStub.Mock().Object,
                 searchFilterSelectionHandler: SearchFilterSelectionHandlerStub.Mock().Object);
 
         // act & assert
@@ -56,23 +53,6 @@ public sealed class SearchControllerUnitTests
                 searchUseCase: SearchUseCaseTestDouble.Mock().Object,
                 searchResponseToViewModelMapper: SearchResultsMapperTestDouble.Mock().Object,
                 null!,
-                searchFiltersViewModelMapper: SearchFiltersViewModelMapperStub.Mock().Object,
-                searchFilterSelectionHandler: SearchFilterSelectionHandlerStub.Mock().Object);
-
-        // act & assert
-        Assert.Throws<ArgumentNullException>(construct);
-    }
-
-    [Fact]
-    public void Constructor_Throws_When_SearchFiltersViewModelMapperIsNull()
-    {
-        // arrange
-        Func<SearchController> construct = () =>
-            new(
-                searchUseCase: SearchUseCaseTestDouble.Mock().Object,
-                searchResponseToViewModelMapper: SearchResultsMapperTestDouble.Mock().Object,
-                selectedFacetsToFilterRequestsMapper: SearchFacetsResultsMapperTestDouble.Mock().Object,
-                searchFiltersViewModelMapper: null!,
                 searchFilterSelectionHandler: SearchFilterSelectionHandlerStub.Mock().Object);
 
         // act & assert
@@ -88,7 +68,6 @@ public sealed class SearchControllerUnitTests
                 searchUseCase: SearchUseCaseTestDouble.Mock().Object,
                 searchResponseToViewModelMapper: SearchResultsMapperTestDouble.Mock().Object,
                 selectedFacetsToFilterRequestsMapper: SearchFacetsResultsMapperTestDouble.Mock().Object,
-                searchFiltersViewModelMapper: SearchFiltersViewModelMapperStub.Mock().Object,
                 searchFilterSelectionHandler: null!);
 
         // act & assert
@@ -108,7 +87,6 @@ public sealed class SearchControllerUnitTests
                 searchUseCase: useCase.Object,
                 searchResponseToViewModelMapper: searchResultsMapper.Object,
                 selectedFacetsToFilterRequestsMapper: searchFacetsResultsMapper.Object,
-                searchFiltersViewModelMapper: SearchFiltersViewModelMapperStub.Mock().Object,
                 searchFilterSelectionHandler: SearchFilterSelectionHandlerStub.Mock().Object);
 
         // act
@@ -126,7 +104,6 @@ public sealed class SearchControllerUnitTests
         // arrange
         SearchRequestViewModel model = SearchRequestViewModelStub.AcademyWithFacet();
         ReadOnlyCollection<FilterRequest> mappedFilters = FilterRequestStub.EstablishmentTypeFacet();
-        SearchFiltersViewModel filtersViewModel = new();
 
         EstablishmentSearchResults establishmentResults = EstablishmentSearchResultsStub.Empty();
         SearchFacets facets = SearchFacetsStub.Empty();
@@ -144,8 +121,6 @@ public sealed class SearchControllerUnitTests
         var searchFacetsResultsMapper =
             SearchFacetsResultsMapperTestDouble.MockFor(mappedFilters);
 
-        var searchFiltersViewModelMapper = SearchFiltersViewModelMapperStub.MockFor(filtersViewModel);
-
         var searchFilterSelectionHandler = SearchFilterSelectionHandlerStub.MockFor();
 
         SearchController sut =
@@ -153,7 +128,6 @@ public sealed class SearchControllerUnitTests
                 searchUseCase: searchUseCase.Object,
                 searchResponseToViewModelMapper: searchResultsMapper.Object,
                 selectedFacetsToFilterRequestsMapper: searchFacetsResultsMapper.Object,
-                searchFiltersViewModelMapper: searchFiltersViewModelMapper.Object,
                 searchFilterSelectionHandler: searchFilterSelectionHandler.Object);
 
         // act
@@ -175,10 +149,6 @@ public sealed class SearchControllerUnitTests
                 context.SearchRequest.SearchKeywords == "academy")),
             Times.Once);
 
-        searchFiltersViewModelMapper.Verify(mapper =>
-            mapper.Map(It.IsAny<SearchFiltersMappingContext>()),
-            Times.Once);
-
         searchFilterSelectionHandler.Verify(handler =>
             handler.Handle(model),
             Times.Once);
@@ -195,7 +165,6 @@ public sealed class SearchControllerUnitTests
         // arrange
         SearchRequestViewModel model = SearchRequestViewModelStub.AcademyWithoutFacet();
         ReadOnlyCollection<FilterRequest> mappedFilters = FilterRequestStub.EstablishmentTypeFacet();
-        SearchFiltersViewModel filtersViewModel = new();
 
         EstablishmentSearchResults establishmentResults = EstablishmentSearchResultsStub.Empty();
         SearchFacets facets = SearchFacetsStub.Empty();
@@ -213,7 +182,6 @@ public sealed class SearchControllerUnitTests
         var searchFacetsResultsMapper =
             SearchFacetsResultsMapperTestDouble.MockFor(mappedFilters);
 
-        var searchFiltersViewModelMapper = SearchFiltersViewModelMapperStub.MockFor(filtersViewModel);
 
         var searchFilterSelectionHandler = SearchFilterSelectionHandlerStub.MockFor();
 
@@ -222,7 +190,6 @@ public sealed class SearchControllerUnitTests
                 searchUseCase: searchUseCase.Object,
                 searchResponseToViewModelMapper: searchResultsMapper.Object,
                 selectedFacetsToFilterRequestsMapper: searchFacetsResultsMapper.Object,
-                searchFiltersViewModelMapper: searchFiltersViewModelMapper.Object,
                 searchFilterSelectionHandler: searchFilterSelectionHandler.Object);
 
         // act

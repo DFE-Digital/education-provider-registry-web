@@ -131,9 +131,9 @@ public sealed class FacetResultsToViewModelMapperUnitTests
         Assert.Equal(2, vm.Values.Count);
         Assert.Equal("Primary", vm.Values[0].Value);
         Assert.Equal(10, vm.Values[0].Count);
-        Assert.True(vm.Values[0].IsSelected);
+        Assert.False(vm.Values[0].IsSelected);
         Assert.Equal("Secondary", vm.Values[1].Value);
         Assert.Equal(20, vm.Values[1].Count);
-        Assert.True(vm.Values[1].IsSelected);
+        Assert.False(vm.Values[1].IsSelected);
     }
 }

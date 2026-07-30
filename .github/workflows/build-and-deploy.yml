@@ -143,7 +143,8 @@ jobs:
 
     - name: SonarCloud scan
       if: github.actor != 'dependabot[bot]'
-      uses: DFE-Digital/github-actions/sonarscan-dotnet@0e3ff9f87329e3d8ace1fc4f175ddd1ea13c7af0
+      # awaiting review of central github-actions repo https://github.com/DFE-Digital/github-actions/pull/242
+      uses: aahmed-dfe/github-actions/sonarscan-dotnet@d9e442885ed5812c42795fb565199e5e7081b40e
       with:
           sonarcloud-project-key: DFE-Digital_education-provider-registry-web
           sonarcloud-token: ${{ secrets.SONAR_TOKEN }}
@@ -151,6 +152,8 @@ jobs:
           # awaiting completion of https://github.com/DFE-Digital/github-actions/pull/236/changes then defaults handle
           java-version: 21
           coverage-report-path: coverage-sonar/SonarQube.xml
+          sonarscan-exclusions: "src/**/wwwroot/css/site.css"
+
 
     - name: Run Accessibility Tests
       run: |
@@ -165,7 +168,9 @@ jobs:
         name: accessibility-results
         path: artifacts
 
-  
+    - name: Validate formatting
+      run: dotnet format --verify-no-changes --verbosity diagnostic
+      
   deploy-review-app:
     name: Deployment To Review
     concurrency: deploy_review_${{ github.event.pull_request.number }}

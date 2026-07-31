@@ -43,7 +43,7 @@
 @functions {
     IHtmlContent RenderCell(GovUkTableCell cell)
     {
-        if (!string.IsNullOrWhiteSpace(cell.LinkUrl))
+        if (!string.IsNullOrWhiteSpace(cell.LinkUrl) && !string.IsNullOrWhiteSpace(cell.Text))
         {
             return new HtmlString($"<a class=\"govuk-link\" href=\"{cell.LinkUrl}\">{cell.Text}</a>");
         }

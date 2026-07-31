@@ -42,7 +42,7 @@ public static class GovUkTableExtensions
                 },
                 new GovUkTableCell {
                     Text = value ?? string.Empty,
-                    LinkUrl = linkUrl
+                    LinkUrl = string.IsNullOrWhiteSpace(linkUrl) ? null : linkUrl
                 }
             ]
         });

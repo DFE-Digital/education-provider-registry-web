@@ -77,6 +77,8 @@ jobs:
         snyk-token: ${{ secrets.SNYK_TOKEN }}
   test:
     name: Run tests
+    # needs build as accessibility tests require application docker image
+    needs: build
     if: ${{ github.event_name != 'workflow_dispatch' }}
     runs-on: ubuntu-latest
 
@@ -154,6 +156,12 @@ jobs:
           coverage-report-path: coverage-sonar/SonarQube.xml
           sonarscan-exclusions: "src/**/wwwroot/css/site.css"
 
+
+    - name: Update application image in accessibility tests
+      run: |
+        TAG="${{ needs.build.outputs.docker-image-tag }}"
+        echo "Using application image tag: [$TAG]"
+        sed -i "s|{APPLICATION_IMAGE_TAG}|$TAG|g" tests/DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests/appsettings.json
 
     - name: Run Accessibility Tests
       run: |

@@ -62,7 +62,7 @@ public sealed class EstablishmentSearchResultsToViewModelMapper :
         );
 
         table.AddRow(
-            "Part of",
+            "Part of a group",
             input?.Group?.PartOfName,
             CreateLinkUrl("/groups/", input?.Group?.PartOfCode)
         );

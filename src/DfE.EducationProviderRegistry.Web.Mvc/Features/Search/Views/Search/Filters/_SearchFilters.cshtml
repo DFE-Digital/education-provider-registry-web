@@ -1,8 +1,8 @@
 ﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels
-@model SearchResultsViewModel
+@model IEnumerable<FacetViewModel>
 
 @{
-    var selectedFilters = (Model.Facets ?? [])
+    var selectedFilters = (Model ?? [])
         .SelectMany(facet =>
             facet.Values
                 .Where(value => value.IsSelected)
@@ -58,7 +58,7 @@
                 </div>
             }
 
-            @foreach (var facet in Model.Facets ?? [])
+            @foreach (var facet in Model ?? [])
             {
                 <details class="govuk-details filter-section" open>
                     <summary class="govuk-details__summary">

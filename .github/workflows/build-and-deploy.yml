@@ -156,12 +156,6 @@ jobs:
           sonarscan-exclusions: "src/**/wwwroot/css/site.css"
 
 
-    - name: Update application image in accessibility tests
-      run: |
-        TAG="${{ steps.build-image.outputs.tag }}"
-        echo "Using application image tag: [$TAG]"
-        sed -i "s|{APPLICATION_IMAGE_TAG}|$TAG|g" tests/DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests/appsettings.json
-
     - name: Run Accessibility Tests
       run: |
         dotnet test tests/DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests      

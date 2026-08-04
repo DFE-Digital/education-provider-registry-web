@@ -4,8 +4,6 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 
 public sealed class SearchRequestViewModel
 {
-    private Dictionary<string, List<string>>? _selectedFacets;
-
     /// <summary>
     /// Gets or sets the dictionary of selected facet values, grouped by facet name.
     /// </summary>
@@ -17,17 +15,7 @@ public sealed class SearchRequestViewModel
     /// field to <c>null</c> and returns <c>null</c>, ensuring that all filters are
     /// cleared for the request.
     /// </remarks>
-    public Dictionary<string, List<string>>? SelectedFacets
-    {
-        get
-        {
-            if (ClearFilters)
-                _selectedFacets = null;
-
-            return _selectedFacets;
-        }
-        set { _selectedFacets = value; }
-    }
+    public Dictionary<string, List<string>> SelectedFacets { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the search keywords entered by the user.
@@ -37,6 +25,13 @@ public sealed class SearchRequestViewModel
     /// </remarks>
     [Required(ErrorMessage = "Enter an establishment name")]
     public string? SearchKeywords { get; set; }
+
+
+    /// <summary>
+    ///     Gets or sets address location entered by user -- Temp wiring
+    /// </summary>
+    //[Required(ErrorMessage = "Enter an address name")]
+    public string? Address { get; set; }
 
     /// <summary>
     /// Gets or sets the number of records to display per page.
@@ -66,6 +61,12 @@ public sealed class SearchRequestViewModel
     /// ensuring that no facet filters are applied to the search request.
     /// </remarks>
     public bool ClearFilters { get; set; }
+
+
+    /// <summary>
+    /// Remove a specific filter
+    /// </summary>
+    public string? RemoveFilter { get; set; }
 
     /// <summary>
     /// Gets the number of records to skip when retrieving paged search results.

@@ -4,6 +4,8 @@ using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Filter;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Sort;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Request;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Services;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.ObjectModel;
@@ -13,59 +15,92 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Controllers;
 [Route("search")]
 public sealed class SearchController : Controller
 {
-    private readonly IUseCase<SearchRequest, UseCaseResponse<SearchResponse>> _searchUseCase;
-    private readonly IMapper<UseCaseResponse<SearchResponse>, SearchResultsViewModel> _searchResponseToViewModelMapper;
-    private readonly IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>> _facetResultToViewModelMapper;
+    private readonly IUseCase<
+        SearchRequest,
+        UseCaseResponse<SearchResponse>> _searchUseCase;
+
+    private readonly IMapper<
+        SearchResultsMappingContext,
+        SearchResultsViewModel> _searchResponseToViewModelMapper;
+
+    private readonly IMapper<
+        Dictionary<string, List<string>>?,
+        ReadOnlyCollection<FilterRequest>> _selectedFacetsToFilterRequestsMapper;
+
+    private readonly ISearchFilterSelectionHandler
+        _searchFilterSelectionHandler;
 
     public SearchController(
         IUseCase<SearchRequest, UseCaseResponse<SearchResponse>> searchUseCase,
-        IMapper<UseCaseResponse<SearchResponse>, SearchResultsViewModel> searchResponseToViewModelMapper,
-        IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>> facetResultToViewModelMapper)
+        IMapper<SearchResultsMappingContext, SearchResultsViewModel> searchResponseToViewModelMapper,
+        IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>> selectedFacetsToFilterRequestsMapper,
+        ISearchFilterSelectionHandler searchFilterSelectionHandler)
     {
         ArgumentNullException.ThrowIfNull(searchUseCase);
-        ArgumentNullException.ThrowIfNull(searchResponseToViewModelMapper);
-        ArgumentNullException.ThrowIfNull(facetResultToViewModelMapper);
+        ArgumentNullException.ThrowIfNull(
+            searchResponseToViewModelMapper);
+        ArgumentNullException.ThrowIfNull(
+            selectedFacetsToFilterRequestsMapper);
+        ArgumentNullException.ThrowIfNull(
+            searchFilterSelectionHandler);
 
         _searchUseCase = searchUseCase;
-        _searchResponseToViewModelMapper = searchResponseToViewModelMapper;
-        _facetResultToViewModelMapper = facetResultToViewModelMapper;
+        _searchResponseToViewModelMapper =
+            searchResponseToViewModelMapper;
+        _selectedFacetsToFilterRequestsMapper =
+            selectedFacetsToFilterRequestsMapper;
+        _searchFilterSelectionHandler =
+            searchFilterSelectionHandler;
     }
 
     [HttpGet("")]
-    public IActionResult Index() =>
-        View("Index", new SearchRequestViewModel());
+    public IActionResult Index()
+    {
+        return View(
+            "Index",
+            new SearchRequestViewModel());
+    }
 
     [HttpPost("")]
-    public async Task<IActionResult> Search(SearchRequestViewModel model)
+    public async Task<IActionResult> Search(
+        SearchRequestViewModel model)
     {
         if (!ModelState.IsValid)
         {
             return View("Index", model);
         }
 
-        SortOrder sortOrder =
-            new(
-                sortField: "TO_BE_DEFINED",
-                sortDirection: "ASC",
-                validSortFields: new List<string> { "TO_BE_DEFINED" }.AsReadOnly());
+        SortOrder sortOrder = new(
+            sortField: "TO_BE_DEFINED",
+            sortDirection: "ASC",
+            validSortFields:
+            [
+                "TO_BE_DEFINED"
+            ]);
+
+        _searchFilterSelectionHandler.Handle(model);
 
         ReadOnlyCollection<FilterRequest> searchFilterRequests =
-            _facetResultToViewModelMapper.Map(model.SelectedFacets);
+            _selectedFacetsToFilterRequestsMapper.Map(
+                model.SelectedFacets);
 
-        SearchRequest searchRequest =
-            new(
-                searchIndexKey: "TO_BE_REMOVED_FROM_CORE",
-                searchKeywords: model.SearchKeywords!,
-                searchFilterRequests,
-                sortOrder);
+        SearchRequest searchRequest = new(
+            searchIndexKey: "TO_BE_REMOVED_FROM_CORE",
+            searchKeywords: model.SearchKeywords!,
+            searchFilterRequests,
+            sortOrder);
 
         UseCaseResponse<SearchResponse> searchResponse =
-            await _searchUseCase.HandleRequestAsync(searchRequest);
+            await _searchUseCase.HandleRequestAsync(
+                searchRequest);
 
         SearchResultsViewModel updatedModel =
-            _searchResponseToViewModelMapper.Map(searchResponse);
+            _searchResponseToViewModelMapper.Map(
+                new SearchResultsMappingContext(
+                    model,
+                    searchResponse));
 
-        updatedModel.PrimarySearchTerms = model.SearchKeywords!;
+        ModelState.Clear();
 
         return View("Results", updatedModel);
     }

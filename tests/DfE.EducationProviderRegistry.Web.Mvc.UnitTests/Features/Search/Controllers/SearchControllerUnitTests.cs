@@ -1,10 +1,9 @@
-using DfE.Core.Libraries.CleanArchitecture.Application;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Establishment;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Filter;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Request;
-using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Controllers;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Controllers.TestDoubles;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +22,8 @@ public sealed class SearchControllerUnitTests
             new(
                 searchUseCase: null!,
                 searchResponseToViewModelMapper: SearchResultsMapperTestDouble.Mock().Object,
-                facetResultToViewModelMapper: SearchFacetsResultsMapperTestDouble.Mock().Object);
+                selectedFacetsToFilterRequestsMapper: SearchFacetsResultsMapperTestDouble.Mock().Object,
+                searchFilterSelectionHandler: SearchFilterSelectionHandlerStub.Mock().Object);
 
         // act & assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -37,7 +37,8 @@ public sealed class SearchControllerUnitTests
             new(
                 searchUseCase: SearchUseCaseTestDouble.Mock().Object,
                 searchResponseToViewModelMapper: null!,
-                facetResultToViewModelMapper: SearchFacetsResultsMapperTestDouble.Mock().Object);
+                selectedFacetsToFilterRequestsMapper: SearchFacetsResultsMapperTestDouble.Mock().Object,
+                searchFilterSelectionHandler: SearchFilterSelectionHandlerStub.Mock().Object);
 
         // act & assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -51,7 +52,23 @@ public sealed class SearchControllerUnitTests
             new(
                 searchUseCase: SearchUseCaseTestDouble.Mock().Object,
                 searchResponseToViewModelMapper: SearchResultsMapperTestDouble.Mock().Object,
-                facetResultToViewModelMapper: null!);
+                null!,
+                searchFilterSelectionHandler: SearchFilterSelectionHandlerStub.Mock().Object);
+
+        // act & assert
+        Assert.Throws<ArgumentNullException>(construct);
+    }
+
+    [Fact]
+    public void Constructor_Throws_When_SearchFilterSelectionHandlerIsNull()
+    {
+        // arrange
+        Func<SearchController> construct = () =>
+            new(
+                searchUseCase: SearchUseCaseTestDouble.Mock().Object,
+                searchResponseToViewModelMapper: SearchResultsMapperTestDouble.Mock().Object,
+                selectedFacetsToFilterRequestsMapper: SearchFacetsResultsMapperTestDouble.Mock().Object,
+                searchFilterSelectionHandler: null!);
 
         // act & assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -69,7 +86,8 @@ public sealed class SearchControllerUnitTests
             new(
                 searchUseCase: useCase.Object,
                 searchResponseToViewModelMapper: searchResultsMapper.Object,
-                facetResultToViewModelMapper: searchFacetsResultsMapper.Object);
+                selectedFacetsToFilterRequestsMapper: searchFacetsResultsMapper.Object,
+                searchFilterSelectionHandler: SearchFilterSelectionHandlerStub.Mock().Object);
 
         // act
         IActionResult result = sut.Index();
@@ -103,18 +121,22 @@ public sealed class SearchControllerUnitTests
         var searchFacetsResultsMapper =
             SearchFacetsResultsMapperTestDouble.MockFor(mappedFilters);
 
+        var searchFilterSelectionHandler = SearchFilterSelectionHandlerStub.MockFor();
+
         SearchController sut =
             new(
                 searchUseCase: searchUseCase.Object,
                 searchResponseToViewModelMapper: searchResultsMapper.Object,
-                facetResultToViewModelMapper: searchFacetsResultsMapper.Object);
+                selectedFacetsToFilterRequestsMapper: searchFacetsResultsMapper.Object,
+                searchFilterSelectionHandler: searchFilterSelectionHandler.Object);
 
         // act
         IActionResult result = await sut.Search(model);
 
         // assert
         searchFacetsResultsMapper.Verify(mapper =>
-            mapper.Map(model.SelectedFacets), Times.Once);
+            mapper.Map(model.SelectedFacets),
+            Times.Once);
 
         searchUseCase.Verify(useCase =>
             useCase.HandleRequestAsync(
@@ -123,14 +145,18 @@ public sealed class SearchControllerUnitTests
             Times.Once);
 
         searchResultsMapper.Verify(mapper =>
-            mapper.Map(It.IsAny<UseCaseResponse<SearchResponse>>()),
+            mapper.Map(It.Is<SearchResultsMappingContext>(context =>
+                context.SearchRequest.SearchKeywords == "academy")),
             Times.Once);
 
-        Assert.Equal("academy", mappedViewModel.PrimarySearchTerms);
+        searchFilterSelectionHandler.Verify(handler =>
+            handler.Handle(model),
+            Times.Once);
 
         ViewResult view = Assert.IsType<ViewResult>(result);
+
         Assert.Equal("Results", view.ViewName);
-        Assert.Equal(mappedViewModel, view.Model);
+        Assert.Same(mappedViewModel, view.Model);
     }
 
     [Fact]
@@ -156,17 +182,21 @@ public sealed class SearchControllerUnitTests
         var searchFacetsResultsMapper =
             SearchFacetsResultsMapperTestDouble.MockFor(mappedFilters);
 
+
+        var searchFilterSelectionHandler = SearchFilterSelectionHandlerStub.MockFor();
+
         SearchController sut =
             new(
                 searchUseCase: searchUseCase.Object,
                 searchResponseToViewModelMapper: searchResultsMapper.Object,
-                facetResultToViewModelMapper: searchFacetsResultsMapper.Object);
+                selectedFacetsToFilterRequestsMapper: searchFacetsResultsMapper.Object,
+                searchFilterSelectionHandler: searchFilterSelectionHandler.Object);
 
         // act
         IActionResult result = await sut.Search(model);
 
         // assert
-        searchFacetsResultsMapper.Verify(mapper => mapper.Map(null), Times.Once);
+        searchFacetsResultsMapper.Verify(mapper => mapper.Map(new()), Times.Once);
 
         ViewResult view = Assert.IsType<ViewResult>(result);
         Assert.Equal("Results", view.ViewName);

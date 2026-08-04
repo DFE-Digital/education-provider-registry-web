@@ -172,7 +172,7 @@ public sealed class EstablishmentSearchResultsToViewModelMapperTests
         GovUkTable table = mapper.Map([input])[0];
 
         // assert
-        GovUkTableRow row = table.Rows.Single(tableRow => tableRow.Cells[0].Text == "Part of");
+        GovUkTableRow row = table.Rows.Single(tableRow => tableRow.Cells[0].Text == "Part of a group");
 
         Assert.Equal("Group Name", row.Cells[1].Text);
         Assert.Equal("/groups/G123", row.Cells[1].LinkUrl);

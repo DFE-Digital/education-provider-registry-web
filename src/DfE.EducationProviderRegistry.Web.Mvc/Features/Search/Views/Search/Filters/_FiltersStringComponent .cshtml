@@ -1,0 +1,29 @@
+﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels
+@model FacetViewModel
+
+@{
+    var id = $"filter-{Model.Name}";
+    var bindingName = $"SelectedFacets[{Model.Name}]";
+}
+
+<div class="govuk-form-group">
+    <label class="govuk-label" for="@id">
+        @Model.Name
+    </label>
+
+    <select id="@id"
+            name="@bindingName"
+            class="govuk-select"
+            data-module="app-autocomplete">
+
+        <option value="">Select an option</option>
+
+        @foreach (var option in Model.Values)
+        {
+            <option value="@option.Value"
+                    selected="@(option.IsSelected ? "selected" : null)">
+                @option.Value
+            </option>
+        }
+    </select>
+</div>

@@ -1,7 +1,8 @@
-@use "govuk-frontend/dist/govuk" as *;
-@use "features/search";
-
 @forward "@ministryofjustice/frontend/moj/all";
 
-@import 'dfe-frontend/packages/dfefrontend';
-@import "@x-govuk/govuk-prototype-components/src/x-govuk";
+@use "accessible-autocomplete/dist/accessible-autocomplete.min.css";
+@use "govuk-frontend/dist/govuk" as *;
+@use "dfe-frontend/packages/dfefrontend";
+@use "@x-govuk/govuk-prototype-components/src/x-govuk";
+
+@use "features/search";

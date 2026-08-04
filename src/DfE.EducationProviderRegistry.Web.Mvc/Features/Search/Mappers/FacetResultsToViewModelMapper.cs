@@ -68,7 +68,7 @@ public sealed class FacetResultsToViewModelMapper :
         return new FacetValueViewModel(
             Value: result.Value,
             Count: result.Count.Value,
-            IsSelected: true
+            IsSelected: false
         );
     }
 }

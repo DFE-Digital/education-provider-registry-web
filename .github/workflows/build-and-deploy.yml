@@ -77,6 +77,8 @@ jobs:
         snyk-token: ${{ secrets.SNYK_TOKEN }}
   test:
     name: Run tests
+    # needs build as accessibility tests require application docker image
+    needs: build
     if: ${{ github.event_name != 'workflow_dispatch' }}
     runs-on: ubuntu-latest
 
@@ -143,7 +145,8 @@ jobs:
 
     - name: SonarCloud scan
       if: github.actor != 'dependabot[bot]'
-      uses: DFE-Digital/github-actions/sonarscan-dotnet@0e3ff9f87329e3d8ace1fc4f175ddd1ea13c7af0
+      # awaiting review of central github-actions repo https://github.com/DFE-Digital/github-actions/pull/242
+      uses: aahmed-dfe/github-actions/sonarscan-dotnet@d9e442885ed5812c42795fb565199e5e7081b40e
       with:
           sonarcloud-project-key: DFE-Digital_education-provider-registry-web
           sonarcloud-token: ${{ secrets.SONAR_TOKEN }}
@@ -151,6 +154,14 @@ jobs:
           # awaiting completion of https://github.com/DFE-Digital/github-actions/pull/236/changes then defaults handle
           java-version: 21
           coverage-report-path: coverage-sonar/SonarQube.xml
+          sonarscan-exclusions: "src/**/wwwroot/css/site.css"
+
+
+    - name: Update application image in accessibility tests
+      run: |
+        TAG="${{ needs.build.outputs.docker-image-tag }}"
+        echo "Using application image tag: [$TAG]"
+        sed -i "s|{APPLICATION_IMAGE_TAG}|$TAG|g" tests/DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests/appsettings.json
 
     - name: Run Accessibility Tests
       run: |

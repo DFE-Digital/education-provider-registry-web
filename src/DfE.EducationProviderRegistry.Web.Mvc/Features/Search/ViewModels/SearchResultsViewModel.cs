@@ -19,6 +19,8 @@ public sealed class SearchResultsViewModel
 
     public string? PrimarySearchTerms { get; set; }
 
+    public string? SecondarySearchTerms { get; set; }
+
     /// <summary>
     /// Property determining whether we have at least one search result.
     /// </summary>
@@ -38,4 +40,6 @@ public sealed class SearchResultsViewModel
     /// Determines whether there are filters in the results
     /// </summary>
     public bool HasFilters => Facets?.Count > 0;
+
+    public SearchRequestViewModel SearchRequest { get; set; } = new();
 }

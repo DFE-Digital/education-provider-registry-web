@@ -42,40 +42,40 @@ public class EstablishmentDetailsBasicDetailsTableMapper :
                        new GovUkTableCell { Text = dto.Urn.Value });
 
         builder.AddRow(new GovUkTableCell { Text = "Number", IsBold = true },
-                       new GovUkTableCell { Text = dto.Number.Value });
+                       new GovUkTableCell { Text = dto.Number.Value ?? "" });
 
         builder.AddRow(new GovUkTableCell { Text = "Status", IsBold = true },
-                       new GovUkTableCell { Text = dto.Status.Value });
+                       new GovUkTableCell { Text = dto.Status.Value ?? "" });
 
         builder.AddRow(new GovUkTableCell { Text = "Type", IsBold = true },
                        new GovUkTableCell { Text = dto.Type.Value });
 
         builder.AddRow(new GovUkTableCell { Text = "Phase of education", IsBold = true },
-                       new GovUkTableCell { Text = dto.Phase.Value });
+                       new GovUkTableCell { Text = dto.Phase.Value ?? "" });
 
         builder.AddRow(new GovUkTableCell { Text = "Open date", IsBold = true },
-                       new GovUkTableCell { Text = dto.LifecycleEventOpened?.EventDate.ToShortDateString() });
+                       new GovUkTableCell { Text = dto.LifecycleEventOpened?.EventDate.ToShortDateString() ?? "" });
 
         builder.AddRow(new GovUkTableCell { Text = "Open reason", IsBold = true },
-                       new GovUkTableCell { Text = dto.LifecycleEventOpened?.Reason.Reason });
+                       new GovUkTableCell { Text = dto.LifecycleEventOpened?.Reason.Reason ?? "" });
 
         builder.AddRow(new GovUkTableCell { Text = "Closed date", IsBold = true },
-                       new GovUkTableCell { Text = dto.LifecycleEventClosed?.EventDate.ToShortDateString() });
+                       new GovUkTableCell { Text = dto.LifecycleEventClosed?.EventDate.ToShortDateString() ?? "" });
 
         builder.AddRow(new GovUkTableCell { Text = "Closed reason", IsBold = true },
-                       new GovUkTableCell { Text = dto.LifecycleEventClosed?.Reason.Reason });
+                       new GovUkTableCell { Text = dto.LifecycleEventClosed?.Reason.Reason ?? "" });
 
         builder.AddRow(new GovUkTableCell { Text = "Uid", IsBold = true },
-                       new GovUkTableCell { Text = dto.Uid });
+                       new GovUkTableCell { Text = dto.Uid ?? "" });
 
         builder.AddRow(new GovUkTableCell { Text = "Grope name", IsBold = true },
-                       new GovUkTableCell { Text = dto.GroupName });
+                       new GovUkTableCell { Text = dto.GroupName ?? "" });
 
         builder.AddRow(new GovUkTableCell { Text = "Group type", IsBold = true },
-                       new GovUkTableCell { Text = dto.GroupType });
+                       new GovUkTableCell { Text = dto.GroupType ?? "" });
 
         builder.AddRow(new GovUkTableCell { Text = "Group open date", IsBold = true },
-                       new GovUkTableCell { Text = dto.GroupOpenDate.ToString() });
+                       new GovUkTableCell { Text = dto.GroupOpenDate.ToString() ?? "" });
 
         return builder.Build();
     }
@@ -95,7 +95,7 @@ public class EstablishmentDetailsGovernorsTableMapper :
         {
             builder.AddRow(
                 new GovUkTableCell { Text = g.Name.Value },
-                new GovUkTableCell { Text = g.Identifier.Value },
+                new GovUkTableCell { Text = g.Identifier.Value ?? "" },
                 new GovUkTableCell { Text = string.Empty }
             );
         }

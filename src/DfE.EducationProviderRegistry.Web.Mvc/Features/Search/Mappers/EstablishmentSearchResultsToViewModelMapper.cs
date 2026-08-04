@@ -58,13 +58,21 @@ public sealed class EstablishmentSearchResultsToViewModelMapper :
         table.AddRow(
             "Local authority",
             input?.LocalAuthority?.Name,
-            "/la/" + input?.LocalAuthority?.Code
+            CreateLinkUrl("/la/", input?.LocalAuthority?.Code)
         );
 
         table.AddRow(
-            "Part of",
+            "Part of a group",
             input?.Group?.PartOfName,
-            "/groups/" + input?.Group?.PartOfCode
+            CreateLinkUrl("/groups/", input?.Group?.PartOfCode)
         );
+    }
+
+
+    private static string? CreateLinkUrl(string prefix, string? value)
+    {
+        return string.IsNullOrWhiteSpace(value)
+            ? null
+            : prefix + value;
     }
 }

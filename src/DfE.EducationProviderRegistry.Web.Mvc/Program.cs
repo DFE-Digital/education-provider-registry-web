@@ -5,6 +5,7 @@ using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,26 +33,11 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
     options.Secure = CookieSecurePolicy.Always;
 });
 
-builder.Services.AddDbContextFactory<EducationProviderRegistryDbContext>(options =>
-{
-    string? connectionString = builder.Configuration["eprweb_eprdat_dotnet_db_connection"];
-
-    if (string.IsNullOrWhiteSpace(connectionString))
-    {
-        throw new ArgumentException("Database connection string not configured.");
-    }
-
-    options.UseNpgsql(connectionString)
-           .EnableSensitiveDataLogging()
-           .EnableDetailedErrors()
-           .LogTo(Console.WriteLine, LogLevel.Information);
-});
-
-
 builder.Services
     .AddEstablishments()
     .AddGroups()
-    .AddSearch(builder.Configuration);
+    .AddSearch(builder.Configuration)
+    .AddPostgresDatabase(builder.Configuration);
 
 var app = builder.Build();
 

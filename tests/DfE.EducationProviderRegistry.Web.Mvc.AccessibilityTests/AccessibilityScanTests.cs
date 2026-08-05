@@ -36,7 +36,7 @@ public sealed class AccessibilityScanTests
 
         _webDriverSessionBuilder
             .WithChrome()
-            .WithHeadless(false)
+            .WithHeadless(true)
             .WithViewport(1920, 1080)
             .WithStartMaximised(true)
             .WithAllowInsecureLocalConnections(true)

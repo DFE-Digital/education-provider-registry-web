@@ -1,7 +1,7 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 
-namespace BrowserLibrary.WebDriver.Chrome;
+namespace DfE.WebDriver.WebDriver.Chrome;
 
 internal sealed class ChromeDriverProvider : IWebDriverProvider
 {

@@ -1,6 +1,6 @@
 ﻿using OpenQA.Selenium;
 
-namespace BrowserLibrary.Public.Session;
+namespace DfE.WebDriver.Public.Session;
 
 public interface IWebDriverSession
 {

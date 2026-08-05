@@ -1,6 +1,4 @@
-﻿using BrowserLibrary.Public.Session;
-
-namespace DfE.WebDriver.WebDriver;
+﻿namespace DfE.WebDriver.WebDriver;
 
 internal sealed class WebDriverProviderRegistry : IWebDriverProviderRegistry
 {

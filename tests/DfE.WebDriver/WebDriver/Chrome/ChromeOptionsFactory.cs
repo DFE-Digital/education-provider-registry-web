@@ -1,6 +1,7 @@
-﻿using OpenQA.Selenium.Chrome;
+﻿using DfE.WebDriver.WebDriver;
+using OpenQA.Selenium.Chrome;
 
-namespace BrowserLibrary.WebDriver.Chrome;
+namespace DfE.WebDriver.WebDriver.Chrome;
 
 internal sealed class ChromeOptionsFactory : IWebDriverOptionsFactory<ChromeOptions>
 {

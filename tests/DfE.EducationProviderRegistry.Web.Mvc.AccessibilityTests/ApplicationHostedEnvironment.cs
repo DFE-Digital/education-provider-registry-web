@@ -1,12 +1,4 @@
-﻿using DfE.Core.Libraries.IntegrationTests.Abstractions;
-using DfE.Core.Libraries.IntegrationTests.Database.Abstractions;
-using DfE.Core.Libraries.IntegrationTests.Database.Postgres.Container;
-using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Options;
-using DotNet.Testcontainers.Builders;
-using DotNet.Testcontainers.Configurations;
-using DotNet.Testcontainers.Containers;
-using DotNet.Testcontainers.Networks;
-using Npgsql;
+﻿using DfE.Core.Libraries.IntegrationTests.Abstractions.Containers;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests;
 
@@ -15,48 +7,55 @@ public sealed class ApplicationHostedEnvironment
     private IDatabase? _database;
     private IContainer? _applicationContainer;
     private readonly IDatabaseFactory _databaseFactory;
+    private readonly IContainerRegistry _containerRegistry;
     private readonly ApplicationHostOptions _options;
     private readonly ContainerOptions _dbContainerOptions;
     private readonly PostgresDatabaseOptions _dbOptions;
-    private readonly INetwork _containerNetwork;
 
     public ApplicationHostedEnvironment(
-        IDatabaseFactory databaseFactory,
-        ApplicationHostOptions options,
-        INetwork containerNetwork,
+        ApplicationHostOptions applicationOptions,
         ContainerOptions dbContainerOptions,
-        PostgresDatabaseOptions dbOptions)
+        PostgresDatabaseOptions dbOptions,
+        IDatabaseFactory databaseFactory,
+        IContainerRegistry containerRegistry)
     {
-        _databaseFactory = databaseFactory;
-        _options = options;
-        _containerNetwork = containerNetwork;
+        _options = applicationOptions;
         _dbContainerOptions = dbContainerOptions;
         _dbOptions = dbOptions;
+
+        _databaseFactory = databaseFactory;
+        _containerRegistry = containerRegistry;
     }
 
     public async Task InitialiseAsync(
         CancellationToken ct = default)
     {
         _database = await _databaseFactory.CreateAsync(ct);
+        await _database.StartAsync(ct);
 
         const int postgresContainerPort = 5432;
 
         NpgsqlConnectionStringBuilder containerNetworkConnectionStringBuilder = new()
         {
-            Host = _dbContainerOptions.HostName,
+            Host = _dbContainerOptions.Networks.First().Aliases.First(), // resolve alias to enable connection
             Port = postgresContainerPort, // Internal postgres port as container-container
             Database = _dbOptions.Database,
             Username = _dbOptions.Username,
             Password = _dbOptions.Password
         };
 
-        _applicationContainer =
+        ContainerBuilder builder =
             new ContainerBuilder(_options.Container.Image)
                 .WithExposedPorts<ContainerBuilder, IContainer, IContainerConfiguration>(_options.Container.PortMappings ?? [])
                 .WithEnvironment("eprweb_eprdat_dotnet_db_connection", containerNetworkConnectionStringBuilder.ConnectionString)
-                .WithWaitStrategy(Wait.ForUnixContainer().UntilHttpRequestIsSucceeded(r => r.ForPort((ushort)_options.Container.PortMappings!.First().ContainerPort)))
-                .WithNetwork(_containerNetwork)
-                .Build();
+                .WithWaitStrategy(Wait.ForUnixContainer().UntilHttpRequestIsSucceeded(r => r.ForPort((ushort)_options.Container.PortMappings!.First().ContainerPort)));
+
+        builder =
+            await builder
+                .WithNetworksAsync<ContainerBuilder, IContainer, IContainerConfiguration>(
+                    _options.Container?.Networks, _containerRegistry);
+
+        _applicationContainer = builder.Build();
 
         // Start the container.
         await _applicationContainer.StartAsync(ct);

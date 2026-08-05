@@ -36,7 +36,7 @@ public sealed class AccessibilityScanTests
 
         _webDriverSessionBuilder
             .WithChrome()
-            .WithHeadless(true)
+            .WithHeadless(false)
             .WithViewport(1920, 1080)
             .WithStartMaximised(true)
             .WithAllowInsecureLocalConnections(true)
@@ -47,7 +47,7 @@ public sealed class AccessibilityScanTests
     [Fact]
     public async Task Axe_Detects_Known_Violation()
     {
-        IWebDriver driver =
+        using IWebDriver driver =
             await _webDriverSessionBuilder.Build()
                     .StartDriverAsync(_ct);
 

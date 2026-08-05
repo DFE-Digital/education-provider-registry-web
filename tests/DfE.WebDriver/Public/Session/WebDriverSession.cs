@@ -1,7 +1,7 @@
-﻿using BrowserLibrary.WebDriver;
+﻿using DfE.WebDriver.WebDriver;
 using OpenQA.Selenium;
 
-namespace BrowserLibrary.Public.Session;
+namespace DfE.WebDriver.Public.Session;
 
 internal sealed class WebDriverSession : IWebDriverSession
 {

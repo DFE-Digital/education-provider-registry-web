@@ -1,6 +1,6 @@
 ﻿using OpenQA.Selenium;
 
-namespace BrowserLibrary.WebDriver;
+namespace DfE.WebDriver.WebDriver;
 
 internal interface IWebDriverProvider
 {

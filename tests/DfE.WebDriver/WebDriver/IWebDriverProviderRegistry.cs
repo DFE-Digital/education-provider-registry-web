@@ -1,4 +1,4 @@
-﻿namespace BrowserLibrary.WebDriver;
+﻿namespace DfE.WebDriver.WebDriver;
 
 internal interface IWebDriverProviderRegistry
 {

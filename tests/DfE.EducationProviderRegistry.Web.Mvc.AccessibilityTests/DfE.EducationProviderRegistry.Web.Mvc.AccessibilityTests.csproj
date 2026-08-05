@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BrowserLibrary\BrowserLibrary.csproj" />
+    <ProjectReference Include="..\DfE.WebDriver\DfE.WebDriver.csproj" />
   </ItemGroup>
 
 </Project>

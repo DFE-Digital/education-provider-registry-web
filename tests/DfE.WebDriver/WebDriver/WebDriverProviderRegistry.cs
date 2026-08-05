@@ -1,6 +1,6 @@
 ﻿using BrowserLibrary.Public.Session;
 
-namespace BrowserLibrary.WebDriver;
+namespace DfE.WebDriver.WebDriver;
 
 internal sealed class WebDriverProviderRegistry : IWebDriverProviderRegistry
 {

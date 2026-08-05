@@ -1,8 +1,8 @@
-﻿using BrowserLibrary.Public.Session;
-using Deque.AxeCore.Commons;
+﻿using Deque.AxeCore.Commons;
 using Deque.AxeCore.Selenium;
 using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Actions;
 using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Options;
+using DfE.WebDriver.Public.Session;
 using Microsoft.Extensions.Configuration;
 using OpenQA.Selenium;
 using System.Text;

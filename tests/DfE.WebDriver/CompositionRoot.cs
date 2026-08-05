@@ -1,10 +1,10 @@
-﻿using BrowserLibrary.Public.Session;
-using BrowserLibrary.WebDriver;
-using BrowserLibrary.WebDriver.Chrome;
+﻿using DfE.WebDriver.Public.Session;
+using DfE.WebDriver.WebDriver;
+using DfE.WebDriver.WebDriver.Chrome;
 using Microsoft.Extensions.DependencyInjection;
 using OpenQA.Selenium.Chrome;
 
-namespace BrowserLibrary;
+namespace DfE.WebDriver;
 
 public static class CompositionRoot
 {

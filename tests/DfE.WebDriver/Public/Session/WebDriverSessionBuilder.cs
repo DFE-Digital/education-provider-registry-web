@@ -1,6 +1,6 @@
-﻿using BrowserLibrary.WebDriver;
+﻿using DfE.WebDriver.WebDriver;
 
-namespace BrowserLibrary.Public.Session;
+namespace DfE.WebDriver.Public.Session;
 
 internal sealed class WebDriverSessionBuilder : IWebDriverSessionBuilder
 {

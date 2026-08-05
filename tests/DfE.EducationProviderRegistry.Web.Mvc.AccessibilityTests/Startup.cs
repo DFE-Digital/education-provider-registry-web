@@ -1,9 +1,9 @@
-﻿using BrowserLibrary;
-using DfE.Core.Libraries.IntegrationTests.Abstractions;
+﻿using DfE.Core.Libraries.IntegrationTests.Abstractions;
 using DfE.Core.Libraries.IntegrationTests.Database.Postgres.Extensions;
 using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Actions;
 using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Actions.Handlers;
 using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Options;
+using DfE.WebDriver;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Networks;
 using MartinCostello.Logging.XUnit;

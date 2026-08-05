@@ -1,4 +1,4 @@
-﻿namespace BrowserLibrary.WebDriver;
+﻿namespace DfE.WebDriver.WebDriver;
 
 public static class WebDriverSessionContextKeys
 {

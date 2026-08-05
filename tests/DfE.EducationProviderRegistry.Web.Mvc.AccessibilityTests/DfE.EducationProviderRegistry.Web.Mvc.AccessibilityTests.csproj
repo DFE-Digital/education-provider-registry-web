@@ -24,4 +24,8 @@
     <PackageReference Include="xunit.v3.mtp-v2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DfE.WebDriver\DfE.WebDriver.csproj" />
+  </ItemGroup>
+
 </Project>

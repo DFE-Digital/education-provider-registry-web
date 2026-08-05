@@ -7,6 +7,7 @@
   <Folder Name="/tests/">
     <File Path="tests/Directory.Build.props" />
     <File Path="tests/Directory.Packages.props" />
+    <Project Path="tests/DfE.WebDriver/DfE.WebDriver.csproj" Id="379d06c6-0ced-4a2e-b67f-237b85e00a45" />
     <Project Path="tests/DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests/DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.csproj" />
     <Project Path="tests/DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests/DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.csproj" />
     <Project Path="tests/DfE.EducationProviderRegistry.Web.Mvc.UnitTests/DfE.EducationProviderRegistry.Web.Mvc.UnitTests.csproj" />

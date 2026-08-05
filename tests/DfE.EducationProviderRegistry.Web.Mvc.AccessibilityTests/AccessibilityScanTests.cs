@@ -2,9 +2,9 @@
 using Deque.AxeCore.Selenium;
 using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Actions;
 using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Options;
+using DfE.WebDriver.Public.Session;
 using Microsoft.Extensions.Configuration;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
 using System.Text;
 using Xunit.Sdk;
 
@@ -13,15 +13,16 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests;
 public sealed class AccessibilityScanTests
 {
     private readonly CancellationToken _ct;
-    private readonly ChromeOptions _chromeOptions;
     private readonly AccessibilityTestOptions _accessibilityTestOptions;
     private readonly ApplicationHostedEnvironment _hostedEnvironment;
     private readonly Dictionary<string, Func<IAccessibilityScanActionHandler>> _handlersFactory;
+    private readonly IWebDriverSessionBuilder _webDriverSessionBuilder;
 
     public AccessibilityScanTests(
         AccessibilityTestOptions options,
         ApplicationHostedEnvironment hostedEnvironment,
-        Dictionary<string, Func<IAccessibilityScanActionHandler>> handlersFactory)
+        Dictionary<string, Func<IAccessibilityScanActionHandler>> handlersFactory,
+        IWebDriverSessionBuilder webDriverSessionBuilder)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(hostedEnvironment);
@@ -30,32 +31,27 @@ public sealed class AccessibilityScanTests
         _accessibilityTestOptions = options;
         _hostedEnvironment = hostedEnvironment;
         _handlersFactory = handlersFactory;
+        _webDriverSessionBuilder = webDriverSessionBuilder;
         _ct = TestContext.Current.CancellationToken;
 
-        _chromeOptions = new();
+        _webDriverSessionBuilder
+            .WithChrome()
+            .WithHeadless(true)
+            .WithViewport(1920, 1080)
+            .WithStartMaximised(true)
+            .WithAllowInsecureLocalConnections(true)
+            .Build();
 
-        _chromeOptions.AddArguments(
-            "--incognito",
-            // https://github.com/SeleniumHQ/selenium/issues/6049 observed on ubuntu 22.04 runners
-            "--disable-dev-shm-usage",
-            "--disable-gpu",
-            // screen size setting
-            "--window-size=1920,1080",
-            "--start-maximized",
-            "--start-fullscreen",
-            // see https://www.selenium.dev/blog/2023/headless-is-going-away/
-            "--headless=new",
-            // Bypass localhost certificate errors in CI
-            "--allow-insecure-localhost");
     }
 
     [Fact]
-    public void Axe_Detects_Known_Violation()
+    public async Task Axe_Detects_Known_Violation()
     {
-        using ChromeDriverService service = ChromeDriverService.CreateDefaultService();
-        using IWebDriver driver = new ChromeDriver(service, _chromeOptions);
+        IWebDriver driver =
+            await _webDriverSessionBuilder.Build()
+                    .StartDriverAsync(_ct);
 
-        driver.Navigate().GoToUrl(
+        await driver.Navigate().GoToUrlAsync(
             "data:text/html;charset=utf-8," +
             Uri.EscapeDataString("""
                 <!DOCTYPE html>
@@ -80,8 +76,7 @@ public sealed class AccessibilityScanTests
     {
         await _hostedEnvironment.InitialiseAsync(_ct);
 
-        using ChromeDriverService service = ChromeDriverService.CreateDefaultService();
-        using IWebDriver driver = new ChromeDriver(service, _chromeOptions);
+        using IWebDriver driver = await _webDriverSessionBuilder.Build().StartDriverAsync(_ct);
 
         foreach (AccessibilityScanAction action in testCase.Scan.Actions)
         {
@@ -147,8 +142,6 @@ public sealed class AccessibilityScanTests
             results.Violations.Length == 0,
             $"Accessibility scan '{testCase.Name}' has {results.Violations.Length} violations.");
     }
-
-
 
     private static AxeResult ExecuteScan(IWebDriver driver, AccessibilityTestOptions options)
     {

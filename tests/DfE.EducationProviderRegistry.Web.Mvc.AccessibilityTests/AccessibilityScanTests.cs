@@ -47,7 +47,7 @@ public sealed class AccessibilityScanTests
     [Fact]
     public async Task Axe_Detects_Known_Violation()
     {
-        IWebDriver driver =
+        using IWebDriver driver =
             await _webDriverSessionBuilder.Build()
                     .StartDriverAsync(_ct);
 

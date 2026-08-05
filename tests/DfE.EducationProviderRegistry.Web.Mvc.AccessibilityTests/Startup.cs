@@ -1,4 +1,5 @@
-﻿using DfE.Core.Libraries.IntegrationTests.Abstractions;
+﻿using BrowserLibrary;
+using DfE.Core.Libraries.IntegrationTests.Abstractions;
 using DfE.Core.Libraries.IntegrationTests.Database.Postgres.Extensions;
 using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Actions;
 using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Actions.Handlers;
@@ -80,5 +81,7 @@ public sealed class Startup
                 Network = network
             };
         });
+
+        services.AddWebDriver();
     }
 }

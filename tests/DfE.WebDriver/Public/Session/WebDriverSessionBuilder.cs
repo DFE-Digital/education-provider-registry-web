@@ -1,4 +1,5 @@
 ﻿using DfE.WebDriver.WebDriver;
+using DfE.WebDriver.WebDriver.Provider;
 
 namespace DfE.WebDriver.Public.Session;
 
@@ -20,22 +21,22 @@ internal sealed class WebDriverSessionBuilder : IWebDriverSessionBuilder
 
     public IWebDriverSession Build()
     {
-        WebDriverSessionRequest req = new();
+        WebDriverSessionContext req = new();
 
-        req.Set(WebDriverSessionContextKeys.BrowserType, _browserType);
-        req.Set(WebDriverSessionContextKeys.Headless, _headless);
-        req.Set(WebDriverSessionContextKeys.StartMaximised, _startMaximised);
-        req.Set(WebDriverSessionContextKeys.AllowInsecureLocalhost, _insecureLocal);
+        req.Set(WebDriverSessionRequestKeys.BrowserType, _browserType);
+        req.Set(WebDriverSessionRequestKeys.Headless, _headless);
+        req.Set(WebDriverSessionRequestKeys.StartMaximised, _startMaximised);
+        req.Set(WebDriverSessionRequestKeys.AllowInsecureLocalhost, _insecureLocal);
 
         if (!string.IsNullOrWhiteSpace(_browserVersion))
         {
-            req.Set(WebDriverSessionContextKeys.BrowserVersion, _browserVersion);
+            req.Set(WebDriverSessionRequestKeys.BrowserVersion, _browserVersion);
         }
 
         if (_viewportCartesian != null)
         {
             req.Set(
-                WebDriverSessionContextKeys.Viewport,
+                WebDriverSessionRequestKeys.Viewport,
                     new BrowserViewport(_viewportCartesian.Value.width, _viewportCartesian.Value.height));
         }
 

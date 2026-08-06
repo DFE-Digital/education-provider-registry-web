@@ -2,29 +2,29 @@
 
 namespace DfE.WebDriver.WebDriver.Options;
 
-internal class WebDriverOptionsFactory<TOptions> where TOptions : DriverOptions, new()
+internal abstract class WebDriverOptionsFactory<TOptions> : IWebDriverOptionsFactory<TOptions> where TOptions : DriverOptions, new()
 {
-    private readonly IReadOnlyDictionary<string, Action<WebDriverSessionRequest, TOptions>> _handlerMap;
+    private readonly IReadOnlyCollection<Action<WebDriverSessionRequest, TOptions>> _optionHandlers;
 
     protected WebDriverOptionsFactory(IEnumerable<KeyValuePair<string, Action<WebDriverSessionRequest, TOptions>>> handlers)
     {
-        _handlerMap =
-            handlers?.ToDictionary(
-                t => t.Key,
-                t => t.Value) ?? [];
+        _optionHandlers =
+        [
+            .. DriverOptionsMappings.CreateSharedMappings<TOptions>().Select(x => x.Value),
+            .. handlers.Select(x => x.Value)
+        ];
     }
 
     protected virtual void ConfigureOptions(TOptions options) { }
 
-    public TOptions CreateOptions(WebDriverSessionContext spec)
+    public TOptions CreateOptions(WebDriverSessionContext context)
     {
         TOptions options = new();
         ConfigureOptions(options);
 
-        WebDriverSessionRequest request = new(spec);
+        WebDriverSessionRequest request = new(context);
 
-        foreach (Action<WebDriverSessionRequest, TOptions> handler in _handlerMap
-                .Select((handlerContained) => handlerContained.Value))
+        foreach (Action<WebDriverSessionRequest, TOptions> handler in _optionHandlers)
         {
             handler.Invoke(request, options);
         }

@@ -3,13 +3,13 @@
 public static class WebDriverSessionRequestKeys
 {
     public const string Headless = "headless";
-    public const string Viewport = "viewport";
     public const string BrowserType = "browser";
     public const string BrowserVersion = "browserVersion";
-    public const string AllowInsecureLocalhost = "allowInsecureLocalhost";
+    public const string Viewport = "viewport";
     public const string StartMaximised = "startMaximised";
+    public const string AllowInsecureCertificates = "allowInsecureCertificates";
+    public const string AllowInsecureLocalhost = "allowInsecureLocalhost";
 
-    //public const string AcceptInsecureCertificates = "acceptInsecureCertificates";
 }
 
 internal sealed class WebDriverSessionContext
@@ -67,36 +67,4 @@ internal sealed class WebDriverSessionContext
     {
         _config[key] = value;
     }
-}
-
-internal sealed record WebDriverSessionRequest
-{
-    public WebDriverSessionRequest(
-        WebDriverSessionContext request)
-    {
-        request.TryGet<bool>(WebDriverSessionRequestKeys.Headless, out bool headless);
-        Headless = headless;
-
-        request.TryGet<bool>(WebDriverSessionRequestKeys.StartMaximised, out bool maximised);
-        StartMaximised = maximised;
-
-        BrowserVersion =
-            request.TryGet<string>(
-                WebDriverSessionRequestKeys.BrowserVersion,
-                out string? version)
-                    ? version
-                    : null;
-
-        Viewport =
-            request.TryGet<BrowserViewport>(
-                WebDriverSessionRequestKeys.Viewport,
-                out BrowserViewport viewport)
-                    ? viewport
-                    : null;
-    }
-
-    public bool Headless { get; }
-    public bool StartMaximised { get; }
-    public string? BrowserVersion { get; }
-    public BrowserViewport? Viewport { get; }
 }

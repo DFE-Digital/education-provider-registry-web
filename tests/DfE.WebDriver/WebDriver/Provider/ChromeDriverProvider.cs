@@ -6,9 +6,9 @@ namespace DfE.WebDriver.WebDriver.Provider;
 
 internal sealed class ChromeDriverProvider : IWebDriverProvider
 {
-    private readonly WebDriverOptionsFactory<ChromeOptions> _optionsFactory;
+    private readonly IWebDriverOptionsFactory<ChromeOptions> _optionsFactory;
 
-    public ChromeDriverProvider(WebDriverOptionsFactory<ChromeOptions> optionsFactory)
+    public ChromeDriverProvider(IWebDriverOptionsFactory<ChromeOptions> optionsFactory)
     {
         _optionsFactory = optionsFactory ?? throw new ArgumentNullException(nameof(optionsFactory));
     }

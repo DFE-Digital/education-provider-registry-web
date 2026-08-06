@@ -1,4 +1,4 @@
-﻿namespace DfE.WebDriver.WebDriver;
+﻿namespace DfE.WebDriver.WebDriver.Provider;
 
 internal sealed class WebDriverProviderRegistry : IWebDriverProviderRegistry
 {

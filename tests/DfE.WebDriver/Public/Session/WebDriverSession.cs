@@ -1,4 +1,5 @@
 ﻿using DfE.WebDriver.WebDriver;
+using DfE.WebDriver.WebDriver.Provider;
 using OpenQA.Selenium;
 
 namespace DfE.WebDriver.Public.Session;
@@ -6,9 +7,9 @@ namespace DfE.WebDriver.Public.Session;
 internal sealed class WebDriverSession : IWebDriverSession
 {
     private readonly IWebDriverProviderRegistry _registry;
-    private readonly WebDriverSessionRequest _request;
+    private readonly WebDriverSessionContext _request;
 
-    public WebDriverSession(IWebDriverProviderRegistry registry, WebDriverSessionRequest spec)
+    public WebDriverSession(IWebDriverProviderRegistry registry, WebDriverSessionContext spec)
     {
         _registry = registry ?? throw new ArgumentNullException(nameof(registry));
         _request = spec ?? throw new ArgumentNullException(nameof(spec));
@@ -17,7 +18,7 @@ internal sealed class WebDriverSession : IWebDriverSession
     public ValueTask<IWebDriver> StartDriverAsync(CancellationToken cancellationToken = default)
     {
         if (!_request.TryGet<string>(
-                WebDriverSessionContextKeys.BrowserType,
+                WebDriverSessionRequestKeys.BrowserType,
                 out string? browser))
         {
             throw new InvalidOperationException(

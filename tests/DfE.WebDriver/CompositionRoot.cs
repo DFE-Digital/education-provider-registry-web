@@ -1,6 +1,6 @@
 ﻿using DfE.WebDriver.Public.Session;
-using DfE.WebDriver.WebDriver;
-using DfE.WebDriver.WebDriver.Chrome;
+using DfE.WebDriver.WebDriver.Options;
+using DfE.WebDriver.WebDriver.Provider;
 using Microsoft.Extensions.DependencyInjection;
 using OpenQA.Selenium.Chrome;
 
@@ -15,15 +15,20 @@ public static class CompositionRoot
             throw new ArgumentException("Services cannot be null.", nameof(services));
         }
 
+        // Client SessionBuilder
         services.AddTransient<IWebDriverSessionBuilder, WebDriverSessionBuilder>();
 
-        // TODO options to template to share parsing of spec. share SessionSpec parsing TOptions CreateOptions(SessionSpec) ApplyHeadless(bool);
-        services.AddTransient<IWebDriverOptionsFactory<ChromeOptions>, ChromeOptionsFactory>();
+        // DriverOptions
+        services.AddScoped<WebDriverOptionsFactory<ChromeOptions>, ChromeOptionsFactory>();
+
+        // DriverProvider
         services.AddScoped<IWebDriverProviderRegistry>((sp) =>
         {
-            Dictionary<string, Func<IWebDriverProvider>> webDriverProviders = new Dictionary<string, Func<IWebDriverProvider>>()
+            Dictionary<string, Func<IWebDriverProvider>> webDriverProviders = new()
             {
-                { "chrome", () => new ChromeDriverProvider(sp.GetRequiredService<IWebDriverOptionsFactory<ChromeOptions>>()) },
+                { "chrome",
+                    () => new ChromeDriverProvider(
+                        sp.GetRequiredService<WebDriverOptionsFactory<ChromeOptions>>()) },
                 //{ "firefox", () => new FirefoxWebDriverProvider() },
                 //{ "edge", () => new EdgeWebDriverProvider() }
             };

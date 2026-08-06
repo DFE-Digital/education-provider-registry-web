@@ -13,12 +13,20 @@ internal sealed class ChromeOptionsFactory
             [WebDriverSessionRequestKeys.Headless] =
                 (session, options) =>
                 {
-                    options.AddArgument("--headless=new");
+                    if (session.Headless)
+                    {
+                        options.AddArgument("--headless=new");
+                    }
                 },
             [WebDriverSessionRequestKeys.StartMaximised] =
                 (session, options) =>
                 {
-                    options.AddArgument("--start-maximized");
+                    if (session.StartMaximised)
+                    {
+                        options.AddArgument("--start-maximized");
+                        options.AddArgument("--start-fullscreen");
+                    }
+
                 },
             [WebDriverSessionRequestKeys.Viewport] =
                 (session, options) =>
@@ -30,15 +38,10 @@ internal sealed class ChromeOptionsFactory
                     BrowserViewport viewport = session.Viewport.Value;
                     options.AddArgument($"--window-size={viewport.Width},{viewport.Height}");
                 },
-            [WebDriverSessionRequestKeys.AllowInsecureLocalhost] =
+            [WebDriverSessionRequestKeys.AllowInsecureCertificates] =
                 (session, options) =>
                 {
                     options.AddArgument("--allow-insecure-localhost");
-                },
-            [WebDriverSessionRequestKeys.BrowserVersion] =
-                (session, options) =>
-                {
-                    options.BrowserVersion = session.BrowserVersion;
                 }
         };
 

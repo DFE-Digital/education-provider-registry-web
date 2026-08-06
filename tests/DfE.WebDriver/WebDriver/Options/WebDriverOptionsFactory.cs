@@ -8,9 +8,9 @@ internal class WebDriverOptionsFactory<TOptions> where TOptions : DriverOptions,
 
     protected WebDriverOptionsFactory(IEnumerable<KeyValuePair<string, Action<WebDriverSessionRequest, TOptions>>> handlers)
     {
-        _handlerMap = 
+        _handlerMap =
             handlers?.ToDictionary(
-                t => t.Key, 
+                t => t.Key,
                 t => t.Value) ?? [];
     }
 

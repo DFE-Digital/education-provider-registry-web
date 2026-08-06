@@ -17,16 +17,16 @@ public static class CompositionRoot
 
         // Client SessionBuilder
         services.AddTransient<IWebDriverSessionBuilder, WebDriverSessionBuilder>();
-        
+
         // DriverOptions
         services.AddScoped<WebDriverOptionsFactory<ChromeOptions>, ChromeOptionsFactory>();
-        
+
         // DriverProvider
         services.AddScoped<IWebDriverProviderRegistry>((sp) =>
         {
             Dictionary<string, Func<IWebDriverProvider>> webDriverProviders = new()
             {
-                { "chrome", 
+                { "chrome",
                     () => new ChromeDriverProvider(
                         sp.GetRequiredService<WebDriverOptionsFactory<ChromeOptions>>()) },
                 //{ "firefox", () => new FirefoxWebDriverProvider() },

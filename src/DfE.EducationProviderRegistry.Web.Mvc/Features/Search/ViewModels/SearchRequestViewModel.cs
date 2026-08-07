@@ -15,7 +15,7 @@ public sealed class SearchRequestViewModel
     /// field to <c>null</c> and returns <c>null</c>, ensuring that all filters are
     /// cleared for the request.
     /// </remarks>
-    public Dictionary<string, List<string>> SelectedFacets { get; set; } = [];
+    public Dictionary<string, List<SelectedFacetValueViewModel>> SelectedFacets { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the search keywords entered by the user.

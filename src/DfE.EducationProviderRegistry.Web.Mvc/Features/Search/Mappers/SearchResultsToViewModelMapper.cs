@@ -87,7 +87,7 @@ public sealed class SearchResultsToViewModelMapper :
 
     private static void MarkSelectedFacetValues(
         List<FacetViewModel> facets,
-        Dictionary<string, List<string>>? selectedFacets)
+        Dictionary<string, List<SelectedFacetValueViewModel>>? selectedFacets)
     {
         if (selectedFacets is null)
         {
@@ -96,18 +96,22 @@ public sealed class SearchResultsToViewModelMapper :
 
         foreach (FacetViewModel facet in facets)
         {
-            if (!selectedFacets.TryGetValue(facet.Name, out List<string>? selectedValues))
+            if (!selectedFacets.TryGetValue(
+                    facet.Name,
+                    out List<SelectedFacetValueViewModel>? selectedValues))
             {
                 continue;
             }
 
-            UpdateFacetSelections(facet, selectedValues);
+            UpdateFacetSelections(
+                facet,
+                selectedValues);
         }
     }
 
     private static void UpdateFacetSelections(
         FacetViewModel facet,
-        List<string> selectedValues)
+        List<SelectedFacetValueViewModel> selectedValues)
     {
         for (int index = 0; index < facet.Values.Count; index++)
         {
@@ -115,9 +119,14 @@ public sealed class SearchResultsToViewModelMapper :
 
             facet.Values[index] = value with
             {
-                IsSelected = selectedValues.Contains(
-                    value.Value,
-                    StringComparer.OrdinalIgnoreCase)
+                IsSelected = selectedValues.Any(
+                    selectedValue =>
+                        !string.IsNullOrWhiteSpace(
+                            selectedValue.FilterValue) &&
+                        string.Equals(
+                            selectedValue.FilterValue,
+                            value.Id,
+                            StringComparison.OrdinalIgnoreCase))
             };
         }
     }

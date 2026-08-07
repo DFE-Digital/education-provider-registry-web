@@ -1,19 +1,29 @@
 ﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels
 
-@model (string BindingName, FacetValueViewModel FacetValue)
+@model (string BindingName, int Index, FacetValueViewModel FacetValue)
 
 @{
-    var id = $"filter-{Model.BindingName}-{Model.FacetValue.Value}"
+    var id = $"filter-{Model.BindingName}-{Model.FacetValue.Id}"
         .Replace("[", "-")
         .Replace("]", string.Empty);
+
+    var valueBindingName =
+        $"SelectedFacets[{Model.BindingName}][{Model.Index}].Value";
+
+    var filterValueBindingName =
+        $"SelectedFacets[{Model.BindingName}][{Model.Index}].FilterValue";
 }
 
 <div class="govuk-checkboxes__item">
+    <input type="hidden"
+           name="@valueBindingName"
+           value="@Model.FacetValue.Value" />
+
     <input class="govuk-checkboxes__input"
            id="@id"
-           name="SelectedFacets[@Model.BindingName]"
+           name="@filterValueBindingName"
            type="checkbox"
-           value="@Model.FacetValue.Value"
+           value="@Model.FacetValue.Id"
            checked="@Model.FacetValue.IsSelected" />
 
     <label class="govuk-label govuk-checkboxes__label"

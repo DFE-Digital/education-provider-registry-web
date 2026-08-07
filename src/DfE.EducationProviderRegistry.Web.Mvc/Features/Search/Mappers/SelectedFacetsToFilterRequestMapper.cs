@@ -1,11 +1,12 @@
 ﻿using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Filter;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 using System.Collections.ObjectModel;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 
 public sealed class SelectedFacetsToFilterRequestsMapper :
-    IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>
+    IMapper<Dictionary<string, List<SelectedFacetValueViewModel>>?, ReadOnlyCollection<FilterRequest>>
 {
     /// <summary>
     /// Maps the posted facet selections into a read‑only collection of
@@ -39,7 +40,7 @@ public sealed class SelectedFacetsToFilterRequestsMapper :
     /// ]
     /// </code>
     /// </remarks>
-    public ReadOnlyCollection<FilterRequest> Map(Dictionary<string, List<string>>? selectedFacets)
+    public ReadOnlyCollection<FilterRequest> Map(Dictionary<string, List<SelectedFacetValueViewModel>>? selectedFacets)
     {
         if (selectedFacets is null || selectedFacets.Count == 0)
         {
@@ -50,10 +51,20 @@ public sealed class SelectedFacetsToFilterRequestsMapper :
         [
             .. selectedFacets.Select(kvp =>
                 new FilterRequest(
-                    filterName: kvp.Key,
-                    filterValues: [.. kvp.Value.Cast<object>()]))
+                    filterName: MapKeyToSearchFilterExpressionMap(kvp.Key),
+                    filterValues: [.. kvp.Value.Select(x =>x.FilterValue)]))
         ];
 
         return mapped.AsReadOnly();
+    }
+
+    private static string MapKeyToSearchFilterExpressionMap(string input)
+    {
+        Dictionary<string, string> mappedValues = new()
+        {
+            ["EstablishmentTypeId"] = "t.establishment_type_id"
+        };
+
+        return mappedValues[input];
     }
 }

@@ -21,7 +21,7 @@ public sealed class SearchFilterSelectionHandler :
     private static void ClearFilters(
         SearchRequestViewModel request)
     {
-        request.SelectedFacets?.Clear();
+        request.SelectedFacets.Clear();
         request.ClearFilters = false;
         request.RemoveFilter = null;
     }
@@ -39,17 +39,16 @@ public sealed class SearchFilterSelectionHandler :
 
         request.RemoveFilter = null;
 
-        if (request.SelectedFacets is null ||
-            !request.SelectedFacets.TryGetValue(
+        if (!request.SelectedFacets.TryGetValue(
                 facetName,
-                out List<string>? selectedValues))
+                out List<SelectedFacetValueViewModel>? selectedValues))
         {
             return;
         }
 
         selectedValues.RemoveAll(selectedValue =>
             string.Equals(
-                selectedValue,
+                selectedValue.Value,
                 value,
                 StringComparison.OrdinalIgnoreCase));
 

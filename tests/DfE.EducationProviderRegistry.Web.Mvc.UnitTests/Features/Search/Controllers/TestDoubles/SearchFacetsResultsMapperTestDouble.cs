@@ -11,22 +11,22 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Contro
 internal static class SearchFacetsResultsMapperTestDouble
 {
     public static Mock<IMapper<
-        Dictionary<string, List<SelectedFacetValueViewModel>>?,
+        Dictionary<string, List<string>>?,
         ReadOnlyCollection<FilterRequest>>> Mock() => new(MockBehavior.Strict);
 
     public static Mock<IMapper<
-        Dictionary<string, List<SelectedFacetValueViewModel>>?,
+        Dictionary<string, List<string>>?,
         ReadOnlyCollection<FilterRequest>>> MockFor(
         ReadOnlyCollection<FilterRequest> response)
     {
         Mock<IMapper<
-            Dictionary<string, List<SelectedFacetValueViewModel>>?,
+            Dictionary<string, List<string>>?,
             ReadOnlyCollection<FilterRequest>>> mock = Mock();
 
         mock
             .Setup(mapper =>
                 mapper.Map(
-                    It.IsAny<Dictionary<string, List<SelectedFacetValueViewModel>>>()))
+                    It.IsAny<Dictionary<string, List<string>>>()))
             .Returns(response)
             .Verifiable();
 

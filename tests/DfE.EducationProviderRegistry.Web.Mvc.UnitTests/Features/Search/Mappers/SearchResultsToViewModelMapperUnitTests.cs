@@ -234,11 +234,11 @@ public sealed class SearchResultsToViewModelMapperTests
 
         SearchRequestViewModel searchRequest = new()
         {
-            SelectedFacets = new Dictionary<string, List<SelectedFacetValueViewModel>>
+            SelectedFacets = new Dictionary<string, List<string>>
             {
                 ["EstablishmentType"] =
                 [
-                    new SelectedFacetValueViewModel("1", "Primary")
+                    "1"
                 ]
             }
         };
@@ -322,11 +322,11 @@ public sealed class SearchResultsToViewModelMapperTests
 
         SearchRequestViewModel searchRequest = new()
         {
-            SelectedFacets = new Dictionary<string, List<SelectedFacetValueViewModel>>
+            SelectedFacets = new Dictionary<string, List<string>>
             {
                 ["EstablishmentType"] =
                 [
-                    new SelectedFacetValueViewModel("1", "Academy")
+                    "1"
                 ]
             }
         };

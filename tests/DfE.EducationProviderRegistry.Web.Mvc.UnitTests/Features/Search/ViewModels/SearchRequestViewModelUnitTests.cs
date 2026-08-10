@@ -10,9 +10,9 @@ public sealed class SearchRequestViewModelUnitTests
         // arrange
         SearchRequestViewModel vm = new()
         {
-            SelectedFacets = new Dictionary<string, List<SelectedFacetValueViewModel>>
+            SelectedFacets = new Dictionary<string, List<string>>
             {
-                { "Phase", new List<SelectedFacetValueViewModel> { new SelectedFacetValueViewModel("1", "Primary") } }
+                { "Phase", new List<string> { "1" } }
             },
             ClearFilters = false
         };
@@ -23,7 +23,7 @@ public sealed class SearchRequestViewModelUnitTests
         // assert
         Assert.NotNull(result);
         Assert.Single(result);
-        Assert.Equal("Primary", result["Phase"][0].Value);
+        Assert.Equal("1", result["Phase"][0]);
     }
 
     [Fact]

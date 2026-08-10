@@ -26,17 +26,17 @@ public sealed class SearchFilterSelectionHandlerTests
         {
             ClearFilters = true,
 
-            SelectedFacets = new Dictionary<string, List<SelectedFacetValueViewModel>>
+            SelectedFacets = new Dictionary<string, List<string>>
             {
                 ["EstablishmentType"] =
                 [
-                    new SelectedFacetValueViewModel("1", "Academy"),
-                    new SelectedFacetValueViewModel("2", "Free school")
+                    "1",
+                    "2"
                 ],
 
                 ["LocalAuthority"] =
                 [
-                    new SelectedFacetValueViewModel("3", "TestLocalAuthority1")
+                    "3"
                 ]
             }
         };
@@ -80,11 +80,11 @@ public sealed class SearchFilterSelectionHandlerTests
             RemoveFilter =
                 "SelectedFacets[EstablishmentType]|1",
 
-            SelectedFacets = new Dictionary<string, List<SelectedFacetValueViewModel>>
+            SelectedFacets = new Dictionary<string, List<string>>
             {
                 ["EstablishmentType"] =
                 [
-                    new SelectedFacetValueViewModel("1", "Academy")
+                    "1"
                 ]
             }
         };
@@ -107,12 +107,12 @@ public sealed class SearchFilterSelectionHandlerTests
             RemoveFilter =
                 "EstablishmentType|1",
 
-            SelectedFacets = new Dictionary<string, List<SelectedFacetValueViewModel>>
+            SelectedFacets = new Dictionary<string, List<string>>
             {
                 ["EstablishmentType"] =
                 [
-                    new SelectedFacetValueViewModel("1", "Academy"),
-                    new SelectedFacetValueViewModel("2", "Free school")
+                    "1",
+                    "2"
                 ]
             }
         };
@@ -125,8 +125,7 @@ public sealed class SearchFilterSelectionHandlerTests
             request.SelectedFacets["EstablishmentType"],
             selected =>
             {
-                Assert.Equal("2", selected.Key);
-                Assert.Equal("Free school", selected.Value);
+                Assert.Equal("2", selected);
             });
     }
 
@@ -141,12 +140,12 @@ public sealed class SearchFilterSelectionHandlerTests
             RemoveFilter =
                 "EstablishmentType|academy-key",
 
-            SelectedFacets = new Dictionary<string, List<SelectedFacetValueViewModel>>
+            SelectedFacets = new Dictionary<string, List<string>>
             {
                 ["EstablishmentType"] =
                 [
-                    new SelectedFacetValueViewModel("ACADEMY-KEY", "Academy"),
-                    new SelectedFacetValueViewModel("2", "Free school")
+                    "ACADEMY-KEY",
+                    "2"
                 ]
             }
         };
@@ -159,8 +158,7 @@ public sealed class SearchFilterSelectionHandlerTests
             request.SelectedFacets["EstablishmentType"],
             selected =>
             {
-                Assert.Equal("2", selected.Key);
-                Assert.Equal("Free school", selected.Value);
+                Assert.Equal("2", selected);
             });
     }
 
@@ -175,11 +173,11 @@ public sealed class SearchFilterSelectionHandlerTests
             RemoveFilter =
                 "EstablishmentType|1",
 
-            SelectedFacets = new Dictionary<string, List<SelectedFacetValueViewModel>>
+            SelectedFacets = new Dictionary<string, List<string>>
             {
                 ["EstablishmentType"] =
                 [
-                    new SelectedFacetValueViewModel("1", "Academy")
+                    "1"
                 ]
             }
         };
@@ -204,11 +202,11 @@ public sealed class SearchFilterSelectionHandlerTests
             RemoveFilter =
                 "EstablishmentType|1",
 
-            SelectedFacets = new Dictionary<string, List<SelectedFacetValueViewModel>>
+            SelectedFacets = new Dictionary<string, List<string>>
             {
                 ["EstablishmentType"] =
                 [
-                    new SelectedFacetValueViewModel("1", "Academy")
+                    "1"
                 ]
             }
         };
@@ -230,11 +228,11 @@ public sealed class SearchFilterSelectionHandlerTests
         {
             RemoveFilter = null,
 
-            SelectedFacets = new Dictionary<string, List<SelectedFacetValueViewModel>>
+            SelectedFacets = new Dictionary<string, List<string>>
             {
                 ["EstablishmentType"] =
                 [
-                    new SelectedFacetValueViewModel("1", "Academy")
+                    "1"
                 ]
             }
         };
@@ -247,8 +245,7 @@ public sealed class SearchFilterSelectionHandlerTests
             request.SelectedFacets["EstablishmentType"],
             selected =>
             {
-                Assert.Equal("1", selected.Key);
-                Assert.Equal("Academy", selected.Value);
+                Assert.Equal("1", selected);
             });
 
         Assert.Null(request.RemoveFilter);
@@ -264,11 +261,11 @@ public sealed class SearchFilterSelectionHandlerTests
         {
             RemoveFilter = string.Empty,
 
-            SelectedFacets = new Dictionary<string, List<SelectedFacetValueViewModel>>
+            SelectedFacets = new Dictionary<string, List<string>>
             {
                 ["EstablishmentType"] =
                 [
-                    new SelectedFacetValueViewModel("1", "Academy")
+                    "1"
                 ]
             }
         };
@@ -281,8 +278,7 @@ public sealed class SearchFilterSelectionHandlerTests
             request.SelectedFacets["EstablishmentType"],
             selected =>
             {
-                Assert.Equal("1", selected.Key);
-                Assert.Equal("Academy", selected.Value);
+                Assert.Equal("1", selected);
             });
     }
 
@@ -296,11 +292,11 @@ public sealed class SearchFilterSelectionHandlerTests
         {
             RemoveFilter = "   ",
 
-            SelectedFacets = new Dictionary<string, List<SelectedFacetValueViewModel>>
+            SelectedFacets = new Dictionary<string, List<string>>
             {
                 ["EstablishmentType"] =
                 [
-                    new SelectedFacetValueViewModel("1", "Academy")
+                    "1"
                 ]
             }
         };
@@ -313,8 +309,7 @@ public sealed class SearchFilterSelectionHandlerTests
             request.SelectedFacets["EstablishmentType"],
             selected =>
             {
-                Assert.Equal("1", selected.Key);
-                Assert.Equal("Academy", selected.Value);
+                Assert.Equal("1", selected);
             });
     }
 
@@ -337,11 +332,11 @@ public sealed class SearchFilterSelectionHandlerTests
         {
             RemoveFilter = removeFilter,
 
-            SelectedFacets = new Dictionary<string, List<SelectedFacetValueViewModel>>
+            SelectedFacets = new Dictionary<string, List<string>>
             {
                 ["EstablishmentType"] =
                 [
-                    new SelectedFacetValueViewModel("1", "Academy")
+                    "1"
                 ]
             }
         };
@@ -354,8 +349,7 @@ public sealed class SearchFilterSelectionHandlerTests
             request.SelectedFacets["EstablishmentType"],
             selected =>
             {
-                Assert.Equal("1", selected.Key);
-                Assert.Equal("Academy", selected.Value);
+                Assert.Equal("1", selected);
             });
     }
 
@@ -370,11 +364,11 @@ public sealed class SearchFilterSelectionHandlerTests
             RemoveFilter =
                 "LocalAuthority|3",
 
-            SelectedFacets = new Dictionary<string, List<SelectedFacetValueViewModel>>
+            SelectedFacets = new Dictionary<string, List<string>>
             {
                 ["EstablishmentType"] =
                 [
-                    new SelectedFacetValueViewModel("1", "Academy")
+                    "1"
                 ]
             }
         };
@@ -387,8 +381,7 @@ public sealed class SearchFilterSelectionHandlerTests
             request.SelectedFacets["EstablishmentType"],
             selected =>
             {
-                Assert.Equal("1", selected.Key);
-                Assert.Equal("Academy", selected.Value);
+                Assert.Equal("1", selected);
             });
     }
 
@@ -403,11 +396,11 @@ public sealed class SearchFilterSelectionHandlerTests
             RemoveFilter =
                 "EstablishmentType|2",
 
-            SelectedFacets = new Dictionary<string, List<SelectedFacetValueViewModel>>
+            SelectedFacets = new Dictionary<string, List<string>>
             {
                 ["EstablishmentType"] =
                 [
-                    new SelectedFacetValueViewModel("1", "Academy")
+                    "1"
                 ]
             }
         };
@@ -420,8 +413,7 @@ public sealed class SearchFilterSelectionHandlerTests
             request.SelectedFacets["EstablishmentType"],
             selected =>
             {
-                Assert.Equal("1", selected.Key);
-                Assert.Equal("Academy", selected.Value);
+                Assert.Equal("1", selected);
             });
 
         Assert.Null(request.RemoveFilter);
@@ -438,12 +430,12 @@ public sealed class SearchFilterSelectionHandlerTests
             RemoveFilter =
                 " EstablishmentType | 1 ",
 
-            SelectedFacets = new Dictionary<string, List<SelectedFacetValueViewModel>>
+            SelectedFacets = new Dictionary<string, List<string>>
             {
                 ["EstablishmentType"] =
                 [
-                    new SelectedFacetValueViewModel("1", "Academy"),
-                    new SelectedFacetValueViewModel("2", "Free school")
+                    "1",
+                    "2"
                 ]
             }
         };
@@ -456,8 +448,7 @@ public sealed class SearchFilterSelectionHandlerTests
             request.SelectedFacets["EstablishmentType"],
             selected =>
             {
-                Assert.Equal("2", selected.Key);
-                Assert.Equal("Free school", selected.Value);
+                Assert.Equal("2", selected);
             });
     }
 
@@ -474,12 +465,12 @@ public sealed class SearchFilterSelectionHandlerTests
             RemoveFilter =
                 "EstablishmentType|1",
 
-            SelectedFacets = new Dictionary<string, List<SelectedFacetValueViewModel>>
+            SelectedFacets = new Dictionary<string, List<string>>
             {
                 ["EstablishmentType"] =
                 [
-                    new SelectedFacetValueViewModel("1", "Academy"),
-                    new SelectedFacetValueViewModel("2", "Free school")
+                    "1",
+                    "2"
                 ]
             }
         };

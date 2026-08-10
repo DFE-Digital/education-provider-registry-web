@@ -24,7 +24,7 @@ public sealed class SelectedFacetsToFilterRequestsMapperTests
     {
         // arrange
         SelectedFacetsToFilterRequestsMapper mapper = new();
-        Dictionary<string, List<SelectedFacetValueViewModel>> input = [];
+        Dictionary<string, List<string>> input = [];
 
         // act
         var result = mapper.Map(input);
@@ -39,9 +39,9 @@ public sealed class SelectedFacetsToFilterRequestsMapperTests
         // arrange
         SelectedFacetsToFilterRequestsMapper mapper = new();
 
-        Dictionary<string, List<SelectedFacetValueViewModel>> input = new()
+        Dictionary<string, List<string>> input = new()
         {
-            { "Phase", new List<SelectedFacetValueViewModel> { new SelectedFacetValueViewModel("1", "Primary"), new SelectedFacetValueViewModel("2", "Secondary") } }
+            { "Phase", new List<string> { "Primary", "Secondary" } }
         };
 
         // act
@@ -63,10 +63,10 @@ public sealed class SelectedFacetsToFilterRequestsMapperTests
         // arrange
         SelectedFacetsToFilterRequestsMapper mapper = new();
 
-        Dictionary<string, List<SelectedFacetValueViewModel>> input = new()
+        Dictionary<string, List<string>> input = new()
         {
-            { "Phase", new List<SelectedFacetValueViewModel> { new SelectedFacetValueViewModel("1", "Primary") } },
-            { "Type", new List<SelectedFacetValueViewModel> { new SelectedFacetValueViewModel("2", "Academy"), new SelectedFacetValueViewModel("3", "Free School") } }
+            { "Phase", new List<string> { "Primary" } },
+            { "Type", new List<string> { "Academy", "Free School" } }
         };
 
         // act
@@ -93,12 +93,12 @@ public sealed class SelectedFacetsToFilterRequestsMapperTests
         // arrange
         SelectedFacetsToFilterRequestsMapper mapper = new();
 
-        Dictionary<string, List<SelectedFacetValueViewModel>> input = new()
+        Dictionary<string, List<string>> input = new()
         {
             {
                 "EstablishmentTypeId",
                 [
-                    new SelectedFacetValueViewModel("1", "Primary")
+                    "1"
                 ]
             }
         };

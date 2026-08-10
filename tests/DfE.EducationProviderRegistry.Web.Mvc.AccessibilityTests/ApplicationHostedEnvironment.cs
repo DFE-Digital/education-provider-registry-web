@@ -3,7 +3,7 @@ using DfE.Core.Libraries.IntegrationTests.Database.Postgres.Container.Provider;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests;
 
-public sealed class ApplicationHostedEnvironment : IAsyncDisposable
+public sealed class ApplicationHostedEnvironment
 {
     private IDatabase? _database;
     private IContainer? _applicationContainer;
@@ -50,13 +50,5 @@ public sealed class ApplicationHostedEnvironment : IAsyncDisposable
         === STDERR ===
         {logs.stderr}
         """;
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (_database != null)
-        {
-            await _database.DisposeAsync();
-        }
     }
 }

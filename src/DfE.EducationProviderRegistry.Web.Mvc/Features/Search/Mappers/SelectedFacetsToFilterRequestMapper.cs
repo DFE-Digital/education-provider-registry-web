@@ -1,5 +1,6 @@
 ﻿using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Filter;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 using System.Collections.ObjectModel;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
@@ -39,7 +40,8 @@ public sealed class SelectedFacetsToFilterRequestsMapper :
     /// ]
     /// </code>
     /// </remarks>
-    public ReadOnlyCollection<FilterRequest> Map(Dictionary<string, List<string>>? selectedFacets)
+    public ReadOnlyCollection<FilterRequest> Map(
+        Dictionary<string, List<string>>? selectedFacets)
     {
         if (selectedFacets is null || selectedFacets.Count == 0)
         {
@@ -49,9 +51,9 @@ public sealed class SelectedFacetsToFilterRequestsMapper :
         List<FilterRequest> mapped =
         [
             .. selectedFacets.Select(kvp =>
-                new FilterRequest(
-                    filterName: kvp.Key,
-                    filterValues: [.. kvp.Value.Cast<object>()]))
+            new FilterRequest(
+                filterName: kvp.Key,
+                filterValues: [.. kvp.Value.Cast<object>()]))
         ];
 
         return mapped.AsReadOnly();

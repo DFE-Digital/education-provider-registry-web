@@ -1,5 +1,6 @@
 ﻿using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Filter;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Mappers;
 
@@ -23,7 +24,7 @@ public sealed class SelectedFacetsToFilterRequestsMapperTests
     {
         // arrange
         SelectedFacetsToFilterRequestsMapper mapper = new();
-        Dictionary<string, List<string>> input = [];
+        Dictionary<string, List<SelectedFacetValueViewModel>> input = [];
 
         // act
         var result = mapper.Map(input);
@@ -38,9 +39,9 @@ public sealed class SelectedFacetsToFilterRequestsMapperTests
         // arrange
         SelectedFacetsToFilterRequestsMapper mapper = new();
 
-        Dictionary<string, List<string>> input = new()
+        Dictionary<string, List<SelectedFacetValueViewModel>> input = new()
         {
-            { "Phase", new List<string> { "Primary", "Secondary" } }
+            { "Phase", new List<SelectedFacetValueViewModel> { new SelectedFacetValueViewModel("1", "Primary"), new SelectedFacetValueViewModel("2", "Secondary") } }
         };
 
         // act
@@ -62,10 +63,10 @@ public sealed class SelectedFacetsToFilterRequestsMapperTests
         // arrange
         SelectedFacetsToFilterRequestsMapper mapper = new();
 
-        Dictionary<string, List<string>> input = new()
+        Dictionary<string, List<SelectedFacetValueViewModel>> input = new()
         {
-            { "Phase", new List<string> { "Primary" } },
-            { "Type", new List<string> { "Academy", "Free School" } }
+            { "Phase", new List<SelectedFacetValueViewModel> { new SelectedFacetValueViewModel("1", "Primary") } },
+            { "Type", new List<SelectedFacetValueViewModel> { new SelectedFacetValueViewModel("2", "Academy"), new SelectedFacetValueViewModel("3", "Free School") } }
         };
 
         // act
@@ -92,9 +93,14 @@ public sealed class SelectedFacetsToFilterRequestsMapperTests
         // arrange
         SelectedFacetsToFilterRequestsMapper mapper = new();
 
-        Dictionary<string, List<string>> input = new()
+        Dictionary<string, List<SelectedFacetValueViewModel>> input = new()
         {
-            { "Phase", new List<string> { "Primary" } }
+            {
+                "EstablishmentTypeId",
+                [
+                    new SelectedFacetValueViewModel("1", "Primary")
+                ]
+            }
         };
 
         // act
@@ -104,6 +110,6 @@ public sealed class SelectedFacetsToFilterRequestsMapperTests
         var values = result[0].FilterValues;
 
         Assert.All(values, value => Assert.IsType<string>(value));
-        Assert.Equal("Primary", values[0]);
+        Assert.Equal("1", values[0]);
     }
 }

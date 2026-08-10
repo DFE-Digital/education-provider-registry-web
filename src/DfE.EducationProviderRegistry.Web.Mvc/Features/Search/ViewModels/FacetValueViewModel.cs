@@ -1,8 +1,8 @@
 ﻿namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 
 public record FacetValueViewModel(
+    string Key,
     string Value,
-    string Id,
     long? Count,
     bool IsSelected
 );

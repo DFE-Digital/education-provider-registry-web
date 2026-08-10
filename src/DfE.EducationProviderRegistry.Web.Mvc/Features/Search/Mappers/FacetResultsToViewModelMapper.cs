@@ -63,6 +63,7 @@ public sealed class FacetResultsToViewModelMapper :
     private static FacetValueViewModel MapFacetValue(FacetResult result)
     {
         ArgumentNullException.ThrowIfNull(result.Key);
+        ArgumentNullException.ThrowIfNull(result.Value);
 
         if (result.Count == null)
         {
@@ -73,7 +74,7 @@ public sealed class FacetResultsToViewModelMapper :
         }
 
         return new FacetValueViewModel(
-            Id: result.Key,
+            Key: result.Key,
             Value: result.Value,
             Count: result.Count.Value,
             IsSelected: false

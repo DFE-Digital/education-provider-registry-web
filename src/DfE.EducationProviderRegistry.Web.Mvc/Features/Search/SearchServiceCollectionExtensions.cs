@@ -33,7 +33,7 @@ internal static class SearchServiceCollectionExtensions
             .AddSingleton<IMapper<
                 IReadOnlyCollection<EstablishmentSearchResult>, List<GovUkTable>>, EstablishmentSearchResultsToViewModelMapper>()
             .AddSingleton<IMapper<
-                Dictionary<string, List<SelectedFacetValueViewModel>>?, ReadOnlyCollection<FilterRequest>>, SelectedFacetsToFilterRequestsMapper>()
+                Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>, SelectedFacetsToFilterRequestsMapper>()
             .AddSingleton<ISearchFilterSelectionHandler, SearchFilterSelectionHandler>();
 
         return services;

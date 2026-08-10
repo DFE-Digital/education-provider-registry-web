@@ -41,14 +41,14 @@ public sealed class SearchFilterSelectionHandler :
 
         if (!request.SelectedFacets.TryGetValue(
                 facetName,
-                out List<SelectedFacetValueViewModel>? selectedValues))
+                out List<string>? selectedValues))
         {
             return;
         }
 
         selectedValues.RemoveAll(selectedValue =>
             string.Equals(
-                selectedValue.Value,
+                selectedValue,
                 value,
                 StringComparison.OrdinalIgnoreCase));
 

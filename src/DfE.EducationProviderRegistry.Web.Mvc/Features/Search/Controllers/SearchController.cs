@@ -24,7 +24,7 @@ public sealed class SearchController : Controller
         SearchResultsViewModel> _searchResponseToViewModelMapper;
 
     private readonly IMapper<
-        Dictionary<string, List<SelectedFacetValueViewModel>>?,
+        Dictionary<string, List<string>>?,
         ReadOnlyCollection<FilterRequest>> _selectedFacetsToFilterRequestsMapper;
 
     private readonly ISearchFilterSelectionHandler
@@ -33,7 +33,7 @@ public sealed class SearchController : Controller
     public SearchController(
         IUseCase<SearchRequest, UseCaseResponse<SearchResponse>> searchUseCase,
         IMapper<SearchResultsMappingContext, SearchResultsViewModel> searchResponseToViewModelMapper,
-        IMapper<Dictionary<string, List<SelectedFacetValueViewModel>>?, ReadOnlyCollection<FilterRequest>> selectedFacetsToFilterRequestsMapper,
+        IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>> selectedFacetsToFilterRequestsMapper,
         ISearchFilterSelectionHandler searchFilterSelectionHandler)
     {
         ArgumentNullException.ThrowIfNull(searchUseCase);

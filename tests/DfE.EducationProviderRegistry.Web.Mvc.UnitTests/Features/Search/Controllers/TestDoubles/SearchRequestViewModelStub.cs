@@ -10,9 +10,9 @@ internal static class SearchRequestViewModelStub
         new()
         {
             SearchKeywords = "academy",
-            SelectedFacets = new Dictionary<string, List<string>>
+            SelectedFacets = new Dictionary<string, List<SelectedFacetValueViewModel>>
             {
-                { "establishment_type_id", new List<string> { "01", "02" } }
+                { "establishment_type_id", new List<SelectedFacetValueViewModel> { new SelectedFacetValueViewModel("01", "Academy"), new SelectedFacetValueViewModel("02", "Foundation") } }
             }
         };
 

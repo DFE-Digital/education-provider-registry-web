@@ -30,8 +30,8 @@ public sealed class SearchResultsToViewModelMapperTests
         return new SearchFacet(
             name,
             [
-                new FacetResult("Primary", 10),
-                new FacetResult("Secondary", 20)
+                new FacetResult("1", "Primary", 10),
+                new FacetResult("2", "Secondary", 20)
             ]);
     }
 
@@ -124,7 +124,7 @@ public sealed class SearchResultsToViewModelMapperTests
 
         List<FacetViewModel> facetVMs =
         [
-            new FacetViewModel("Phase", [])
+            new FacetViewModel("Phase", "Phase", [])
         ];
 
         Mock<IMapper<
@@ -199,13 +199,16 @@ public sealed class SearchResultsToViewModelMapperTests
         [
             new FacetViewModel(
             "EstablishmentType",
+            "Establishment Type",
             [
                 new FacetValueViewModel(
+                    "1",
                     "Primary",
                     10,
                     false),
 
                 new FacetValueViewModel(
+                    "2",
                     "Secondary",
                     20,
                     false)
@@ -231,11 +234,11 @@ public sealed class SearchResultsToViewModelMapperTests
 
         SearchRequestViewModel searchRequest = new()
         {
-            SelectedFacets = new Dictionary<string, List<string>>
+            SelectedFacets = new Dictionary<string, List<SelectedFacetValueViewModel>>
             {
                 ["EstablishmentType"] =
                 [
-                    "primary"
+                    new SelectedFacetValueViewModel("1", "Primary")
                 ]
             }
         };
@@ -284,13 +287,16 @@ public sealed class SearchResultsToViewModelMapperTests
         [
             new FacetViewModel(
             "Phase",
+            "Phase",
             [
                 new FacetValueViewModel(
+                    "1",
                     "Primary",
                     10,
                     false),
 
                 new FacetValueViewModel(
+                    "2",
                     "Secondary",
                     20,
                     false)
@@ -316,11 +322,11 @@ public sealed class SearchResultsToViewModelMapperTests
 
         SearchRequestViewModel searchRequest = new()
         {
-            SelectedFacets = new Dictionary<string, List<string>>
+            SelectedFacets = new Dictionary<string, List<SelectedFacetValueViewModel>>
             {
                 ["EstablishmentType"] =
                 [
-                    "Academy"
+                    new SelectedFacetValueViewModel("1", "Academy")
                 ]
             }
         };

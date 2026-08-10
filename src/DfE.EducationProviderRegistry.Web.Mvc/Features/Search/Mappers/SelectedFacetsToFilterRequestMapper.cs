@@ -6,7 +6,7 @@ using System.Collections.ObjectModel;
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 
 public sealed class SelectedFacetsToFilterRequestsMapper :
-    IMapper<Dictionary<string, List<SelectedFacetValueViewModel>>?, ReadOnlyCollection<FilterRequest>>
+    IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>
 {
     /// <summary>
     /// Maps the posted facet selections into a read‑only collection of
@@ -40,7 +40,8 @@ public sealed class SelectedFacetsToFilterRequestsMapper :
     /// ]
     /// </code>
     /// </remarks>
-    public ReadOnlyCollection<FilterRequest> Map(Dictionary<string, List<SelectedFacetValueViewModel>>? selectedFacets)
+    public ReadOnlyCollection<FilterRequest> Map(
+        Dictionary<string, List<string>>? selectedFacets)
     {
         if (selectedFacets is null || selectedFacets.Count == 0)
         {
@@ -50,21 +51,11 @@ public sealed class SelectedFacetsToFilterRequestsMapper :
         List<FilterRequest> mapped =
         [
             .. selectedFacets.Select(kvp =>
-                new FilterRequest(
-                    filterName: MapKeyToSearchFilterExpressionMap(kvp.Key),
-                    filterValues: [.. kvp.Value.Select(x =>x.FilterValue)]))
+            new FilterRequest(
+                filterName: kvp.Key,
+                filterValues: [.. kvp.Value.Cast<object>()]))
         ];
 
         return mapped.AsReadOnly();
-    }
-
-    private static string MapKeyToSearchFilterExpressionMap(string input)
-    {
-        Dictionary<string, string> mappedValues = new()
-        {
-            ["EstablishmentTypeId"] = "t.establishment_type_id"
-        };
-
-        return mappedValues[input];
     }
 }

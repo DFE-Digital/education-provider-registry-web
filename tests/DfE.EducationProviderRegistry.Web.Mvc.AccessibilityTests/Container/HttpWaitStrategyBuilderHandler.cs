@@ -1,4 +1,5 @@
-﻿using DfE.Core.Libraries.IntegrationTests.Abstractions.Containers.Registry;
+﻿using DfE.Core.Libraries.IntegrationTests.Abstractions.Containers.Options.Container;
+using DfE.Core.Libraries.IntegrationTests.Abstractions.Containers.Registry;
 using Microsoft.Extensions.Options;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Container;

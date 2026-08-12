@@ -125,7 +125,7 @@ public sealed class SearchResultsToViewModelMapper :
                             selectedValue) &&
                         string.Equals(
                             selectedValue,
-                            value.Key,
+                            value.Value,
                             StringComparison.OrdinalIgnoreCase))
             };
         }

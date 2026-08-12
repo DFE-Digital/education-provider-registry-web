@@ -3,7 +3,7 @@
 @model (string BindingName, FacetValueViewModel FacetValue)
 
 @{
-    var id = $"filter-{Model.BindingName}-{Model.FacetValue.Key}"
+    var id = $"filter-{Model.BindingName}-{Model.FacetValue.Value}"
         .Replace("[", "-")
         .Replace("]", string.Empty);
 
@@ -15,12 +15,12 @@
            id="@id"
            name="@bindingName"
            type="checkbox"
-           value="@Model.FacetValue.Key"
+           value="@Model.FacetValue.Value"
            checked="@(Model.FacetValue.IsSelected ? "checked" : null)" />
 
     <label class="govuk-label govuk-checkboxes__label"
            for="@id">
-        @Model.FacetValue.Value
+        @Model.FacetValue.Label
 
         @if (Model.FacetValue.Count is not null)
         {

@@ -117,6 +117,6 @@ public sealed class FacetViewModelUnitTests
 
         // assert
         Assert.Equal(2, vm.Values.Count);
-        Assert.Contains(vm.Values, v => v.Value == "Secondary");
+        Assert.Contains(vm.Values, v => v.Label == "Secondary");
     }
 }

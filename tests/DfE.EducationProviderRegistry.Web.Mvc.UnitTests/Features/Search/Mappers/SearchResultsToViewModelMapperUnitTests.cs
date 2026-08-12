@@ -263,12 +263,12 @@ public sealed class SearchResultsToViewModelMapperTests
         FacetValueViewModel primary =
             Assert.Single(
                 phaseFacet.Values,
-                value => value.Value == "Primary");
+                value => value.Label == "Primary");
 
         FacetValueViewModel secondary =
             Assert.Single(
                 phaseFacet.Values,
-                value => value.Value == "Secondary");
+                value => value.Label == "Secondary");
 
         Assert.True(primary.IsSelected);
         Assert.False(secondary.IsSelected);

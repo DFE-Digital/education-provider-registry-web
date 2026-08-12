@@ -140,10 +140,10 @@ public sealed class FacetResultsToViewModelMapperUnitTests
 
         Assert.Equal("Phase", vm.Name);
         Assert.Equal(2, vm.Values.Count);
-        Assert.Equal("Primary", vm.Values[0].Value);
+        Assert.Equal("Primary", vm.Values[0].Label);
         Assert.Equal(10, vm.Values[0].Count);
         Assert.False(vm.Values[0].IsSelected);
-        Assert.Equal("Secondary", vm.Values[1].Value);
+        Assert.Equal("Secondary", vm.Values[1].Label);
         Assert.Equal(20, vm.Values[1].Count);
         Assert.False(vm.Values[1].IsSelected);
     }

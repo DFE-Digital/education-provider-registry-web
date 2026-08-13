@@ -18,6 +18,8 @@
     <PackageVersion Include="Moq" Version="4.20.72" />
     <PackageVersion Include="Selenium.Support" Version="4.46.0" />
     <PackageVersion Include="Selenium.WebDriver" Version="4.46.0" />
+	  <!-- transistive package SSH.NET vulnerability in 2025.10 - via TestContainers waiting for release above 4.13.0 https://github.com/testcontainers/testcontainers-dotnet/commit/2b81b68b7cba1b283b8b57ee800e3f1052bbb7d7-->
+    <PackageVersion Include="SSH.NET" Version="2026.0.0" />
     <PackageVersion Include="Testcontainers" Version="4.13.0" />
     <PackageVersion Include="Verify.XunitV3" Version="31.20.0" />
     <PackageVersion Include="Xunit.DependencyInjection" Version="11.3.0" />

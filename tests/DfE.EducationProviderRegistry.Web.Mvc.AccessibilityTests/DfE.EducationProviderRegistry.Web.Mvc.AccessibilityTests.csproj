@@ -18,6 +18,7 @@
     <PackageReference Include="DotNetSeleniumExtras.PageObjects" />
     <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" />
     <PackageReference Include="Selenium.WebDriver" />
+    <PackageReference Include="SSH.NET" />
     <PackageReference Include="Testcontainers" />
     <PackageReference Include="Xunit.DependencyInjection" />
     <PackageReference Include="Xunit.DependencyInjection.Logging" />

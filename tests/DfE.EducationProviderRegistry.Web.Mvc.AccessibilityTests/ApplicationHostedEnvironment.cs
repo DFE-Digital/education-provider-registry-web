@@ -1,4 +1,5 @@
-﻿using DfE.Core.Libraries.IntegrationTests.Abstractions.Containers;
+﻿using DfE.Core.Libraries.IntegrationTests.Abstractions.Containers.Registry;
+using DfE.Core.Libraries.IntegrationTests.Database.Postgres.Container.Provider;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests;
 
@@ -6,58 +7,24 @@ public sealed class ApplicationHostedEnvironment
 {
     private IDatabase? _database;
     private IContainer? _applicationContainer;
-    private readonly IDatabaseFactory _databaseFactory;
     private readonly IContainerRegistry _containerRegistry;
-    private readonly ApplicationHostOptions _options;
-    private readonly ContainerOptions _dbContainerOptions;
-    private readonly PostgresDatabaseOptions _dbOptions;
+    private readonly IPostgresDatabaseProvider _dbProvider;
 
     public ApplicationHostedEnvironment(
-        ApplicationHostOptions applicationOptions,
-        ContainerOptions dbContainerOptions,
-        PostgresDatabaseOptions dbOptions,
-        IDatabaseFactory databaseFactory,
-        IContainerRegistry containerRegistry)
+        IContainerRegistry containerRegistry,
+        IPostgresDatabaseProvider dbProvider)
     {
-        _options = applicationOptions;
-        _dbContainerOptions = dbContainerOptions;
-        _dbOptions = dbOptions;
-
-        _databaseFactory = databaseFactory;
         _containerRegistry = containerRegistry;
+        _dbProvider = dbProvider;
     }
 
     public async Task InitialiseAsync(
         CancellationToken ct = default)
     {
-        _database = await _databaseFactory.CreateAsync(ct);
+        _database = await _dbProvider.GetDatabaseAsync("postgres", ct);
         await _database.StartAsync(ct);
 
-        const int postgresContainerPort = 5432;
-
-        NpgsqlConnectionStringBuilder containerNetworkConnectionStringBuilder = new()
-        {
-            Host = _dbContainerOptions.Networks.First().Aliases.First(), // resolve alias to enable connection
-            Port = postgresContainerPort, // Internal postgres port as container-container
-            Database = _dbOptions.Database,
-            Username = _dbOptions.Username,
-            Password = _dbOptions.Password
-        };
-
-        ContainerBuilder builder =
-            new ContainerBuilder(_options.Container.Image)
-                .WithExposedPorts<ContainerBuilder, IContainer, IContainerConfiguration>(_options.Container.PortMappings ?? [])
-                .WithEnvironment("eprweb_eprdat_dotnet_db_connection", containerNetworkConnectionStringBuilder.ConnectionString)
-                .WithWaitStrategy(Wait.ForUnixContainer().UntilHttpRequestIsSucceeded(r => r.ForPort((ushort)_options.Container.PortMappings!.First().ContainerPort)));
-
-        builder =
-            await builder
-                .WithNetworksAsync<ContainerBuilder, IContainer, IContainerConfiguration>(
-                    _options.Container?.Networks, _containerRegistry);
-
-        _applicationContainer = builder.Build();
-
-        // Start the container.
+        _applicationContainer = await _containerRegistry.GetOrCreateContainerAsync("epr-web", ct);
         await _applicationContainer.StartAsync(ct);
     }
 

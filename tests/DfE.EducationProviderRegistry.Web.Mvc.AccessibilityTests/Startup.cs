@@ -1,6 +1,8 @@
-﻿using DfE.Core.Libraries.IntegrationTests.Database.Postgres.Extensions;
+﻿using DfE.Core.Libraries.IntegrationTests.Abstractions.Containers.Registry;
+using DfE.Core.Libraries.IntegrationTests.Database.Postgres.Container.Extensions;
 using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Actions;
 using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Actions.Handlers;
+using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Container;
 using DfE.WebDriver;
 using MartinCostello.Logging.XUnit;
 using Microsoft.Extensions.Configuration;
@@ -41,13 +43,30 @@ public sealed class Startup
             .ValidateOnStart();
         services.AddSingleton(t => t.GetRequiredService<IOptions<AccessibilityTestOptions>>().Value);
 
+        IConfiguration applicationHostOptions = context.Configuration.GetSection(nameof(ApplicationHostOptions));
+
         services.AddOptions<ApplicationHostOptions>()
-            .Bind(context.Configuration.GetSection(nameof(ApplicationHostOptions)))
+            .Bind(applicationHostOptions)
             .ValidateDataAnnotations()
             .ValidateOnStart();
         services.AddSingleton(t => t.GetRequiredService<IOptions<ApplicationHostOptions>>().Value);
 
-        services.AddPostgresDatabase(context.Configuration.GetSection("DatabaseContainerOptions"));
+        services.AddTransient<DatabaseConnectionStringBuilderHandler>();
+        services.AddTransient<HttpWaitStrategyBuilderHandler>();
+
+        services.AddSingleton<
+            IContainerBuilderHandler<ContainerBuilder>,
+            DatabaseConnectionStringBuilderHandler>();
+
+        services.AddSingleton<
+            IContainerBuilderHandler<ContainerBuilder>,
+            HttpWaitStrategyBuilderHandler>();
+
+        services.AddContainer(
+            key: "epr-web",
+            configuration: applicationHostOptions);
+
+        services.AddPostgres(context.Configuration);
 
         services.AddLogging((loggingBuilder) =>
             loggingBuilder.AddXunitOutput((optionsConfigure) =>

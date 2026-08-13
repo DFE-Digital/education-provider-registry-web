@@ -6,19 +6,21 @@
     var id = $"filter-{Model.BindingName}-{Model.FacetValue.Value}"
         .Replace("[", "-")
         .Replace("]", string.Empty);
+
+    var bindingName = $"SelectedFacets[{Model.BindingName}]";
 }
 
 <div class="govuk-checkboxes__item">
     <input class="govuk-checkboxes__input"
            id="@id"
-           name="SelectedFacets[@Model.BindingName]"
+           name="@bindingName"
            type="checkbox"
            value="@Model.FacetValue.Value"
-           checked="@Model.FacetValue.IsSelected" />
+           checked="@(Model.FacetValue.IsSelected ? "checked" : null)" />
 
     <label class="govuk-label govuk-checkboxes__label"
            for="@id">
-        @Model.FacetValue.Value
+        @Model.FacetValue.Label
 
         @if (Model.FacetValue.Count is not null)
         {

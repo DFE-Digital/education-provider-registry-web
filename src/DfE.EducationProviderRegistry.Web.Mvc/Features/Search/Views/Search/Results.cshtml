@@ -30,7 +30,7 @@
 
                 <div class="filter-panel__title">
                     <h2 class="govuk-heading-m govuk-!-margin-bottom-0">
-                        Selected Filters
+                        Filter
                     </h2>
                 </div>
                 @await Html.PartialAsync("_SearchFilters", Model.Facets)
@@ -52,7 +52,6 @@
 
                         <select class="govuk-select" id="sort" name="sort">
                             <option value="published">A to Z</option>
-                            <option value="comments">Option</option>
                         </select>
                     </div>
 

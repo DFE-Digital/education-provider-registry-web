@@ -10,7 +10,7 @@
                 {
                     FacetName = facet.Name,
                     Value = value.Value,
-                    Label = value.Value
+                    Label = value.Label
                 }))
         .ToList();
 }
@@ -60,10 +60,10 @@
 
             @foreach (var facet in Model ?? [])
             {
-                <details class="govuk-details filter-section" open>
+                <details class="govuk-details filter-section">
                     <summary class="govuk-details__summary">
                         <span class="govuk-details__summary-text">
-                            @facet.Name
+                            @facet.Label
                         </span>
                     </summary>
 

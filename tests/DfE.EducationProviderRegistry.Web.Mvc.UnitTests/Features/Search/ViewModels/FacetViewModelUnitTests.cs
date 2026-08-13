@@ -11,12 +11,12 @@ public sealed class FacetViewModelUnitTests
         string name = "Establishment status";
         List<FacetValueViewModel> values =
         [
-            new FacetValueViewModel("Open", 120, false),
-            new FacetValueViewModel("Closed", 30, true)
+            new FacetValueViewModel("120", "Open", 120, false),
+            new FacetValueViewModel("30", "Closed", 30, true)
         ];
 
         // act
-        FacetViewModel vm = new(name, values);
+        FacetViewModel vm = new(name, name, values);
 
         // assert
         Assert.Equal(name, vm.Name);
@@ -32,7 +32,7 @@ public sealed class FacetViewModelUnitTests
         List<FacetValueViewModel> values = [];
 
         // act
-        FacetViewModel vm = new(name, values);
+        FacetViewModel vm = new(name, name, values);
 
         // assert
         Assert.Equal("Phase", vm.Name);
@@ -45,11 +45,11 @@ public sealed class FacetViewModelUnitTests
         // arrange
         List<FacetValueViewModel> values =
         [
-            new FacetValueViewModel("Primary", 10, false)
+            new FacetValueViewModel("10", "Primary", 10, false)
         ];
 
-        FacetViewModel a = new("Phase", values);
-        FacetViewModel b = new("Phase", values);
+        FacetViewModel a = new("Phase", "Phase", values);
+        FacetViewModel b = new("Phase", "Phase", values);
 
         // act
         bool equal = a == b;
@@ -65,11 +65,11 @@ public sealed class FacetViewModelUnitTests
         // arrange
         List<FacetValueViewModel> values =
         [
-            new FacetValueViewModel("Primary", 10, false)
+            new FacetValueViewModel("10", "Primary", 10, false)
         ];
 
-        FacetViewModel a = new("Phase", values);
-        FacetViewModel b = new("Type", values);
+        FacetViewModel a = new("Phase", "Phase", values);
+        FacetViewModel b = new("Type", "Type", values);
 
         // act
         bool equal = a == b;
@@ -85,10 +85,10 @@ public sealed class FacetViewModelUnitTests
         // arrange
         List<FacetValueViewModel> values =
         [
-            new FacetValueViewModel("Primary", 10, false)
+            new FacetValueViewModel("10", "Primary", 10, false)
         ];
 
-        FacetViewModel original = new("Phase", values);
+        FacetViewModel original = new("Phase", "Phase", values);
 
         // act
         FacetViewModel modified = original with { Name = "Updated Phase" };
@@ -107,16 +107,16 @@ public sealed class FacetViewModelUnitTests
         // arrange
         List<FacetValueViewModel> values =
         [
-            new FacetValueViewModel("Primary", 10, false)
+            new FacetValueViewModel("10", "Primary", 10, false)
         ];
 
-        FacetViewModel vm = new("Phase", values);
+        FacetViewModel vm = new("Phase", "Phase", values);
 
         // act
-        values.Add(new FacetValueViewModel("Secondary", 20, true));
+        values.Add(new FacetValueViewModel("20", "Secondary", 20, true));
 
         // assert
         Assert.Equal(2, vm.Values.Count);
-        Assert.Contains(vm.Values, v => v.Value == "Secondary");
+        Assert.Contains(vm.Values, v => v.Label == "Secondary");
     }
 }

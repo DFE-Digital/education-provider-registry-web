@@ -8,13 +8,13 @@ public sealed class FacetResultsToViewModelMapperUnitTests
 {
     private static SearchFacet MakeFacet(
         string name = "Phase",
-        params (string value, int count)[] results)
+        params (string key, string value, int count)[] results)
     {
         List<FacetResult> facetResults = new();
 
-        foreach (var (value, count) in results)
+        foreach (var (key, value, count) in results)
         {
-            facetResults.Add(new FacetResult(value, count));
+            facetResults.Add(new FacetResult(key, value, count));
         }
 
         return new SearchFacet(name, facetResults);
@@ -51,8 +51,8 @@ public sealed class FacetResultsToViewModelMapperUnitTests
 
         IReadOnlyCollection<SearchFacet> input =
         [
-            MakeFacet("Phase", ("Primary", 10)),
-            MakeFacet("Type", ("Academy", 5))
+            MakeFacet("Phase", ("1", "Primary", 10)),
+            MakeFacet("Type", ("2", "Academy", 5))
         ];
 
         // act
@@ -87,11 +87,22 @@ public sealed class FacetResultsToViewModelMapperUnitTests
     }
 
     [Fact]
+    public void MapFacetValue_Throws_WhenKeyIsNull()
+    {
+        // arrange
+        FacetResultsToViewModelMapper mapper = new();
+        SearchFacet facet = new("Phase", [new FacetResult(null!, "Primary", 5)]);
+
+        // act/assert
+        Assert.Throws<ArgumentNullException>(() => mapper.Map([facet]));
+    }
+
+    [Fact]
     public void MapFacetValue_Throws_WhenValueIsNull()
     {
         // arrange
         FacetResultsToViewModelMapper mapper = new();
-        SearchFacet facet = new("Phase", [new FacetResult(null!, 5)]);
+        SearchFacet facet = new("Phase", [new FacetResult("1", null!, 5)]);
 
         // act/assert
         Assert.Throws<ArgumentNullException>(() => mapper.Map([facet]));
@@ -102,7 +113,7 @@ public sealed class FacetResultsToViewModelMapperUnitTests
     {
         // arrange
         FacetResultsToViewModelMapper mapper = new();
-        FacetResult result = new("Primary", null);
+        FacetResult result = new("1", "Primary", null);
         SearchFacet facet = new("Phase", [result]);
 
         // act/assert
@@ -117,8 +128,8 @@ public sealed class FacetResultsToViewModelMapperUnitTests
 
         SearchFacet facet = MakeFacet(
             "Phase",
-            ("Primary", 10),
-            ("Secondary", 20)
+            ("1", "Primary", 10),
+            ("2", "Secondary", 20)
         );
 
         // act
@@ -129,10 +140,10 @@ public sealed class FacetResultsToViewModelMapperUnitTests
 
         Assert.Equal("Phase", vm.Name);
         Assert.Equal(2, vm.Values.Count);
-        Assert.Equal("Primary", vm.Values[0].Value);
+        Assert.Equal("Primary", vm.Values[0].Label);
         Assert.Equal(10, vm.Values[0].Count);
         Assert.False(vm.Values[0].IsSelected);
-        Assert.Equal("Secondary", vm.Values[1].Value);
+        Assert.Equal("Secondary", vm.Values[1].Label);
         Assert.Equal(20, vm.Values[1].Count);
         Assert.False(vm.Values[1].IsSelected);
     }

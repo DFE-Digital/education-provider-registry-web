@@ -1,5 +1,6 @@
 ﻿using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Filter;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Mappers;
 
@@ -94,7 +95,12 @@ public sealed class SelectedFacetsToFilterRequestsMapperTests
 
         Dictionary<string, List<string>> input = new()
         {
-            { "Phase", new List<string> { "Primary" } }
+            {
+                "EstablishmentTypeId",
+                [
+                    "1"
+                ]
+            }
         };
 
         // act
@@ -104,6 +110,6 @@ public sealed class SelectedFacetsToFilterRequestsMapperTests
         var values = result[0].FilterValues;
 
         Assert.All(values, value => Assert.IsType<string>(value));
-        Assert.Equal("Primary", values[0]);
+        Assert.Equal("1", values[0]);
     }
 }

@@ -2,6 +2,7 @@
 
 public record FacetValueViewModel(
     string Value,
+    string Label,
     long? Count,
     bool IsSelected
 );

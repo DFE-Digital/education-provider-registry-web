@@ -96,12 +96,16 @@ public sealed class SearchResultsToViewModelMapper :
 
         foreach (FacetViewModel facet in facets)
         {
-            if (!selectedFacets.TryGetValue(facet.Name, out List<string>? selectedValues))
+            if (!selectedFacets.TryGetValue(
+                    facet.Name,
+                    out List<string>? selectedValues))
             {
                 continue;
             }
 
-            UpdateFacetSelections(facet, selectedValues);
+            UpdateFacetSelections(
+                facet,
+                selectedValues);
         }
     }
 
@@ -115,9 +119,14 @@ public sealed class SearchResultsToViewModelMapper :
 
             facet.Values[index] = value with
             {
-                IsSelected = selectedValues.Contains(
-                    value.Value,
-                    StringComparer.OrdinalIgnoreCase)
+                IsSelected = selectedValues.Any(
+                    selectedValue =>
+                        !string.IsNullOrWhiteSpace(
+                            selectedValue) &&
+                        string.Equals(
+                            selectedValue,
+                            value.Value,
+                            StringComparison.OrdinalIgnoreCase))
             };
         }
     }

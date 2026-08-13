@@ -7,6 +7,12 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 public sealed class FacetResultsToViewModelMapper :
     IMapper<IReadOnlyCollection<SearchFacet>, List<FacetViewModel>>
 {
+    static readonly Dictionary<string, string> labelMappings = new()
+    {
+        ["EstablishmentTypeId"] = "Establishment Type",
+        ["LocalAuthority"] = "Local Authority",
+    };
+
     public List<FacetViewModel> Map(IReadOnlyCollection<SearchFacet> input)
     {
         ArgumentNullException.ThrowIfNull(input);
@@ -32,6 +38,7 @@ public sealed class FacetResultsToViewModelMapper :
 
         return new FacetViewModel(
             Name: searchFacet.Name,
+            Label: labelMappings.GetValueOrDefault(searchFacet.Name, searchFacet.Name),
             Values: values
         );
     }
@@ -56,6 +63,7 @@ public sealed class FacetResultsToViewModelMapper :
     private static FacetValueViewModel MapFacetValue(FacetResult result)
     {
         ArgumentNullException.ThrowIfNull(result.Value);
+        ArgumentNullException.ThrowIfNull(result.Label);
 
         if (result.Count == null)
         {
@@ -67,6 +75,7 @@ public sealed class FacetResultsToViewModelMapper :
 
         return new FacetValueViewModel(
             Value: result.Value,
+            Label: result.Label,
             Count: result.Count.Value,
             IsSelected: false
         );

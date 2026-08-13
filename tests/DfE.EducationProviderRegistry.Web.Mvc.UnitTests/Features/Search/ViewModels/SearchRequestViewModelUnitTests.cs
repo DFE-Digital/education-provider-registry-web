@@ -12,7 +12,7 @@ public sealed class SearchRequestViewModelUnitTests
         {
             SelectedFacets = new Dictionary<string, List<string>>
             {
-                { "Phase", new List<string> { "Primary" } }
+                { "Phase", new List<string> { "1" } }
             },
             ClearFilters = false
         };
@@ -23,7 +23,7 @@ public sealed class SearchRequestViewModelUnitTests
         // assert
         Assert.NotNull(result);
         Assert.Single(result);
-        Assert.Equal("Primary", result["Phase"][0]);
+        Assert.Equal("1", result["Phase"][0]);
     }
 
     [Fact]

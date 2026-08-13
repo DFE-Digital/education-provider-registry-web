@@ -8,15 +8,17 @@ public sealed class FacetValueViewModelUnitTests
     public void Constructor_SetsPropertiesCorrectly()
     {
         // arrange
-        string value = "Open, but proposed to close";
+        string value = "1";
+        string label = "Open, but proposed to close";
         long? count = 150;
         bool isSelected = true;
 
         // act
-        FacetValueViewModel vm = new(value, count, isSelected);
+        FacetValueViewModel vm = new(value, label, count, isSelected);
 
         // assert
         Assert.Equal(value, vm.Value);
+        Assert.Equal(label, vm.Label);
         Assert.Equal(count, vm.Count);
         Assert.True(vm.IsSelected);
     }
@@ -25,15 +27,17 @@ public sealed class FacetValueViewModelUnitTests
     public void Constructor_AllowsNullCount()
     {
         // arrange
-        string value = "Primary";
+        string value = "1";
+        string label = "Primary";
         long? count = null;
 
         // act
-        FacetValueViewModel vm = new(value, count, false);
+        FacetValueViewModel vm = new(value, label, count, false);
 
         // assert
         Assert.Null(vm.Count);
-        Assert.Equal("Primary", vm.Value);
+        Assert.Equal(value, vm.Value);
+        Assert.Equal(label, vm.Label);
         Assert.False(vm.IsSelected);
     }
 
@@ -41,8 +45,8 @@ public sealed class FacetValueViewModelUnitTests
     public void Record_Equality_WorksForSameValues()
     {
         // arrange
-        FacetValueViewModel a = new("Primary", 10, true);
-        FacetValueViewModel b = new("Primary", 10, true);
+        FacetValueViewModel a = new("1", "Primary", 10, true);
+        FacetValueViewModel b = new("1", "Primary", 10, true);
 
         // act
         bool equal = a == b;
@@ -56,8 +60,8 @@ public sealed class FacetValueViewModelUnitTests
     public void Record_Equality_FailsForDifferentValues()
     {
         // arrange
-        FacetValueViewModel a = new("Primary", 10, true);
-        FacetValueViewModel b = new("Secondary", 10, true);
+        FacetValueViewModel a = new("1", "Primary", 10, true);
+        FacetValueViewModel b = new("2", "Secondary", 10, true);
 
         // act
         bool equal = a == b;
@@ -71,16 +75,18 @@ public sealed class FacetValueViewModelUnitTests
     public void WithExpression_CreatesModifiedCopy()
     {
         // arrange
-        FacetValueViewModel original = new("Primary", 10, false);
+        FacetValueViewModel original = new("1", "Primary", 10, false);
 
         // act
         FacetValueViewModel modified = original with { Count = 20, IsSelected = true };
 
         // assert
-        Assert.Equal("Primary", modified.Value);
+        Assert.Equal("1", modified.Value);
+        Assert.Equal("Primary", modified.Label);
         Assert.Equal(20, modified.Count);
         Assert.True(modified.IsSelected);
-        Assert.Equal("Primary", original.Value);
+        Assert.Equal("1", original.Value);
+        Assert.Equal("Primary", original.Label);
         Assert.Equal(10, original.Count);
         Assert.False(original.IsSelected);
     }
@@ -89,10 +95,11 @@ public sealed class FacetValueViewModelUnitTests
     public void Properties_AreImmutable()
     {
         // arrange
-        FacetValueViewModel vm = new("Primary", 10, false);
+        FacetValueViewModel vm = new("1", "Primary", 10, false);
 
         // assert
-        Assert.Equal("Primary", vm.Value);
+        Assert.Equal("1", vm.Value);
+        Assert.Equal("Primary", vm.Label);
         Assert.Equal(10, vm.Count);
         Assert.False(vm.IsSelected);
     }

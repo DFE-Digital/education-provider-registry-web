@@ -11,5 +11,6 @@
 /// </remarks>
 public record FacetViewModel(
     string Name,
+    string Label,
     List<FacetValueViewModel> Values
 );

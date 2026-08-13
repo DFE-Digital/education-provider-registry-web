@@ -30,13 +30,13 @@ public sealed class SearchFilterSelectionHandlerTests
             {
                 ["EstablishmentType"] =
                 [
-                    "Academy",
-                    "Free school"
+                    "1",
+                    "2"
                 ],
 
                 ["LocalAuthority"] =
                 [
-                    "TestLocalAuthority1"
+                    "3"
                 ]
             }
         };
@@ -78,13 +78,13 @@ public sealed class SearchFilterSelectionHandlerTests
             ClearFilters = true,
 
             RemoveFilter =
-                "SelectedFacets[EstablishmentType]|Academy",
+                "SelectedFacets[EstablishmentType]|1",
 
             SelectedFacets = new Dictionary<string, List<string>>
             {
                 ["EstablishmentType"] =
                 [
-                    "Academy"
+                    "1"
                 ]
             }
         };
@@ -105,14 +105,14 @@ public sealed class SearchFilterSelectionHandlerTests
         SearchRequestViewModel request = new()
         {
             RemoveFilter =
-                "EstablishmentType|Academy",
+                "EstablishmentType|1",
 
             SelectedFacets = new Dictionary<string, List<string>>
             {
                 ["EstablishmentType"] =
                 [
-                    "Academy",
-                    "Free school"
+                    "1",
+                    "2"
                 ]
             }
         };
@@ -121,9 +121,12 @@ public sealed class SearchFilterSelectionHandlerTests
         handler.Handle(request);
 
         // assert
-        Assert.Equal(
-            ["Free school"],
-            request.SelectedFacets["EstablishmentType"]);
+        Assert.Collection(
+            request.SelectedFacets["EstablishmentType"],
+            selected =>
+            {
+                Assert.Equal("2", selected);
+            });
     }
 
     [Fact]
@@ -135,14 +138,14 @@ public sealed class SearchFilterSelectionHandlerTests
         SearchRequestViewModel request = new()
         {
             RemoveFilter =
-                "EstablishmentType|academy",
+                "EstablishmentType|academy-key",
 
             SelectedFacets = new Dictionary<string, List<string>>
             {
                 ["EstablishmentType"] =
                 [
-                    "Academy",
-                    "Free school"
+                    "ACADEMY-KEY",
+                    "2"
                 ]
             }
         };
@@ -151,9 +154,12 @@ public sealed class SearchFilterSelectionHandlerTests
         handler.Handle(request);
 
         // assert
-        Assert.Equal(
-            ["Free school"],
-            request.SelectedFacets["EstablishmentType"]);
+        Assert.Collection(
+            request.SelectedFacets["EstablishmentType"],
+            selected =>
+            {
+                Assert.Equal("2", selected);
+            });
     }
 
     [Fact]
@@ -165,13 +171,13 @@ public sealed class SearchFilterSelectionHandlerTests
         SearchRequestViewModel request = new()
         {
             RemoveFilter =
-                "EstablishmentType|Academy",
+                "EstablishmentType|1",
 
             SelectedFacets = new Dictionary<string, List<string>>
             {
                 ["EstablishmentType"] =
                 [
-                    "Academy"
+                    "1"
                 ]
             }
         };
@@ -194,13 +200,13 @@ public sealed class SearchFilterSelectionHandlerTests
         SearchRequestViewModel request = new()
         {
             RemoveFilter =
-                "EstablishmentType|Academy",
+                "EstablishmentType|1",
 
             SelectedFacets = new Dictionary<string, List<string>>
             {
                 ["EstablishmentType"] =
                 [
-                    "Academy"
+                    "1"
                 ]
             }
         };
@@ -226,7 +232,7 @@ public sealed class SearchFilterSelectionHandlerTests
             {
                 ["EstablishmentType"] =
                 [
-                    "Academy"
+                    "1"
                 ]
             }
         };
@@ -235,9 +241,12 @@ public sealed class SearchFilterSelectionHandlerTests
         handler.Handle(request);
 
         // assert
-        Assert.Equal(
-            ["Academy"],
-            request.SelectedFacets["EstablishmentType"]);
+        Assert.Collection(
+            request.SelectedFacets["EstablishmentType"],
+            selected =>
+            {
+                Assert.Equal("1", selected);
+            });
 
         Assert.Null(request.RemoveFilter);
     }
@@ -256,7 +265,7 @@ public sealed class SearchFilterSelectionHandlerTests
             {
                 ["EstablishmentType"] =
                 [
-                    "Academy"
+                    "1"
                 ]
             }
         };
@@ -265,9 +274,12 @@ public sealed class SearchFilterSelectionHandlerTests
         handler.Handle(request);
 
         // assert
-        Assert.Equal(
-            ["Academy"],
-            request.SelectedFacets["EstablishmentType"]);
+        Assert.Collection(
+            request.SelectedFacets["EstablishmentType"],
+            selected =>
+            {
+                Assert.Equal("1", selected);
+            });
     }
 
     [Fact]
@@ -284,7 +296,7 @@ public sealed class SearchFilterSelectionHandlerTests
             {
                 ["EstablishmentType"] =
                 [
-                    "Academy"
+                    "1"
                 ]
             }
         };
@@ -293,20 +305,23 @@ public sealed class SearchFilterSelectionHandlerTests
         handler.Handle(request);
 
         // assert
-        Assert.Equal(
-            ["Academy"],
-            request.SelectedFacets["EstablishmentType"]);
+        Assert.Collection(
+            request.SelectedFacets["EstablishmentType"],
+            selected =>
+            {
+                Assert.Equal("1", selected);
+            });
     }
 
     [Theory]
     [InlineData("Invalid")]
-    [InlineData("Invalid|Academy")]
+    [InlineData("Invalid|1")]
     [InlineData("SelectedFacets[EstablishmentType]")]
-    [InlineData("SelectedFacets[]|Academy")]
+    [InlineData("SelectedFacets[]|1")]
     [InlineData("SelectedFacets[EstablishmentType]|")]
-    [InlineData("|Academy")]
-    [InlineData("WrongPrefix[EstablishmentType]|Academy")]
-    [InlineData("SelectedFacets[EstablishmentType|Academy")]
+    [InlineData("|1")]
+    [InlineData("WrongPrefix[EstablishmentType]|1")]
+    [InlineData("SelectedFacets[EstablishmentType|1")]
     public void Handle_DoesNothing_WhenRemoveFilterFormatIsInvalid(
         string removeFilter)
     {
@@ -321,7 +336,7 @@ public sealed class SearchFilterSelectionHandlerTests
             {
                 ["EstablishmentType"] =
                 [
-                    "Academy"
+                    "1"
                 ]
             }
         };
@@ -330,9 +345,12 @@ public sealed class SearchFilterSelectionHandlerTests
         handler.Handle(request);
 
         // assert
-        Assert.Equal(
-            ["Academy"],
-            request.SelectedFacets["EstablishmentType"]);
+        Assert.Collection(
+            request.SelectedFacets["EstablishmentType"],
+            selected =>
+            {
+                Assert.Equal("1", selected);
+            });
     }
 
     [Fact]
@@ -344,13 +362,13 @@ public sealed class SearchFilterSelectionHandlerTests
         SearchRequestViewModel request = new()
         {
             RemoveFilter =
-                "LocalAuthority|TestLocalAuthority1",
+                "LocalAuthority|3",
 
             SelectedFacets = new Dictionary<string, List<string>>
             {
                 ["EstablishmentType"] =
                 [
-                    "Academy"
+                    "1"
                 ]
             }
         };
@@ -359,9 +377,12 @@ public sealed class SearchFilterSelectionHandlerTests
         handler.Handle(request);
 
         // assert
-        Assert.Equal(
-            ["Academy"],
-            request.SelectedFacets["EstablishmentType"]);
+        Assert.Collection(
+            request.SelectedFacets["EstablishmentType"],
+            selected =>
+            {
+                Assert.Equal("1", selected);
+            });
     }
 
     [Fact]
@@ -373,13 +394,13 @@ public sealed class SearchFilterSelectionHandlerTests
         SearchRequestViewModel request = new()
         {
             RemoveFilter =
-                "EstablishmentType|Free school",
+                "EstablishmentType|2",
 
             SelectedFacets = new Dictionary<string, List<string>>
             {
                 ["EstablishmentType"] =
                 [
-                    "Academy"
+                    "1"
                 ]
             }
         };
@@ -388,9 +409,12 @@ public sealed class SearchFilterSelectionHandlerTests
         handler.Handle(request);
 
         // assert
-        Assert.Equal(
-            ["Academy"],
-            request.SelectedFacets["EstablishmentType"]);
+        Assert.Collection(
+            request.SelectedFacets["EstablishmentType"],
+            selected =>
+            {
+                Assert.Equal("1", selected);
+            });
 
         Assert.Null(request.RemoveFilter);
     }
@@ -404,14 +428,14 @@ public sealed class SearchFilterSelectionHandlerTests
         SearchRequestViewModel request = new()
         {
             RemoveFilter =
-                " EstablishmentType | Academy ",
+                " EstablishmentType | 1 ",
 
             SelectedFacets = new Dictionary<string, List<string>>
             {
                 ["EstablishmentType"] =
                 [
-                    "Academy",
-                    "Free school"
+                    "1",
+                    "2"
                 ]
             }
         };
@@ -420,9 +444,12 @@ public sealed class SearchFilterSelectionHandlerTests
         handler.Handle(request);
 
         // assert
-        Assert.Equal(
-            ["Free school"],
-            request.SelectedFacets["EstablishmentType"]);
+        Assert.Collection(
+            request.SelectedFacets["EstablishmentType"],
+            selected =>
+            {
+                Assert.Equal("2", selected);
+            });
     }
 
     [Fact]
@@ -436,14 +463,14 @@ public sealed class SearchFilterSelectionHandlerTests
             ClearFilters = true,
 
             RemoveFilter =
-                "EstablishmentType|Academy",
+                "EstablishmentType|1",
 
             SelectedFacets = new Dictionary<string, List<string>>
             {
                 ["EstablishmentType"] =
                 [
-                    "Academy",
-                    "Free school"
+                    "1",
+                    "2"
                 ]
             }
         };

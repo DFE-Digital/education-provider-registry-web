@@ -1,11 +1,11 @@
-﻿using DfE.Core.Libraries.IntegrationTests.Abstractions.Containers.Registry;
+﻿using DfE.Core.Libraries.IntegrationTests.Abstractions.Containers.Registry.BuilderHandler;
 using DfE.Core.Libraries.IntegrationTests.Database.Postgres.Container.Options;
 using Microsoft.Extensions.Options;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Container;
 
 internal sealed class DatabaseConnectionStringBuilderHandler
-    : IContainerBuilderHandler<ContainerBuilder>
+    : IConfigureContainerBuilderHandler<ContainerBuilder>
 {
     private readonly IOptionsMonitor<PostgresContainerOptions> _options;
 
@@ -15,7 +15,7 @@ internal sealed class DatabaseConnectionStringBuilderHandler
         _options = options;
     }
 
-    public ValueTask<ContainerBuilder> ApplyAsync(
+    public ValueTask<ContainerBuilder> HandleAsync(
         ContainerBuilder builder,
         CancellationToken cancellationToken)
     {

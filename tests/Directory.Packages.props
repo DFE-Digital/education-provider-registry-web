@@ -5,9 +5,9 @@
   <ItemGroup>
     <PackageVersion Include="coverlet.msbuild" Version="10.0.1" />
     <PackageVersion Include="Deque.AxeCore.Selenium" Version="4.12.0" />
-    <PackageVersion Include="DfE.Core.Libraries.IntegrationTests" Version="1.0.28" />
-    <PackageVersion Include="DfE.Core.Libraries.IntegrationTests.Database.Postgres" Version="1.0.28" />
-    <PackageVersion Include="DfE.Core.Libraries.Testing" Version="1.0.28" />
+    <PackageVersion Include="DfE.Core.Libraries.IntegrationTests" Version="1.0.30" />
+    <PackageVersion Include="DfE.Core.Libraries.IntegrationTests.Database.Postgres" Version="1.0.30" />
+    <PackageVersion Include="DfE.Core.Libraries.Testing" Version="1.0.30" />
     <PackageVersion Include="DotNetSeleniumExtras.PageObjects" Version="3.11.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="10.0.9" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.9" />
@@ -18,9 +18,6 @@
     <PackageVersion Include="Moq" Version="4.20.72" />
     <PackageVersion Include="Selenium.Support" Version="4.46.0" />
     <PackageVersion Include="Selenium.WebDriver" Version="4.46.0" />
-	  <!-- transistive package SSH.NET vulnerability in 2025.10 - via TestContainers waiting for release above 4.13.0 https://github.com/testcontainers/testcontainers-dotnet/commit/2b81b68b7cba1b283b8b57ee800e3f1052bbb7d7-->
-    <PackageVersion Include="SSH.NET" Version="2026.0.0" />
-    <PackageVersion Include="Testcontainers" Version="4.13.0" />
     <PackageVersion Include="Verify.XunitV3" Version="31.20.0" />
     <PackageVersion Include="Xunit.DependencyInjection" Version="11.3.0" />
     <PackageVersion Include="Xunit.DependencyInjection.Logging" Version="11.0.0" />

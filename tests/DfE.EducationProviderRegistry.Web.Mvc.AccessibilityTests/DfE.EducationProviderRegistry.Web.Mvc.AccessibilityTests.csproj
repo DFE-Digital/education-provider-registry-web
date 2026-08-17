@@ -12,9 +12,6 @@
 
   <ItemGroup>
     <PackageReference Include="Deque.AxeCore.Selenium" />
-	<PackageReference Include="DfE.Core.Libraries.Testing" />
-	<PackageReference Include="DfE.Core.Libraries.IntegrationTests" />
-	<PackageReference Include="DfE.Core.Libraries.IntegrationTests.Database.Postgres" />
     <PackageReference Include="DotNetSeleniumExtras.PageObjects" />
     <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" />
     <PackageReference Include="Selenium.WebDriver" />
@@ -24,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DfE.EducationProviderRegistry.Web.SharedTests\DfE.EducationProviderRegistry.Web.SharedTests.csproj" />
     <ProjectReference Include="..\DfE.WebDriver\DfE.WebDriver.csproj" />
   </ItemGroup>
 

@@ -1,18 +1,9 @@
-﻿using DfE.Core.Libraries.IntegrationTests.Database.Postgres.Container.Extensions;
-using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Actions;
-using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Actions.Handlers;
-using DfE.EducationProviderRegistry.Web.SharedTests;
-using DfE.WebDriver;
-using MartinCostello.Logging.XUnit;
+﻿using MartinCostello.Logging.XUnit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
-using Xunit.DependencyInjection.Logging;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests;
-
-// Mark members as static - Startup is instantiated by XUnit.DependencyInjection and instance is expected
+namespace DfE.EducationProviderRegistry.Web.MVC.UITests;
 
 public sealed class Startup
 {
@@ -35,22 +26,43 @@ public sealed class Startup
     {
         services.AddOptions<XUnitLoggerOptions>();
 
-        services
-            .AddOptions<AccessibilityTestOptions>()
-            .Bind(context.Configuration.GetSection(nameof(AccessibilityTestOptions)))
+        IConfiguration applicationHostOptions = context.Configuration.GetSection(nameof(ApplicationHostOptions));
+
+        services.AddOptions<ApplicationHostOptions>()
+            .Bind(applicationHostOptions)
             .ValidateDataAnnotations()
             .ValidateOnStart();
-        services.AddSingleton(t => t.GetRequiredService<IOptions<AccessibilityTestOptions>>().Value);
-        
-        services.AddPostgres(context.Configuration);
+        services.AddSingleton(t => t.GetRequiredService<IOptions<ApplicationHostOptions>>().Value);
 
-        services.AddApplicationContainer(context.Configuration);
+        services.AddScoped<DatabaseConnectionStringBuilderHandler>();
+        services.AddScoped<HttpWaitStrategyBuilderHandler>();
+
+        services.AddScoped<Dictionary<string, IReadOnlyCollection<Func<IConfigureContainerBuilderHandler<ContainerBuilder>>>>>(sp =>
+        {
+            return new()
+            {
+                { "epr-web",
+                    [
+                        () => sp.GetRequiredService<DatabaseConnectionStringBuilderHandler>(),
+                        () => sp.GetRequiredService<HttpWaitStrategyBuilderHandler>()
+                    ]
+                }
+            };
+        });
+
+        services.AddContainer(
+            key: "epr-web",
+            configuration: applicationHostOptions);
+
+        services.AddPostgres(context.Configuration);
 
         services.AddLogging((loggingBuilder) =>
             loggingBuilder.AddXunitOutput((optionsConfigure) =>
             {
                 // TODO filter logging
             }));
+
+        services.AddScoped<ApplicationHostedEnvironment>();
 
         services.AddScoped<Dictionary<string, Func<IAccessibilityScanActionHandler>>>((sp) =>
         {

@@ -1,8 +1,10 @@
 ﻿using DfE.Core.Libraries.IntegrationTests.Abstractions.Containers.Registry.BuilderHandler;
 using DfE.Core.Libraries.IntegrationTests.Database.Postgres.Container.Options;
+using DotNet.Testcontainers.Builders;
 using Microsoft.Extensions.Options;
+using Npgsql;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Container;
+namespace DfE.EducationProviderRegistry.Web.SharedTests.Container;
 
 internal sealed class DatabaseConnectionStringBuilderHandler
     : IConfigureContainerBuilderHandler<ContainerBuilder>

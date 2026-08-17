@@ -1,7 +1,9 @@
 ﻿using DfE.Core.Libraries.IntegrationTests.Abstractions.Containers.Registry;
+using DfE.Core.Libraries.IntegrationTests.Database.Abstractions;
 using DfE.Core.Libraries.IntegrationTests.Database.Postgres.Container.Provider;
+using DotNet.Testcontainers.Containers;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests;
+namespace DfE.EducationProviderRegistry.Web.SharedTests;
 
 public sealed class ApplicationHostedEnvironment
 {

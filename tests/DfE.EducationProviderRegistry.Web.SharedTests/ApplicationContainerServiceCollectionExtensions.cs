@@ -1,0 +1,49 @@
+﻿using DfE.Core.Libraries.IntegrationTests.Abstractions.Containers.Extensions;
+using DfE.Core.Libraries.IntegrationTests.Abstractions.Containers.Registry.BuilderHandler;
+using DfE.EducationProviderRegistry.Web.SharedTests.Container;
+using DotNet.Testcontainers.Builders;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
+
+namespace DfE.EducationProviderRegistry.Web.SharedTests;
+
+public static class ApplicationContainerServiceCollectionExtensions
+{
+    public static IServiceCollection AddApplicationContainer(this IServiceCollection services, IConfiguration configuration)
+    {
+        IConfiguration applicationHostOptions = configuration.GetSection(nameof(ApplicationOptions));
+
+        services.AddOptions<ApplicationOptions>()
+            .Bind(applicationHostOptions)
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        services.AddSingleton(t => t.GetRequiredService<IOptions<ApplicationOptions>>().Value);
+
+        services.TryAddSingleton<DatabaseConnectionStringBuilderHandler>();
+        services.TryAddSingleton<HttpWaitStrategyBuilderHandler>();
+
+        services.AddScoped<Dictionary<string, Func<IReadOnlyCollection<IConfigureContainerBuilderHandler<ContainerBuilder>>>>>(sp =>
+        {
+            return new()
+            {
+                { "epr-web",
+                     () => [
+                        sp.GetRequiredService<DatabaseConnectionStringBuilderHandler>(),
+                        sp.GetRequiredService<HttpWaitStrategyBuilderHandler>()
+                    ]
+                }
+            };
+        });
+
+        services.AddContainer(
+            key: "epr-web",
+            configuration: applicationHostOptions);
+
+        services.AddScoped<ApplicationHostedEnvironment>();
+
+        return services;
+    }
+}

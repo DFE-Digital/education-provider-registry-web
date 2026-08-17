@@ -41,7 +41,6 @@ public sealed class AccessibilityScanTests
             .WithStartMaximised(true)
             .WithAllowInsecureLocalConnections(true)
             .Build();
-
     }
 
     [Fact]

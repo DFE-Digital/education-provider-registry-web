@@ -10,8 +10,7 @@ internal abstract class BaseAccessibilityScanActionHandler
         AccessibilityScanContext context);
 
     // TODO DefaultWebDriverOptions and back into ActionOptions
-    protected IWebElement FindElement(
-        AccessibilityScanContext context)
+    protected IWebElement FindElement(AccessibilityScanContext context)
     {
         WebDriverWait wait = new(
             context.WebDriver,

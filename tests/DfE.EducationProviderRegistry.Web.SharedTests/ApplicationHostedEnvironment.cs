@@ -37,7 +37,9 @@ public sealed class ApplicationHostedEnvironment
             throw new ArgumentException($"Host environment has not been started with {nameof(InitialiseAsync)}");
         }
 
-        return new($"http://localhost:{_applicationContainer.GetMappedPublicPort(8080)}");
+        ushort publicPort = _applicationContainer.GetMappedPublicPort(8080);
+
+        return new($"http://localhost:{publicPort}");
     }
 
     public async Task<string> GetLogsAsync()

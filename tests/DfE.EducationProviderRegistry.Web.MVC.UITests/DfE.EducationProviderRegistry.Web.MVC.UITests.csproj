@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DfE.EducationProviderRegistry.Web.SharedTests\DfE.EducationProviderRegistry.Web.SharedTests.csproj" />
     <ProjectReference Include="..\DfE.WebDriver\DfE.WebDriver.csproj" />
   </ItemGroup>
 

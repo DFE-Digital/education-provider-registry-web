@@ -41,7 +41,7 @@ public sealed class Startup
             .ValidateDataAnnotations()
             .ValidateOnStart();
         services.AddSingleton(t => t.GetRequiredService<IOptions<AccessibilityTestOptions>>().Value);
-        
+
         services.AddPostgres(context.Configuration);
 
         services.AddApplicationContainer(context.Configuration);

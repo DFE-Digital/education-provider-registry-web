@@ -52,10 +52,10 @@ public sealed class Startup
             .ValidateOnStart();
         services.AddSingleton(t => t.GetRequiredService<IOptions<ApplicationHostOptions>>().Value);
 
-        services.AddTransient<DatabaseConnectionStringBuilderHandler>();
-        services.AddTransient<HttpWaitStrategyBuilderHandler>();
+        services.AddScoped<DatabaseConnectionStringBuilderHandler>();
+        services.AddScoped<HttpWaitStrategyBuilderHandler>();
 
-        services.AddSingleton<Dictionary<string, IReadOnlyCollection<Func<IConfigureContainerBuilderHandler<ContainerBuilder>>>>>(sp =>
+        services.AddScoped<Dictionary<string, IReadOnlyCollection<Func<IConfigureContainerBuilderHandler<ContainerBuilder>>>>>(sp =>
         {
             return new()
             {

@@ -1,10 +1,10 @@
 ﻿using DfE.Core.Libraries.IntegrationTests.Abstractions.Containers.Options.Container;
-using DfE.Core.Libraries.IntegrationTests.Abstractions.Containers.Registry;
+using DfE.Core.Libraries.IntegrationTests.Abstractions.Containers.Registry.BuilderHandler;
 using Microsoft.Extensions.Options;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Container;
 
-internal sealed class HttpWaitStrategyBuilderHandler : IContainerBuilderHandler<ContainerBuilder>
+internal sealed class HttpWaitStrategyBuilderHandler : IConfigureContainerBuilderHandler<ContainerBuilder>
 {
     private readonly ContainerOptions _options;
 
@@ -14,7 +14,7 @@ internal sealed class HttpWaitStrategyBuilderHandler : IContainerBuilderHandler<
         _options = options.Get("epr-web");
     }
 
-    public ValueTask<ContainerBuilder> ApplyAsync(
+    public ValueTask<ContainerBuilder> HandleAsync(
         ContainerBuilder builder,
         CancellationToken cancellationToken)
     {

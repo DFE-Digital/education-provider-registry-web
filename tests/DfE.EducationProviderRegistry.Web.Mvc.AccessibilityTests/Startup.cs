@@ -1,4 +1,5 @@
 ﻿using DfE.Core.Libraries.IntegrationTests.Abstractions.Containers.Registry;
+using DfE.Core.Libraries.IntegrationTests.Abstractions.Containers.Registry.BuilderHandler;
 using DfE.Core.Libraries.IntegrationTests.Database.Postgres.Container.Extensions;
 using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Actions;
 using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Actions.Handlers;
@@ -54,13 +55,18 @@ public sealed class Startup
         services.AddTransient<DatabaseConnectionStringBuilderHandler>();
         services.AddTransient<HttpWaitStrategyBuilderHandler>();
 
-        services.AddSingleton<
-            IContainerBuilderHandler<ContainerBuilder>,
-            DatabaseConnectionStringBuilderHandler>();
-
-        services.AddSingleton<
-            IContainerBuilderHandler<ContainerBuilder>,
-            HttpWaitStrategyBuilderHandler>();
+        services.AddSingleton<Dictionary<string, IReadOnlyCollection<Func<IConfigureContainerBuilderHandler<ContainerBuilder>>>>>(sp =>
+        {
+            return new()
+            {
+                { "epr-web",
+                    [
+                        () => sp.GetRequiredService<DatabaseConnectionStringBuilderHandler>(),
+                        () => sp.GetRequiredService<HttpWaitStrategyBuilderHandler>()
+                    ]
+                }
+            };
+        });
 
         services.AddContainer(
             key: "epr-web",

@@ -7,9 +7,17 @@
     @if (!string.IsNullOrWhiteSpace(Model.Caption))
     {
         string captionClass = GovUkCaptionSizeExtensions.ToCssClass(Model.CaptionSize);
-
         <caption class="govuk-table__caption @(captionClass)">
-            @Model.Caption
+            @if (!string.IsNullOrWhiteSpace(Model.CaptionLinkUrl))
+            {
+                <a class="govuk-link" href="@Model.CaptionLinkUrl">
+                    @Model.Caption
+                </a>
+            }
+            else
+            {
+                @Model.Caption
+            }
         </caption>
     }
 

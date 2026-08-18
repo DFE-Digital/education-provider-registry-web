@@ -40,6 +40,6 @@ public class GovUkTableBuilder
         rows: _rows,
         caption: _caption,
         captionLinkUrl: _link,
-        captionSize: _isCaptionLarge ? TableCaptionSize.Large : TableCaptionSize.Default
+        captionSize: _isCaptionLarge ? TableCaptionSize.Large : TableCaptionSize.Medium
     );
 }

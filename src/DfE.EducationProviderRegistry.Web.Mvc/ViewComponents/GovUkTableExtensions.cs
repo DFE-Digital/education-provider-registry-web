@@ -1,4 +1,6 @@
-﻿namespace DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
+﻿using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
+
+namespace DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 
 /// <summary>
 /// Provides extension methods for building <see cref="GovUkTable"/> instances
@@ -26,25 +28,25 @@ public static class GovUkTableExtensions
     /// An optional URL that, when provided, renders the value cell as a link
     /// instead of plain text. If <c>null</c>, the value is rendered as text.
     /// </param>
-    public static void AddRow(
-        this GovUkTable table,
+    public static GovUkTableBuilder AddRow(
+        this GovUkTableBuilder builder,
         string label,
         string? value,
         string? linkUrl = null)
     {
-        table.Rows.Add(new GovUkTableRow
-        {
-            Cells =
-            [
-                new GovUkTableCell {
-                    Text = label,
-                    IsBold = true
-                },
-                new GovUkTableCell {
-                    Text = value ?? string.Empty,
-                    LinkUrl = string.IsNullOrWhiteSpace(linkUrl) ? null : linkUrl
-                }
-            ]
-        });
+        ArgumentNullException.ThrowIfNull(builder);
+
+        return builder.AddRow(
+            new TableCell
+            {
+                Text = label
+            },
+            new TableCell
+            {
+                Text = value ?? string.Empty,
+                Href = string.IsNullOrWhiteSpace(linkUrl)
+                    ? null
+                    : linkUrl
+            });
     }
 }

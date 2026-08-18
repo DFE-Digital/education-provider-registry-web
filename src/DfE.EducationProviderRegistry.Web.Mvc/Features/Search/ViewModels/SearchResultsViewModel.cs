@@ -1,4 +1,4 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
+﻿using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 

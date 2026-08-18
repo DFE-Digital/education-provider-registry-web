@@ -1,6 +1,7 @@
 ﻿using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.Model;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
+using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments;
 
@@ -12,14 +13,18 @@ public class EstablishmentDetailsGovernorsTableMapper :
         GovUkTableBuilder builder = GovUkTableBuilder
             .Create()
             .WithCaption("Governors")
-            .WithHeaders("Name", "Governor ID", "Start date");
+            .WithColumns(
+            new TableColumn ("Name"),
+            new TableColumn ("Governor ID"),
+            new TableColumn ("Start date")
+        );
 
         foreach (GovernorModel g in dto)
         {
             builder.AddRow(
-                new GovUkTableCell { Text = g.Name.Value },
-                new GovUkTableCell { Text = g.Identifier.Value ?? "" },
-                new GovUkTableCell { Text = string.Empty }
+                new TableCell { Text = g.Name.Value },
+                new TableCell { Text = g.Identifier.Value ?? "" },
+                new TableCell { Text = string.Empty }
             );
         }
 

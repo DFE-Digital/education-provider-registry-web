@@ -3,14 +3,16 @@
 public sealed class GovUkTable
 {
     public IReadOnlyList<TableColumn> Columns { get; }
-    public IReadOnlyList<IReadOnlyList<TableCell>> Rows { get; }
+    public IReadOnlyList<TableRow> Rows { get; }
     public string? Caption { get; }
     public TableCaptionSize CaptionSize { get; }
+    public string? CaptionLinkUrl { get; }
 
     public GovUkTable(
         IReadOnlyList<TableColumn> columns,
-        IReadOnlyList<IReadOnlyList<TableCell>> rows,
+        IReadOnlyList<TableRow> rows,
         string? caption = null,
+        string? captionLinkUrl = null,
         TableCaptionSize captionSize = TableCaptionSize.Default)
     {
         ArgumentNullException.ThrowIfNull(columns);
@@ -43,11 +45,11 @@ public sealed class GovUkTable
             throw new ArgumentException("Only one column can be marked as a row header.", nameof(columns));
         }
 
-        foreach (IReadOnlyList<TableCell> row in rows)
+        foreach (TableRow row in rows)
         {
             ArgumentNullException.ThrowIfNull(row);
 
-            if (row.Count != columns.Count)
+            if (row.Cells.Count != columns.Count)
             {
                 throw new ArgumentException(
                     "Each row must have the same number of values as columns.",
@@ -59,5 +61,6 @@ public sealed class GovUkTable
         Rows = rows;
         Caption = caption;
         CaptionSize = captionSize;
+        CaptionLinkUrl = captionLinkUrl;
     }
 }

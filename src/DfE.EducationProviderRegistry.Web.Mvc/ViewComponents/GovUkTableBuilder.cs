@@ -1,30 +1,45 @@
-﻿namespace DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
+﻿using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
+
+namespace DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 
 public class GovUkTableBuilder
 {
-    private readonly GovUkTable _table = new();
-
     public static GovUkTableBuilder Create() => new();
+
+    private string _caption;
+    private string? _link;
+    private bool _isCaptionLarge;
+    private readonly List<TableColumn> _columns = [];
+    private readonly List<TableRow> _rows = [];
+
 
     public GovUkTableBuilder WithCaption(string caption, string? link = null, bool large = false)
     {
-        _table.Caption = caption;
-        _table.CaptionLinkUrl = link;
-        _table.IsCaptionLarge = large;
+        _caption = caption;
+        _link = link;
+        _isCaptionLarge = large;
         return this;
     }
 
-    public GovUkTableBuilder WithHeaders(params string[] headers)
+    public GovUkTableBuilder WithColumns(params TableColumn[] columns)
     {
-        _table.Headers = headers.ToList();
+        _columns.Clear();
+        _columns.AddRange(columns);
+
         return this;
     }
 
-    public GovUkTableBuilder AddRow(params GovUkTableCell[] cells)
+    public GovUkTableBuilder AddRow(params TableCell[] cells)
     {
-        _table.Rows.Add(new GovUkTableRow { Cells = cells.ToList() });
+        _rows.Add(new TableRow { Cells = cells.ToList() });
         return this;
     }
 
-    public GovUkTable Build() => _table;
+    public GovUkTable Build() => new(
+        columns: _columns,
+        rows: _rows,
+        caption: _caption,
+        captionLinkUrl: _link,
+        captionSize: _isCaptionLarge ? TableCaptionSize.Large : TableCaptionSize.Default
+    );
 }

@@ -31,16 +31,14 @@
     @* Body *@
     <tbody class="govuk-table__body">
 
-        @for (int rowIndex = 0; rowIndex < Model.Rows.Count; rowIndex++)
+        @foreach (TableRow row in Model.Rows)
         {
-            IReadOnlyList<TableCell> row = Model.Rows[rowIndex];
-
             <tr class="govuk-table__row">
 
                 @for (int colIndex = 0; colIndex < Model.Columns.Count; colIndex++)
                 {
                     TableColumn column = Model.Columns[colIndex];
-                    TableCell cell = row[colIndex];
+                    TableCell cell = row.Cells[colIndex];
 
                     if (column.IsRowHeader)
                     {

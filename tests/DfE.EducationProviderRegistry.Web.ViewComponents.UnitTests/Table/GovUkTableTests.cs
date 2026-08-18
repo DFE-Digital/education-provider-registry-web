@@ -100,10 +100,7 @@ public sealed class GovUkTableTests
                 ],
                 rows:
                 [
-                    [
-                        new TableCell(),
-                        new TableCell()
-                    ]
+                    new TableRow { Cells = { new TableCell(), new TableCell() } }
                 ]);
 
         // Act & Assert
@@ -142,9 +139,7 @@ public sealed class GovUkTableTests
                 ],
                 rows:
                 [
-                    [
-                        new TableCell()
-                    ]
+                    new TableRow { Cells = { new TableCell() } }
                 ]);
 
         // Act & Assert
@@ -164,18 +159,22 @@ public sealed class GovUkTableTests
             new TableColumn("Amount")
         ];
 
-        IReadOnlyList<IReadOnlyList<TableCell>> rows =
+        IReadOnlyList<TableRow> rows =
         [
-            [
-                new TableCell
-                {
-                    Text = "January"
-                },
-                new TableCell
-                {
-                    Text = "100"
-                }
-            ]
+            new TableRow
+            {
+                Cells =
+                [
+                    new TableCell
+                    {
+                        Text = "January"
+                    },
+                    new TableCell
+                    {
+                        Text = "100"
+                    }
+                ]
+            }
         ];
 
         // Act
@@ -205,12 +204,9 @@ public sealed class GovUkTableTests
             new TableColumn("Amount")
         ];
 
-        IReadOnlyList<IReadOnlyList<TableCell>> rows =
+        IReadOnlyList<TableRow> rows =
         [
-            [
-                new TableCell(),
-                new TableCell()
-            ]
+            new TableRow { Cells = { new TableCell(), new TableCell() } }
         ];
 
         // Act

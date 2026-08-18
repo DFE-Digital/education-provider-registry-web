@@ -1,7 +1,7 @@
 ﻿using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Establishment;
 using DfE.EducationProviderRegistry.Core.Query.Shared;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
-using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
+using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 using Xunit;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Mappers;
@@ -110,7 +110,7 @@ public sealed class EstablishmentSearchResultsToViewModelMapperTests
         GovUkTable table = mapper.Map([input])[0];
 
         // assert
-        GovUkTableRow row = table.Rows.Single(tableRow => tableRow.Cells[0].Text == "URN");
+        TableRow row = table.Rows.Single(tableRow => tableRow.Cells[0].Text == "URN");
         Assert.Equal("555555", row.Cells[1].Text);
     }
 
@@ -125,7 +125,7 @@ public sealed class EstablishmentSearchResultsToViewModelMapperTests
         GovUkTable table = mapper.Map([input])[0];
 
         // assert
-        GovUkTableRow row = table.Rows.Single(tableRow => tableRow.Cells[0].Text == "Type");
+        TableRow row = table.Rows.Single(tableRow => tableRow.Cells[0].Text == "Type");
         Assert.Equal("Academy", row.Cells[1].Text);
     }
 
@@ -140,7 +140,7 @@ public sealed class EstablishmentSearchResultsToViewModelMapperTests
         GovUkTable table = mapper.Map([input])[0];
 
         // assert
-        GovUkTableRow row = table.Rows.Single(tableRow => tableRow.Cells[0].Text == "Address");
+        TableRow row = table.Rows.Single(tableRow => tableRow.Cells[0].Text == "Address");
         Assert.Equal("Street County AB1 2CD", row.Cells[1].Text);
     }
 
@@ -154,11 +154,11 @@ public sealed class EstablishmentSearchResultsToViewModelMapperTests
         // act
         GovUkTable table = mapper.Map([input])[0];
 
-        GovUkTableRow row = table.Rows.Single(tableRow => tableRow.Cells[0].Text == "Local authority");
+        TableRow row = table.Rows.Single(tableRow => tableRow.Cells[0].Text == "Local authority");
 
         // assert
         Assert.Equal("LA Name", row.Cells[1].Text);
-        Assert.Equal("/la/123", row.Cells[1].LinkUrl);
+        Assert.Equal("/la/123", row.Cells[1].Href);
     }
 
     [Fact]
@@ -172,9 +172,9 @@ public sealed class EstablishmentSearchResultsToViewModelMapperTests
         GovUkTable table = mapper.Map([input])[0];
 
         // assert
-        GovUkTableRow row = table.Rows.Single(tableRow => tableRow.Cells[0].Text == "Part of a group");
+        TableRow row = table.Rows.Single(tableRow => tableRow.Cells[0].Text == "Part of a group");
 
         Assert.Equal("Group Name", row.Cells[1].Text);
-        Assert.Equal("/groups/G123", row.Cells[1].LinkUrl);
+        Assert.Equal("/groups/G123", row.Cells[1].Href);
     }
 }

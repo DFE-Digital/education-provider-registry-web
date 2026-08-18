@@ -49,21 +49,9 @@ internal static class GovUkTabsExamples
                 ],
                 rows:
                 [
-                    [
-                        new TableCell { Text = "David Francis" },
-                        new TableCell { Text = "3" },
-                        new TableCell { Text = "0" }
-                    ],
-                    [
-                        new TableCell { Text = "Paul Farmer" },
-                        new TableCell { Text = "1" },
-                        new TableCell { Text = "0" }
-                    ],
-                    [
-                        new TableCell { Text = "Rita Patel" },
-                        new TableCell { Text = "2" },
-                        new TableCell { Text = "0" }
-                    ]
+                    new TableRow { Cells = { new TableCell { Text = "David Francis" }, new TableCell { Text = "3" }, new TableCell { Text = "0" } } },
+                    new TableRow { Cells = { new TableCell { Text = "Paul Farmer" }, new TableCell { Text = "1" }, new TableCell { Text = "0" } } },
+                    new TableRow { Cells = { new TableCell { Text = "Rita Patel" }, new TableCell { Text = "2" }, new TableCell { Text = "0" } } }
                 ]));
 
     private static TabContent PastWeekStatistics() =>
@@ -78,21 +66,9 @@ internal static class GovUkTabsExamples
                 ],
                 rows:
                 [
-                    [
-                        new TableCell { Text = "David Francis" },
-                        new TableCell { Text = "24" },
-                        new TableCell { Text = "18" }
-                    ],
-                    [
-                        new TableCell { Text = "Paul Farmer" },
-                        new TableCell { Text = "16" },
-                        new TableCell { Text = "20" }
-                    ],
-                    [
-                        new TableCell { Text = "Rita Patel" },
-                        new TableCell { Text = "24" },
-                        new TableCell { Text = "27" }
-                    ]
+                    new TableRow { Cells = { new TableCell { Text = "David Francis" }, new TableCell { Text = "24" }, new TableCell { Text = "18" } } },
+                    new TableRow { Cells = { new TableCell { Text = "Paul Farmer" }, new TableCell { Text = "16" }, new TableCell { Text = "20" } } },
+                    new TableRow { Cells = { new TableCell { Text = "Rita Patel" }, new TableCell { Text = "24" }, new TableCell { Text = "27" } } }
                 ]));
 
     private static TabContent PastMonthStatistics() =>
@@ -107,21 +83,9 @@ internal static class GovUkTabsExamples
                 ],
                 rows:
                 [
-                    [
-                        new TableCell { Text = "David Francis" },
-                        new TableCell { Text = "98" },
-                        new TableCell { Text = "95" }
-                    ],
-                    [
-                        new TableCell { Text = "Paul Farmer" },
-                        new TableCell { Text = "122" },
-                        new TableCell { Text = "131" }
-                    ],
-                    [
-                        new TableCell { Text = "Rita Patel" },
-                        new TableCell { Text = "126" },
-                        new TableCell { Text = "142" }
-                    ]
+                    new TableRow { Cells = { new TableCell { Text = "David Francis" }, new TableCell { Text = "98" }, new TableCell { Text = "95" } } },
+                    new TableRow { Cells = { new TableCell { Text = "Paul Farmer" }, new TableCell { Text = "122" }, new TableCell { Text = "131" } } },
+                    new TableRow { Cells = { new TableCell { Text = "Rita Patel" }, new TableCell { Text = "126" }, new TableCell { Text = "142" } } },
                 ]));
 
     private static TabContent PastYearStatistics() =>
@@ -136,10 +100,10 @@ internal static class GovUkTabsExamples
                 ],
                 rows:
                 [
-                    [
-                        new TableCell { Text = "No data available" },
-                        new TableCell { Text = "-" },
-                        new TableCell { Text = "-" }
-                    ]
+
+                    new TableRow { Cells = {new TableCell { Text = "No data available" }} },
+                    new TableRow { Cells = {new TableCell { Text = "-" }} },
+                    new TableRow { Cells = {new TableCell { Text = "-" }} }
+
                 ]));
 }

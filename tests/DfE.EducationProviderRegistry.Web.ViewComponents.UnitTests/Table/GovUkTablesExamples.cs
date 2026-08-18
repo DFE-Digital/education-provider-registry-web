@@ -12,18 +12,27 @@ internal static class GovUkTablesExamples
         ],
         rows:
         [
-            [
-                new TableCell { Text = "January" },
-                new TableCell { Text = "£95" }
-            ],
-            [
-                new TableCell { Text = "February" },
-                new TableCell { Text = "£55" }
-            ],
-            [
-                new TableCell { Text = "March" },
-                new TableCell { Text = "£125" }
-            ]
+            new TableRow{
+            Cells =
+                [
+                    new TableCell { Text = "January" },
+                    new TableCell { Text = "£95" }
+                ]
+            },
+            new TableRow{
+            Cells =
+                [
+                    new TableCell { Text = "February" },
+                    new TableCell { Text = "£55" }
+                ]
+            },
+            new TableRow{
+            Cells =
+                [
+                    new TableCell { Text = "March" },
+                    new TableCell { Text = "£125" }
+                ]
+            }
         ],
         caption: "Months and rates"
     );
@@ -36,18 +45,9 @@ internal static class GovUkTablesExamples
         ],
         rows:
         [
-            [
-                new TableCell { Text = "First 6 weeks" },
-                new TableCell { Text = "£109.80 per week" }
-            ],
-            [
-                new TableCell { Text = "Next 33 weeks" },
-                new TableCell { Text = "£109.80 per week" }
-            ],
-            [
-                new TableCell { Text = "Total estimated pay" },
-                new TableCell { Text = "£4,282.20" }
-            ]
+            new TableRow { Cells = { new TableCell { Text = "First 6 weeks" }, new TableCell { Text = "£109.80 per week" } } },
+            new TableRow { Cells = { new TableCell { Text = "Next 33 weeks" }, new TableCell { Text = "£109.80 per week" } } },
+            new TableRow { Cells = { new TableCell { Text = "Total estimated pay" }, new TableCell { Text = "£4,282.20" } } }
         ],
         caption: "Dates and amounts"
     );
@@ -61,21 +61,9 @@ internal static class GovUkTablesExamples
         ],
         rows:
         [
-            [
-                new TableCell { Text = "David Francis" },
-                new TableCell { Text = "3" },
-                new TableCell { Text = "0" }
-            ],
-            [
-                new TableCell { Text = "Paul Farmer" },
-                new TableCell { Text = "1" },
-                new TableCell { Text = "0" }
-            ],
-            [
-                new TableCell { Text = "Rita Patel" },
-                new TableCell { Text = "2" },
-                new TableCell { Text = "0" }
-            ]
+            new TableRow { Cells = { new TableCell { Text = "David Francis" }, new TableCell { Text = "3" }, new TableCell { Text = "0" } } },
+            new TableRow { Cells = { new TableCell { Text = "Paul Farmer" }, new TableCell { Text = "1" }, new TableCell { Text = "0" } } },
+            new TableRow { Cells = { new TableCell { Text = "Rita Patel" }, new TableCell { Text = "2" }, new TableCell { Text = "0" } } }
         ]
     );
 
@@ -87,14 +75,8 @@ internal static class GovUkTablesExamples
         ],
         rows:
         [
-            [
-                new TableCell { Text = "London" },
-                new TableCell { Text = "8.9" }
-            ],
-            [
-                new TableCell { Text = "Manchester" },
-                new TableCell { Text = "553" }
-            ]
+            new TableRow { Cells = { new TableCell { Text = "London" }, new TableCell { Text = "8.9" } } },
+            new TableRow { Cells = { new TableCell { Text = "Manchester" }, new TableCell { Text = "553" } } }
         ],
         caption: "Cities and population"
     );
@@ -107,14 +89,8 @@ internal static class GovUkTablesExamples
         ],
         rows:
         [
-            [
-                new TableCell { Text = "London" },
-                new TableCell { Text = "8.9m" }
-            ],
-            [
-                new TableCell { Text = "Manchester" },
-                new TableCell { Text = "553k" }
-            ]
+            new TableRow { Cells = { new TableCell { Text = "London" }, new TableCell { Text = "8.9m" } } },
+            new TableRow { Cells = { new TableCell { Text = "Manchester" }, new TableCell { Text = "553k" } } }
         ]
     );
 
@@ -126,14 +102,8 @@ internal static class GovUkTablesExamples
         ],
         rows:
         [
-            [
-                new TableCell { Text = "London" },
-                new TableCell { Text = "8.9m" }
-            ],
-            [
-                new TableCell { Text = "Manchester" },
-                new TableCell { Text = "553k" }
-            ]
+            new TableRow { Cells = { new TableCell { Text = "London" }, new TableCell { Text = "8.9m" } } },
+            new TableRow { Cells = { new TableCell { Text = "Manchester" }, new TableCell { Text = "553k" } } }
         ],
         caption: "Population",
         captionSize: TableCaptionSize.Large

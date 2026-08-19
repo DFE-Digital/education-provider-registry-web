@@ -3,7 +3,7 @@ using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.Model;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments;
+namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments.Mappers;
 
 public class EstablishmentDetailsGovernorsTableMapper :
     IMapper<IEnumerable<GovernorModel>, GovUkTable>
@@ -14,9 +14,9 @@ public class EstablishmentDetailsGovernorsTableMapper :
             .Create()
             .WithCaption("Governors")
             .WithColumns(
-            new TableColumn ("Name"),
-            new TableColumn ("Governor ID"),
-            new TableColumn ("Start date")
+            new TableColumn { Text = "Name" },
+            new TableColumn { Text = "Governor ID" },
+            new TableColumn { Text = "Start date" }
         );
 
         foreach (GovernorModel g in dto)

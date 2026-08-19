@@ -9,6 +9,7 @@ using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Mappers.TestDoubles;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 using Moq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Mappers;
 
@@ -85,7 +86,7 @@ public sealed class SearchResultsToViewModelMapperTests
     {
         // arrange
         List<EstablishmentSearchResult> establishmentResults = [MakeEstablishment()];
-        List<GovUkTable> establishmentTables = [new([new("testColumn")], [new TableRow{ Cells = [new TableCell{ Text = "Test Cell" }] }], "School A")];
+        List<GovUkTable> establishmentTables = [new([new TableColumn{ Text = "testColumn" }], [new TableRow{ Cells = [new TableCell{ Text = "Test Cell" }] }], "School A")];
 
         Mock<IMapper<
             IReadOnlyCollection<EstablishmentSearchResult>,

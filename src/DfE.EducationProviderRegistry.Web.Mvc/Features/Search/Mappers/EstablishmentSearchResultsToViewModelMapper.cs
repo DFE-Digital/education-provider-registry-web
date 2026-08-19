@@ -28,8 +28,8 @@ public sealed class EstablishmentSearchResultsToViewModelMapper :
 
         TableColumn[] columns =
         [
-            new("Name") { IsRowHeader = true },
-            new("Value")
+            new() { Text = "Name", IsRowHeader = true },
+            new() { Text = "Value" }
         ];
 
         GovUkTableBuilder builder = GovUkTableBuilder

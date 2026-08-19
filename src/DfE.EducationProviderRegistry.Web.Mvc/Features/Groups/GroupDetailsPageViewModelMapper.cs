@@ -61,8 +61,8 @@ internal sealed class GroupDetailsPageViewModelMapper :
     private static GroupDetailsAcademyTabViewModel CreateAcademies(GroupReadModel model)
     {
         TableColumn[] columns = [
-            new("Name") { IsRowHeader = true},
-            new("URN")
+            new() { Text = "Name", IsRowHeader = true },
+            new() { Text = "URN" }
         ];
 
         List<TableRow> rows = new();
@@ -110,9 +110,9 @@ internal sealed class GroupDetailsPageViewModelMapper :
     private static GovUkTable CreateTrusteesTable(IEnumerable<TrusteeReadModel> trustees)
     {
         TableColumn[] columns = [
-            new("Name") { IsRowHeader = true},
-            new("Governor ID"),
-            new("Start date")
+            new() { Text = "Name", IsRowHeader = true },
+            new() { Text = "Governor ID" },
+            new() { Text = "Start date" }
         ];
 
         List<TableRow> rows = [];
@@ -143,9 +143,9 @@ internal sealed class GroupDetailsPageViewModelMapper :
     private static GovUkTable CreateMembersTable(IEnumerable<MemberReadModel> members)
     {
         TableColumn[] columns = [
-            new("Name") { IsRowHeader = true},
-            new("Governor ID"),
-            new("Start date")
+            new() { Text = "Name", IsRowHeader = true },
+            new() { Text = "Governor ID" },
+            new() { Text = "Start date" }
         ];
 
         List<TableRow> rows = [];

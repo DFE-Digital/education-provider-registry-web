@@ -5,4 +5,6 @@ public sealed record TableCell
     public string? Text { get; init; }
     public string? Href { get; init; }
     public bool IsBold { get; set; }
+
+    public bool OpenInNewTab { get; init; }
 }

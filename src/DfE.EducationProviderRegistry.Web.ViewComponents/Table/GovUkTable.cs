@@ -29,11 +29,6 @@ public sealed class GovUkTable
         {
             ArgumentNullException.ThrowIfNull(column);
 
-            if (string.IsNullOrWhiteSpace(column.Text))
-            {
-                throw new ArgumentException("Column headers must not be empty.", nameof(columns));
-            }
-
             if (column.IsRowHeader)
             {
                 rowHeaderCount++;

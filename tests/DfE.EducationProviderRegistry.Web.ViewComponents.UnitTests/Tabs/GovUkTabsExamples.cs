@@ -43,9 +43,9 @@ internal static class GovUkTabsExamples
             new GovUkTable(
                 columns:
                 [
-                    new TableColumn("Case manager") { IsRowHeader = true },
-                    new TableColumn("Cases opened") { IsNumeric = true },
-                    new TableColumn("Cases closed") { IsNumeric = true }
+                    new TableColumn { Text = "Case manager", IsRowHeader = true },
+                    new TableColumn { Text = "Cases opened", IsNumeric = true },
+                    new TableColumn { Text = "Cases closed", IsNumeric = true }
                 ],
                 rows:
                 [
@@ -60,9 +60,9 @@ internal static class GovUkTabsExamples
             new GovUkTable(
                 columns:
                 [
-                    new TableColumn("Case manager") { IsRowHeader = true },
-                    new TableColumn("Cases opened") { IsNumeric = true },
-                    new TableColumn("Cases closed") { IsNumeric = true }
+                    new TableColumn { Text = "Case manager", IsRowHeader = true },
+                    new TableColumn { Text = "Cases opened", IsNumeric = true },
+                    new TableColumn { Text = "Cases closed", IsNumeric = true }
                 ],
                 rows:
                 [
@@ -77,9 +77,9 @@ internal static class GovUkTabsExamples
             new GovUkTable(
                 columns:
                 [
-                    new TableColumn("Case manager") { IsRowHeader = true },
-                    new TableColumn("Cases opened") { IsNumeric = true },
-                    new TableColumn("Cases closed") { IsNumeric = true }
+                    new TableColumn { Text = "Case manager", IsRowHeader = true },
+                    new TableColumn { Text = "Cases opened", IsNumeric = true },
+                    new TableColumn { Text = "Cases closed", IsNumeric = true }
                 ],
                 rows:
                 [
@@ -94,9 +94,9 @@ internal static class GovUkTabsExamples
             new GovUkTable(
                 columns:
                 [
-                    new TableColumn("Case manager") { IsRowHeader = true },
-                    new TableColumn("Cases opened") { IsNumeric = true },
-                    new TableColumn("Cases closed") { IsNumeric = true }
+                    new TableColumn { Text = "Case manager", IsRowHeader = true },
+                    new TableColumn { Text = "Cases opened", IsNumeric = true },
+                    new TableColumn { Text = "Cases closed", IsNumeric = true }
                 ],
                 rows:
                 [

@@ -68,7 +68,12 @@
                         <td class="govuk-table__cell @(column.IsNumeric ? "govuk-table__cell--numeric" : null)">
                             @if (!string.IsNullOrWhiteSpace(cell.Href))
                             {
-                                <a href="@cell.Href">@cell.Text</a>
+                                <a href="@cell.Href"
+                                   class="govuk-link"
+                                   target="@(cell.OpenInNewTab ? "_blank" : null)"
+                                   rel="@(cell.OpenInNewTab ? "noopener noreferrer" : null)">
+                                    @cell.Text
+                                </a>
                             }
                             else
                             {

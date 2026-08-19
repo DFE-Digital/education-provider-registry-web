@@ -1,4 +1,5 @@
 ﻿using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace DfE.EducationProviderRegistry.Web.ViewComponents.UnitTests.Table;
 
@@ -25,7 +26,7 @@ public sealed class GovUkTableTests
             () => new GovUkTable(
                 columns:
                 [
-                    new TableColumn("Column")
+                    new TableColumn { Text = "Column" }
                 ],
                 rows: null!);
 
@@ -73,7 +74,7 @@ public sealed class GovUkTableTests
             () => new GovUkTable(
                 columns:
                 [
-                    new TableColumn(text)
+                    new TableColumn { Text = text }
                 ],
                 rows: []);
 
@@ -89,13 +90,15 @@ public sealed class GovUkTableTests
             () => new GovUkTable(
                 columns:
                 [
-                    new TableColumn("Column 1")
+                    new TableColumn
                     {
-                        IsRowHeader = true
+                        IsRowHeader = true,
+                        Text = "Column 1"
                     },
-                    new TableColumn("Column 2")
+                    new TableColumn
                     {
-                        IsRowHeader = true
+                        IsRowHeader = true,
+                        Text = "Column 2"
                     }
                 ],
                 rows:
@@ -115,7 +118,7 @@ public sealed class GovUkTableTests
             () => new GovUkTable(
                 columns:
                 [
-                    new TableColumn("Column")
+                    new TableColumn{ Text = "Column" }
                 ],
                 rows:
                 [
@@ -134,8 +137,8 @@ public sealed class GovUkTableTests
             () => new GovUkTable(
                 columns:
                 [
-                    new TableColumn("Column 1"),
-                    new TableColumn("Column 2")
+                    new TableColumn { Text = "Column 1" },
+                    new TableColumn { Text = "Column 2" }
                 ],
                 rows:
                 [
@@ -152,11 +155,12 @@ public sealed class GovUkTableTests
         // Arrange
         IReadOnlyList<TableColumn> columns =
         [
-            new TableColumn("Month")
+            new TableColumn
             {
-                IsRowHeader = true
+                IsRowHeader = true,
+                Text = "Month"
             },
-            new TableColumn("Amount")
+            new TableColumn{ Text = "Amount" }
         ];
 
         IReadOnlyList<TableRow> rows =
@@ -197,11 +201,12 @@ public sealed class GovUkTableTests
         // Arrange
         IReadOnlyList<TableColumn> columns =
         [
-            new TableColumn("Month")
+            new TableColumn
             {
-                IsRowHeader = true
+                IsRowHeader = true,
+                Text = "Month"
             },
-            new TableColumn("Amount")
+            new TableColumn { Text = "Amount" }
         ];
 
         IReadOnlyList<TableRow> rows =

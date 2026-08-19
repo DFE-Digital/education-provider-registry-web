@@ -7,8 +7,8 @@ internal static class GovUkTablesExamples
     public static GovUkTable MonthsAndRates() => new(
         columns:
         [
-            new TableColumn("Month") { IsRowHeader = true },
-            new TableColumn("Rate for vehicles") { IsNumeric = true }
+            new TableColumn { Text = "Month", IsRowHeader = true },
+            new TableColumn { Text = "Rate for vehicles", IsNumeric = true }
         ],
         rows:
         [
@@ -40,8 +40,8 @@ internal static class GovUkTablesExamples
     public static GovUkTable DatesAndAmounts() => new(
         columns:
         [
-            new TableColumn("Date") { IsRowHeader = true },
-            new TableColumn("Amount")
+            new TableColumn { Text = "Date", IsRowHeader = true },
+            new TableColumn { Text = "Amount" }
         ],
         rows:
         [
@@ -55,9 +55,9 @@ internal static class GovUkTablesExamples
     public static GovUkTable CaseStatistics() => new(
         columns:
         [
-            new TableColumn("Case manager") { IsRowHeader = true },
-            new TableColumn("Cases opened") { IsNumeric = true },
-            new TableColumn("Cases closed") { IsNumeric = true }
+            new TableColumn { Text = "Case manager", IsRowHeader = true },
+            new TableColumn { Text = "Cases opened", IsNumeric = true },
+            new TableColumn { Text = "Cases closed", IsNumeric = true }
         ],
         rows:
         [
@@ -70,8 +70,8 @@ internal static class GovUkTablesExamples
     public static GovUkTable NoRowHeaders() => new(
         columns:
         [
-            new TableColumn("City"),
-            new TableColumn("Population") { IsNumeric = true }
+            new TableColumn { Text = "City" },
+            new TableColumn { Text = "Population", IsNumeric = true }
         ],
         rows:
         [
@@ -84,8 +84,8 @@ internal static class GovUkTablesExamples
     public static GovUkTable NoCaption() => new(
         columns:
         [
-            new TableColumn("City") { IsRowHeader = true },
-            new TableColumn("Population") { IsNumeric = true }
+            new TableColumn { Text = "City", IsRowHeader = true },
+            new TableColumn { Text = "Population", IsNumeric = true }
         ],
         rows:
         [
@@ -97,8 +97,8 @@ internal static class GovUkTablesExamples
     public static GovUkTable LargeCaption() => new(
         columns:
         [
-            new TableColumn("City") { IsRowHeader = true },
-            new TableColumn("Population") { IsNumeric = true }
+            new TableColumn { Text = "City", IsRowHeader = true },
+            new TableColumn { Text = "Population", IsNumeric = true }
         ],
         rows:
         [

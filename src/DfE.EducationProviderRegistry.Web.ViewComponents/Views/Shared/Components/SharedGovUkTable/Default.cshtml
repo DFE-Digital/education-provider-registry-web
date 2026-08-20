@@ -53,7 +53,10 @@
                         <th scope="row" class="govuk-table__header @column.Classes">
                             @if (!string.IsNullOrWhiteSpace(cell.Href))
                             {
-                                <a href="@cell.Href" class="govuk-link">
+                                <a href="@cell.Href"
+                                   class="govuk-link"
+                                   target="@(cell.OpenInNewTab ? "_blank" : null)"
+                                   rel="@(cell.OpenInNewTab ? "noopener noreferrer" : null)">
                                     @cell.Text
                                 </a>
                             }
@@ -66,7 +69,47 @@
                     else
                     {
                         <td class="govuk-table__cell @(column.IsNumeric ? "govuk-table__cell--numeric" : null)">
-                            @if (!string.IsNullOrWhiteSpace(cell.Href))
+
+                            @if (cell.Rows.Count > 0)
+                            {
+                                @foreach (TableCellRow cellRow in cell.Rows)
+                                {
+                                    <div class="govuk-table__subrow">
+                                        <span class="govuk-table__subrow-label">
+                                            @if (!string.IsNullOrWhiteSpace(cellRow.Label.Href))
+                                            {
+                                                <a href="@cellRow.Label.Href"
+                                                   class="govuk-link"
+                                                   target="@(cellRow.Label.OpenInNewTab ? "_blank" : null)"
+                                                   rel="@(cellRow.Label.OpenInNewTab ? "noopener noreferrer" : null)">
+                                                    @cellRow.Label.Text
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                @cellRow.Label.Text
+                                            }
+                                        </span>
+
+                                        <span class="govuk-table__subrow-value">
+                                            @if (!string.IsNullOrWhiteSpace(cellRow.Value.Href))
+                                            {
+                                                <a href="@cellRow.Value.Href"
+                                                   class="govuk-link"
+                                                   target="@(cellRow.Value.OpenInNewTab ? "_blank" : null)"
+                                                   rel="@(cellRow.Value.OpenInNewTab ? "noopener noreferrer" : null)">
+                                                    @cellRow.Value.Text
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                @cellRow.Value.Text
+                                            }
+                                        </span>
+                                    </div>
+                                }
+                            }
+                            else if (!string.IsNullOrWhiteSpace(cell.Href))
                             {
                                 <a href="@cell.Href"
                                    class="govuk-link"
@@ -79,6 +122,7 @@
                             {
                                 @cell.Text
                             }
+
                         </td>
                     }
                 }

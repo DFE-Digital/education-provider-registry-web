@@ -1,0 +1,4 @@
+.govuk-table__subrow {
+    display: grid;
+    grid-template-columns: minmax(100px, max-content) auto;
+}

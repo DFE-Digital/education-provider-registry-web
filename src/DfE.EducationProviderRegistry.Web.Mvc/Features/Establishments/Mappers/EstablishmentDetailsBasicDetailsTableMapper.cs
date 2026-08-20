@@ -10,54 +10,108 @@ public class EstablishmentDetailsBasicDetailsTableMapper :
 {
     public GovUkTable Map(EstablishmentDetailsModel dto)
     {
+        const string DataUnavailable = "Yet to be provisioned";
+
         GovUkTableBuilder builder = GovUkTableBuilder
             .Create()
             .WithColumns(
                 new TableColumn { IsRowHeader = true },
                 new TableColumn());
 
-        builder.AddRow(new TableCell { Text = "URN", IsBold = true },
-                       new TableCell { Text = dto.Urn.Value });
+        builder.AddRow(
+            new TableCell { Text = "Status", IsBold = true },
+            new TableCell { Text = dto.Status.Value ?? string.Empty });
 
-        builder.AddRow(new TableCell { Text = "UKPRN", IsBold = true },
-                       new TableCell { Text = dto.Number.Value ?? string.Empty });
+        builder.AddRow(
+            new TableCell { Text = "ID numbers", IsBold = true },
+            new TableCell
+            {
+                Rows =
+                [
+                    new TableCellRow
+                    {
+                        Label = new TableCell { Text = "LAESTAB" },
+                        Value = new TableCell { Text = dto.Number.Value ?? string.Empty }
+                    },
+                    new TableCellRow
+                    {
+                        Label = new TableCell { Text = "UKPRN" },
+                        Value = new TableCell { Text = dto.Number.Value ?? string.Empty }
+                    },
+                    new TableCellRow
+                    {
+                        Label = new TableCell { Text = "URN" },
+                        Value = new TableCell { Text = dto.Urn.Value }
+                    }
+                ]
+            });
 
-        builder.AddRow(new TableCell { Text = "DfE Number", IsBold = true },
-                       new TableCell { Text = dto.Number.Value ?? string.Empty });
+        builder.AddRow(
+            new TableCell { Text = "Headteacher", IsBold = true },
+            new TableCell { Text = dto.Headteacher ?? string.Empty });
 
-        builder.AddRow(new TableCell { Text = "Status", IsBold = true },
-                       new TableCell { Text = dto.Status.Value ?? string.Empty });
+        builder.AddRow(
+            new TableCell { Text = "Type", IsBold = true },
+            new TableCell { Text = dto.Type.Value });
 
-        builder.AddRow(new TableCell { Text = "Address", IsBold = true },
-                       new TableCell { Text = dto.Address?.AddressLine1 ?? string.Empty });
+        builder.AddRow(
+            new TableCell { Text = "Phase of education", IsBold = true },
+            new TableCell { Text = dto.Phase.Value ?? string.Empty });
 
-        builder.AddRow(new TableCell { Text = "Local authority", IsBold = true },
-                       new TableCell { Text = dto.LocalAuthority?.Name ?? string.Empty});
+        builder.AddRow(
+            new TableCell { Text = "Address", IsBold = true },
+            new TableCell { Text = dto.Address?.AddressLine1 ?? string.Empty });
 
-        builder.AddRow(new TableCell { Text = "Part of group", IsBold = true },
-                       new TableCell { Text = dto.GroupName });
+        builder.AddRow(
+            new TableCell { Text = "Local authority", IsBold = true },
+            new TableCell { Text = dto.LocalAuthority?.Name ?? string.Empty });
 
-        builder.AddRow(new TableCell { Text = "Type", IsBold = true },
-                       new TableCell { Text = dto.Type.Value });
+        builder.AddRow(
+            new TableCell { Text = "Part of", IsBold = true },
+            new TableCell { Text = dto.GroupName ?? string.Empty });
 
-        builder.AddRow(new TableCell { Text = "Phase of education", IsBold = true },
-                       new TableCell { Text = dto.Phase.Value ?? string.Empty });
+        builder.AddRow(
+            new TableCell { Text = "Age range", IsBold = true },
+            new TableCell { Text = dto.AgeRange ?? string.Empty });
 
-        builder.AddRow(new TableCell { Text = "Age range", IsBold = true },
-                       new TableCell { Text = dto.AgeRange ?? string.Empty });
+        builder.AddRow(
+            new TableCell { Text = "Gender", IsBold = true },
+            new TableCell { Text = DataUnavailable });
 
-        builder.AddRow(new TableCell { Text = "Gender", IsBold = true },
-                       new TableCell { Text = dto.LifecycleEventOpened?.EventDate.ToShortDateString() ?? string.Empty });
+        builder.AddRow(
+            new TableCell { Text = "Number of pupils", IsBold = true },
+            new TableCell { Text = DataUnavailable });
 
-        builder.AddRow(new TableCell { Text = "Religious character", IsBold = true },
-                       new TableCell { Text = dto.ReligiousCharacter ?? string.Empty });
+        builder.AddRow(
+            new TableCell { Text = "Pupils capacity", IsBold = true },
+            new TableCell { Text = dto.AgeRange ?? string.Empty });
 
-        builder.AddRow(new TableCell { Text = "Ofsted", IsBold = true },
-                       new TableCell { Text = dto.Ofsted?.InspectionDate is DateOnly inspectionDate
-                                              ? $"Latest report {inspectionDate:d MMMM yyyy} (opens in new tab)"
-                                              : string.Empty, 
-                                              Href = dto.Ofsted?.InspectionOutcome ?? string.Empty,
-                                              OpenInNewTab = true});
+        builder.AddRow(
+            new TableCell { Text = "Religious character", IsBold = true },
+            new TableCell { Text = dto.ReligiousCharacter ?? string.Empty });
+
+        builder.AddRow(
+            new TableCell { Text = "Type of SEN provision", IsBold = true },
+            new TableCell { Text = dto.SenProvision ?? string.Empty });
+
+        builder.AddRow(
+            new TableCell { Text = "Website", IsBold = true },
+            new TableCell { Text = dto.ContactDetails?.Website ?? string.Empty });
+
+        builder.AddRow(
+            new TableCell { Text = "Ofsted", IsBold = true },
+            new TableCell
+            {
+                Text = dto.Ofsted?.InspectionDate is DateOnly inspectionDate
+                    ? $"Latest report {inspectionDate:d MMMM yyyy} (opens in new tab)"
+                    : string.Empty,
+                Href = dto.Ofsted?.InspectionOutcome ?? string.Empty,
+                OpenInNewTab = true
+            });
+
+        builder.AddRow(
+            new TableCell { Text = "School profiles service", IsBold = true },
+            new TableCell { Text = DataUnavailable });
 
         return builder.Build();
     }

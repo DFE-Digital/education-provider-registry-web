@@ -1,0 +1,13 @@
+﻿@if (Context.Request.Cookies.TryGetValue("cookies_analytics", out var analytics)
+    && analytics == "yes")
+{
+    <!-- Google Tag Manager (noscript) -->
+    <noscript>
+        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-52FS6M7J"
+                height="0"
+                width="0"
+                style="display:none;visibility:hidden">
+        </iframe>
+    </noscript>
+    <!-- End Google Tag Manager (noscript) -->
+}

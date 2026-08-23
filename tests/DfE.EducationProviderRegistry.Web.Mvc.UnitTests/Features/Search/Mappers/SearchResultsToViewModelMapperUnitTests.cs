@@ -86,7 +86,7 @@ public sealed class SearchResultsToViewModelMapperTests
     {
         // arrange
         List<EstablishmentSearchResult> establishmentResults = [MakeEstablishment()];
-        List<GovUkTable> establishmentTables = [new([new TableColumn{ Text = "testColumn" }], [new TableRow{ Cells = [new TableCell{ Text = "Test Cell" }] }], "School A")];
+        List<GovUkTable> establishmentTables = [new([new TableColumn { Text = "testColumn" }], [new TableRow { Cells = [new TableCell { Text = "Test Cell" }] }], "School A")];
 
         Mock<IMapper<
             IReadOnlyCollection<EstablishmentSearchResult>,

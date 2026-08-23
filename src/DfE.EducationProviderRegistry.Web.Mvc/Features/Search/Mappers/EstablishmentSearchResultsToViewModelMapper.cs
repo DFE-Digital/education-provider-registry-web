@@ -49,27 +49,29 @@ public sealed class EstablishmentSearchResultsToViewModelMapper :
         EstablishmentSearchResult input)
     {
         builder.AddRow(
-            new TableCell{ Text = "URN" },
-            new TableCell{ Text = input.Urn.Value });
+            new TableCell { Text = "URN" },
+            new TableCell { Text = input.Urn.Value });
 
         builder.AddRow(
-            new TableCell{ Text = "Type" },
-            new TableCell{ Text = input.Type?.Value });
+            new TableCell { Text = "Type" },
+            new TableCell { Text = input.Type?.Value });
 
         builder.AddRow(
-            new TableCell{ Text = "Address" },
-            new TableCell{ Text = BuildAddress(input) });
+            new TableCell { Text = "Address" },
+            new TableCell { Text = BuildAddress(input) });
 
         builder.AddRow(
-            new TableCell{ Text = "Local authority" },
-            new TableCell{
+            new TableCell { Text = "Local authority" },
+            new TableCell
+            {
                 Text = input.LocalAuthority?.Name,
                 Href = CreateLinkUrl("/la/", input.LocalAuthority?.Code)
             });
 
         builder.AddRow(
-            new TableCell{ Text = "Part of a group" },
-            new TableCell{
+            new TableCell { Text = "Part of a group" },
+            new TableCell
+            {
                 Text = input.Group?.PartOfName,
                 Href = CreateLinkUrl("/groups/", input.Group?.PartOfCode)
             });

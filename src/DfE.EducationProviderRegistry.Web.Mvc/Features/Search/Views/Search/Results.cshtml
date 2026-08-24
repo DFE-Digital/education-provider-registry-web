@@ -1,5 +1,5 @@
 ﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels
-@using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents
+@using DfE.EducationProviderRegistry.Web.ViewComponents.Table
 @using DfE.EducationProviderRegistry.Web.ViewComponents.Tabs
 @model SearchResultsViewModel
 
@@ -74,7 +74,7 @@
                                 title: $"Establishments ({Model.EstablishmentResults.Count})",
                                 contents:
                                 Model.EstablishmentResults.Select(result => new TabContent(
-                                    viewComponentName: "GovUkTable",
+                                    viewComponentName: "SharedGovUkTable",
                                     model: result)).ToList()
                             ),
                                 new Tab(
@@ -82,7 +82,7 @@
                                 title: "Establishments groups",
                                 contents:
                                 [
-                                    new TabContent("GovUkTable",  new GovUkTable())
+                                    new TabContent("SharedGovUkTable",  new GovUkTable([new TableColumn { Text = "Placeholder" }], [new TableRow{Cells = new List<TableCell>() {new(){Text = "Sample Cell"} } }]))
                                 ]
                             )
                 ]))

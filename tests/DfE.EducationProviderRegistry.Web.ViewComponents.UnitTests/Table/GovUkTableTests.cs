@@ -1,4 +1,5 @@
 ﻿using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace DfE.EducationProviderRegistry.Web.ViewComponents.UnitTests.Table;
 
@@ -25,7 +26,7 @@ public sealed class GovUkTableTests
             () => new GovUkTable(
                 columns:
                 [
-                    new TableColumn("Column")
+                    new TableColumn { Text = "Column" }
                 ],
                 rows: null!);
 
@@ -63,22 +64,25 @@ public sealed class GovUkTableTests
     }
 
     [Theory]
+    [InlineData(null)]
     [InlineData("")]
     [InlineData(" ")]
-    public void Constructor_ShouldThrowArgumentException_WhenColumnTextIsInvalid(
-        string text)
+    public void Constructor_AllowsColumnTextToBeBlank(string? text)
     {
         // Arrange
-        Func<GovUkTable> construct =
-            () => new GovUkTable(
-                columns:
-                [
-                    new TableColumn(text)
-                ],
-                rows: []);
+        TableColumn[] columns =
+        [
+            new() { Text = text! }
+        ];
 
-        // Act & Assert
-        Assert.ThrowsAny<ArgumentException>(construct);
+        // Act
+        GovUkTable table = new(
+            columns,
+            rows: []);
+
+        // Assert
+        TableColumn column = Assert.Single(table.Columns);
+        Assert.Equal(text, column.Text);
     }
 
     [Fact]
@@ -89,21 +93,20 @@ public sealed class GovUkTableTests
             () => new GovUkTable(
                 columns:
                 [
-                    new TableColumn("Column 1")
+                    new TableColumn
                     {
-                        IsRowHeader = true
+                        IsRowHeader = true,
+                        Text = "Column 1"
                     },
-                    new TableColumn("Column 2")
+                    new TableColumn
                     {
-                        IsRowHeader = true
+                        IsRowHeader = true,
+                        Text = "Column 2"
                     }
                 ],
                 rows:
                 [
-                    [
-                        new TableCell(),
-                        new TableCell()
-                    ]
+                    new TableRow { Cells = { new TableCell(), new TableCell() } }
                 ]);
 
         // Act & Assert
@@ -118,7 +121,7 @@ public sealed class GovUkTableTests
             () => new GovUkTable(
                 columns:
                 [
-                    new TableColumn("Column")
+                    new TableColumn{ Text = "Column" }
                 ],
                 rows:
                 [
@@ -137,14 +140,12 @@ public sealed class GovUkTableTests
             () => new GovUkTable(
                 columns:
                 [
-                    new TableColumn("Column 1"),
-                    new TableColumn("Column 2")
+                    new TableColumn { Text = "Column 1" },
+                    new TableColumn { Text = "Column 2" }
                 ],
                 rows:
                 [
-                    [
-                        new TableCell()
-                    ]
+                    new TableRow { Cells = { new TableCell() } }
                 ]);
 
         // Act & Assert
@@ -157,25 +158,30 @@ public sealed class GovUkTableTests
         // Arrange
         IReadOnlyList<TableColumn> columns =
         [
-            new TableColumn("Month")
+            new TableColumn
             {
-                IsRowHeader = true
+                IsRowHeader = true,
+                Text = "Month"
             },
-            new TableColumn("Amount")
+            new TableColumn{ Text = "Amount" }
         ];
 
-        IReadOnlyList<IReadOnlyList<TableCell>> rows =
+        IReadOnlyList<TableRow> rows =
         [
-            [
-                new TableCell
-                {
-                    Text = "January"
-                },
-                new TableCell
-                {
-                    Text = "100"
-                }
-            ]
+            new TableRow
+            {
+                Cells =
+                [
+                    new TableCell
+                    {
+                        Text = "January"
+                    },
+                    new TableCell
+                    {
+                        Text = "100"
+                    }
+                ]
+            }
         ];
 
         // Act
@@ -198,19 +204,17 @@ public sealed class GovUkTableTests
         // Arrange
         IReadOnlyList<TableColumn> columns =
         [
-            new TableColumn("Month")
+            new TableColumn
             {
-                IsRowHeader = true
+                IsRowHeader = true,
+                Text = "Month"
             },
-            new TableColumn("Amount")
+            new TableColumn { Text = "Amount" }
         ];
 
-        IReadOnlyList<IReadOnlyList<TableCell>> rows =
+        IReadOnlyList<TableRow> rows =
         [
-            [
-                new TableCell(),
-                new TableCell()
-            ]
+            new TableRow { Cells = { new TableCell(), new TableCell() } }
         ];
 
         // Act

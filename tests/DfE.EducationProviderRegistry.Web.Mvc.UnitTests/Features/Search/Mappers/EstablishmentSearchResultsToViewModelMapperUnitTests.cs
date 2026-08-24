@@ -1,7 +1,7 @@
 ﻿using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Establishment;
 using DfE.EducationProviderRegistry.Core.Query.Shared;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
-using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
+using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 using Xunit;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Mappers;
@@ -110,7 +110,7 @@ public sealed class EstablishmentSearchResultsToViewModelMapperTests
         GovUkTable table = mapper.Map([input])[0];
 
         // assert
-        GovUkTableRow row = table.Rows.Single(tableRow => tableRow.Cells[0].Text == "URN");
+        TableRow row = table.Rows.Single(tableRow => tableRow.Cells[0].Text == "URN");
         Assert.Equal("555555", row.Cells[1].Text);
     }
 
@@ -125,7 +125,7 @@ public sealed class EstablishmentSearchResultsToViewModelMapperTests
         GovUkTable table = mapper.Map([input])[0];
 
         // assert
-        GovUkTableRow row = table.Rows.Single(tableRow => tableRow.Cells[0].Text == "Type");
+        TableRow row = table.Rows.Single(tableRow => tableRow.Cells[0].Text == "Type");
         Assert.Equal("Academy", row.Cells[1].Text);
     }
 
@@ -140,7 +140,7 @@ public sealed class EstablishmentSearchResultsToViewModelMapperTests
         GovUkTable table = mapper.Map([input])[0];
 
         // assert
-        GovUkTableRow row = table.Rows.Single(tableRow => tableRow.Cells[0].Text == "Address");
+        TableRow row = table.Rows.Single(tableRow => tableRow.Cells[0].Text == "Address");
         Assert.Equal("Street County AB1 2CD", row.Cells[1].Text);
     }
 
@@ -154,11 +154,11 @@ public sealed class EstablishmentSearchResultsToViewModelMapperTests
         // act
         GovUkTable table = mapper.Map([input])[0];
 
-        GovUkTableRow row = table.Rows.Single(tableRow => tableRow.Cells[0].Text == "Local authority");
+        TableRow row = table.Rows.Single(tableRow => tableRow.Cells[0].Text == "Local authority");
 
         // assert
         Assert.Equal("LA Name", row.Cells[1].Text);
-        Assert.Equal("/la/123", row.Cells[1].LinkUrl);
+        Assert.Equal("/la/123", row.Cells[1].Href);
     }
 
     [Fact]
@@ -172,9 +172,197 @@ public sealed class EstablishmentSearchResultsToViewModelMapperTests
         GovUkTable table = mapper.Map([input])[0];
 
         // assert
-        GovUkTableRow row = table.Rows.Single(tableRow => tableRow.Cells[0].Text == "Part of a group");
+        TableRow row = table.Rows.Single(tableRow => tableRow.Cells[0].Text == "Part of a group");
 
         Assert.Equal("Group Name", row.Cells[1].Text);
-        Assert.Equal("/groups/G123", row.Cells[1].LinkUrl);
+        Assert.Equal("/groups/G123", row.Cells[1].Href);
+    }
+
+    [Fact]
+    public void Map_ThrowsArgumentNullException_WhenCollectionContainsNullResult()
+    {
+        // arrange
+        EstablishmentSearchResultsToViewModelMapper mapper = new();
+
+        IReadOnlyCollection<EstablishmentSearchResult> input =
+        [
+            null!
+        ];
+
+        // act/assert
+        Assert.Throws<ArgumentNullException>(() => mapper.Map(input));
+    }
+
+    [Fact]
+    public void MapItem_ConfiguresColumnsCorrectly()
+    {
+        // arrange
+        EstablishmentSearchResultsToViewModelMapper mapper = new();
+        EstablishmentSearchResult input = MakeResult();
+
+        // act
+        GovUkTable table = mapper.Map([input])[0];
+
+        // assert
+        Assert.Collection(
+            table.Columns,
+            column =>
+            {
+                Assert.Equal("Name", column.Text);
+                Assert.True(column.IsRowHeader);
+            },
+            column =>
+            {
+                Assert.Equal("Value", column.Text);
+                Assert.False(column.IsRowHeader);
+            });
+    }
+
+    [Fact]
+    public void MapItem_AddsExpectedRows()
+    {
+        // arrange
+        EstablishmentSearchResultsToViewModelMapper mapper = new();
+        EstablishmentSearchResult input = MakeResult();
+
+        // act
+        GovUkTable table = mapper.Map([input])[0];
+
+        // assert
+        Assert.Collection(
+            table.Rows,
+            row => Assert.Equal("URN", row.Cells[0].Text),
+            row => Assert.Equal("Type", row.Cells[0].Text),
+            row => Assert.Equal("Address", row.Cells[0].Text),
+            row => Assert.Equal("Local authority", row.Cells[0].Text),
+            row => Assert.Equal("Part of a group", row.Cells[0].Text));
+    }
+
+    [Fact]
+    public void MapItem_ExcludesBlankAddressParts()
+    {
+        // arrange
+        EstablishmentSearchResultsToViewModelMapper mapper = new();
+
+        Address address = new(
+            Street: "Street",
+            Town: "Town",
+            County: " ",
+            Postcode: "AB1 2CD");
+
+        EstablishmentSearchResult input = new(
+            new UniqueReferenceNumber("111111"),
+            new Name("Test School"),
+            address,
+            new EstablishmentType("Academy"),
+            new GroupDetail("Group Name", "G123"),
+            new LocalAuthority("LA Name", "123"));
+
+        // act
+        GovUkTable table = mapper.Map([input])[0];
+
+        // assert
+        TableRow row = table.Rows.Single(
+            tableRow => tableRow.Cells[0].Text == "Address");
+
+        Assert.Equal("Street AB1 2CD", row.Cells[1].Text);
+    }
+
+    [Fact]
+    public void MapItem_UsesEmptyAddress_WhenAddressIsNull()
+    {
+        // arrange
+        EstablishmentSearchResultsToViewModelMapper mapper = new();
+
+        EstablishmentSearchResult input = new(
+            new UniqueReferenceNumber("111111"),
+            new Name("Test School"),
+            null,
+            new EstablishmentType("Academy"),
+            new GroupDetail("Group Name", "G123"),
+            new LocalAuthority("LA Name", "123"));
+
+        // act
+        GovUkTable table = mapper.Map([input])[0];
+
+        // assert
+        TableRow row = table.Rows.Single(
+            tableRow => tableRow.Cells[0].Text == "Address");
+
+        Assert.Equal(string.Empty, row.Cells[1].Text);
+    }
+
+    [Fact]
+    public void MapItem_UsesNullTypeText_WhenTypeIsNull()
+    {
+        // arrange
+        EstablishmentSearchResultsToViewModelMapper mapper = new();
+
+        EstablishmentSearchResult input = new(
+            new UniqueReferenceNumber("111111"),
+            new Name("Test School"),
+            new Address("Street", "Town", "County", "AB1 2CD"),
+            null,
+            new GroupDetail("Group Name", "G123"),
+            new LocalAuthority("LA Name", "123"));
+
+        // act
+        GovUkTable table = mapper.Map([input])[0];
+
+        // assert
+        TableRow row = table.Rows.Single(
+            tableRow => tableRow.Cells[0].Text == "Type");
+
+        Assert.Null(row.Cells[1].Text);
+    }
+
+    [Fact]
+    public void MapItem_UsesNullLocalAuthorityValues_WhenLocalAuthorityIsNull()
+    {
+        // arrange
+        EstablishmentSearchResultsToViewModelMapper mapper = new();
+
+        EstablishmentSearchResult input = new(
+            new UniqueReferenceNumber("111111"),
+            new Name("Test School"),
+            new Address("Street", "Town", "County", "AB1 2CD"),
+            new EstablishmentType("Academy"),
+            new GroupDetail("Group Name", "G123"),
+            null);
+
+        // act
+        GovUkTable table = mapper.Map([input])[0];
+
+        // assert
+        TableRow row = table.Rows.Single(
+            tableRow => tableRow.Cells[0].Text == "Local authority");
+
+        Assert.Null(row.Cells[1].Text);
+        Assert.Null(row.Cells[1].Href);
+    }
+
+    [Fact]
+    public void MapItem_UsesNullGroupValues_WhenGroupIsNull()
+    {
+        // arrange
+        EstablishmentSearchResultsToViewModelMapper mapper = new();
+
+        EstablishmentSearchResult input = new(
+            new UniqueReferenceNumber("111111"),
+            new Name("Test School"),
+            new Address("Street", "Town", "County", "AB1 2CD"),
+            new EstablishmentType("Academy"),
+            null,
+            new LocalAuthority("LA Name", "123"));
+
+        // act
+        GovUkTable table = mapper.Map([input])[0];
+
+        // assert
+        TableRow row = table.Rows.Single(
+            tableRow => tableRow.Cells[0].Text == "Part of a group");
+
+        Assert.Null(row.Cells[1].Text);
+        Assert.Null(row.Cells[1].Href);
     }
 }

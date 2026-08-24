@@ -15,17 +15,23 @@ public class EstablishmentDetailsPageViewModelMapper :
         IMapper<EstablishmentDetailsModel, GovUkTable> basicMapper,
         IMapper<IEnumerable<GovernorModel>, GovUkTable> governorMapper)
     {
+        ArgumentNullException.ThrowIfNull(basicMapper);
+        ArgumentNullException.ThrowIfNull(governorMapper);
+
         _basicToTableMapper = basicMapper;
         _governorsToTableMapper = governorMapper;
     }
 
-    public EstablishmentDetailsPageViewModel Map(EstablishmentDetailsModel model)
+    public EstablishmentDetailsPageViewModel Map(
+        EstablishmentDetailsModel model)
     {
+        ArgumentNullException.ThrowIfNull(model);
+
         return new EstablishmentDetailsPageViewModel
         {
-            Heading = model.Name.Value,
+            Heading = model.Name?.Value,
             BasicDetails = _basicToTableMapper.Map(model),
-            Governors = _governorsToTableMapper.Map(model.Governors),
+            Governors = _governorsToTableMapper.Map(model.Governors ?? [])
         };
     }
 }

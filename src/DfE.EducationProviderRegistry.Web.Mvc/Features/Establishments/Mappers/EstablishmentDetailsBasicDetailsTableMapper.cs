@@ -20,7 +20,7 @@ public class EstablishmentDetailsBasicDetailsTableMapper :
 
         builder.AddRow(
             new TableCell { Text = "Status", IsBold = true },
-            new TableCell { Text = dto.Status.Value ?? string.Empty });
+            new TableCell { Text = dto.Status?.Value ?? string.Empty });
 
         builder.AddRow(
             new TableCell { Text = "ID numbers", IsBold = true },
@@ -31,12 +31,12 @@ public class EstablishmentDetailsBasicDetailsTableMapper :
                     new TableCellRow
                     {
                         Label = new TableCell { Text = "LAESTAB" },
-                        Value = new TableCell { Text = dto.Number.Value ?? string.Empty }
+                        Value = new TableCell { Text = dto.Number?.Value ?? string.Empty }
                     },
                     new TableCellRow
                     {
                         Label = new TableCell { Text = "UKPRN" },
-                        Value = new TableCell { Text = dto.Number.Value ?? string.Empty }
+                        Value = new TableCell { Text = dto.Number?.Value ?? string.Empty }
                     },
                     new TableCellRow
                     {
@@ -52,11 +52,11 @@ public class EstablishmentDetailsBasicDetailsTableMapper :
 
         builder.AddRow(
             new TableCell { Text = "Type", IsBold = true },
-            new TableCell { Text = dto.Type.Value });
+            new TableCell { Text = dto.Type?.Value });
 
         builder.AddRow(
             new TableCell { Text = "Phase of education", IsBold = true },
-            new TableCell { Text = dto.Phase.Value ?? string.Empty });
+            new TableCell { Text = dto.Phase?.Value ?? string.Empty });
 
         builder.AddRow(
             new TableCell { Text = "Address", IsBold = true },

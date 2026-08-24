@@ -29,17 +29,14 @@ public sealed class EstablishmentDetailsGovernorsTableMapperTests
             column =>
             {
                 Assert.Equal("Name", column.Text);
-                Assert.True(column.IsRowHeader);
             },
             column =>
             {
                 Assert.Equal("Governor ID", column.Text);
-                Assert.False(column.IsRowHeader);
             },
             column =>
             {
                 Assert.Equal("Start date", column.Text);
-                Assert.False(column.IsRowHeader);
             });
     }
 

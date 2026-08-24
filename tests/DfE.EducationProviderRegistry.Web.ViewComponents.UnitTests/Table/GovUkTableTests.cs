@@ -64,22 +64,25 @@ public sealed class GovUkTableTests
     }
 
     [Theory]
+    [InlineData(null)]
     [InlineData("")]
     [InlineData(" ")]
-    public void Constructor_ShouldThrowArgumentException_WhenColumnTextIsInvalid(
-        string text)
+    public void Constructor_AllowsColumnTextToBeBlank(string? text)
     {
         // Arrange
-        Func<GovUkTable> construct =
-            () => new GovUkTable(
-                columns:
-                [
-                    new TableColumn { Text = text }
-                ],
-                rows: []);
+        TableColumn[] columns =
+        [
+            new() { Text = text! }
+        ];
 
-        // Act & Assert
-        Assert.ThrowsAny<ArgumentException>(construct);
+        // Act
+        GovUkTable table = new(
+            columns,
+            rows: []);
+
+        // Assert
+        TableColumn column = Assert.Single(table.Columns);
+        Assert.Equal(text, column.Text);
     }
 
     [Fact]

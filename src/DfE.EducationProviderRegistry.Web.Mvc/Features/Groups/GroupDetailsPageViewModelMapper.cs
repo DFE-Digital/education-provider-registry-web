@@ -72,7 +72,7 @@ internal sealed class GroupDetailsPageViewModelMapper :
             TableCell name = new()
             {
                 Text = academy.Name.ToString(),
-                Href = $"/establishment/{academy.Id.Value}"
+                Href = $"/establishments/{academy.Id.Value}"
             };
 
             TableCell urn = new()
@@ -80,7 +80,7 @@ internal sealed class GroupDetailsPageViewModelMapper :
                 Text = academy.Id.Value
             };
 
-            rows.Add(new TableRow { Cells = [urn, name] });
+            rows.Add(new TableRow { Cells = [name, urn] });
         }
 
         GovUkTable academiesTable = new(

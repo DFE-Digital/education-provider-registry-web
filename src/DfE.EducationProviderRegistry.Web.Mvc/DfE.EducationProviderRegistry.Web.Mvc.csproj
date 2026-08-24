@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <Folder Include="Features\Search\ViewModels\FilterViewModels\" />
+    <Folder Include="ViewComponentsBuilders\" />
   </ItemGroup>
 
 </Project>

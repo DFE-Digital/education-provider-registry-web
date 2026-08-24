@@ -1,6 +1,7 @@
 ﻿using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Establishment;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
+using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 
@@ -15,8 +16,7 @@ public sealed class EstablishmentSearchResultsToViewModelMapper :
 
         foreach (EstablishmentSearchResult result in input)
         {
-            GovUkTable table = MapItem(result);
-            tables.Add(table);
+            tables.Add(MapItem(result));
         }
 
         return tables;
@@ -26,48 +26,69 @@ public sealed class EstablishmentSearchResultsToViewModelMapper :
     {
         ArgumentNullException.ThrowIfNull(input);
 
-        GovUkTable table = BuildTable(input);
-        AddRows(table, input);
+        TableColumn[] columns =
+        [
+            new() { Text = "Name", IsRowHeader = true },
+            new() { Text = "Value" }
+        ];
 
-        return table;
+        GovUkTableBuilder builder = GovUkTableBuilder
+            .Create()
+            .WithCaption(
+                input.Name.Value,
+                "establishments/" + input.Urn.Value)
+            .WithColumns(columns);
+
+        AddRows(builder, input);
+
+        return builder.Build();
     }
 
-    private static GovUkTable BuildTable(EstablishmentSearchResult input)
+    private static void AddRows(
+        GovUkTableBuilder builder,
+        EstablishmentSearchResult input)
     {
-        GovUkTable table = new()
-        {
-            Caption = input.Name.Value,
-            CaptionLinkUrl = "establishments/" + input.Urn.Value
-        };
+        builder.AddRow(
+            new TableCell { Text = "URN" },
+            new TableCell { Text = input.Urn.Value });
 
-        return table;
+        builder.AddRow(
+            new TableCell { Text = "Type" },
+            new TableCell { Text = input.Type?.Value });
+
+        builder.AddRow(
+            new TableCell { Text = "Address" },
+            new TableCell { Text = BuildAddress(input) });
+
+        builder.AddRow(
+            new TableCell { Text = "Local authority" },
+            new TableCell
+            {
+                Text = input.LocalAuthority?.Name,
+                Href = CreateLinkUrl("/la/", input.LocalAuthority?.Code)
+            });
+
+        builder.AddRow(
+            new TableCell { Text = "Part of a group" },
+            new TableCell
+            {
+                Text = input.Group?.PartOfName,
+                Href = CreateLinkUrl("/groups/", input.Group?.PartOfCode)
+            });
     }
 
-    private static void AddRows(GovUkTable table, EstablishmentSearchResult input)
+    private static string BuildAddress(EstablishmentSearchResult input)
     {
-        table.AddRow("URN", input.Urn.Value);
-        table.AddRow("Type", input?.Type?.Value);
-
-        table.AddRow(
-            "Address",
-            input?.Address?.Street + " " +
-            input?.Address?.County + " " +
-            input?.Address?.Postcode
-        );
-
-        table.AddRow(
-            "Local authority",
-            input?.LocalAuthority?.Name,
-            CreateLinkUrl("/la/", input?.LocalAuthority?.Code)
-        );
-
-        table.AddRow(
-            "Part of a group",
-            input?.Group?.PartOfName,
-            CreateLinkUrl("/groups/", input?.Group?.PartOfCode)
-        );
+        return string.Join(
+            " ",
+            new[]
+            {
+                input.Address?.Street,
+                input.Address?.County,
+                input.Address?.Postcode
+            }
+            .Where(value => !string.IsNullOrWhiteSpace(value)));
     }
-
 
     private static string? CreateLinkUrl(string prefix, string? value)
     {

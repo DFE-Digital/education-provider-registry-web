@@ -23,7 +23,7 @@ public sealed class SearchRequestViewModel
     /// <remarks>
     /// This value is typically used to perform text‑based search across establishments.
     /// </remarks>
-    [Required(ErrorMessage = "Enter an establishment name")]
+    //[Required(ErrorMessage = "Enter an establishment name")]
     public string? SearchKeywords { get; set; }
 
 

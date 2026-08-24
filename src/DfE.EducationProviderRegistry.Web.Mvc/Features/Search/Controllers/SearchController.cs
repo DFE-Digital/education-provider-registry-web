@@ -85,8 +85,10 @@ public sealed class SearchController : Controller
                 model.SelectedFacets);
 
         SearchRequest searchRequest = new(
-            searchIndexKey: "TO_BE_REMOVED_FROM_CORE",
-            searchKeywords: model.SearchKeywords!,
+            searchTerms: [
+                new SearchTerm("what", model.SearchKeywords!),
+                new SearchTerm("where", model.Address!)
+            ],
             searchFilterRequests,
             sortOrder);
 

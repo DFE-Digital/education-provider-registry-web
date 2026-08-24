@@ -6,7 +6,7 @@ public class GovUkTableBuilder
 {
     public static GovUkTableBuilder Create() => new();
 
-    private string _caption;
+    private string _caption = string.Empty;
     private string? _link;
     private bool _isCaptionLarge;
     private readonly List<TableColumn> _columns = [];

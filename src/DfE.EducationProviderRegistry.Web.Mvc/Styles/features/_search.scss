@@ -14,17 +14,9 @@
     margin-top: 30px;
 }
 
-    .search-form-row .govuk-form-group {
-        flex: 1;
-    }
-
 .search-action-row {
     display: flex;
     justify-content: space-between;
-}
-
-.search-panel .govuk-checkboxes__label::before {
-    background-color: govuk-colour("white");
 }
 
 /* Results */

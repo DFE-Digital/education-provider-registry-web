@@ -1,4 +1,6 @@
-﻿internal static class ContentSecurityPolicy
+﻿namespace DfE.EducationProviderRegistry.Web.Mvc.SecurityPolicies;
+
+internal static class ContentSecurityPolicy
 {
     public const string Value =
         "default-src 'self'; " +

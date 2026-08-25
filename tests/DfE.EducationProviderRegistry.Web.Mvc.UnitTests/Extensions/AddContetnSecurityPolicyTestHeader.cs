@@ -1,4 +1,5 @@
 ﻿using DfE.EducationProviderRegistry.Web.Mvc.Middleware;
+using DfE.EducationProviderRegistry.Web.Mvc.SecurityPolicies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;

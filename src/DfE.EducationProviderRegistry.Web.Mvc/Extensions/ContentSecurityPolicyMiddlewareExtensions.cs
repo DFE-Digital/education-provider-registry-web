@@ -1,4 +1,6 @@
-﻿namespace DfE.EducationProviderRegistry.Web.Mvc.Middleware;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.SecurityPolicies;
+
+namespace DfE.EducationProviderRegistry.Web.Mvc.Middleware;
 
 public static class SecurityHeadersMiddlewareExtensions
 {

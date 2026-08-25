@@ -1,9 +1,24 @@
-﻿@if (Context.Request.Cookies.TryGetValue("cookies_analytics", out var analytics)
+﻿@inject IConfiguration Configuration
+
+@{
+    string? containerId = Configuration["GoogleTagManager:ContainerId"];
+    string? auth = Configuration["GoogleTagManager:Auth"];
+    string? preview = Configuration["GoogleTagManager:Preview"];
+}
+
+@if (!string.IsNullOrWhiteSpace(containerId)
+    && Context.Request.Cookies.TryGetValue("cookies_analytics", out var analytics)
     && analytics == "yes")
 {
+    string environmentParameters =
+        !string.IsNullOrWhiteSpace(auth) && !string.IsNullOrWhiteSpace(preview)
+            ? $"&gtm_auth={auth}&gtm_preview={preview}&gtm_cookies_win=x"
+            : string.Empty;
+
     <!-- Google Tag Manager (noscript) -->
     <noscript>
-        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-52FS6M7J"
+        <iframe src="https://www.googletagmanager.com/ns.html?id=@containerId@environmentParameters"
+                title="Google Tag Manager"
                 height="0"
                 width="0"
                 style="display:none;visibility:hidden">

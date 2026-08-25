@@ -1,5 +1,19 @@
-﻿@if (Context.Request.Cookies.TryGetValue("cookies_analytics", out var analytics)
-                && analytics == "yes")
+﻿@inject IConfiguration Configuration
+
+@{
+    string? containerId = Configuration["GoogleTagManager:ContainerId"];
+    string? auth = Configuration["GoogleTagManager:Auth"];
+    string? preview = Configuration["GoogleTagManager:Preview"];
+
+    string environmentParameters =
+        !string.IsNullOrWhiteSpace(auth) && !string.IsNullOrWhiteSpace(preview)
+            ? $"&gtm_auth={auth}&gtm_preview={preview}&gtm_cookies_win=x"
+            : string.Empty;
+}
+
+@if (!string.IsNullOrWhiteSpace(containerId)
+    && Context.Request.Cookies.TryGetValue("cookies_analytics", out var analytics)
+    && analytics == "yes")
 {
     <!-- Google Tag Manager -->
     <script>
@@ -9,8 +23,8 @@
                     new Date().getTime(), event: 'gtm.js'
             }); var f = d.getElementsByTagName(s)[0],
                 j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
-                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
-        })(window, document, 'script', 'dataLayer', 'GTM-52FS6M7J');
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl + '@Html.Raw(environmentParameters)'; f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', '@containerId');
     </script>
     <!-- End Google Tag Manager -->
 }

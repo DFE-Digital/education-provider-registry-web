@@ -353,7 +353,7 @@ MigrationBackup/
 
 # wwwroot assets
 
-**/wwwroot/css/*
+**/wwwroot/css/site.css*
 **/wwwroot/assets/*
 **/wwwroot/js/govuk-frontend.min.js
 **/wwwroot/js/moj-frontend.min.js

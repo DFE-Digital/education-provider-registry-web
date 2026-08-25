@@ -8,6 +8,18 @@ EXPOSE 8080
 EXPOSE 8081
 
 
+FROM node:22-bookworm-slim AS assets
+
+WORKDIR /src/DfE.EducationProviderRegistry.Web.Mvc
+
+COPY DfE.EducationProviderRegistry.Web.Mvc/package*.json ./
+
+RUN npm ci
+
+COPY DfE.EducationProviderRegistry.Web.Mvc ./
+
+RUN npm run build
+
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
@@ -19,6 +31,8 @@ RUN --mount=type=secret,id=nuget_config \
     --configfile /run/secrets/nuget_config
 
 COPY . .
+
+COPY --from=assets /src/DfE.EducationProviderRegistry.Web.Mvc/wwwroot /DfE.EducationProviderRegistry.Web.Mvc/wwwroot
 
 RUN dotnet build "DfE.EducationProviderRegistry.Web.Mvc/DfE.EducationProviderRegistry.Web.Mvc.csproj" -c "$BUILD_CONFIGURATION" -o /app/build
 

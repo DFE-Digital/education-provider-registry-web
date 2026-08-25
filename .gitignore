@@ -353,9 +353,9 @@ MigrationBackup/
 
 # wwwroot assets
 
-wwwroot/css/*.css
-wwwroot/assets/*
-wwwroot/js/*.js
+**/wwwroot/css/*
+**/wwwroot/assets/*
+**/wwwroot/js/*
 
 # Environment variables
 .env

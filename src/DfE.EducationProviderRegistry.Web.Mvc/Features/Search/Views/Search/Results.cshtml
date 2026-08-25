@@ -19,9 +19,7 @@
 
 <form asp-action="Search"
       asp-controller="Search"
-      method="post"
-      class="dfe-search-panel govuk-!-margin-bottom-6">
-
+      method="post">
     @await Html.PartialAsync("_SearchPanel", Model.SearchRequest)
 
     <div class="govuk-grid-row">

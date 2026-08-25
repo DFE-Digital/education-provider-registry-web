@@ -11,7 +11,7 @@
     ViewData.ModelState[nameof(Model.Address)]?.Errors.Count > 0;
 }
 
-<div class="govuk-grid-row">
+<div class="dfe-search-panel govuk-grid-row govuk-!-margin-bottom-6">
     <div class="govuk-grid-column-full">
         <p class="govuk-body govuk-!-margin-bottom-4">Use one or both fields to search</p>
         <div class="govuk-grid-row">
@@ -22,7 +22,7 @@
                         Enter a name or ID number
                     </label>
 
-                    <div id="SearchKeywords-hint" class="govuk-hint">For example, a school or trust name, UKPRN or DfE number.</div>
+                    <div id="SearchKeywords-hint" class="govuk-hint">For example, a school or trust name.</div>
 
                     <span asp-validation-for="SearchKeywords"
                           class="govuk-error-message"></span>

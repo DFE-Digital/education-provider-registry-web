@@ -21,6 +21,8 @@ public sealed class SearchResultsViewModel
 
     public string? SecondarySearchTerms { get; set; }
 
+    public string? SelectedSortDirection { get; set; }
+
     /// <summary>
     /// Property determining whether we have at least one search result.
     /// </summary>

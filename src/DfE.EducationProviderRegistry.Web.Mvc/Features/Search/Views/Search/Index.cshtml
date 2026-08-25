@@ -17,10 +17,12 @@
 
 
 
-<form asp-action="Search" asp-controller="Search" method="post">
-    @await Html.PartialAsync("_SearchPanel", Model)
+<form 
+    asp-action="Search" 
+    asp-controller="Search" 
+    method="post">
+        @await Html.PartialAsync("_SearchPanel", Model)
 </form>
-
 
 <div>
     <h1 class="govuk-label-wrapper">

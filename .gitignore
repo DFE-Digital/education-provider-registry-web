@@ -351,6 +351,13 @@ MigrationBackup/
 
 **/appsettings.*.json
 
+# wwwroot assets
+
+**/wwwroot/css/site.css*
+**/wwwroot/assets/*
+**/wwwroot/js/govuk-frontend.min.js
+**/wwwroot/js/moj-frontend.min.js
+
 # Environment variables
 .env
 

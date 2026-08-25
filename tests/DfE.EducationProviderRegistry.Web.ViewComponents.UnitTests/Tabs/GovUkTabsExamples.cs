@@ -100,10 +100,32 @@ internal static class GovUkTabsExamples
                 ],
                 rows:
                 [
-
-                    new TableRow { Cells = {new TableCell { Text = "No data available" }} },
-                    new TableRow { Cells = {new TableCell { Text = "-" }} },
-                    new TableRow { Cells = {new TableCell { Text = "-" }} }
-
+                    new TableRow
+                {
+                    Cells =
+                    {
+                        new TableCell { Text = "David Francis" },
+                        new TableCell { Text = "1380" },
+                        new TableCell { Text = "1472" }
+                    }
+                },
+                new TableRow
+                {
+                    Cells =
+                    {
+                        new TableCell { Text = "Paul Farmer" },
+                        new TableCell { Text = "1129" },
+                        new TableCell { Text = "1083" }
+                    }
+                },
+                new TableRow
+                {
+                    Cells =
+                    {
+                        new TableCell { Text = "Rita Patel" },
+                        new TableCell { Text = "1539" },
+                        new TableCell { Text = "1265" }
+                    }
+                }
                 ]));
 }

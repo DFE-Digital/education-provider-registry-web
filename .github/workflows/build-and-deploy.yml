@@ -112,15 +112,26 @@ jobs:
           --coverage-output-format cobertura \
           --coverage-settings coverage.runsettings
 
-
     - name: Run ViewComponent UnitTests with coverage
       run: |
-        dotnet test tests/DfE.EducationProviderRegistry.Web.Mvc.UnitTests \
+        dotnet test tests/DfE.EducationProviderRegistry.Web.ViewComponents.UnitTests \
           --coverage \
           --coverage-output coverage.cobertura.xml \
           --coverage-output-format cobertura \
           --coverage-settings coverage.runsettings
 
+          - name: Build frontend assets
+  
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 22
+      
+    - name: Build frontend assets
+      working-directory: src/DfE.EducationProviderRegistry.Web.Mvc
+      run: |
+        npm ci
+        npm run build
+  
     - name: Run MVC IntegrationTests with coverage
       run: |
         dotnet test tests/DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests \

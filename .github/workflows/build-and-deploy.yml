@@ -119,8 +119,6 @@ jobs:
           --coverage-output coverage.cobertura.xml \
           --coverage-output-format cobertura \
           --coverage-settings coverage.runsettings
-
-          - name: Build frontend assets
   
     - uses: actions/setup-node@v4
       with:

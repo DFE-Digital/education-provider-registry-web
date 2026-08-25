@@ -3,6 +3,7 @@ using DfE.EducationProviderRegistry.Web.Mvc.Extensions;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search;
+using DfE.EducationProviderRegistry.Web.Mvc.Middleware;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
@@ -54,6 +55,8 @@ else
 }
 
 app.UseStatusCodePagesWithReExecute("/not-found");
+
+app.UseSecurityHeaders();
 
 app.UseHttpsRedirection();
 

@@ -31,6 +31,7 @@
   <ItemGroup>
     <Folder Include="Features\Search\ViewModels\FilterViewModels\" />
     <Folder Include="ViewComponentsBuilders\" />
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>

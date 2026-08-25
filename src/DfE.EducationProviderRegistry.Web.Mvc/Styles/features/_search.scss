@@ -2,21 +2,33 @@
 
 /* Search panel */
 
-.search-panel {
-    background-color: #d2e2f1;
-    padding: 30px 30px 0;
-    margin-bottom: 30px;
+.dfe-search-panel {
+    padding: govuk-spacing(4);
+    background-color: govuk-colour("blue", $variant: "tint-80");
+
+    @include govuk-media-query($from: tablet) {
+        padding: govuk-spacing(6);
+    }
 }
 
-.search-form-row {
+// Checkbox left, Search button right, on one row.
+.dfe-search-panel__actions {
     display: flex;
-    gap: 30px;
-    margin-top: 30px;
-}
-
-.search-action-row {
-    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
     justify-content: space-between;
+    gap: govuk-spacing(4);
+    margin-top: govuk-spacing(4); // controlled gap above the actions row
+}
+
+// Keep checkbox boxes white inside the shaded (blue) panel.
+.dfe-search-panel .govuk-checkboxes__input + .govuk-checkboxes__label::before {
+    background-color: govuk-colour("white");
+}
+
+// Remove the default form-group bottom margin inside the panel.
+.dfe-search-panel .govuk-form-group {
+    margin-bottom: 0;
 }
 
 /* Results */

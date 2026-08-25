@@ -351,6 +351,12 @@ MigrationBackup/
 
 **/appsettings.*.json
 
+# wwwroot assets
+
+wwwroot/css/*.css
+wwwroot/assets/*
+wwwroot/js/*.js
+
 # Environment variables
 .env
 

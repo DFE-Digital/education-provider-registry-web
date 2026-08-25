@@ -45,12 +45,13 @@
 
                 <div class="results-actions">
                     <div class="sort-controls">
-                        <label class="govuk-label sort-controls__label" for="sort">
+                        <label class="govuk-label govuk-label--s dfe-results-sort__label" for="sort">
                             Sort results
                         </label>
 
-                        <select class="govuk-select" id="sort" name="sort">
-                            <option value="published">A to Z</option>
+                        <select asp-for="SelectedSortDirection" class="govuk-select dfe-results-sort__select" id="sort" name="sort">
+                            <option value="az">A to Z</option>
+                            <option value="za">Z to A</option>
                         </select>
                     </div>
 

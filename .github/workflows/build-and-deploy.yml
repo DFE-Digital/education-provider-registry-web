@@ -127,7 +127,7 @@ jobs:
     - name: Build frontend assets
       working-directory: src/DfE.EducationProviderRegistry.Web.Mvc
       run: |
-        npm ci
+        npm ci --ignore-scripts
         npm run build
   
     - name: Run MVC IntegrationTests with coverage

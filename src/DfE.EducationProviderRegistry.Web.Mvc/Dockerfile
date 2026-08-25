@@ -14,7 +14,7 @@ WORKDIR /src/DfE.EducationProviderRegistry.Web.Mvc
 
 COPY DfE.EducationProviderRegistry.Web.Mvc/package*.json ./
 
-RUN npm ci
+RUN npm ci --ignore-scripts
 
 COPY DfE.EducationProviderRegistry.Web.Mvc ./
 

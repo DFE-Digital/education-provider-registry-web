@@ -83,6 +83,11 @@ variable "probe_path" {
   description = "Path for the liveness and startup probe. The probe can be disabled by setting this to null."
 }
 
+variable "google_tag_manager_auth" {
+    type      = string
+    sensitive = true
+}
+
 locals {
   postgres_ssl_mode = var.enable_postgres_ssl ? "require" : "disable"
 

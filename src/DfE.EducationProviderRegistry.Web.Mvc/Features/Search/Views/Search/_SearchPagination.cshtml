@@ -1,57 +1,6 @@
-﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels
-@using Microsoft.AspNetCore.Http.Extensions
+﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search
+@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels
 @model SearchResultsViewModel
-
-@functions {
-    private string BuildPageUrl(
-        IUrlHelper urlHelper,
-        SearchRequestViewModel searchRequest,
-        int pageNumber)
-    {
-        QueryBuilder query = new();
-
-        if (!string.IsNullOrWhiteSpace(searchRequest.SearchKeywords))
-        {
-            query.Add(
-                nameof(searchRequest.SearchKeywords),
-                searchRequest.SearchKeywords);
-        }
-
-        if (!string.IsNullOrWhiteSpace(searchRequest.Address))
-        {
-            query.Add(
-                nameof(searchRequest.Address),
-                searchRequest.Address);
-        }
-
-        query.Add(
-            nameof(searchRequest.PageNumber),
-            pageNumber.ToString());
-
-        query.Add(
-            nameof(searchRequest.RecordsPerPage),
-            searchRequest.RecordsPerPage.ToString());
-
-        if (searchRequest.SelectedFacets is not null)
-        {
-            foreach (KeyValuePair<string, List<string>> facet in searchRequest.SelectedFacets)
-            {
-                foreach (string value in facet.Value)
-                {
-                    query.Add(
-                        $"SelectedFacets[{facet.Key}]",
-                        value);
-                }
-            }
-        }
-
-        string path = urlHelper.Action(
-            "Search",
-            "Search")!;
-
-        return path + query.ToQueryString();
-    }
-}
 
 @if (Model.TotalPages > 1)
 {
@@ -67,10 +16,10 @@
             <div class="govuk-pagination__prev">
 
                 <a class="govuk-link govuk-pagination__link"
-                   href="@BuildPageUrl(
-                                                Url,
-                                                Model.SearchRequest,
-                                                currentPage - 1)"
+                   href="@SearchUrlBuilder.BuildPageUrl(
+                                          Url,
+                                          Model.SearchRequest,
+                                          currentPage - 1)"
                    rel="prev">
 
                     <svg class="govuk-pagination__icon govuk-pagination__icon--prev"
@@ -99,10 +48,10 @@
                 <li class="govuk-pagination__item">
 
                     <a class="govuk-link govuk-pagination__link"
-                       href="@BuildPageUrl(
-                                                        Url,
-                                                        Model.SearchRequest,
-                                                        1)"
+                       href="@SearchUrlBuilder.BuildPageUrl(
+                                                  Url,
+                                                  Model.SearchRequest,
+                                                  1)"
                        aria-label="Page 1">
                         1
                     </a>
@@ -127,10 +76,10 @@
                 <li class="govuk-pagination__item @(isCurrentPage ? "govuk-pagination__item--current" : null)">
 
                     <a class="govuk-link govuk-pagination__link"
-                       href="@BuildPageUrl(
-                                                        Url,
-                                                        Model.SearchRequest,
-                                                        pageNumber)"
+                       href="@SearchUrlBuilder.BuildPageUrl(
+                                                  Url,
+                                                  Model.SearchRequest,
+                                                  pageNumber)"
                        aria-label="Page @pageNumber"
                        aria-current="@(isCurrentPage ? "page" : null)">
                         @pageNumber
@@ -151,10 +100,10 @@
                 <li class="govuk-pagination__item">
 
                     <a class="govuk-link govuk-pagination__link"
-                       href="@BuildPageUrl(
-                                                        Url,
-                                                        Model.SearchRequest,
-                                                        Model.TotalPages)"
+                       href="@SearchUrlBuilder.BuildPageUrl(
+                                                  Url,
+                                                  Model.SearchRequest,
+                                                  Model.TotalPages)"
                        aria-label="Page @Model.TotalPages">
                         @Model.TotalPages
                     </a>
@@ -169,10 +118,10 @@
             <div class="govuk-pagination__next">
 
                 <a class="govuk-link govuk-pagination__link"
-                   href="@BuildPageUrl(
-                                                Url,
-                                                Model.SearchRequest,
-                                                currentPage + 1)"
+                   href="@SearchUrlBuilder.BuildPageUrl(
+                                          Url,
+                                          Model.SearchRequest,
+                                          currentPage + 1)"
                    rel="next">
 
                     <span class="govuk-pagination__link-title">

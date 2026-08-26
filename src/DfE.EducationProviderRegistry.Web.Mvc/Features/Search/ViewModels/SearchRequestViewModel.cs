@@ -24,7 +24,6 @@ public sealed class SearchRequestViewModel
     //[Required(ErrorMessage = "Enter an establishment name")]
     public string? SearchKeywords { get; set; }
 
-
     /// <summary>
     ///     Gets or sets address location entered by user -- Temp wiring
     /// </summary>
@@ -39,8 +38,6 @@ public sealed class SearchRequestViewModel
     /// determines how many results are shown in each page of the search results.
     /// </remarks>
     public int RecordsPerPage { get; set; } = 10;
-
-    public string? Sort { get; set; }
 
     public string? Sort { get; set; }
 
@@ -63,7 +60,6 @@ public sealed class SearchRequestViewModel
     /// ensuring that no facet filters are applied to the search request.
     /// </remarks>
     public bool ClearFilters { get; set; }
-
 
     /// <summary>
     /// Remove a specific filter

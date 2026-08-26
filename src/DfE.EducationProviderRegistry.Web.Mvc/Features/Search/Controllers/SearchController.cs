@@ -71,9 +71,15 @@ public sealed class SearchController : Controller
             return View("Index", model);
         }
 
+        string sortDirection = model.Sort switch
+        {
+            "za" => "desc",
+            _ => "asc"
+        };
+
         SortOrder sortOrder = new(
             sortField: "TO_BE_DEFINED",
-            sortDirection: "ASC",
+            sortDirection: sortDirection,
             validSortFields:
             [
                 "TO_BE_DEFINED"

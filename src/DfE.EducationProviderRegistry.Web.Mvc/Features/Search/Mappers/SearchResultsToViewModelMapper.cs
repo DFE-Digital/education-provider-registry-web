@@ -73,6 +73,8 @@ public sealed class SearchResultsToViewModelMapper :
             SearchRequest =
                 input.SearchRequest,
 
+            SelectedSortDirection = input.SearchRequest.Sort,
+
             EstablishmentResults =
                 searchResponse.EstablishmentResults is not null
                     ? _establishmentSearchResultsToViewModelMapper.Map(

@@ -42,6 +42,8 @@ public sealed class SearchRequestViewModel
     /// </remarks>
     public int RecordsPerPage { get; set; } = 10;
 
+    public string? Sort { get; set; }
+
     /// <summary>
     /// Gets or sets the current page number for the search results.
     /// </summary>

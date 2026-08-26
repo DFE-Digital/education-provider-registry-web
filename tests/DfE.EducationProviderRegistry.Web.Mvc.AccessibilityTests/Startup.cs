@@ -1,7 +1,7 @@
 ﻿using DfE.Core.Libraries.IntegrationTests.Database.Postgres.Container.Extensions;
 using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Actions;
 using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Actions.Handlers;
-using DfE.EducationProviderRegistry.Web.SharedTests;
+using DfE.EducationProviderRegistry.Web.SharedTests.ApplicationContainer.Extensions;
 using DfE.WebDriver;
 using MartinCostello.Logging.XUnit;
 using Microsoft.Extensions.Configuration;

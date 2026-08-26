@@ -3,7 +3,7 @@ using DfE.Core.Libraries.IntegrationTests.Abstractions.Containers.Registry.Build
 using DotNet.Testcontainers.Builders;
 using Microsoft.Extensions.Options;
 
-namespace DfE.EducationProviderRegistry.Web.SharedTests.Container;
+namespace DfE.EducationProviderRegistry.Web.SharedTests.ApplicationContainer;
 
 internal sealed class HttpWaitStrategyBuilderHandler : IConfigureContainerBuilderHandler<ContainerBuilder>
 {

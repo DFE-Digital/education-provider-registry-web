@@ -2,7 +2,7 @@
 using DfE.Core.Libraries.IntegrationTests.Database.Postgres.Container.Provider;
 using DotNet.Testcontainers.Builders;
 
-namespace DfE.EducationProviderRegistry.Web.SharedTests.Container;
+namespace DfE.EducationProviderRegistry.Web.SharedTests.ApplicationContainer;
 
 internal sealed class DatabaseConnectionStringBuilderHandler
     : IConfigureContainerBuilderHandler<ContainerBuilder>

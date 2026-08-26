@@ -20,11 +20,12 @@
 <form asp-action="Search"
       asp-controller="Search"
       method="post">
+
     @await Html.PartialAsync("_SearchPanel", Model.SearchRequest)
 
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-third">
 
+        <div class="govuk-grid-column-one-third">
             <div class="filter-panel">
 
                 <div class="filter-panel__title">
@@ -32,68 +33,79 @@
                         Filter
                     </h2>
                 </div>
+
                 @await Html.PartialAsync("_SearchFilters", Model.Facets)
+
             </div>
         </div>
 
-        @if (Model.HasResults)
-        {
-            <div class="results-header">
-                <p class="govuk-body">
-                    @Model.EstablishmentResults.Count results
-                </p>
+        <div class="govuk-grid-column-two-thirds">
 
-                <div class="results-actions">
-                    <div class="sort-controls">
-                        <label class="govuk-label sort-controls__label" for="sort">
-                            Sort results
-                        </label>
-
-                        <select class="govuk-select" id="sort" name="sort">
-                            <option value="published">A to Z</option>
-                        </select>
-                    </div>
-
-                    <button type="button"
-                            class="govuk-button govuk-button--secondary"
-                            data-module="govuk-button">
-                        Download results
-                    </button>
-                </div>
-            </div>
-
+            @if (Model.HasResults)
             {
-                <div class="govuk-grid-column-two-thirds">
-                    <div class="govuk-grid-row search-results">
-                        @await Component.InvokeAsync("GovUkTabs",
+                @await Html.PartialAsync("_SearchResultsHeader", Model)
+
+                <div class="search-results">
+
+                    @await Component.InvokeAsync(
+                        "GovUkTabs",
                         new GovUkTabs(
                         [
                             new Tab(
                                 id: "establishments",
-                                title: $"Establishments ({Model.EstablishmentResults.Count})",
+                                title: $"Establishments ({Model.TotalEstablishmentResults})",
                                 contents:
-                                Model.EstablishmentResults.Select(result => new TabContent(
-                                    viewComponentName: "SharedGovUkTable",
-                                    model: result)).ToList()
+                                    Model.EstablishmentResults
+                                        .Select(result =>
+                                            new TabContent(
+                                                viewComponentName: "SharedGovUkTable",
+                                                model: result))
+                                        .ToList()
                             ),
-                                new Tab(
+
+                            new Tab(
                                 id: "establishmentsGroups",
                                 title: "Establishments groups",
                                 contents:
                                 [
-                                    new TabContent("SharedGovUkTable",  new GovUkTable([new TableColumn { Text = "Placeholder" }], [new TableRow{Cells = new List<TableCell>() {new(){Text = "Sample Cell"} } }]))
+                                    new TabContent(
+                                        "SharedGovUkTable",
+                                        new GovUkTable(
+                                            [
+                                                new TableColumn
+                                                {
+                                                    Text = "Placeholder"
+                                                }
+                                            ],
+                                            [
+                                                new TableRow
+                                                {
+                                                    Cells =
+                                                    [
+                                                        new TableCell
+                                                        {
+                                                            Text = "Sample Cell"
+                                                        }
+                                                    ]
+                                                }
+                                            ]))
                                 ]
                             )
-                ]))
-                    </div>
+                        ]))
+
                 </div>
 
+                @await Html.PartialAsync("_SearchPagination", Model)
             }
-        }
-        else
-        {
-            <p class="govuk-body">No results found.</p>
-        }
+            else
+            {
+                <p class="govuk-body">
+                    No results found.
+                </p>
+            }
+
+        </div>
+
     </div>
 
 </form>

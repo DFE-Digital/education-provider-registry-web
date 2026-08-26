@@ -40,7 +40,7 @@ public sealed class SearchRequestViewModel
     /// This value is usually configured indirectly via application settings and
     /// determines how many results are shown in each page of the search results.
     /// </remarks>
-    public int RecordsPerPage { get; set; }
+    public int RecordsPerPage { get; set; } = 10;
 
     /// <summary>
     /// Gets or sets the current page number for the search results.

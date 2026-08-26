@@ -19,7 +19,7 @@ internal static class UseCaseResponseSearchResponseTestDouble
 
     public static UseCaseResponse<SearchResponse> EmptySuccess()
     {
-        EstablishmentSearchResults emptyResults = new([]);
+        EstablishmentSearchResults emptyResults = new([], 1);
         SearchFacets emptyFacets = new([]);
         SearchResponse response = new(emptyResults, emptyFacets);
 

@@ -103,7 +103,7 @@ public sealed class SearchResultsToViewModelMapperTests
 
         SearchResponse response =
             new(
-                new EstablishmentSearchResults(establishmentResults),
+                new EstablishmentSearchResults(establishmentResults, 1),
                 null);
 
         SearchResultsMappingContext input = new(new SearchRequestViewModel(), UseCaseResponse<SearchResponse>.Success(response));

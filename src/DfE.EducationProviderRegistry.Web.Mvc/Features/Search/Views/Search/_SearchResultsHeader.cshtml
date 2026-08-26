@@ -1,0 +1,37 @@
+﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels
+@model SearchResultsViewModel
+
+<div class="results-header">
+
+    <p class="govuk-body">
+        @Model.TotalSearchResultsCount results
+    </p>
+
+    <div class="results-actions">
+
+        <div class="sort-controls">
+
+            <label class="govuk-label sort-controls__label"
+                   for="sort">
+                Sort results
+            </label>
+
+            <select class="govuk-select"
+                    id="sort"
+                    name="sort">
+                <option value="published">
+                    A to Z
+                </option>
+            </select>
+
+        </div>
+
+        <button type="button"
+                class="govuk-button govuk-button--secondary"
+                data-module="govuk-button">
+            Download results
+        </button>
+
+    </div>
+
+</div>

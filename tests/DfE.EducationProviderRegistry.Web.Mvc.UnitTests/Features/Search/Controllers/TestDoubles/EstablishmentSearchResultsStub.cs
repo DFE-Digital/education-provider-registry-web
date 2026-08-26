@@ -6,5 +6,5 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Contro
 [ExcludeFromCodeCoverage]
 internal static class EstablishmentSearchResultsStub
 {
-    public static EstablishmentSearchResults Empty() => new([]);
+    public static EstablishmentSearchResults Empty() => new([], 1);
 }

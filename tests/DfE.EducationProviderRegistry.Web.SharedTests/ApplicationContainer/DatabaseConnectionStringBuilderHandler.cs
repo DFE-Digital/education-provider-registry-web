@@ -1,5 +1,5 @@
 ﻿using DfE.Core.Libraries.IntegrationTests.Abstractions.Containers.Registry.BuilderHandler;
-using DfE.Core.Libraries.IntegrationTests.Database.Postgres.Container.Provider;
+using DfE.Core.Libraries.IntegrationTests.Database.Postgres.Container.Providers;
 using DotNet.Testcontainers.Builders;
 
 namespace DfE.EducationProviderRegistry.Web.SharedTests.ApplicationContainer;
@@ -7,20 +7,18 @@ namespace DfE.EducationProviderRegistry.Web.SharedTests.ApplicationContainer;
 internal sealed class DatabaseConnectionStringBuilderHandler
     : IConfigureContainerBuilderHandler<ContainerBuilder>
 {
-    private readonly IPostgresContainerConnectionStringProvider _provider;
+    private readonly IPostgresDatabaseProvider _provider;
 
-    public DatabaseConnectionStringBuilderHandler(IPostgresContainerConnectionStringProvider provider)
+    public DatabaseConnectionStringBuilderHandler(IPostgresDatabaseProvider provider)
     {
         _provider = provider;
     }
 
-    public ValueTask<ContainerBuilder> HandleAsync(
+    public async ValueTask<ContainerBuilder> HandleAsync(
         ContainerBuilder builder,
         CancellationToken cancellationToken)
     {
-        return ValueTask.FromResult(
-            builder.WithEnvironment(
-                name: "eprweb_eprdat_dotnet_db_connection",
-                value: _provider.GetConnectionString()));
+        string connectionString = await _provider.GetConnectionStringAsync("postgres", cancellationToken: cancellationToken);
+        return builder.WithEnvironment(name: "eprweb_eprdat_dotnet_db_connection", value: connectionString);
     }
 }

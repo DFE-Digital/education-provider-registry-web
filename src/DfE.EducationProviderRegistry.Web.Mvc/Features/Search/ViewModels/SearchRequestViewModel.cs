@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+﻿namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 
 public sealed class SearchRequestViewModel
 {
@@ -41,6 +39,8 @@ public sealed class SearchRequestViewModel
     /// determines how many results are shown in each page of the search results.
     /// </remarks>
     public int RecordsPerPage { get; set; } = 10;
+
+    public string? Sort { get; set; }
 
     public string? Sort { get; set; }
 

@@ -22,8 +22,8 @@ public static class ApplicationContainerServiceCollectionExtensions
 
         services.AddSingleton(t => t.GetRequiredService<IOptions<ApplicationOptions>>().Value);
 
-        services.TryAddSingleton<DatabaseConnectionStringBuilderHandler>();
-        services.TryAddSingleton<HttpWaitStrategyBuilderHandler>();
+        services.TryAddScoped<DatabaseConnectionStringBuilderHandler>();
+        services.TryAddScoped<HttpWaitStrategyBuilderHandler>();
 
         services.AddScoped<Dictionary<string, Func<IReadOnlyCollection<IConfigureContainerBuilderHandler<ContainerBuilder>>>>>(sp =>
         {

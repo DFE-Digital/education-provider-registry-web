@@ -1,6 +1,8 @@
 ﻿namespace DfE.EducationProviderRegistry.Web.Mvc.Settings;
 
-public sealed record ClaritySettings(
-    bool Enabled,
-    string ProjectId);
+public class ClaritySettings
+{
+    public bool Enabled { get; set; }
+    public string ProjectId { get; set; } = string.Empty;
+}
 

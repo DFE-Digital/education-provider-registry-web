@@ -1,15 +1,13 @@
 ﻿@using DfE.EducationProviderRegistry.Web.Mvc.Settings
 @using Microsoft.Extensions.Options
-@inject IOptions<ClaritySettings> ClarityOptions
-@{
-    var clarity = ClarityOptions.Value;
 
-    // Basic consent mode: Microsoft Clarity is only loaded when analytics consent
-    // has already been granted, so Clarity sends no data without consent. First-time
-    // visitors who accept via the cookie banner get Clarity loaded on the fly by
-    // loadClarity() in cookies.js.
+@inject IOptions<ClaritySettings> ClarityOptions
+
+@{
+    ClaritySettings clarity = ClarityOptions.Value;
     bool analyticsGranted = Context.IsAnalyticsConsentGranted();
 }
+
 @if (clarity.Enabled && !string.IsNullOrEmpty(clarity.ProjectId))
 {
     <script>

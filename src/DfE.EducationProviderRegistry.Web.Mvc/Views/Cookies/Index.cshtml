@@ -1,34 +1,125 @@
-﻿@{
+﻿@model CookiesViewModel
+@{
     ViewData["Title"] = "Cookies";
 }
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-l">Cookies</h1>
-        <p class="govuk-body">Cookies are small files saved on your phone, tablet or computer when you visit a website.</p>
-        <p class="govuk-body">We use cookies to make this site work and collect information about how you use our service.</p>
-        <h2 class="govuk-heading-m">Essential cookies</h2>
-        <p class="govuk-body">Essential cookies keep your information secure while you use this service. We do not need to ask permission to use them.</p>
-        <table class="govuk-table">
-            <caption class="govuk-table__caption govuk-table__caption--s">Essential cookies we use</caption>
-            <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header">Name</th>
-                    <th scope="col" class="govuk-table__header">Purpose</th>
-                    <th scope="col" class="govuk-table__header">Expires</th>
-                </tr>
-            </thead>
-            <tbody class="govuk-table__body">
-                <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">session_cookie</td>
-                    <td class="govuk-table__cell">Used to keep you signed in</td>
-                    <td class="govuk-table__cell">20 hours</td>
-                </tr>
-                <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">cookie_policy</td>
-                    <td class="govuk-table__cell">Saves your cookie consent settings</td>
-                    <td class="govuk-table__cell">1 year</td>
-                </tr>
-            </tbody>
-        </table>
+
+@* No container or <main> here: _GovUkPageTemplate already wraps the body in
+   <div class="govuk-width-container"><main class="govuk-main-wrapper" id="main-content">.
+   This view used to add its own, which shipped two <main> landmarks and a duplicate
+   id="main-content" — the skip link resolves to the first match, so it skipped to the
+   outer wrapper and the duplicate id is a 4.1.1 / 1.3.1 defect. *@
+
+@if (Model.Saved)
+{
+    <div class="govuk-notification-banner govuk-notification-banner--success" role="alert"
+         aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+        <div class="govuk-notification-banner__header">
+            <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">Success</h2>
+        </div>
+        <div class="govuk-notification-banner__content">
+            <p class="govuk-body">Your cookie settings have been saved.</p>
+        </div>
     </div>
-</div>
+}
+
+<h1 class="govuk-heading-l">Cookies</h1>
+
+<p class="govuk-body">Cookies are small files saved on your phone, tablet or computer when you visit a website.</p>
+<p class="govuk-body">We use cookies to make Check Performance Data work and to collect information about how you use the service.</p>
+
+<h2 class="govuk-heading-m">Essential cookies</h2>
+<p class="govuk-body">These cookies are needed to run the service. They do not store any personally identifiable information.</p>
+
+<table class="govuk-table">
+    <caption class="govuk-table__caption govuk-table__caption--s">Essential cookies we use</caption>
+    <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th class="govuk-table__header" scope="col">Name</th>
+            <th class="govuk-table__header" scope="col">Purpose</th>
+            <th class="govuk-table__header" scope="col">Expires</th>
+        </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+            <td class="govuk-table__cell">.AspNetCore.Antiforgery.*</td>
+            <td class="govuk-table__cell">Helps protect against cross-site request forgery attacks</td>
+            <td class="govuk-table__cell">When you close the browser</td>
+        </tr>
+        <tr class="govuk-table__row">
+            <td class="govuk-table__cell">cookies_policy</td>
+            <td class="govuk-table__cell">Saves your cookie consent settings</td>
+            <td class="govuk-table__cell">1 year</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 class="govuk-heading-m">Analytics cookies (optional)</h2>
+<p class="govuk-body">We use Google Analytics and Microsoft Clarity to collect data about how you use the service. This information helps us improve the service.</p>
+<p class="govuk-body">Google Analytics sets cookies that store anonymised information about:</p>
+<ul class="govuk-list govuk-list--bullet">
+    <li>how you got to the service</li>
+    <li>the pages you visit and how long you spend on each page</li>
+    <li>what you click on while you're visiting the service</li>
+</ul>
+<p class="govuk-body">Microsoft Clarity sets cookies that record how you use the service, such as your mouse movements, clicks and scrolling, so we can see where the service can be improved. This information is anonymised.</p>
+
+<table class="govuk-table">
+    <caption class="govuk-table__caption govuk-table__caption--s">Analytics cookies we use</caption>
+    <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th class="govuk-table__header" scope="col">Name</th>
+            <th class="govuk-table__header" scope="col">Purpose</th>
+            <th class="govuk-table__header" scope="col">Expires</th>
+        </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+            <td class="govuk-table__cell">_ga</td>
+            <td class="govuk-table__cell">Distinguishes users for Google Analytics</td>
+            <td class="govuk-table__cell">2 years</td>
+        </tr>
+        <tr class="govuk-table__row">
+            <td class="govuk-table__cell">_ga_*</td>
+            <td class="govuk-table__cell">Stores session state for Google Analytics</td>
+            <td class="govuk-table__cell">2 years</td>
+        </tr>
+        <tr class="govuk-table__row">
+            <td class="govuk-table__cell">_clck</td>
+            <td class="govuk-table__cell">Stores a Microsoft Clarity user ID and preferences</td>
+            <td class="govuk-table__cell">1 year</td>
+        </tr>
+        <tr class="govuk-table__row">
+            <td class="govuk-table__cell">_clsk</td>
+            <td class="govuk-table__cell">Connects multiple Microsoft Clarity page views into a single session</td>
+            <td class="govuk-table__cell">1 day</td>
+        </tr>
+    </tbody>
+</table>
+
+<form id="cookies-form" method="post" action="/cookies">
+    @Html.AntiForgeryToken()
+    <div class="govuk-form-group">
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                Do you want to accept analytics cookies?
+            </legend>
+            <div class="govuk-radios" data-module="govuk-radios">
+                <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="analytics-yes" name="analytics" type="radio"
+                           value="true" @(Model.Analytics == true ? "checked" : "")>
+                    <label class="govuk-label govuk-radios__label" for="analytics-yes">
+                        Yes, use cookies that measure my website use
+                    </label>
+                </div>
+                <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="analytics-no" name="analytics" type="radio"
+                           value="false" @(Model.Analytics == false ? "checked" : "")>
+                    <label class="govuk-label govuk-radios__label" for="analytics-no">
+                        No, do not use cookies that measure my website use
+                    </label>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+    <button type="submit" class="govuk-button">Save cookie settings</button>
+</form>

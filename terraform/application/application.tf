@@ -18,7 +18,6 @@ module "application_configuration" {
   }
   secret_variables = {
     #DATABASE_URL = module.postgres.url
-    GoogleTagManager__Auth = var.google_tag_manager_auth
   }
 }
 

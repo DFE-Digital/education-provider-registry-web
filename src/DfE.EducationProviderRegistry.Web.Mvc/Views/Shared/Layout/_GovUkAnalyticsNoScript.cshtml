@@ -12,12 +12,17 @@
 {
     string environmentParameters =
         !string.IsNullOrWhiteSpace(auth) && !string.IsNullOrWhiteSpace(preview)
-            ? $"&gtm_auth={auth}&gtm_preview={preview}&gtm_cookies_win=x"
+            ? $"&gtm_auth={Uri.EscapeDataString(auth)}" +
+              $"&gtm_preview={Uri.EscapeDataString(preview)}" +
+              "&gtm_cookies_win=x"
             : string.Empty;
+
+    string googleTagManagerUrl =
+        $"https://www.googletagmanager.com/ns.html?id={Uri.EscapeDataString(containerId)}{environmentParameters}";
 
     <!-- Google Tag Manager (noscript) -->
     <noscript>
-        <iframe src="https://www.googletagmanager.com/ns.html?id=@containerId@environmentParameters"
+        <iframe src="@googleTagManagerUrl"
                 title="Google Tag Manager"
                 height="0"
                 width="0"

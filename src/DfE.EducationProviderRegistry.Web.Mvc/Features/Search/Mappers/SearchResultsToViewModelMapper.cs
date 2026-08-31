@@ -83,9 +83,8 @@ public sealed class SearchResultsToViewModelMapper :
                             .EstablishmentCollection)
                     : [],
 
-
             TotalEstablishmentResults =
-                searchResponse.EstablishmentResults?.TotalCount ?? 0,
+                searchResponse.TotalNumberOfResults,
 
             Facets = facets
         };

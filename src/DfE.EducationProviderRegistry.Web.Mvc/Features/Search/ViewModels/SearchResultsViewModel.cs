@@ -26,17 +26,12 @@ public sealed class SearchResultsViewModel
     /// <summary>
     /// Property determining whether we have at least one search result.
     /// </summary>
-    public bool HasResults => TotalSearchResultsCount >= 1;
+    public bool HasResults => TotalEstablishmentResults >= 1;
 
     /// <summary>
     /// Property determining whether we have more than one search result.
     /// </summary>
-    public bool HasMoreThanOneResult => TotalSearchResultsCount > 1;
-
-    /// <summary>
-    /// Property determining the number of search results.
-    /// </summary>
-    public int TotalSearchResultsCount => TotalEstablishmentResults;
+    public bool HasMoreThanOneResult => TotalEstablishmentResults > 1;
 
     /// <summary>
     /// Determines whether there are filters in the results
@@ -45,14 +40,16 @@ public sealed class SearchResultsViewModel
 
     public SearchRequestViewModel SearchRequest { get; set; } = new();
 
+    /// <summary>
+    /// Property determining the number of search results.
+    /// </summary>
     public int TotalEstablishmentResults { get; set; }
 
     public int TotalPages =>
-    SearchRequest.RecordsPerPage <= 0
-        ? 0
-        : (int)Math.Ceiling(
-            TotalEstablishmentResults /
-            (double)SearchRequest.RecordsPerPage);
+        SearchRequest.RecordsPerPage <= 0
+            ? 0
+            : (int)Math.Ceiling(
+                TotalEstablishmentResults / (double)SearchRequest.RecordsPerPage);
 
     public bool HasPreviousPage =>
         SearchRequest.PageNumber > 1;

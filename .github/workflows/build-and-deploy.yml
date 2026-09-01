@@ -171,8 +171,7 @@ jobs:
         sed -i "s|{APPLICATION_IMAGE_TAG}|$TAG|g" tests/DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests/appsettings.json
 
     - name: Run Accessibility Tests
-      run: |
-        dotnet test tests/DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests      
+      run: dotnet test tests/DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests      
       env:
         AccessibilityTestOptions__ArtifactsOutputDirectory: ${{ github.workspace }}/artifacts
 
@@ -182,6 +181,17 @@ jobs:
       with:
         name: accessibility-results
         path: artifacts
+
+
+    - name: Update application image in UI tests
+      run: |
+        TAG="${{ needs.build.outputs.docker-image-tag }}"
+        echo "Using application image tag: [$TAG]"
+        sed -i "s|{APPLICATION_IMAGE_TAG}|$TAG|g" tests/DfE.EducationProviderRegistry.Web.Mvc.UITests/appsettings.json
+
+    - name: Run UI Tests
+      run: dotnet test tests/DfE.EducationProviderRegistry.Web.Mvc.UITests
+    # TODO artifacts from UI tests
 
     - name: Validate formatting
       run: dotnet format --verify-no-changes --verbosity diagnostic

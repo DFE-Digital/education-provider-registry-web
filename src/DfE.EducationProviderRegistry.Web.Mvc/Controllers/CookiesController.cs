@@ -32,7 +32,8 @@ public class CookiesController : Controller
             Expires = DateTimeOffset.UtcNow.AddDays(CookieExpiryDays),
             IsEssential = true,
             SameSite = SameSiteMode.Lax,
-            Secure = Request.IsHttps,
+            Secure = true,
+            HttpOnly = true,
             Path = "/"
         };
 

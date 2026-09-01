@@ -1,0 +1,27 @@
+﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels
+@model SearchResultsViewModel
+
+<div class="results-header">
+    <p class="govuk-body">
+        @Model.TotalEstablishmentResults results
+    </p>
+
+    <div class="results-actions">
+        <label class="govuk-label govuk-label--s dfe-results-sort__label" for="sort">
+            Sort results
+        </label>
+
+        <div class="results-actions__row">
+            <select asp-for="SelectedSortDirection" class="govuk-select dfe-results-sort__select" id="sort" name="sort">
+                <option value="az">A to Z</option>
+                <option value="za">Z to A</option>
+            </select>
+
+            <button type="button"
+                    class="govuk-button govuk-button--secondary results-download-button"
+                    data-module="govuk-button">
+                Download results
+            </button>
+        </div>
+    </div>
+</div>

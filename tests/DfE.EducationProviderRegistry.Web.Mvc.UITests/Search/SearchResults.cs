@@ -8,7 +8,7 @@ public sealed class SearchResults
     private readonly WebDriverWait _defaultWaiter;
     private readonly IWebDriver _driver;
 
-    private static By ResultRecords => By.CssSelector("#establishments .govuk-table");
+    private static By ResultRecords => By.CssSelector(".search-results .govuk-table");
     private static By ResultName => By.CssSelector(".govuk-table__caption");
 
     public SearchResults(IWebDriver driver)

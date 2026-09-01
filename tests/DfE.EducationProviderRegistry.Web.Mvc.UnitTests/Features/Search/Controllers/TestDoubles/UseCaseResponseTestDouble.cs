@@ -13,7 +13,7 @@ internal static class UseCaseResponseSearchResponseTestDouble
         EstablishmentSearchResults establishmentResults,
         SearchFacets? facets = null)
     {
-        SearchResponse response = new(establishmentResults, facets);
+        SearchResponse response = new(establishmentResults, facets, 1);
         return UseCaseResponse<SearchResponse>.Success(response);
     }
 
@@ -21,7 +21,7 @@ internal static class UseCaseResponseSearchResponseTestDouble
     {
         EstablishmentSearchResults emptyResults = new([]);
         SearchFacets emptyFacets = new([]);
-        SearchResponse response = new(emptyResults, emptyFacets);
+        SearchResponse response = new(emptyResults, emptyFacets, 1);
 
         return UseCaseResponse<SearchResponse>.Success(response);
     }

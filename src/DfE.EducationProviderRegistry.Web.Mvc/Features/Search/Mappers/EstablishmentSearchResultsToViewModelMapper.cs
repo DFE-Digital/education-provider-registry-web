@@ -36,7 +36,7 @@ public sealed class EstablishmentSearchResultsToViewModelMapper :
             .Create()
             .WithCaption(
                 input.Name.Value,
-                "establishments/" + input.Urn.Value)
+                "/establishments/" + input.Urn.Value)
             .WithColumns(columns);
 
         AddRows(builder, input);

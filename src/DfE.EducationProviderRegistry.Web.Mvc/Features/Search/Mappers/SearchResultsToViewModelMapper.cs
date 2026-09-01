@@ -83,6 +83,9 @@ public sealed class SearchResultsToViewModelMapper :
                             .EstablishmentCollection)
                     : [],
 
+            TotalEstablishmentResults =
+                searchResponse.TotalNumberOfResults,
+
             Facets = facets
         };
     }

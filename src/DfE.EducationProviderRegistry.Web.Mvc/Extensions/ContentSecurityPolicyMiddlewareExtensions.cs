@@ -11,11 +11,6 @@ public static class SecurityHeadersMiddlewareExtensions
             // Only report violations of the Content Security Policy, do not enforce it, so we can monitor for any issues before enforcing
             context.Response.Headers.ContentSecurityPolicyReportOnly =
                 ContentSecurityPolicy.Value;
-
-            // Uncomment the following line to enforce the Content Security Policy instead of reporting violations only
-            //context.Response.Headers.ContentSecurityPolicy =
-                //ContentSecurityPolicy.Value;
-
             await next();
         });
     }

@@ -1,34 +1,40 @@
-﻿using DfE.Core.Libraries.IntegrationTests.Database.Postgres.Container.Provider;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests;
 
-internal class EducationProviderRegistryWebApplicationFactory : WebApplicationFactory<Program>
+public sealed class EducationProviderRegistryWebApplicationFactory : WebApplicationFactory<Program>
 {
-    private readonly IPostgresContainerConnectionStringProvider _provider;
+    private readonly string _connectionString;
 
-    public EducationProviderRegistryWebApplicationFactory(IPostgresContainerConnectionStringProvider provider)
+    public EducationProviderRegistryWebApplicationFactory(string connectionString)
     {
-        ArgumentNullException.ThrowIfNull(provider);
-        _provider = provider;
+        ArgumentException.ThrowIfNullOrWhiteSpace(connectionString);
+        _connectionString = connectionString;
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.ConfigureAppConfiguration((context, configurationBuilder) =>
-        {
-            configurationBuilder.AddInMemoryCollection(
-                [
-                    new("eprweb_eprdat_dotnet_db_connection", _provider.GetConnectionString())
-                ]);
-        });
-
         builder.ConfigureServices((services) =>
         {
-
+            // TODO configure host
         });
+    }
+
+    protected override IHost CreateHost(IHostBuilder builder)
+    {
+        // Application binds config directly limitation requires host configuration https://github.com/dotnet/aspnetcore/issues/37680
+        builder.ConfigureHostConfiguration(config =>
+        {
+            config.AddInMemoryCollection([
+                new("eprweb_eprdat_dotnet_db_connection", _connectionString)
+            ]);
+        });
+
+        return base.CreateHost(builder);
+
     }
 
     public HttpClient CreateDefaultedHttpClient(Action<WebApplicationFactoryClientOptions>? configure = null)
@@ -41,10 +47,5 @@ internal class EducationProviderRegistryWebApplicationFactory : WebApplicationFa
         configure?.Invoke(options);
 
         return base.CreateClient(options);
-    }
-
-    protected override void ConfigureClient(HttpClient client)
-    {
-        client.BaseAddress = new Uri("https://localhost");
     }
 }

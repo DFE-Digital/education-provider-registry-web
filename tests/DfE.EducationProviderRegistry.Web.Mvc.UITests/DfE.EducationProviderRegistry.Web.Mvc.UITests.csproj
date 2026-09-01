@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+	<PackageReference Include="Selenium.Support" />
 	<PackageReference Include="Selenium.WebDriver" />
 	<PackageReference Include="Xunit.DependencyInjection" />
 	<PackageReference Include="Xunit.DependencyInjection.Logging" />

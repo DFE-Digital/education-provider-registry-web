@@ -4,7 +4,6 @@ using DotNet.Testcontainers.Builders;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
 
 namespace DfE.EducationProviderRegistry.Web.SharedTests.ApplicationContainer.Extensions;
 
@@ -12,15 +11,6 @@ public static class ApplicationContainerServiceCollectionExtensions
 {
     public static IServiceCollection AddApplicationContainer(this IServiceCollection services, IConfiguration configuration)
     {
-        IConfiguration applicationHostOptions = configuration.GetSection(nameof(ApplicationOptions));
-
-        services.AddOptions<ApplicationOptions>()
-            .Bind(applicationHostOptions)
-            .ValidateDataAnnotations()
-            .ValidateOnStart();
-
-        services.AddSingleton(t => t.GetRequiredService<IOptions<ApplicationOptions>>().Value);
-
         services.TryAddScoped<DatabaseConnectionStringBuilderHandler>();
         services.TryAddScoped<HttpWaitStrategyBuilderHandler>();
 
@@ -39,7 +29,7 @@ public static class ApplicationContainerServiceCollectionExtensions
 
         services.AddContainer(
             key: "epr-web",
-            configuration: applicationHostOptions);
+            configuration: configuration);
 
         services.AddScoped<ApplicationHostedEnvironment>();
 

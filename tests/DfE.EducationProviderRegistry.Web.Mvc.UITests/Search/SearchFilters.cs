@@ -23,17 +23,11 @@ internal sealed class SearchFilters
     {
         ExpandFacet(facetLabel);
 
-        _defaultWait.Until(
-            (driver) => driver.FindElement(
-                By.Id(
-                    GetFacetValueId(
-                        driver,
-                        facetLabel,
-                        facetValueLabel)))
-                .Click());
+        SelectFacetValue(facetLabel, facetValueLabel);
 
-        _defaultWait.Until((driver) => driver.FindElement(SubmitFilters).Click());
+        ApplyFilters();
     }
+
 
     public IReadOnlyCollection<SelectedFilter> GetSelectedFilters()
     {
@@ -54,13 +48,31 @@ internal sealed class SearchFilters
     private void ExpandFacet(string filterContainerLabel) =>
         _defaultWait.Until(
             (driver) =>
-                FindFilterDropdown(driver, filterContainerLabel)
+                FindFacet(driver, filterContainerLabel)
                 .Click());
+
+    private void SelectFacetValue(string facetLabel, string facetValueLabel)
+    {
+        _defaultWait.Until(
+            (driver) =>
+                driver.FindElement(
+                    By.Id(
+                        GetFacetValueId(
+                            driver,
+                            facetLabel,
+                            facetValueLabel)))
+                .Click());
+    }
+
+
+    private void ApplyFilters()
+        => _defaultWait.Until((driver)
+            => driver.FindElement(SubmitFilters).Click());
 
     private static string GetFacetValueId(IWebDriver driver, string facetLabel, string targetFacetValueLabel)
     {
         IWebElement? targetFacet =
-            FindFilterDropdown(driver, facetLabel)
+            FindFacet(driver, facetLabel)
                 .FindElements(By.CssSelector(".govuk-label"))
                 // details behaviour when collapsed .Text behaves incorrectly, so we use GetAttribute("textContent") to get the correct label text
                 .SingleOrDefault((label) =>
@@ -69,7 +81,7 @@ internal sealed class SearchFilters
         return targetFacet?.GetAttribute("for") ?? throw new InvalidOperationException($"Could not find label with text {targetFacetValueLabel}");
     }
 
-    private static IWebElement FindFilterDropdown(IWebDriver driver, string label)
+    private static IWebElement FindFacet(IWebDriver driver, string label)
     {
         IWebElement? container =
             driver

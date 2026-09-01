@@ -96,7 +96,24 @@ public sealed class EstablishmentSearchResultsToViewModelMapperTests
 
         // assert
         Assert.Equal("My School", table.Caption);
-        Assert.Equal("establishments/999999", table.CaptionLinkUrl);
+        Assert.Equal("/establishments/999999", table.CaptionLinkUrl);
+    }
+
+    [Fact]
+    public void MapItem_CreatesRootRelativeEstablishmentLink()
+    {
+        // arrange
+        EstablishmentSearchResultsToViewModelMapper mapper = new();
+        EstablishmentSearchResult input = MakeResult("123456", "Test School");
+
+        // act
+        GovUkTable table = mapper.Map([input])[0];
+
+        // assert
+        Assert.StartsWith("/", table.CaptionLinkUrl);
+        Assert.Equal(
+            "/establishments/123456",
+            table.CaptionLinkUrl);
     }
 
     [Fact]

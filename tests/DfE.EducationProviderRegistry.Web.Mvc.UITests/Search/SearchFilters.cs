@@ -82,46 +82,43 @@ internal sealed class SearchFilters
             throw new ArgumentException($"Could not find filter container with label {label}")
                 : container;
     }
+}
 
-    public sealed record SelectedFilter
+public sealed record SelectedFilter
+{
+    public SelectedFilter(IWebElement element)
     {
-        public SelectedFilter(IWebElement element)
+        ArgumentNullException.ThrowIfNull(element);
+
+        IWebElement button =
+            element.FindElement(By.CssSelector("button"));
+
+        Name = button.GetAttribute("name")
+            ?? throw new ArgumentException("Selected filter does not have a name attribute");
+
+        Value = button.GetAttribute("value")
+            ?? throw new ArgumentException("Selected filter does not have a value attribute");
+
+        string[] parts = Value.Split('|');
+
+        if (parts.Length != 2)
         {
-            ArgumentNullException.ThrowIfNull(element);
-
-            IWebElement button =
-                element.FindElement(By.CssSelector("button"));
-
-            Name = button.GetAttribute("name")
-                ?? throw new ArgumentException(
-                    "Selected filter does not have a name attribute");
-
-            Value = button.GetAttribute("value")
-                ?? throw new ArgumentException(
-                    "Selected filter does not have a value attribute");
-
-            string[] parts = Value.Split('|');
-
-            if (parts.Length != 2)
-            {
-                throw new ArgumentException(
-                    $"Expected value in format '<FilterName>|<FilterId>' but received '{Value}'");
-            }
-
-            FilterName = parts[0];
-            FilterId = parts[1];
-
-            Text = button.Text.Trim();
+            throw new ArgumentException($"Expected value in format '<FilterName>|<FilterId>' but received '{Value}'");
         }
 
-        public string Name { get; }
+        FilterName = parts[0];
+        FilterId = parts[1];
 
-        public string Value { get; }
-
-        public string FilterName { get; }
-
-        public string FilterId { get; }
-
-        public string Text { get; }
+        Text = button.Text.Trim();
     }
+
+    public string Name { get; }
+
+    public string Value { get; }
+
+    public string FilterName { get; }
+
+    public string FilterId { get; }
+
+    public string Text { get; }
 }

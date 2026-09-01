@@ -85,7 +85,7 @@ public sealed class SearchResultsUITests : IAsyncLifetime
         // Act
 
         filters.FilterBy(
-            facetLabel: targetFacet, 
+            facetLabel: targetFacet,
             facetValueLabel: targetFacetValueLabel);
 
         // Assert
@@ -131,7 +131,7 @@ public sealed class SearchResultsUITests : IAsyncLifetime
     {
         string[] preselectionFilterValueParts =
             filters.GetFacetValueValue(
-                targetFacet, 
+                targetFacet,
                 targetFacetValueLabel)!.Split("-");
 
         return string.Concat(preselectionFilterValueParts[1], "|", preselectionFilterValueParts[2]);

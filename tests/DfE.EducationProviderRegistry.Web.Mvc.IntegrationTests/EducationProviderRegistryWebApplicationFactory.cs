@@ -5,7 +5,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests;
 
-internal class EducationProviderRegistryWebApplicationFactory : WebApplicationFactory<Program>
+public sealed class EducationProviderRegistryWebApplicationFactory : WebApplicationFactory<Program>
 {
     private readonly string _connectionString;
 

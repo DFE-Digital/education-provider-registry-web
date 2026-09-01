@@ -11,7 +11,7 @@
     <Project Path="tests/DfE.EducationProviderRegistry.Web.SharedTests/DfE.EducationProviderRegistry.Web.SharedTests.csproj" Id="416d64b2-33ea-4d2d-a2ea-174f5a8979a8" />
     <Project Path="tests/DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests/DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.csproj" />
     <Project Path="tests/DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests/DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.csproj" />
-    <Project Path="tests/DfE.EducationProviderRegistry.Web.MVC.UITests/DfE.EducationProviderRegistry.Web.MVC.UITests.csproj" />
+    <Project Path="tests/DfE.EducationProviderRegistry.Web.Mvc.UITests/DfE.EducationProviderRegistry.Web.Mvc.UITests.csproj" />
     <Project Path="tests/DfE.EducationProviderRegistry.Web.Mvc.UnitTests/DfE.EducationProviderRegistry.Web.Mvc.UnitTests.csproj" />
     <Project Path="tests/DfE.EducationProviderRegistry.Web.ViewComponents.UnitTests/DfE.EducationProviderRegistry.Web.ViewComponents.UnitTests.csproj" />
   </Folder>

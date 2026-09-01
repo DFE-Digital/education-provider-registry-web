@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
-using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Text;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests;
 

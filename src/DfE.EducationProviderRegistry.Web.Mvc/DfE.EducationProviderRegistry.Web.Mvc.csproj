@@ -16,7 +16,7 @@
 	<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
 	<PackageReference Include="DfE.Core.Libraries.CrossCutting" Version="1.0.16" />
 	<PackageReference Include="DfE.Core.Libraries.CleanArchitecture" Version="1.0.16" />
-	<PackageReference Include="DfE.EducationProviderRegistry.Core.Query" Version="0.0.11" />
+	<PackageReference Include="DfE.EducationProviderRegistry.Core.Query" Version="0.0.16" />
 	<PackageReference Include="DfE.EducationProviderRegistry.Data.DatabaseModels" Version="1.0.30" />
   </ItemGroup>
 
@@ -30,6 +30,8 @@
 
   <ItemGroup>
     <Folder Include="Features\Search\ViewModels\FilterViewModels\" />
+    <Folder Include="ViewComponentsBuilders\" />
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>

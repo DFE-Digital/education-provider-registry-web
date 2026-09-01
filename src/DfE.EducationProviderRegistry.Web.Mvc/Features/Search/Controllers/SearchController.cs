@@ -61,7 +61,8 @@ public sealed class SearchController : Controller
             new SearchRequestViewModel());
     }
 
-    [HttpPost("")]
+    [HttpGet("results")]
+    [HttpPost("results")]
     public async Task<IActionResult> Search(
         SearchRequestViewModel model)
     {
@@ -70,9 +71,15 @@ public sealed class SearchController : Controller
             return View("Index", model);
         }
 
+        string sortDirection = model.Sort switch
+        {
+            "za" => "desc",
+            _ => "asc"
+        };
+
         SortOrder sortOrder = new(
             sortField: "TO_BE_DEFINED",
-            sortDirection: "ASC",
+            sortDirection: sortDirection,
             validSortFields:
             [
                 "TO_BE_DEFINED"
@@ -85,10 +92,14 @@ public sealed class SearchController : Controller
                 model.SelectedFacets);
 
         SearchRequest searchRequest = new(
-            searchIndexKey: "TO_BE_REMOVED_FROM_CORE",
-            searchKeywords: model.SearchKeywords!,
+            searchTerms: [
+                new SearchTerm("what", model.SearchKeywords!),
+                new SearchTerm("where", model.Address!),
+            ],
             searchFilterRequests,
-            sortOrder);
+            sortOrder,
+            model.Offset,
+            model.RecordsPerPage);
 
         UseCaseResponse<SearchResponse> searchResponse =
             await _searchUseCase.HandleRequestAsync(

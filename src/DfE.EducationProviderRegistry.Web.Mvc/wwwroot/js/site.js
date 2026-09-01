@@ -19,4 +19,12 @@
                 }
             });
         });
+
+    const sortSelect = document.getElementById("sort");
+
+    if (sortSelect instanceof HTMLSelectElement) {
+        sortSelect.addEventListener("change", () => {
+            sortSelect.form?.submit();
+        });
+    }
 });

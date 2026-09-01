@@ -49,11 +49,10 @@
         </ul>
         <div class="govuk-tabs__panel" id="details">
             <h2 class="govuk-heading-l">Details</h2>
-            @await Component.InvokeAsync("GovUkTable", Model.BasicDetails)
+            @await Component.InvokeAsync("SharedGovUkTable", Model.BasicDetails)
         </div>
         <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="governance">
-            <h2 class="govuk-heading-l">Governance</h2>
-            @await Component.InvokeAsync("GovUkTable", Model.Governors)
+            @await Component.InvokeAsync("SharedGovUkTable", Model.Governors)
         </div>
         <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="history">
             <h2 class="govuk-heading-l">History</h2>

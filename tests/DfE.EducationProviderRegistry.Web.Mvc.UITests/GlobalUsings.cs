@@ -1,0 +1,1 @@
+﻿global using DfE.EducationProviderRegistry.Web.MVC.UITests.Extensions;

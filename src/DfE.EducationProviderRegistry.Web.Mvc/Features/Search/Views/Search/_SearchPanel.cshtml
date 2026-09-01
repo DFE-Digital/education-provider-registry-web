@@ -11,72 +11,48 @@
     ViewData.ModelState[nameof(Model.Address)]?.Errors.Count > 0;
 }
 
-<div class="search-panel">
-    
-    <p>
-        Use one or both fields to search.
-    </p>
+<div class="dfe-search-panel govuk-grid-row govuk-!-margin-bottom-6">
+    <div class="govuk-grid-column-full">
+        <p class="govuk-body govuk-!-margin-bottom-4">Use one or both fields to search</p>
+        <div class="govuk-grid-row">
 
-    <div class="search-form-row">
-        <div class="govuk-form-group @(hasSearchKeywordsError ? "govuk-form-group--error" : "")">
-            <label asp-for="SearchKeywords"
-                   class="govuk-label govuk-!-font-weight-bold">
-                What
-            </label>
+            <div class="govuk-grid-column-one-half">
+                <div class="govuk-form-group @(hasSearchKeywordsError ? "govuk-form-group--error" : "")">
+                    <label asp-for="SearchKeywords" class="govuk-label govuk-label--s">
+                        Enter a name or ID number
+                    </label>
 
-            <div id="SearchKeywords-hint" class="govuk-hint">
-                Enter a name or ID number
-            </div>
+                    <div id="SearchKeywords-hint" class="govuk-hint">For example, a school or trust name.</div>
 
-            <span asp-validation-for="SearchKeywords"
-                  class="govuk-error-message"></span>
+                    <span asp-validation-for="SearchKeywords"
+                          class="govuk-error-message"></span>
 
-            <input asp-for="SearchKeywords"
-                   class="govuk-input @(hasSearchKeywordsError ? "govuk-input--error" : "")"
-                   aria-describedby="SearchKeywords-hint" />
-        </div>
-
-        <div class="govuk-form-group @(hasAddressError ? "govuk-form-group--error" : "")">
-            <label asp-for="Address"
-                   class="govuk-label govuk-!-font-weight-bold">
-                Where
-            </label>
-
-            <div id="Address-hint" class="govuk-hint">
-                Enter a postcode, local authority, town or city
-            </div>
-
-            <span asp-validation-for="Address"
-                  class="govuk-error-message"></span>
-
-            <input asp-for="Address"
-                   class="govuk-input @(hasAddressError ? "govuk-input--error" : "")"
-                   aria-describedby="Address-hint" />
-        </div>
-    </div>
-
-    <div class="search-action-row">
-        <div class="govuk-form-group">
-            <fieldset class="govuk-fieldset">
-                <div class="govuk-checkboxes" data-module="govuk-checkboxes">
-                    <div class="govuk-checkboxes__item">
-                        <input class="govuk-checkboxes__input"
-                               id="open_establishments"
-                               name="open_establishments"
-                               type="checkbox"
-                               value="open_establishments" />
-
-                        <label class="govuk-label govuk-checkboxes__label"
-                               for="open_establishments">
-                            Show open establishments only
-                        </label>
-                    </div>
+                    <input asp-for="SearchKeywords"
+                           class="govuk-input @(hasSearchKeywordsError ? "govuk-input--error" : "")"
+                           aria-describedby="SearchKeywords-hint" />
                 </div>
-            </fieldset>
-        </div>
+            </div>
+            <div class="govuk-grid-column-one-half">
+                <div class="govuk-form-group @(hasAddressError ? "govuk-form-group--error" : "")">
+                    <label asp-for="Address" class="govuk-label govuk-label--s">
+                        Enter a location
+                    </label>
 
-        <button class="govuk-button" type="submit">
-            Search
-        </button>
+                    <div id="Address-hint" class="govuk-hint">For example, a postcode, city or local authority.</div>
+
+                    <span asp-validation-for="Address"
+                          class="govuk-error-message"></span>
+
+                    <input asp-for="Address"
+                           class="govuk-input @(hasAddressError ? "govuk-input--error" : "")"
+                           aria-describedby="Address-hint" />
+                </div>
+            </div>
+        </div>
+        <div class="dfe-search-panel__actions">
+            <button class="govuk-button govuk-!-margin-bottom-0" type="submit">
+                Search
+            </button>
+        </div>
     </div>
 </div>

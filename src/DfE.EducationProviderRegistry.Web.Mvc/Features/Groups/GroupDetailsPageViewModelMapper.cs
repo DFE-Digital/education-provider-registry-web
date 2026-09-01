@@ -61,18 +61,18 @@ internal sealed class GroupDetailsPageViewModelMapper :
     private static GroupDetailsAcademyTabViewModel CreateAcademies(GroupReadModel model)
     {
         TableColumn[] columns = [
-            new("Name") { IsRowHeader = true},
-            new("URN")
+            new() { Text = "Name", IsRowHeader = true },
+            new() { Text = "URN" }
         ];
 
-        List<TableCell[]> rows = new();
+        List<TableRow> rows = new();
 
         foreach (Academy academy in model.Academies)
         {
             TableCell name = new()
             {
                 Text = academy.Name.ToString(),
-                Href = $"/establishment/{academy.Id.Value}"
+                Href = $"/establishments/{academy.Id.Value}"
             };
 
             TableCell urn = new()
@@ -80,7 +80,7 @@ internal sealed class GroupDetailsPageViewModelMapper :
                 Text = academy.Id.Value
             };
 
-            rows.Add([urn, name]);
+            rows.Add(new TableRow { Cells = [name, urn] });
         }
 
         GovUkTable academiesTable = new(
@@ -110,12 +110,12 @@ internal sealed class GroupDetailsPageViewModelMapper :
     private static GovUkTable CreateTrusteesTable(IEnumerable<TrusteeReadModel> trustees)
     {
         TableColumn[] columns = [
-            new("Name") { IsRowHeader = true},
-            new("Governor ID"),
-            new("Start date")
+            new() { Text = "Name", IsRowHeader = true },
+            new() { Text = "Governor ID" },
+            new() { Text = "Start date" }
         ];
 
-        List<TableCell[]> rows = [];
+        List<TableRow> rows = [];
 
         foreach (TrusteeReadModel trustee in trustees)
         {
@@ -134,7 +134,7 @@ internal sealed class GroupDetailsPageViewModelMapper :
                 Text = trustee.StartDate.ToString("dd MMMM yyyy")
             };
 
-            rows.Add([name, governorId, startDate]);
+            rows.Add(new TableRow { Cells = [name, governorId, startDate] });
         }
 
         return new(columns, rows, caption: "Trustees");
@@ -143,12 +143,12 @@ internal sealed class GroupDetailsPageViewModelMapper :
     private static GovUkTable CreateMembersTable(IEnumerable<MemberReadModel> members)
     {
         TableColumn[] columns = [
-            new("Name") { IsRowHeader = true},
-            new("Governor ID"),
-            new("Start date")
+            new() { Text = "Name", IsRowHeader = true },
+            new() { Text = "Governor ID" },
+            new() { Text = "Start date" }
         ];
 
-        List<TableCell[]> rows = [];
+        List<TableRow> rows = [];
 
         foreach (MemberReadModel member in members)
         {
@@ -167,7 +167,7 @@ internal sealed class GroupDetailsPageViewModelMapper :
                 Text = member.StartDate.ToString("dd MMMM yyyy")
             };
 
-            rows.Add([name, governorId, startDate]);
+            rows.Add(new TableRow { Cells = [name, governorId, startDate] });
         }
 
         return new(columns, rows, caption: "Members");

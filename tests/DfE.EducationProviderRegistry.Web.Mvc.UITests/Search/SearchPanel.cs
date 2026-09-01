@@ -6,7 +6,6 @@ namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Search;
 internal sealed class SearchPanel
 {
     private readonly WebDriverWait _defaultWaiter;
-    private readonly IWebDriver _driver;
 
     private static By IdentityInput => By.CssSelector("#SearchKeywords");
     private static By LocationInput => By.CssSelector("#Address");
@@ -16,8 +15,7 @@ internal sealed class SearchPanel
 
     public SearchPanel(IWebDriver driver)
     {
-        _driver = driver;
-        _defaultWaiter = new(_driver, TimeSpan.FromSeconds(15));
+        _defaultWaiter = new(driver, TimeSpan.FromSeconds(15));
     }
 
     public void Search((string identityTerm, string locationTerm) terms)

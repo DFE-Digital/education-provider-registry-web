@@ -155,13 +155,11 @@ jobs:
     - name: SonarCloud scan
       if: github.actor != 'dependabot[bot]'
       # awaiting review of central github-actions repo https://github.com/DFE-Digital/github-actions/pull/242
-      uses: aahmed-dfe/github-actions/sonarscan-dotnet@d9e442885ed5812c42795fb565199e5e7081b40e
+      uses: DFE-Digital/github-actions/sonarscan-dotnet@e1f86e30746687554ae0aaabf7d8feb7a502f19a
       with:
           sonarcloud-project-key: DFE-Digital_education-provider-registry-web
           sonarcloud-token: ${{ secrets.SONAR_TOKEN }}
           use-global-json: true
-          # awaiting completion of https://github.com/DFE-Digital/github-actions/pull/236/changes then defaults handle
-          java-version: 21
           coverage-report-path: coverage-sonar/SonarQube.xml
           sonarscan-exclusions: "src/**/wwwroot/css/site.css"
 
@@ -173,8 +171,7 @@ jobs:
         sed -i "s|{APPLICATION_IMAGE_TAG}|$TAG|g" tests/DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests/appsettings.json
 
     - name: Run Accessibility Tests
-      run: |
-        dotnet test tests/DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests      
+      run: dotnet test tests/DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests      
       env:
         AccessibilityTestOptions__ArtifactsOutputDirectory: ${{ github.workspace }}/artifacts
 
@@ -184,6 +181,17 @@ jobs:
       with:
         name: accessibility-results
         path: artifacts
+
+
+    - name: Update application image in UI tests
+      run: |
+        TAG="${{ needs.build.outputs.docker-image-tag }}"
+        echo "Using application image tag: [$TAG]"
+        sed -i "s|{APPLICATION_IMAGE_TAG}|$TAG|g" tests/DfE.EducationProviderRegistry.Web.Mvc.UITests/appsettings.json
+
+    - name: Run UI Tests
+      run: dotnet test tests/DfE.EducationProviderRegistry.Web.Mvc.UITests
+    # TODO artifacts from UI tests
 
     - name: Validate formatting
       run: dotnet format --verify-no-changes --verbosity diagnostic

@@ -36,9 +36,9 @@ public sealed class Startup
                 // TODO filter logging
             }));
 
-        services.AddApplicationContainer(context.Configuration);
-
         services.AddPostgres(context.Configuration);
+
+        services.AddApplicationContainer(context.Configuration);
 
         services.AddWebDriver();
     }

@@ -176,7 +176,7 @@ public sealed class SearchResultsToViewModelMapperTests
         SearchResultsToViewModelMapper mapper =
             new(establishmentMapper.Object, facetsMapper.Object);
 
-        var response = new SearchResponse(null!, null, 1    );
+        var response = new SearchResponse(null!, null, 1);
         SearchResultsMappingContext input = new(new SearchRequestViewModel(), UseCaseResponse<SearchResponse>.Success(response));
 
         // act

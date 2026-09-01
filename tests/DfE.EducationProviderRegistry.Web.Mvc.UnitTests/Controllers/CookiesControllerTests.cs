@@ -20,7 +20,7 @@ public sealed class CookiesControllerTests
 
         // act
         IActionResult result = controller.Index(saved: false);
-        
+
         // assert
         ViewResult view = Assert.IsType<ViewResult>(result);
         CookiesViewModel model = Assert.IsType<CookiesViewModel>(view.Model);

@@ -12,7 +12,7 @@ public class CookiesController : Controller
     [HttpGet("/cookies")]
     public IActionResult Index([FromQuery] bool saved = false)
     {
-        CookiesViewModel viewModel = new CookiesViewModel
+        CookiesViewModel viewModel = new()
         {
             Analytics = ReadAnalyticsConsent(),
             Saved = saved
@@ -54,9 +54,9 @@ public class CookiesController : Controller
 
         try
         {
-            JsonDocument document = JsonDocument.Parse(raw);
+            string decoded = Uri.UnescapeDataString(raw);
+            JsonDocument document = JsonDocument.Parse(decoded);
             JsonElement root = document.RootElement;
-
             return root.GetProperty("analytics").GetBoolean();
         }
         catch

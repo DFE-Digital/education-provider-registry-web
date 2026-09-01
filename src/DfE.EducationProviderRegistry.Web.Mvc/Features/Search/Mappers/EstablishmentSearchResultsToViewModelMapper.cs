@@ -36,7 +36,7 @@ public sealed class EstablishmentSearchResultsToViewModelMapper :
             .Create()
             .WithCaption(
                 input.Name.Value,
-                "establishments/" + input.Urn.Value)
+                "/establishments/" + input.Urn.Value)
             .WithColumns(columns);
 
         AddRows(builder, input);
@@ -58,14 +58,14 @@ public sealed class EstablishmentSearchResultsToViewModelMapper :
 
         builder.AddRow(
             new TableCell { Text = "Address" },
-            new TableCell { Text = BuildAddress(input) });
+            new TableCell { Text = MappingHelpers.CombineAddress(input.Address, input.Name.Value) });
 
         builder.AddRow(
             new TableCell { Text = "Local authority" },
             new TableCell
             {
                 Text = input.LocalAuthority?.Name,
-                Href = CreateLinkUrl("/la/", input.LocalAuthority?.Code)
+                Href = MappingHelpers.CreateLinkUrl("/la/", input.LocalAuthority?.Code)
             });
 
         builder.AddRow(
@@ -73,27 +73,7 @@ public sealed class EstablishmentSearchResultsToViewModelMapper :
             new TableCell
             {
                 Text = input.Group?.PartOfName,
-                Href = CreateLinkUrl("/groups/", input.Group?.PartOfCode)
+                Href = MappingHelpers.CreateLinkUrl("/groups/", input.Group?.PartOfCode)
             });
-    }
-
-    private static string BuildAddress(EstablishmentSearchResult input)
-    {
-        return string.Join(
-            " ",
-            new[]
-            {
-                input.Address?.Street,
-                input.Address?.County,
-                input.Address?.Postcode
-            }
-            .Where(value => !string.IsNullOrWhiteSpace(value)));
-    }
-
-    private static string? CreateLinkUrl(string prefix, string? value)
-    {
-        return string.IsNullOrWhiteSpace(value)
-            ? null
-            : prefix + value;
     }
 }

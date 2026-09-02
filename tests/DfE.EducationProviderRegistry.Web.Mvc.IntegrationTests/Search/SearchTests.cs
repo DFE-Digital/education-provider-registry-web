@@ -1,4 +1,5 @@
 ﻿using AngleSharp.Html.Dom;
+using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Extensions;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Search;
 
@@ -20,16 +21,14 @@ public sealed class SearchTests : WebApplicationFactoryBaseIntegrationTest
             SearchHttpRequestBuilder.Create()
                 .WithBaseUri(Factory.Server.BaseAddress)
                 .Build();
-        
+
         // Act
         HttpResponseMessage response = await client.SendAsync(message, ct);
+        IHtmlDocument doc = await response.AssertSuccessfulHtmlResponseAsync();
 
         // Assert
         // TODO both terms are empty returns ModelResult.Err
         Assert.Skip("Search with empty terms is not yet implemented");
-        
-        // response.EnsureSuccessStatusCode();
-        // Assert.Equal("text/html; charset=utf-8", response.Content.Headers.ContentType!.ToString());
     }
 
     [Fact]
@@ -48,7 +47,7 @@ public sealed class SearchTests : WebApplicationFactoryBaseIntegrationTest
         HttpResponseMessage response = await client.SendAsync(message, ct);
 
         // Assert
-        response.EnsureSuccessStatusCode();
+        IHtmlDocument doc = await response.AssertSuccessfulHtmlResponseAsync();
         // TODO results
     }
 
@@ -66,10 +65,10 @@ public sealed class SearchTests : WebApplicationFactoryBaseIntegrationTest
                 .Build();
         // Act
         HttpResponseMessage response = await client.SendAsync(message, ct);
-        
-        // Assert
 
-        response.EnsureSuccessStatusCode();
+        // Assert
+        IHtmlDocument doc = await response.AssertSuccessfulHtmlResponseAsync();
+
         // TODO SearchResults
     }
 
@@ -90,8 +89,8 @@ public sealed class SearchTests : WebApplicationFactoryBaseIntegrationTest
         HttpResponseMessage response = await client.SendAsync(message, ct);
 
         // Assert
+        IHtmlDocument doc = await response.AssertSuccessfulHtmlResponseAsync();
 
-        response.EnsureSuccessStatusCode();
         // TODO SearchResults
     }
 
@@ -102,37 +101,36 @@ public sealed class SearchTests : WebApplicationFactoryBaseIntegrationTest
         CancellationToken ct = TestContext.Current.CancellationToken;
         using HttpClient client = Factory.CreateDefaultedHttpClient();
 
-        const string filterValueApplied = "1";
+        string[] filterValueApplied = ["1"];
 
         HttpRequestMessage message =
             SearchHttpRequestBuilder.Create()
                 .WithBaseUri(Factory.Server.BaseAddress)
                 .WithIdentitySearchTerm("sch")
-                .WithFilter("EstablishmentTypeId", [filterValueApplied])
+                .WithFilter("EstablishmentTypeId", filterValueApplied)
                 .Build();
 
         // Act
         HttpResponseMessage response = await client.SendAsync(message, ct);
 
         // Assert
-        response.EnsureSuccessStatusCode();
+        IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
 
-        IHtmlDocument document = await HtmlHelpers.GetDocumentAsync(response);
+        SearchFiltersComponent filters = new(document);
 
-        SearchFilters filters = new(document);
-
-        // TODO FilteredResults
+        // TODO FilteredSearchResults
 
         // Assert Filter
         // Only selected filters are displayed
-        Filter selected = Assert.Single(filters.GetFilters()); 
+        Filter selected = Assert.Single(filters.GetFilters());
         Assert.Equal("Establishment Type", selected.Name);
 
         // Assert FilterValue
         FilterValue value = Assert.Single(selected.FilterValues);
+
         Assert.True(value.Selected);
         Assert.NotEmpty(value.Label);
-        Assert.Equal(filterValueApplied, value.Value);
+        Assert.Equal(filterValueApplied.Single(), value.Value);
     }
 
     [Fact]
@@ -142,48 +140,122 @@ public sealed class SearchTests : WebApplicationFactoryBaseIntegrationTest
         CancellationToken ct = TestContext.Current.CancellationToken;
         using HttpClient client = Factory.CreateDefaultedHttpClient();
 
-        const string filterValueApplied1 = "1";
-        const string filterValueApplied2 = "2";
+        string[] filtersToApply = ["1", "2"];
 
         HttpRequestMessage message =
             SearchHttpRequestBuilder.Create()
                 .WithBaseUri(Factory.Server.BaseAddress)
                 .WithIdentitySearchTerm("sch")
-                .WithFilter("EstablishmentTypeId", [filterValueApplied1, filterValueApplied2])
+                .WithFilter("EstablishmentTypeId", filtersToApply)
                 .Build();
         // Act
         HttpResponseMessage response = await client.SendAsync(message, ct);
-        
+
         // Assert
-        response.EnsureSuccessStatusCode();
-        IHtmlDocument document = await HtmlHelpers.GetDocumentAsync(response);
-        SearchFilters filters = new(document);
+        IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
+        SearchFiltersComponent filters = new(document);
 
         // TODO FilteredResults
 
         // Assert Filter
         Filter selected = Assert.Single(filters.GetFilters());
         Assert.Equal("Establishment Type", selected.Name);
-        
+
         // Assert FilterValues
         Assert.Equal(2, selected.FilterValues.Count);
 
-        FilterValue value1 = selected.FilterValues.Single(v => v.Value == filterValueApplied1);
+        FilterValue value1 = selected.FilterValues.Single(v => v.Value == filtersToApply[0]);
         Assert.True(value1.Selected);
         Assert.NotEmpty(value1.Label);
 
-        FilterValue value2 = selected.FilterValues.Single(v => v.Value == filterValueApplied2);
+        FilterValue value2 = selected.FilterValues.Single(v => v.Value == filtersToApply[1]);
         Assert.True(value2.Selected);
         Assert.NotEmpty(value2.Label);
     }
 
-    // TODO apply different filters (EstablishmentType, Status)
+    [Fact]
+    public async Task Search_With_Multiple_Filters_Returns_Results()
+    {
+        Assert.Skip("Multiple filters not yet available");
+    }
 
-    // TODO remove specific filter
-    // TODO clear filters
+    [Fact]
+    public async Task Search_Remove_A_Filter_Removes_Applied_Filter()
+    {
+        // Arrange
+        CancellationToken ct = TestContext.Current.CancellationToken;
+        using HttpClient client = Factory.CreateDefaultedHttpClient();
+
+        string[] filtersToApply = ["1", "2"];
+
+        HttpRequestMessage message =
+            SearchHttpRequestBuilder.Create()
+                .WithBaseUri(Factory.Server.BaseAddress)
+                .WithIdentitySearchTerm("sch")
+                .WithFilter("EstablishmentTypeId", filtersToApply)
+                .Build();
+
+        HttpResponseMessage filteredResults = await client.SendAsync(message, ct);
+        IHtmlDocument document = await filteredResults.AssertSuccessfulHtmlResponseAsync();
+        SearchFiltersComponent filters = new(document);
+
+        // Act
+        HttpResponseMessage removalResponse = await filters.RemoveFilterAsync(client, "EstablishmentTypeId", "1", ct);
+
+        // Assert
+        Assert.True(removalResponse.IsSuccessStatusCode);
+
+        Filter remainingSelectedFilter = Assert.Single(filters.GetFilters());
+        Assert.Equal("Establishment Type", remainingSelectedFilter.Name);
+
+        FilterValue remainingSelectedFilterValue = remainingSelectedFilter.FilterValues.Single();
+        Assert.True(remainingSelectedFilterValue.Selected);
+        Assert.Equal("2", remainingSelectedFilterValue.Value);
+        Assert.NotEmpty(remainingSelectedFilterValue.Label);
+    }
+
+
+    [Fact]
+    public async Task Search_Clear_Filter_Removes_All_Applied_Filters()
+    {
+        // Arrange
+        CancellationToken ct = TestContext.Current.CancellationToken;
+        using HttpClient client = Factory.CreateDefaultedHttpClient();
+
+        string[] filtersToApply = ["1", "2"];
+
+        HttpRequestMessage message =
+            SearchHttpRequestBuilder.Create()
+                .WithBaseUri(Factory.Server.BaseAddress)
+                .WithIdentitySearchTerm("sch")
+                .WithFilter("EstablishmentTypeId", filtersToApply)
+                .Build();
+
+        HttpResponseMessage filteredResults = await client.SendAsync(message, ct);
+        SearchFiltersComponent filtersApplied = new(document: await filteredResults.AssertSuccessfulHtmlResponseAsync());
+
+        // Act
+        HttpResponseMessage removalResponse = await filtersApplied.ClearFiltersAsync(client, ct);
+
+        // Assert
+        IHtmlDocument clearedFiltersDocument = await removalResponse.AssertSuccessfulHtmlResponseAsync();
+        SearchFiltersComponent clearedFilters = new(clearedFiltersDocument);
+
+        Filter filters = Assert.Single(clearedFilters.GetFilters());
+        Assert.Equal("Establishment Type", filters.Name);
+
+        // static 2 filter values in data. None selected
+        FilterValue value1 = filters.FilterValues.Single(v => v.Value == filtersToApply[0]);
+        Assert.False(value1.Selected);
+        Assert.NotEmpty(value1.Label);
+
+        FilterValue value2 = filters.FilterValues.Single(v => v.Value == filtersToApply[1]);
+        Assert.False(value2.Selected);
+        Assert.NotEmpty(value2.Label);
+    }
 
     // Results count displayed
     // Sort omitted - A-Z, pass az and Z-A, unknown defaults to az
     // RecordsPerPage = omitted 10, 0 (invalid), 1 valid, 20 valid, 21 invalid
-}
 
+}

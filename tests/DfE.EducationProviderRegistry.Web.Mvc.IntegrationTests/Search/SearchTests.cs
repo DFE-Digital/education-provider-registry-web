@@ -114,9 +114,7 @@ public sealed class SearchTests : WebApplicationFactoryBaseIntegrationTest
         HttpResponseMessage response = await client.SendAsync(message, ct);
 
         // Assert
-        IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
-
-        SearchFiltersComponent filters = new(document);
+        SearchFiltersComponent filters = new(document: await response.AssertSuccessfulHtmlResponseAsync());
 
         // TODO FilteredSearchResults
 
@@ -152,8 +150,7 @@ public sealed class SearchTests : WebApplicationFactoryBaseIntegrationTest
         HttpResponseMessage response = await client.SendAsync(message, ct);
 
         // Assert
-        IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
-        SearchFiltersComponent filters = new(document);
+        SearchFiltersComponent filters = new(document: await response.AssertSuccessfulHtmlResponseAsync());
 
         // TODO FilteredResults
 
@@ -206,10 +203,9 @@ public sealed class SearchTests : WebApplicationFactoryBaseIntegrationTest
                 facetValue: "1",
                 ct);
 
-        SearchFiltersComponent removedFilters = new(document: await removalResponse.AssertSuccessfulHtmlResponseAsync());
-
         // Assert
-        Assert.True(removalResponse.IsSuccessStatusCode);
+        SearchFiltersComponent removedFilters = new(document: await removalResponse.AssertSuccessfulHtmlResponseAsync());
+        // TODO FilteredResults
 
         Filter remainingSelectedFilter = Assert.Single(removedFilters.GetFilters());
         Assert.Equal("Establishment Type", remainingSelectedFilter.Name);
@@ -244,8 +240,8 @@ public sealed class SearchTests : WebApplicationFactoryBaseIntegrationTest
         HttpResponseMessage removalResponse = await filtersApplied.ClearFiltersAsync(client, ct);
 
         // Assert
-        IHtmlDocument clearedFiltersDocument = await removalResponse.AssertSuccessfulHtmlResponseAsync();
-        SearchFiltersComponent clearedFilters = new(clearedFiltersDocument);
+        SearchFiltersComponent clearedFilters = new(document: await removalResponse.AssertSuccessfulHtmlResponseAsync());
+        // TODO FilteredResults
 
         Filter filters = Assert.Single(clearedFilters.GetFilters());
         Assert.Equal("Establishment Type", filters.Name);
@@ -263,5 +259,4 @@ public sealed class SearchTests : WebApplicationFactoryBaseIntegrationTest
     // Results count displayed
     // Sort omitted - A-Z, pass az and Z-A, unknown defaults to az
     // RecordsPerPage = omitted 10, 0 (invalid), 1 valid, 20 valid, 21 invalid
-
 }

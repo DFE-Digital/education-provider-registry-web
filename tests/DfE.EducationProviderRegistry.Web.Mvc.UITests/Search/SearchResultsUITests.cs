@@ -118,7 +118,7 @@ public sealed class SearchResultsUITests : IAsyncLifetime
             Host = baseUri.Host,
             Port = baseUri.Port,
             Path = "/search/results",
-            Query = 
+            Query =
                 $"SearchKeywords={identityTerm ?? string.Empty}" +
                 $"&Address={locationTerm ?? string.Empty}" +
                 $"&sort={sort}"

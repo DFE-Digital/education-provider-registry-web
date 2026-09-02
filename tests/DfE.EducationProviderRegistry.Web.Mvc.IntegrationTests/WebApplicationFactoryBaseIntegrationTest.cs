@@ -42,7 +42,7 @@ public abstract class WebApplicationFactoryBaseIntegrationTest : IntegrationTest
             await _db.DisposeAsync();
         }
 
-        if(Factory != null)
+        if (Factory != null)
         {
             await Factory.DisposeAsync();
         }

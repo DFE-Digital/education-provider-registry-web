@@ -23,16 +23,16 @@ internal sealed class SearchFiltersComponent
             string filterName = filterElement.QuerySelector(".govuk-details__summary-text")?.TextContent?.Trim() ?? string.Empty;
 
             List<FilterValue> filterValues = [];
-            
+
             foreach (IElement valueElement in filterElement.QuerySelectorAll(".govuk-checkboxes__item"))
             {
                 string label = valueElement.QuerySelector("label")?.TextContent?.Trim() ?? string.Empty;
-                
+
                 IElement input = valueElement.QuerySelector("input") ?? throw new InvalidOperationException("Input element not found");
-                
+
                 filterValues.Add(
                     new FilterValue(
-                        Label: label, 
+                        Label: label,
                         Selected: input.HasAttribute("checked"),
                         Value: input.GetAttribute("value") ?? string.Empty));
             }
@@ -44,9 +44,9 @@ internal sealed class SearchFiltersComponent
 
     // TODO ensure it's embedded within FORM else submission won't submit it natively
     public Task<HttpResponseMessage> RemoveFilterAsync(
-        HttpClient client, 
-        string facetLabel, 
-        string facetValue, 
+        HttpClient client,
+        string facetLabel,
+        string facetValue,
         CancellationToken ct = default)
     {
         string removalButtonValue = $"{facetLabel}|{facetValue}";
@@ -54,10 +54,10 @@ internal sealed class SearchFiltersComponent
         IElement? element = _document.QuerySelectorAll($"[value='{removalButtonValue}']").SingleOrDefault() ??
             throw new ArgumentException($"Element for facetLabel {facetLabel} and facetValue {facetValue} could not be found");
 
-        HttpRequestMessage request = 
+        HttpRequestMessage request =
             CreateUpdatedHttpRequest(
                 _document,
-                addQueryParams: [ new(element.GetAttribute("name")!, removalButtonValue) ]
+                addQueryParams: [new(element.GetAttribute("name")!, removalButtonValue)]
             );
 
         return client.SendAsync(request, ct);
@@ -81,7 +81,7 @@ internal sealed class SearchFiltersComponent
     }
 
     private static HttpRequestMessage CreateUpdatedHttpRequest(
-        IHtmlDocument document, 
+        IHtmlDocument document,
         IReadOnlyList<KeyValuePair<string, string>> addQueryParams)
     {
         StringBuilder outputQueryParams = addQueryParams.Aggregate(

@@ -7,7 +7,7 @@ internal sealed class SearchHttpRequestBuilder
 {
     private Uri? _uri;
     private HttpMethod _method = HttpMethod.Post;
-    private SortDirection? _sortDirection; 
+    private SortDirection? _sortDirection;
     private readonly List<KeyValuePair<string, string[]>> _filters;
     private string? _identityTerm;
     private string? _locationTerm;
@@ -67,7 +67,7 @@ internal sealed class SearchHttpRequestBuilder
             values.Add(nameof(SearchRequestViewModel.Address), _locationTerm);
         }
 
-        if(_uri is null)
+        if (_uri is null)
         {
             throw new ArgumentException("Uri cannot be null");
         }
@@ -104,7 +104,7 @@ internal sealed class SearchHttpRequestBuilder
             queryStringBuilder.Append($"{sortParam}={sortValue}");
         }
 
-        return 
+        return
             filters
                 .SelectMany((filter) =>
                     filter.Value.Select((value) =>

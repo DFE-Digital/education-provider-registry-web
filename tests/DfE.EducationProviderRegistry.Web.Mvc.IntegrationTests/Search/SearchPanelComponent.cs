@@ -3,11 +3,11 @@ using AngleSharp.Html.Dom;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Search;
 
-public sealed class SearchPanel
+public sealed class SearchPanelComponent
 {
     private readonly IHtmlDocument _document;
 
-    public SearchPanel(IHtmlDocument document)
+    public SearchPanelComponent(IHtmlDocument document)
     {
         ArgumentNullException.ThrowIfNull(document);
         _document = document;
@@ -24,6 +24,7 @@ public sealed class SearchPanel
         };
 
         Uri currentPageUri = new(_document.Url);
+
         string? actionAttribute = element.GetAttribute("action");
 
         Uri targetUri =

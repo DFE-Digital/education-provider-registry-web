@@ -56,7 +56,7 @@ public class CookiesController : Controller
         try
         {
             string decoded = Uri.UnescapeDataString(raw);
-            JsonDocument document = JsonDocument.Parse(decoded);
+            using JsonDocument document = JsonDocument.Parse(decoded);
             JsonElement root = document.RootElement;
             return root.GetProperty("analytics").GetBoolean();
         }

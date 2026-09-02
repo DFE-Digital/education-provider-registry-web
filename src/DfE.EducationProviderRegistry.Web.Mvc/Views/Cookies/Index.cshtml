@@ -3,12 +3,6 @@
     ViewData["Title"] = "Cookies";
 }
 
-@* No container or <main> here: _GovUkPageTemplate already wraps the body in
-   <div class="govuk-width-container"><main class="govuk-main-wrapper" id="main-content">.
-   This view used to add its own, which shipped two <main> landmarks and a duplicate
-   id="main-content" — the skip link resolves to the first match, so it skipped to the
-   outer wrapper and the duplicate id is a 4.1.1 / 1.3.1 defect. *@
-
 @if (Model.Saved)
 {
     <div class="govuk-notification-banner govuk-notification-banner--success" role="alert"

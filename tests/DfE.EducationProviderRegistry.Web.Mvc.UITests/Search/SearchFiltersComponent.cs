@@ -4,7 +4,7 @@ using OpenQA.Selenium.Support.UI;
 
 namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Search;
 
-internal sealed class SearchFilters
+internal sealed class SearchFiltersComponent
 {
     private static By FiltersDropdowns => By.CssSelector(".filter-section");
     private static By SubmitFilters => By.CssSelector(".filter-panel [type=submit]");
@@ -13,7 +13,7 @@ internal sealed class SearchFilters
     private readonly WebDriverWait _defaultWait;
     private readonly IWebDriver _driver;
 
-    public SearchFilters(IWebDriver driver)
+    public SearchFiltersComponent(IWebDriver driver)
     {
         _defaultWait = new(driver, TimeSpan.FromSeconds(15));
         _driver = driver;

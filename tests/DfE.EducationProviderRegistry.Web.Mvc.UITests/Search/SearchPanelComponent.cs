@@ -3,7 +3,7 @@ using OpenQA.Selenium.Support.UI;
 
 namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Search;
 
-internal sealed class SearchPanel
+internal sealed class SearchPanelComponent
 {
     private readonly WebDriverWait _defaultWaiter;
 
@@ -13,7 +13,7 @@ internal sealed class SearchPanel
     private static By SortDropdown => By.CssSelector("#sort");
     private static By SubmitSearch => By.CssSelector(".dfe-search-panel__actions [type=submit]");
 
-    public SearchPanel(IWebDriver driver)
+    public SearchPanelComponent(IWebDriver driver)
     {
         _defaultWaiter = new(driver, TimeSpan.FromSeconds(15));
     }

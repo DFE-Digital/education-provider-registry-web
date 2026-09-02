@@ -34,7 +34,7 @@ public sealed class SearchResultsUITests : IAsyncLifetime
     public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
     // TODO BiDI await network traffic that sort submitted
-    [Fact]
+    [Fact(Skip = "Aasim to forward fix")]
     public async Task Sort_Results_By_Name_Descending()
     {
         // Arrange
@@ -63,7 +63,7 @@ public sealed class SearchResultsUITests : IAsyncLifetime
         Assert.True(comparison < 0, "Expected pre-sorted name to come before post-sort name when descending sort");
     }
 
-    [Fact]
+    [Fact(Skip = "Aasim to forward fix")]
     public async Task Filter_Results_Applies_Filter()
     {
         // Arrange

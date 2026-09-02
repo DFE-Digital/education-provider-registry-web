@@ -1,8 +1,7 @@
 ﻿using DfE.EducationProviderRegistry.Web.SharedTests.ApplicationContainer;
 using DfE.WebDriver.Public.Session;
 using OpenQA.Selenium;
-using static DfE.EducationProviderRegistry.Web.MVC.UITests.Search.SearchFilters;
-using static DfE.EducationProviderRegistry.Web.MVC.UITests.Search.SearchPanel;
+using static DfE.EducationProviderRegistry.Web.MVC.UITests.Search.SearchPanelComponent;
 
 namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Search;
 
@@ -47,8 +46,8 @@ public sealed class SearchResultsUITests : IAsyncLifetime
 
         await driver.Navigate().GoToUrlAsync(uri);
 
-        SearchPanel panel = new(driver);
-        SearchResults results = new(driver);
+        SearchPanelComponent panel = new(driver);
+        SearchResultsComponent results = new(driver);
 
         SearchResult preSortFirstResult = results.GetSearchResults().First();
 
@@ -76,20 +75,18 @@ public sealed class SearchResultsUITests : IAsyncLifetime
 
         await driver.Navigate().GoToUrlAsync(uri);
 
-        SearchResults results = new(driver);
-        SearchFilters filters = new(driver);
+        SearchResultsComponent results = new(driver);
+        SearchFiltersComponent filters = new(driver);
 
         const string targetFacet = "Establishment Type";
         const string targetFacetValueLabel = "Primary School";
 
         // Act
-
         filters.FilterBy(
             facetLabel: targetFacet,
             facetValueLabel: targetFacetValueLabel);
 
         // Assert
-
         IReadOnlyCollection<SearchResult> postFilterResults = results.GetSearchResults();
 
         // Selected results are filtered
@@ -121,13 +118,16 @@ public sealed class SearchResultsUITests : IAsyncLifetime
             Host = baseUri.Host,
             Port = baseUri.Port,
             Path = "/search/results",
-            Query = $"?SearchKeywords={identityTerm ?? string.Empty}&Address={locationTerm ?? string.Empty}&sort={sort}"
+            Query = 
+                $"SearchKeywords={identityTerm ?? string.Empty}" +
+                $"&Address={locationTerm ?? string.Empty}" +
+                $"&sort={sort}"
         };
 
         return builder.Uri;
     }
 
-    private static string ConvertFacetSelectionToRemovalValue(SearchFilters filters, string targetFacet, string targetFacetValueLabel)
+    private static string ConvertFacetSelectionToRemovalValue(SearchFiltersComponent filters, string targetFacet, string targetFacetValueLabel)
     {
         string[] preselectionFilterValueParts =
             filters.GetFacetValueValue(

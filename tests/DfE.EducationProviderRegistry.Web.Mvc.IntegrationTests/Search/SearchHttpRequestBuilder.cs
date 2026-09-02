@@ -1,14 +1,32 @@
-﻿namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Search;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+using System.Text;
 
-public sealed class SearchHttpRequestBuilder
+namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Search;
+
+internal sealed class SearchHttpRequestBuilder
 {
-    private readonly SearchPanel _searchPanel;
+    private Uri? _uri;
+    private HttpMethod _method = HttpMethod.Post;
+    private SortDirection? _sortDirection; 
+    private readonly List<KeyValuePair<string, string[]>> _filters;
     private string? _identityTerm;
     private string? _locationTerm;
 
-    public SearchHttpRequestBuilder(SearchPanel searchPanel)
+    public SearchHttpRequestBuilder()
     {
-        _searchPanel = searchPanel;
+        _filters = [];
+    }
+
+    public SearchHttpRequestBuilder WithBaseUri(Uri? uri)
+    {
+        _uri = uri;
+        return this;
+    }
+
+    public SearchHttpRequestBuilder WithMethod(HttpMethod method)
+    {
+        _method = method;
+        return this;
     }
 
     public SearchHttpRequestBuilder WithIdentitySearchTerm(string value)
@@ -23,27 +41,88 @@ public sealed class SearchHttpRequestBuilder
         return this;
     }
 
+    public SearchHttpRequestBuilder WithSortDirection(SortDirection direction)
+    {
+        _sortDirection = direction;
+        return this;
+    }
+
+    public SearchHttpRequestBuilder WithFilter(string facet, string[] values)
+    {
+        _filters.Add(new(facet, values));
+        return this;
+    }
+
     public HttpRequestMessage Build()
     {
         Dictionary<string, string> values = [];
 
         if (_identityTerm is not null)
         {
-            values.Add(_searchPanel.GetIdentityInputName(), _identityTerm);
+            values.Add(nameof(SearchRequestViewModel.SearchKeywords), _identityTerm);
         }
 
         if (_locationTerm is not null)
         {
-            values.Add(_searchPanel.GetLocationInputName(), _locationTerm);
+            values.Add(nameof(SearchRequestViewModel.Address), _locationTerm);
         }
 
-        (HttpMethod method, Uri target) = _searchPanel.GetFormDetails();
+        if(_uri is null)
+        {
+            throw new ArgumentException("Uri cannot be null");
+        }
 
-        return new HttpRequestMessage(method, target)
+        UriBuilder uriBuilder = new()
+        {
+            Scheme = _uri.Scheme,
+            Host = _uri.Host,
+            Path = "/search/results",
+            Port = _uri.Port,
+            Query = CreateQueryString(_sortDirection, _filters)
+        };
+
+        return new HttpRequestMessage(_method, uriBuilder.Uri)
         {
             Content = new FormUrlEncodedContent(values)
         };
     }
 
-    public static SearchHttpRequestBuilder Create(SearchPanel panel) => new(panel);
+    private static string CreateQueryString(SortDirection? sort, IEnumerable<KeyValuePair<string, string[]>> filters)
+    {
+        StringBuilder queryStringBuilder = new();
+
+        if (sort is not null)
+        {
+            string sortValue = sort switch
+            {
+                SortDirection.Descending => "za",
+                _ => "az"
+            };
+
+            string sortParam = nameof(SearchRequestViewModel.Sort);
+
+            queryStringBuilder.Append($"{sortParam}={sortValue}");
+        }
+
+        return 
+            filters
+                .SelectMany((filter) =>
+                    filter.Value.Select((value) =>
+                        $"{Uri.EscapeDataString($"SelectedFacets[{filter.Key}]")}" +
+                        $"=" +
+                        $"{Uri.EscapeDataString(value)}"))
+            .Aggregate(
+                seed: queryStringBuilder,
+                func: (sb, value) => sb.Append(value).Append('&'),
+                resultSelector: (sb) => sb.ToString().TrimEnd('&'))
+            .ToString();
+    }
+
+    public static SearchHttpRequestBuilder Create() => new();
+}
+
+internal enum SortDirection
+{
+    Ascending,
+    Descending
 }

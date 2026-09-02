@@ -24,6 +24,7 @@ public sealed class SearchPanel
         };
 
         Uri currentPageUri = new(_document.Url);
+
         string? actionAttribute = element.GetAttribute("action");
 
         Uri targetUri =

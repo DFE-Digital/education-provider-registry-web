@@ -61,7 +61,8 @@ public sealed class SearchController : Controller
             new SearchRequestViewModel());
     }
 
-    [HttpPost("")]
+    [HttpGet("results")]
+    [HttpPost("results")]
     public async Task<IActionResult> Search(
         SearchRequestViewModel model)
     {
@@ -93,10 +94,12 @@ public sealed class SearchController : Controller
         SearchRequest searchRequest = new(
             searchTerms: [
                 new SearchTerm("what", model.SearchKeywords!),
-                new SearchTerm("where", model.Address!)
+                new SearchTerm("where", model.Address!),
             ],
             searchFilterRequests,
-            sortOrder);
+            sortOrder,
+            model.Offset,
+            model.RecordsPerPage);
 
         UseCaseResponse<SearchResponse> searchResponse =
             await _searchUseCase.HandleRequestAsync(

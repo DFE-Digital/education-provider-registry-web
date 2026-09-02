@@ -1,38 +1,38 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
+using System.Collections.ObjectModel;
 
 namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Search;
 
-public sealed class SearchResults
+internal sealed class SearchResults
 {
     private readonly WebDriverWait _defaultWaiter;
     private readonly IWebDriver _driver;
 
-    private static By ResultRecords => By.CssSelector("#establishments .govuk-table");
-    private static By ResultName => By.CssSelector(".govuk-table__caption");
+    private static By ResultRecords => By.CssSelector(".search-results .govuk-table");
 
     public SearchResults(IWebDriver driver)
     {
         _driver = driver;
         _defaultWaiter = new(_driver, TimeSpan.FromSeconds(15));
+        _defaultWaiter.IgnoreExceptionTypes(typeof(StaleElementReferenceException));
     }
 
     public IReadOnlyCollection<SearchResult> GetSearchResults()
     {
-        IReadOnlyCollection<IWebElement>? results = _defaultWaiter.Until(driver =>
-        {
-            var elements = driver.FindElements(ResultRecords);
-            return elements.Count > 0 ? elements : null;
-        });
+        return
+            _defaultWaiter.Until((driver) =>
+            {
+                ReadOnlyCollection<IWebElement> elements = driver.FindElements(ResultRecords);
 
-        return [
-            .. results?.Select(
-                (result) =>
-                {
-                    string name = result.FindElement(ResultName).Text;
-                    return new SearchResult(name);
-                }) ?? []];
+                return elements
+                    .Select((result) => result.ToGovUkTable())
+                    .Select((table) => new SearchResult(
+                        Name: table.Caption ?? string.Empty,
+                        Type: table.Rows["Type"]))
+                    .ToArray();
+            });
     }
 }
 
-public sealed record SearchResult(string Name);
+public sealed record SearchResult(string Name, string Type);

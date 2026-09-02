@@ -196,16 +196,22 @@ public sealed class SearchTests : WebApplicationFactoryBaseIntegrationTest
                 .Build();
 
         HttpResponseMessage filteredResults = await client.SendAsync(message, ct);
-        IHtmlDocument document = await filteredResults.AssertSuccessfulHtmlResponseAsync();
-        SearchFiltersComponent filters = new(document);
+        SearchFiltersComponent filtersApplied = new(document: await filteredResults.AssertSuccessfulHtmlResponseAsync());
 
         // Act
-        HttpResponseMessage removalResponse = await filters.RemoveFilterAsync(client, "EstablishmentTypeId", "1", ct);
+        HttpResponseMessage removalResponse =
+            await filtersApplied.RemoveFilterAsync(
+                client,
+                facetLabel: "EstablishmentTypeId",
+                facetValue: "1",
+                ct);
+
+        SearchFiltersComponent removedFilters = new(document: await removalResponse.AssertSuccessfulHtmlResponseAsync());
 
         // Assert
         Assert.True(removalResponse.IsSuccessStatusCode);
 
-        Filter remainingSelectedFilter = Assert.Single(filters.GetFilters());
+        Filter remainingSelectedFilter = Assert.Single(removedFilters.GetFilters());
         Assert.Equal("Establishment Type", remainingSelectedFilter.Name);
 
         FilterValue remainingSelectedFilterValue = remainingSelectedFilter.FilterValues.Single();

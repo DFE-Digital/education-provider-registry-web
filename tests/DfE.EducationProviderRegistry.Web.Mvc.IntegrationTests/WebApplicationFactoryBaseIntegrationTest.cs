@@ -11,7 +11,7 @@ public abstract class WebApplicationFactoryBaseIntegrationTest : IntegrationTest
     private readonly IPostgresDatabaseProvider _dbProvider;
     private string? _postgresConnectionString;
 
-    public WebApplicationFactoryBaseIntegrationTest(IServiceProvider provider)
+    protected WebApplicationFactoryBaseIntegrationTest(IServiceProvider provider)
     {
         _dbProvider = provider.GetRequiredService<IPostgresDatabaseProvider>();
 
@@ -40,6 +40,11 @@ public abstract class WebApplicationFactoryBaseIntegrationTest : IntegrationTest
         if (_db != null)
         {
             await _db.DisposeAsync();
+        }
+
+        if (Factory != null)
+        {
+            await Factory.DisposeAsync();
         }
     }
 }

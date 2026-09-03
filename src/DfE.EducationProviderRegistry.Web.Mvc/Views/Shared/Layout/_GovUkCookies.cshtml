@@ -1,6 +1,6 @@
-﻿@if (!Context.Request.Cookies.ContainsKey("cookies_analytics"))
+﻿@if (!Context.Request.Cookies.ContainsKey("cookies_policy"))
 {
-    <form asp-controller="Cookies" asp-action="SetPreferences" method="post" novalidate>
+    <form asp-controller="Cookies" asp-action="Save" method="post" novalidate>
         <div class="govuk-cookie-banner" data-nosnippet aria-label="Cookies on Get information about schools">
             <div class="govuk-cookie-banner__message govuk-width-container">
                 <div class="govuk-grid-row">
@@ -15,10 +15,10 @@
                     </div>
                 </div>
                 <div class="govuk-button-group">
-                    <button type="submit" value="yes" name="cookies_analytics" class="govuk-button" data-module="govuk-button">
+                    <button type="submit" name="analytics" value="true" class="govuk-button">
                         Accept analytics cookies
                     </button>
-                    <button type="submit" value="no" name="cookies_analytics" class="govuk-button" data-module="govuk-button">
+                    <button type="submit" name="analytics" value="false" class="govuk-button govuk-button--secondary">
                         Reject analytics cookies
                     </button>
                     <a class="govuk-link" asp-controller="Cookies" asp-action="Index">View cookies</a>

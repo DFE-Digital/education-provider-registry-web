@@ -1,34 +1,68 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.ViewModels;
+using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Controllers;
 
 public class CookiesController : Controller
 {
-    public IActionResult Index()
+    private const string CookieName = "cookies_policy";
+    private const int CookieExpiryDays = 365;
+
+    [HttpGet("/cookies")]
+    public IActionResult Index([FromQuery] bool saved = false)
     {
-        return View();
+        CookiesViewModel viewModel = new()
+        {
+            Analytics = ReadAnalyticsConsent(),
+            Saved = saved
+        };
+
+        return View(viewModel);
     }
 
-    [HttpPost]
-    public IActionResult SetPreferences(string cookies_analytics)
+    [HttpPost("/cookies")]
+    [ValidateAntiForgeryToken]
+    public IActionResult Save(bool? analytics)
     {
-        bool analyticsAccepted = cookies_analytics == "yes";
+        bool accepted = analytics == true;
 
-        Response.Cookies.Append(
-            "cookies_analytics",
-            analyticsAccepted ? "yes" : "no",
-            new CookieOptions
-            {
-                Expires = DateTimeOffset.UtcNow.AddDays(30),
-                Secure = true,
-                HttpOnly = false,
-                SameSite = SameSiteMode.Strict
-            });
+        CookieOptions options = new()
+        {
+            Expires = DateTimeOffset.UtcNow.AddDays(CookieExpiryDays),
+            IsEssential = true,
+            SameSite = SameSiteMode.Lax,
+            Secure = true,
+            HttpOnly = true,
+            Path = "/"
+        };
 
-        string referer = Request.Headers.Referer.ToString();
-        if (!string.IsNullOrWhiteSpace(referer))
-            return Redirect(referer);
+        string json = JsonSerializer.Serialize(new { analytics = accepted });
 
-        return RedirectToAction("Index", "Home");
+        Response.Cookies.Append(CookieName, json, options);
+
+        return RedirectToAction(nameof(Index), new { saved = true });
+    }
+
+    private bool? ReadAnalyticsConsent()
+    {
+        string? raw = Request.Cookies[CookieName];
+
+        if (raw is null)
+        {
+            return null;
+        }
+
+        try
+        {
+            string decoded = Uri.UnescapeDataString(raw);
+            using JsonDocument document = JsonDocument.Parse(decoded);
+            JsonElement root = document.RootElement;
+            return root.GetProperty("analytics").GetBoolean();
+        }
+        catch
+        {
+            return null;
+        }
     }
 }

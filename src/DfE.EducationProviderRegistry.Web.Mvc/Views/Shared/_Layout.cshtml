@@ -17,6 +17,8 @@
     
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    @await Html.PartialAsync("Layout/_ClarityHead")
 </head>
 <body class="govuk-template__body app-body-class" data-test="My value" data-other="report:details">
     <script>
@@ -31,7 +33,6 @@
         @await Html.PartialAsync("Layout/_GovUkNavigation")
         @await Html.PartialAsync("Layout/_GovUkPhaseBanner")
 
-        
         @if (ViewData["ShowMasthead"] as bool? == true)
         {
             <div class="x-govuk-masthead x-govuk-masthead--inverse">

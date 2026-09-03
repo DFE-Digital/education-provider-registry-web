@@ -1,7 +1,9 @@
 ﻿using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.Model;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
+using System.Globalization;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments.Mappers;
 
@@ -60,7 +62,7 @@ public class EstablishmentDetailsBasicDetailsTableMapper :
 
         builder.AddRow(
             new TableCell { Text = "Address", IsBold = true },
-            new TableCell { Text = dto.Address?.AddressLine1 ?? string.Empty });
+            new TableCell { Text = MappingHelpers.CombineAddress(dto.Address, dto.Name?.Value)});
 
         builder.AddRow(
             new TableCell { Text = "Local authority", IsBold = true },
@@ -68,7 +70,11 @@ public class EstablishmentDetailsBasicDetailsTableMapper :
 
         builder.AddRow(
             new TableCell { Text = "Part of", IsBold = true },
-            new TableCell { Text = dto.GroupName ?? string.Empty });
+            new TableCell 
+            { 
+                Text = dto.Group?.GroupName is null ? string.Empty : CultureInfo.CurrentCulture.TextInfo.ToTitleCase(dto.Group?.GroupName.ToLower()!) ?? string.Empty,
+                Href = MappingHelpers.CreateLinkUrl("/groups/", dto.Group?.Code)
+            });
 
         builder.AddRow(
             new TableCell { Text = "Age range", IsBold = true },
@@ -92,11 +98,21 @@ public class EstablishmentDetailsBasicDetailsTableMapper :
 
         builder.AddRow(
             new TableCell { Text = "Type of SEN provision", IsBold = true },
-            new TableCell { Text = dto.SenProvision ?? string.Empty });
+            new TableCell { Text = dto.SenProvision ?? "Not recorded" });
 
-        builder.AddRow(
-            new TableCell { Text = "Website", IsBold = true },
-            new TableCell { Text = dto.ContactDetails?.Website ?? string.Empty });
+        if (dto.ContactDetails?.Website is not null)
+        {
+            builder.AddRow(
+                new TableCell { Text = "Website", IsBold = true },
+                new TableCell { Text = dto.ContactDetails.Website, Href = dto.ContactDetails.Website, OpenInNewTab = true });
+        }
+
+        if(dto.ContactDetails?.TelephoneNumber is not null)
+        {
+            builder.AddRow(
+                new TableCell { Text = "Telephone number", IsBold = true },
+                new TableCell { Text = dto.ContactDetails?.TelephoneNumber ?? string.Empty });
+        }
 
         builder.AddRow(
             new TableCell { Text = "Ofsted", IsBold = true },

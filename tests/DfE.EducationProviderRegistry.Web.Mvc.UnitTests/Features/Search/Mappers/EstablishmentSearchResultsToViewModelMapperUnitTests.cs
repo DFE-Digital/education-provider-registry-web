@@ -15,8 +15,10 @@ public sealed class EstablishmentSearchResultsToViewModelMapperTests
         UniqueReferenceNumber urnVo = new(urn);
         Name nameVo = new(name);
 
-        Address addressVo = new(
-            Street: "Street",
+        SiteAddressModel addressVo = new(
+            Name: "Test School",
+            AddressLine1: "Street",
+            AddressLine2: "Street 2",
             Town: "Town",
             County: "County",
             Postcode: "AB1 2CD");
@@ -158,7 +160,7 @@ public sealed class EstablishmentSearchResultsToViewModelMapperTests
 
         // assert
         TableRow row = table.Rows.Single(tableRow => tableRow.Cells[0].Text == "Address");
-        Assert.Equal("Street County AB1 2CD", row.Cells[1].Text);
+        Assert.Equal("Street, Street 2, Town, County, AB1 2CD", row.Cells[1].Text);
     }
 
     [Fact]
@@ -261,8 +263,10 @@ public sealed class EstablishmentSearchResultsToViewModelMapperTests
         // arrange
         EstablishmentSearchResultsToViewModelMapper mapper = new();
 
-        Address address = new(
-            Street: "Street",
+        SiteAddressModel address = new(
+            Name: "Test School",
+            AddressLine1: "Street",
+            AddressLine2: "Street 2",
             Town: "Town",
             County: " ",
             Postcode: "AB1 2CD");
@@ -282,7 +286,7 @@ public sealed class EstablishmentSearchResultsToViewModelMapperTests
         TableRow row = table.Rows.Single(
             tableRow => tableRow.Cells[0].Text == "Address");
 
-        Assert.Equal("Street AB1 2CD", row.Cells[1].Text);
+        Assert.Equal("Street, Street 2, Town, AB1 2CD", row.Cells[1].Text);
     }
 
     [Fact]
@@ -318,7 +322,7 @@ public sealed class EstablishmentSearchResultsToViewModelMapperTests
         EstablishmentSearchResult input = new(
             new UniqueReferenceNumber("111111"),
             new Name("Test School"),
-            new Address("Street", "Town", "County", "AB1 2CD"),
+            new SiteAddressModel("Test School", "Street", "Street 2", "Town", "County", "AB1 2CD"),
             null,
             new GroupDetail("Group Name", "G123"),
             new LocalAuthority("LA Name", "123"));
@@ -342,7 +346,7 @@ public sealed class EstablishmentSearchResultsToViewModelMapperTests
         EstablishmentSearchResult input = new(
             new UniqueReferenceNumber("111111"),
             new Name("Test School"),
-            new Address("Street", "Town", "County", "AB1 2CD"),
+            new SiteAddressModel("Test School", "Street", "Street 2", "Town", "County", "AB1 2CD"),
             new EstablishmentType("Academy"),
             new GroupDetail("Group Name", "G123"),
             null);
@@ -367,7 +371,7 @@ public sealed class EstablishmentSearchResultsToViewModelMapperTests
         EstablishmentSearchResult input = new(
             new UniqueReferenceNumber("111111"),
             new Name("Test School"),
-            new Address("Street", "Town", "County", "AB1 2CD"),
+            new SiteAddressModel("Test School", "Street", "Street 2", "Town", "County", "AB1 2CD"),
             new EstablishmentType("Academy"),
             null,
             new LocalAuthority("LA Name", "123"));

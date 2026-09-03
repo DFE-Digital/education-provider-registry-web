@@ -11,11 +11,11 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers
                 : prefix + value;
         }
 
-        public static string? CombineAddress(SiteAddressModel? siteAddress, string establishmentName)
+        public static string CombineAddress(SiteAddressModel? siteAddress, string? establishmentName)
         {
             if(siteAddress is null)
             {
-                return null;
+                return string.Empty;
             }
 
             IEnumerable<string?> addressParts =
@@ -35,7 +35,7 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers
                         establishmentName,
                         StringComparison.OrdinalIgnoreCase)));
 
-            return string.IsNullOrEmpty(address) ? null : address;
+            return string.IsNullOrEmpty(address) ? string.Empty : address;
         }
     }
 }

@@ -9,7 +9,6 @@ using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Mappers.TestDoubles;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 using Moq;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Mappers;
 
@@ -20,7 +19,7 @@ public sealed class SearchResultsToViewModelMapperTests
         return new EstablishmentSearchResult(
             new UniqueReferenceNumber(urn),
             new Name(name),
-            new Address("Street", "Town", "County", "AB1 2CD"),
+            new SiteAddressModel(name, "Street", "Street 2", "Town", "County", "AB1 2CD"),
             new EstablishmentType("Academy"),
             new GroupDetail("Group Name", "G123"),
             new LocalAuthority("LA Name", "123"));

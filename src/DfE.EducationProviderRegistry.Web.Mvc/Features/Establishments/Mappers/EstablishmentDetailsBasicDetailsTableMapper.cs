@@ -62,7 +62,7 @@ public class EstablishmentDetailsBasicDetailsTableMapper :
 
         builder.AddRow(
             new TableCell { Text = "Address", IsBold = true },
-            new TableCell { Text = MappingHelpers.CombineAddress(dto.Address, dto.Name!.Value)});
+            new TableCell { Text = MappingHelpers.CombineAddress(dto.Address, dto.Name?.Value)});
 
         builder.AddRow(
             new TableCell { Text = "Local authority", IsBold = true },

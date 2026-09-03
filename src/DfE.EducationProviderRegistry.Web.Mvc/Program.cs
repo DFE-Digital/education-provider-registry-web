@@ -2,6 +2,7 @@ using DfE.EducationProviderRegistry.Web.Mvc.Extensions;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search;
+using DfE.EducationProviderRegistry.Web.Mvc.Settings;
 using Microsoft.AspNetCore.CookiePolicy;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,6 +36,10 @@ builder.Services
     .AddGroups()
     .AddSearch(builder.Configuration)
     .AddPostgresDatabase(builder.Configuration);
+
+builder.Services.Configure<ClaritySettings>(
+    builder.Configuration.GetSection("Clarity")
+);
 
 var app = builder.Build();
 

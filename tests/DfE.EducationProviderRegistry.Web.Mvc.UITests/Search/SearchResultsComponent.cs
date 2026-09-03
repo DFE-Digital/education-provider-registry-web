@@ -20,19 +20,19 @@ internal sealed class SearchResultsComponent
 
     public IReadOnlyCollection<SearchResult> GetSearchResults()
     {
-        return
-            _defaultWaiter.Until((driver) =>
-            {
-                ReadOnlyCollection<IWebElement> elements = driver.FindElements(ResultRecords);
 
-                return elements
-                    .Select((result) => result.ToGovUkTable())
-                    .Select((table) => new SearchResult(
-                        Name: table.Caption ?? string.Empty,
-                        Type: table.Rows["Type"]))
-                    .ToArray();
-            });
+        _defaultWaiter.Until((driver) => FindResults(driver).Count > 0);
+
+        return [.. _defaultWaiter.Until((driver) =>
+            FindResults(driver))
+            .Select((result) => result.ToGovUkTable())
+            .Select((table) => new SearchResult(
+                Name: table.Caption ?? string.Empty,
+                Type: table.Rows["Type"]))
+            ];
     }
+
+    private static ReadOnlyCollection<IWebElement> FindResults(IWebDriver driver) => driver.FindElements(ResultRecords);
 }
 
 public sealed record SearchResult(string Name, string Type);

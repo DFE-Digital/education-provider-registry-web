@@ -2,29 +2,33 @@
 
 /* Search panel */
 
-.search-panel {
-    background-color: #d2e2f1;
-    padding: 30px 30px 0;
-    margin-bottom: 30px;
-}
+.dfe-search-panel {
+    padding: govuk-spacing(4);
+    background-color: govuk-colour("blue", $variant: "tint-80");
 
-.search-form-row {
-    display: flex;
-    gap: 30px;
-    margin-top: 30px;
-}
-
-    .search-form-row .govuk-form-group {
-        flex: 1;
+    @include govuk-media-query($from: tablet) {
+        padding: govuk-spacing(6);
     }
-
-.search-action-row {
-    display: flex;
-    justify-content: space-between;
 }
 
-.search-panel .govuk-checkboxes__label::before {
+// Checkbox left, Search button right, on one row.
+.dfe-search-panel__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: govuk-spacing(4);
+    margin-top: govuk-spacing(4); // controlled gap above the actions row
+}
+
+// Keep checkbox boxes white inside the shaded (blue) panel.
+.dfe-search-panel .govuk-checkboxes__input + .govuk-checkboxes__label::before {
     background-color: govuk-colour("white");
+}
+
+// Remove the default form-group bottom margin inside the panel.
+.dfe-search-panel .govuk-form-group {
+    margin-bottom: 0;
 }
 
 /* Results */
@@ -34,23 +38,25 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
-    margin-bottom: 20px;
+    margin-bottom: govuk-spacing(5);
 }
 
 .results-actions {
+    width: 100%;
+    margin-bottom: govuk-spacing(5);
+}
+
+.results-actions__row {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     width: 100%;
+    gap: govuk-spacing(4);
 }
 
-.search-results .govuk-table {
-    margin-bottom: 20px;
+.results-download-button {
+    margin-bottom: 0;
 }
-
-    .search-results .govuk-table:last-child {
-        margin-bottom: 0;
-    }
 
 /* Sorting */
 
@@ -62,8 +68,9 @@
 
 .sort-controls {
     display: flex;
-    align-items: center;
-    gap: 12px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
 }
 
 .sort-controls__label {
@@ -72,7 +79,7 @@
 }
 
 .sort-controls .govuk-select {
-    width: 7ch;
+    width: 12ch;
     min-width: 0;
 }
 

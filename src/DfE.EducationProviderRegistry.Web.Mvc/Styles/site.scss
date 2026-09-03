@@ -4,5 +4,6 @@
 @use "govuk-frontend/dist/govuk" as *;
 @use "dfe-frontend/packages/dfefrontend";
 @use "@x-govuk/govuk-prototype-components/src/x-govuk";
+@use "govuk-table";
 
 @use "features/search";

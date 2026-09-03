@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 
 public sealed class SearchRequestViewModel
@@ -23,9 +22,8 @@ public sealed class SearchRequestViewModel
     /// <remarks>
     /// This value is typically used to perform text‑based search across establishments.
     /// </remarks>
-    [Required(ErrorMessage = "Enter an establishment name")]
+    //[Required(ErrorMessage = "Enter an establishment name")]
     public string? SearchKeywords { get; set; }
-
 
     /// <summary>
     ///     Gets or sets address location entered by user -- Temp wiring
@@ -40,7 +38,10 @@ public sealed class SearchRequestViewModel
     /// This value is usually configured indirectly via application settings and
     /// determines how many results are shown in each page of the search results.
     /// </remarks>
-    public int RecordsPerPage { get; set; }
+    [Range(1, 20)]
+    public int RecordsPerPage { get; set; } = 10;
+
+    public string? Sort { get; set; }
 
     /// <summary>
     /// Gets or sets the current page number for the search results.
@@ -61,7 +62,6 @@ public sealed class SearchRequestViewModel
     /// ensuring that no facet filters are applied to the search request.
     /// </remarks>
     public bool ClearFilters { get; set; }
-
 
     /// <summary>
     /// Remove a specific filter

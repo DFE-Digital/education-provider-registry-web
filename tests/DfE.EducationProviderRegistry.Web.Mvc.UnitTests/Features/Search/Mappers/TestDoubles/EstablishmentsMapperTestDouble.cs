@@ -1,6 +1,6 @@
 ﻿using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Establishment;
-using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
+using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 using Moq;
 using System.Diagnostics.CodeAnalysis;
 

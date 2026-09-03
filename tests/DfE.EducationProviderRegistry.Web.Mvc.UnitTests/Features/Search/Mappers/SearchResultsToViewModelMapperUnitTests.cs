@@ -7,8 +7,9 @@ using DfE.EducationProviderRegistry.Core.Query.Shared;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Mappers.TestDoubles;
-using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
+using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 using Moq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Mappers;
 
@@ -85,7 +86,7 @@ public sealed class SearchResultsToViewModelMapperTests
     {
         // arrange
         List<EstablishmentSearchResult> establishmentResults = [MakeEstablishment()];
-        List<GovUkTable> establishmentTables = [new() { Caption = "School A" }];
+        List<GovUkTable> establishmentTables = [new([new TableColumn { Text = "testColumn" }], [new TableRow { Cells = [new TableCell { Text = "Test Cell" }] }], "School A")];
 
         Mock<IMapper<
             IReadOnlyCollection<EstablishmentSearchResult>,
@@ -103,7 +104,7 @@ public sealed class SearchResultsToViewModelMapperTests
         SearchResponse response =
             new(
                 new EstablishmentSearchResults(establishmentResults),
-                null);
+                null, 1);
 
         SearchResultsMappingContext input = new(new SearchRequestViewModel(), UseCaseResponse<SearchResponse>.Success(response));
 
@@ -113,6 +114,8 @@ public sealed class SearchResultsToViewModelMapperTests
         // assert
         Assert.Single(vm.EstablishmentResults);
         Assert.Equal("School A", vm.EstablishmentResults[0].Caption);
+        Assert.Equal("testColumn", vm.EstablishmentResults[0].Columns[0].Text);
+        Assert.Equal("Test Cell", vm.EstablishmentResults[0].Rows[0].Cells[0].Text);
         establishmentMapper.Verify(m => m.Map(establishmentResults), Times.Once);
     }
 
@@ -143,7 +146,7 @@ public sealed class SearchResultsToViewModelMapperTests
         SearchResponse response =
             new(
                 null!,
-                new SearchFacets(facets));
+                new SearchFacets(facets), 1);
 
         SearchResultsMappingContext input = new(new SearchRequestViewModel(), UseCaseResponse<SearchResponse>.Success(response));
 
@@ -173,7 +176,7 @@ public sealed class SearchResultsToViewModelMapperTests
         SearchResultsToViewModelMapper mapper =
             new(establishmentMapper.Object, facetsMapper.Object);
 
-        var response = new SearchResponse(null!, null);
+        var response = new SearchResponse(null!, null, 1);
         SearchResultsMappingContext input = new(new SearchRequestViewModel(), UseCaseResponse<SearchResponse>.Success(response));
 
         // act
@@ -246,7 +249,7 @@ public sealed class SearchResultsToViewModelMapperTests
         SearchResponse response =
             new(
                 null!,
-                new SearchFacets(facets));
+                new SearchFacets(facets), 1);
 
         SearchResultsMappingContext input =
             new(
@@ -334,7 +337,7 @@ public sealed class SearchResultsToViewModelMapperTests
         SearchResponse response =
             new(
                 null!,
-                new SearchFacets(facets));
+                new SearchFacets(facets), 1);
 
         SearchResultsMappingContext input =
             new(

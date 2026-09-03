@@ -1,6 +1,8 @@
 ﻿@inject IConfiguration Configuration
 
 @{
+    bool analyticsGranted = Context.IsAnalyticsConsentGranted();
+
     string? containerId = Configuration["GoogleTagManager:ContainerId"];
     string? auth = Configuration["GoogleTagManager:Auth"];
     string? preview = Configuration["GoogleTagManager:Preview"];
@@ -14,8 +16,7 @@
 }
 
 @if (!string.IsNullOrWhiteSpace(containerId)
-    && Context.Request.Cookies.TryGetValue("cookies_analytics", out var analytics)
-    && analytics == "yes")
+    && analyticsGranted)
 {
     <!-- Google Tag Manager -->
     <script>

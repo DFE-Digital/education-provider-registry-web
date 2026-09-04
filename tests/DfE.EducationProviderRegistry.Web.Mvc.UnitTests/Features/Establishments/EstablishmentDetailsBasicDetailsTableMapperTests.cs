@@ -163,7 +163,7 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
             Phase = new PhaseOfEducationModel(null),
             Address = null,
             LocalAuthority = null,
-            GroupName = null,
+            Group = null,
             AgeRange = null,
             ReligiousCharacter = null,
             SenProvision = null,
@@ -239,7 +239,8 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
             LocalAuthority = new LocalAuthority(
                 localAuthorityName: "testLocalAuthority",
                 localAuthorityCode: "testLocalAuthorityCode"),
-            GroupName = "testGroupName",
+            Group = new EstablishmentGroupModel(
+                GroupName: "testGroupName", Code: "testGroupCode"),
             AgeRange = "testAgeRange",
             Gender = "testGender",
             ReligiousCharacter = "testReligiousCharacter",

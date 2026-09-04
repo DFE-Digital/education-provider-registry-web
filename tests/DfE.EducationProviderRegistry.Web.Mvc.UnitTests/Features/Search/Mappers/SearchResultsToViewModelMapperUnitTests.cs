@@ -20,7 +20,7 @@ public sealed class SearchResultsToViewModelMapperTests
         return new EstablishmentSearchResult(
             new UniqueReferenceNumber(urn),
             new Name(name),
-            new Address("Street", "Town", "County", "AB1 2CD"),
+            new SiteAddressModel(Name: name, AddressLine1: "Street", AddressLine2: "Street 2", Town: "Town", County: "County", Postcode: "AB1 2CD"),
             new EstablishmentType("Academy"),
             new GroupDetail("Group Name", "G123"),
             new LocalAuthority("LA Name", "123"));

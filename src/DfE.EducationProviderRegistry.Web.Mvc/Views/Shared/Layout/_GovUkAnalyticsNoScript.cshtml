@@ -1,0 +1,34 @@
+﻿@inject IConfiguration Configuration
+
+@{
+    bool analyticsGranted = Context.IsAnalyticsConsentGranted();
+
+    string? containerId = Configuration["GoogleTagManager:ContainerId"];
+    string? auth = Configuration["GoogleTagManager:Auth"];
+    string? preview = Configuration["GoogleTagManager:Preview"];
+}
+
+@if (!string.IsNullOrWhiteSpace(containerId)
+    && analyticsGranted)
+{
+    string environmentParameters =
+        !string.IsNullOrWhiteSpace(auth) && !string.IsNullOrWhiteSpace(preview)
+            ? $"&gtm_auth={Uri.EscapeDataString(auth)}" +
+              $"&gtm_preview={Uri.EscapeDataString(preview)}" +
+              "&gtm_cookies_win=x"
+            : string.Empty;
+
+    string googleTagManagerUrl =
+        $"https://www.googletagmanager.com/ns.html?id={Uri.EscapeDataString(containerId)}{environmentParameters}";
+
+    <!-- Google Tag Manager (noscript) -->
+    <noscript>
+        <iframe src="@googleTagManagerUrl"
+                title="Google Tag Manager"
+                height="0"
+                width="0"
+                style="display:none;visibility:hidden">
+        </iframe>
+    </noscript>
+    <!-- End Google Tag Manager (noscript) -->
+}

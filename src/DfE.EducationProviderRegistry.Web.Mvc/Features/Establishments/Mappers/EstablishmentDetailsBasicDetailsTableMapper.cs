@@ -68,7 +68,7 @@ public class EstablishmentDetailsBasicDetailsTableMapper :
 
         builder.AddRow(
             new TableCell { Text = "Part of", IsBold = true },
-            new TableCell { Text = dto.GroupName ?? string.Empty });
+            new TableCell { Text = dto.Group?.GroupName ?? string.Empty });
 
         builder.AddRow(
             new TableCell { Text = "Age range", IsBold = true },

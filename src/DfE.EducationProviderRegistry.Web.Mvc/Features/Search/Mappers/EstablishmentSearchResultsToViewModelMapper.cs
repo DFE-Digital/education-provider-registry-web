@@ -83,7 +83,7 @@ public sealed class EstablishmentSearchResultsToViewModelMapper :
             " ",
             new[]
             {
-                input.Address?.Street,
+                input.Address?.AddressLine1,
                 input.Address?.County,
                 input.Address?.Postcode
             }

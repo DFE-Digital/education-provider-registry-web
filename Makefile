@@ -1,5 +1,5 @@
 ARM_TEMPLATE_TAG=1.1.10
-RG_TAGS={"Product" : "Teacher services cloud", "Service Offering" : "Teacher services cloud"}
+RG_TAGS={"Product" : "Teacher services cloud", "Service Offering" : "Find education provider information"}
 REGION=UK South
 SERVICE_NAME=education-provider-registry-web
 SERVICE_SHORT=eprweb

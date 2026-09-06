@@ -61,11 +61,18 @@ public sealed class CookiesTests : WebApplicationFactoryBaseIntegrationTest
             actual: response.Headers.Location);
 
         // Assert Set-Cookie is returned setting the analytics choice
-        const string analyticsCookieSetPrefix = "cookies_policy=";
+        const string analyticsCookiePrefix = "cookies_policy=";
 
-        Assert.Contains(
-            response.Headers.GetValues("Set-Cookie"),
-            (setCookie) => setCookie.StartsWith(analyticsCookieSetPrefix));
+        string cookie = response.Headers
+            .GetValues("Set-Cookie")
+            .Single(x => x.StartsWith(analyticsCookiePrefix));
+
+        Assert.Contains(analytics ? "true" : "false", cookie, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("secure", cookie, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("httponly", cookie, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("samesite=", cookie, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("path=/", cookie, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("expires=", cookie, StringComparison.OrdinalIgnoreCase);
 
         // Assert redirect is valid HTTP route
         using HttpResponseMessage redirectedResponse =

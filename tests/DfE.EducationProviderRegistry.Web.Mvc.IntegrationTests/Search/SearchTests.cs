@@ -15,7 +15,7 @@ public sealed class SearchTests : WebApplicationFactoryBaseIntegrationTest
     {
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
-        using HttpClient client = Factory.CreateDefaultedHttpClient();
+        using HttpClient client = Factory.CreateClient();
 
         HttpRequestMessage message =
             SearchHttpRequestBuilder.Create()
@@ -36,7 +36,7 @@ public sealed class SearchTests : WebApplicationFactoryBaseIntegrationTest
     {
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
-        using HttpClient client = Factory.CreateDefaultedHttpClient();
+        using HttpClient client = Factory.CreateClient();
 
         HttpRequestMessage message =
             SearchHttpRequestBuilder.Create()
@@ -56,7 +56,7 @@ public sealed class SearchTests : WebApplicationFactoryBaseIntegrationTest
     {
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
-        using HttpClient client = Factory.CreateDefaultedHttpClient();
+        using HttpClient client = Factory.CreateClient();
 
         HttpRequestMessage message =
             SearchHttpRequestBuilder.Create()
@@ -77,7 +77,7 @@ public sealed class SearchTests : WebApplicationFactoryBaseIntegrationTest
     {
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
-        using HttpClient client = Factory.CreateDefaultedHttpClient();
+        using HttpClient client = Factory.CreateClient();
 
         HttpRequestMessage message =
             SearchHttpRequestBuilder.Create()
@@ -99,7 +99,7 @@ public sealed class SearchTests : WebApplicationFactoryBaseIntegrationTest
     {
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
-        using HttpClient client = Factory.CreateDefaultedHttpClient();
+        using HttpClient client = Factory.CreateClient();
 
         string[] filterValueApplied = ["1"];
 
@@ -136,7 +136,7 @@ public sealed class SearchTests : WebApplicationFactoryBaseIntegrationTest
     {
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
-        using HttpClient client = Factory.CreateDefaultedHttpClient();
+        using HttpClient client = Factory.CreateClient();
 
         string[] filtersToApply = ["1", "2"];
 
@@ -181,7 +181,7 @@ public sealed class SearchTests : WebApplicationFactoryBaseIntegrationTest
     {
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
-        using HttpClient client = Factory.CreateDefaultedHttpClient();
+        using HttpClient client = Factory.CreateClient();
 
         string[] filtersToApply = ["1", "2"];
 
@@ -222,7 +222,7 @@ public sealed class SearchTests : WebApplicationFactoryBaseIntegrationTest
     {
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
-        using HttpClient client = Factory.CreateDefaultedHttpClient();
+        using HttpClient client = Factory.CreateClient();
 
         string[] filtersToApply = ["1", "2"];
 

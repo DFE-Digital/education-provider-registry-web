@@ -13,6 +13,8 @@ public sealed class EducationProviderRegistryWebApplicationFactory : WebApplicat
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(connectionString);
         _connectionString = connectionString;
+
+        ClientOptions.AllowAutoRedirect = false;
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -34,18 +36,5 @@ public sealed class EducationProviderRegistryWebApplicationFactory : WebApplicat
         });
 
         return base.CreateHost(builder);
-
-    }
-
-    public HttpClient CreateDefaultedHttpClient(Action<WebApplicationFactoryClientOptions>? configure = null)
-    {
-        WebApplicationFactoryClientOptions options = new()
-        {
-            AllowAutoRedirect = false,
-        };
-
-        configure?.Invoke(options);
-
-        return base.CreateClient(options);
     }
 }

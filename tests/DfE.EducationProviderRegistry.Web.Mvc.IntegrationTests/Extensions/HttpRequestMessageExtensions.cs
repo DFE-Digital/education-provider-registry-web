@@ -9,7 +9,9 @@
                     .GetValues("Set-Cookie")
                     .Single((responseCookieSet) => responseCookieSet.Contains(".AspNetCore.Antiforgery"));
 
-            request.Headers.Add(name: "Cookie", value: antiForgeryCookie.Split(';')[0]);
+            request.Headers.Add(
+                name: "Cookie",
+                value: antiForgeryCookie.Split(';')[0]);
         }
     }
 

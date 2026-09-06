@@ -1,5 +1,6 @@
 ﻿using AngleSharp.Html.Dom;
 using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Extensions;
+using Microsoft.AspNetCore.Mvc.Testing.Handlers;
 using System.Net;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Cookies;
@@ -18,7 +19,7 @@ public sealed class CookiesTests : WebApplicationFactoryBaseIntegrationTest
     {
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
-        using HttpClient client = Factory.CreateDefaultedHttpClient();
+        using HttpClient client = Factory.CreateClient();
 
         // Act
         using HttpResponseMessage response = await client.GetAsync(path, ct);
@@ -38,7 +39,7 @@ public sealed class CookiesTests : WebApplicationFactoryBaseIntegrationTest
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
 
-        using HttpClient client = Factory.CreateDefaultedHttpClient();
+        using HttpClient client = Factory.CreateClient();
         using HttpResponseMessage cookieBannerHttpResponse = await client.GetAsync("/", ct);
         CookieBanner cookieBanner = new(document: await cookieBannerHttpResponse.AssertSuccessfulHtmlResponseAsync());
 
@@ -79,7 +80,7 @@ public sealed class CookiesTests : WebApplicationFactoryBaseIntegrationTest
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
 
-        using HttpClient client = Factory.CreateDefaultedHttpClient();
+        using HttpClient client = Factory.CreateClient();
         using HttpResponseMessage cookieBannerHttpResponse = await client.GetAsync("/", ct);
         CookieBanner cookieBanner = new(document: await cookieBannerHttpResponse.AssertSuccessfulHtmlResponseAsync());
 
@@ -92,4 +93,53 @@ public sealed class CookiesTests : WebApplicationFactoryBaseIntegrationTest
         // note: app.UseStatusCodePagesWithReExecute("/not-found"); re-executes a failed response (BadRequest)
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
+
+    [Theory]
+    [InlineData("/", true)]
+    [InlineData("/cookies", true)]
+    [InlineData("/cookies", false)]
+    [InlineData("/search", false)]
+    public async Task GET_Any_Route_With_Analytics_Cookie_Does_Not_Display_Cookie_Banner(string path, bool analytics)
+    {
+        // Arrange
+        CancellationToken ct = TestContext.Current.CancellationToken;
+
+        CookieContainer cookieContainer = new();
+
+        cookieContainer.Add(
+            AnalyticsCookie(
+                Factory.Server.BaseAddress,
+                analytics));
+
+        CookieContainerHandler handler = new(cookieContainer);
+
+        using HttpClient client = Factory.CreateDefaultClient(handler);
+
+        // Act
+        using HttpResponseMessage response = await client.GetAsync(path, ct);
+
+        // Assert
+        using IHtmlDocument doc = await response.AssertSuccessfulHtmlResponseAsync();
+        CookieBanner banner = new(doc);
+        Assert.False(banner.Exists());
+    }
+
+    private static Cookie AnalyticsCookie(Uri domain, bool analytics)
+    {
+        return new Cookie(
+            name: "cookies_policy",
+            value: Uri.EscapeDataString(
+                $$"""
+                    {
+                        "analytics":{{analytics.ToString().ToLowerInvariant()}}
+                    }
+                """
+            ))
+        {
+            Path = "/",
+            Domain = domain.Host
+        };
+    }
+
+    // Invalid JSON errors and displays cookie policy
 }

@@ -18,8 +18,7 @@ public static class AnalyticsConsentExtensions
     {
         const string CookieName = "cookies_policy";
 
-        if (!context.Request.Cookies.TryGetValue(
-            CookieName, out string? rawCookie) ||
+        if (!context.Request.Cookies.TryGetValue(CookieName, out string? rawCookie) ||
             string.IsNullOrWhiteSpace(rawCookie))
         {
             return false;
@@ -27,12 +26,8 @@ public static class AnalyticsConsentExtensions
 
         rawCookie = Uri.UnescapeDataString(rawCookie);
 
-        if (!TryParseAnalyticsFlag(rawCookie, out bool analytics))
-        {
-            return false;
-        }
+        return (TryParseAnalyticsFlag(rawCookie, out bool analytics) && analytics);
 
-        return analytics;
     }
 
     /// <summary>
@@ -53,7 +48,7 @@ public static class AnalyticsConsentExtensions
             // Try to get the "analytics" property; fail closed if missing.
             if (!root.TryGetProperty("analytics", out JsonElement analyticsElement))
             {
-                return true; // JSON was valid, but no consent.
+                return false; // JSON was valid, but no consent.
             }
 
             // Only treat explicit true as consent.

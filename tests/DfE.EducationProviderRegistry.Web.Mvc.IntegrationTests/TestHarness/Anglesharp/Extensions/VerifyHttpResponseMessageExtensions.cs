@@ -1,7 +1,7 @@
 ﻿using AngleSharp.Html.Dom;
 using System.Net;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Extensions;
+namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness.Anglesharp.Extensions;
 
 internal static class VerifyHttpResponseMessageExtensions
 {

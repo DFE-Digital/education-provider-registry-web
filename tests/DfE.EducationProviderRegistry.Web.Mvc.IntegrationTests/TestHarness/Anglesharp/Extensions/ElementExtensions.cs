@@ -1,7 +1,7 @@
 ﻿using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Extensions;
+namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness.Anglesharp.Extensions;
 
 internal static class ElementExtensions
 {

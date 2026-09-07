@@ -1,5 +1,5 @@
 ﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
-using System.Text;
+using HttpMethod = System.Net.Http.HttpMethod;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Search;
 

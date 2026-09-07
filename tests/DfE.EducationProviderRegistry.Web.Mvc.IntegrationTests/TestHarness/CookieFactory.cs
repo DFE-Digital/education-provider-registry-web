@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Cookies;
+namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness;
 
 internal static class CookieFactory
 {

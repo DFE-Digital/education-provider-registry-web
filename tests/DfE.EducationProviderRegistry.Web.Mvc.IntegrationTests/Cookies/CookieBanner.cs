@@ -1,81 +1,56 @@
-﻿using AngleSharp.Dom;
-using AngleSharp.Html.Dom;
-using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness.Anglesharp.Extensions;
-using AngleSharp.Io;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness.Anglesharp;
+using HttpMethod = System.Net.Http.HttpMethod;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Cookies;
 
 internal sealed class CookieBanner
 {
-    private readonly IHtmlDocument _document;
     private const string CookieBannerSelector = ".govuk-cookie-banner";
+    private readonly IHtmlDocument _document;
 
     public CookieBanner(IHtmlDocument document)
     {
         ArgumentNullException.ThrowIfNull(document);
+
         _document = document;
     }
 
-    public bool Exists() => GetCookieBannerContainer is not null;
+    public bool Exists() => GetContainer() is not null;
 
-    private IElement? GetCookieBannerContainer => _document.QuerySelector(CookieBannerSelector);
-
-    public HttpRequestMessage SubmitCookieBannerHttpRequest(
-        bool addAntiForgeryToken = false,
-        bool analytics = false)
+    public HtmlForm GetForm(bool analytics)
     {
-        if (GetCookieBannerContainer is null)
-        {
-            throw new InvalidOperationException($"Could not find CookieBanner with {CookieBannerSelector}");
-        }
+        IHtmlFormElement form = GetForm();
 
-        IHtmlFormElement formContainer = GetCookieBannerContainer!.Closest("form") as IHtmlFormElement ??
-            throw new ArgumentException("Could not find form for CookieBanner");
+        Dictionary<string, string> fields = [];
 
-        //DocumentRequest? form = formContainer.GetSubmission();
+        IElement analyticsElement =
+            form.Elements
+                .OfType<IElement>()
+                .Single(t =>
+                    t.GetAttribute("value") == (analytics ? "true" : "false"));
 
-        IHtmlCollection<IElement> formElementsWithValue =
-            _document.QuerySelectorAll(".govuk-cookie-banner [value]") ??
-                throw new ArgumentException("Could not find any elements in CookieBanner with a value attribute");
+        string analyticsName =
+            analyticsElement.GetAttribute("name") ??
+                throw new InvalidOperationException("Could not find analytics field name.");
 
-        // Ensure element in form has value
-        string targetValue = analytics ? "true" : "false";
+        string analyticsValue =
+            analyticsElement.GetAttribute("value") ??
+                throw new InvalidOperationException("Could not find analytics field value.");
 
-        IElement element =
-            formElementsWithValue.Single((t) =>
-                t.GetAttribute("value") == targetValue);
+        fields.Add(analyticsName, analyticsValue);
 
-        string targetParam = element.GetAttribute("name") ??
-            throw new ArgumentException("Could not find name attribute on element");
+        return new HtmlForm(
+            Action: new Uri(form.Action, UriKind.RelativeOrAbsolute),
+            Method: new HttpMethod(form.Method.ToUpperInvariant()),
+            Enctype: form.Enctype,
+            Fields: fields);
+    }
 
+    private IElement? GetContainer() => _document.QuerySelector(CookieBannerSelector);
 
-        Dictionary<string, string?> formData = new()
-        {
-            [targetParam] = element.GetAttribute("value"),
-        };
-
-        // TODO application parts and remove
-
-        if (addAntiForgeryToken)
-        {
-            IElement antiForgeryElement =
-                formContainer.QuerySelector("input[name='__RequestVerificationToken']") ??
-                    throw new ArgumentException("Could not find antiforgery token input");
-
-            string antiForgeryToken =
-                antiForgeryElement.GetAttribute("value") ??
-                    throw new ArgumentException("Could not find antiforgery token value");
-
-            formData["__RequestVerificationToken"] = antiForgeryToken;
-        }
-
-        (System.Net.Http.HttpMethod method, string? action) = formContainer.ParseFormAttributes();
-
-        HttpRequestMessage request = new(method, action)
-        {
-            Content = new FormUrlEncodedContent(formData)
-        };
-
-        return request;
+    private IHtmlFormElement GetForm()
+    {
+        return GetContainer()?.Closest("form") as IHtmlFormElement ??
+            throw new InvalidOperationException($"Could not find form for {CookieBannerSelector}");
     }
 }

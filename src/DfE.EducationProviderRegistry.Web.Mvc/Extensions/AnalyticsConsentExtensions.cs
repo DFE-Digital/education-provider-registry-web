@@ -31,9 +31,10 @@ public static class AnalyticsConsentExtensions
     }
 
     /// <summary>
-    /// Attempts to parse the JSON cookie and extract the "analytics" boolean.
-    /// Returns false if JSON is malformed, the property is missing, or the value
-    /// is not a boolean. This ensures strict fail-closed behaviour.
+    /// Attempts to read the analytics flag from valid JSON.
+    /// Returns true when the analytics property is present, regardless of its type.
+    /// Only the literal JSON boolean value <c>true</c> sets <paramref name="value"/>
+    /// to true; all other values are treated as no consent.
     /// </summary>
     private static bool TryParseAnalyticsFlag(string json, out bool value)
     {

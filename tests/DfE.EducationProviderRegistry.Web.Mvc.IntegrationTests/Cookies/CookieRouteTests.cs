@@ -6,10 +6,11 @@ using HttpMethod = System.Net.Http.HttpMethod;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Cookies;
 
-public sealed class CookiesControllerTests : WebApplicationFactoryBaseTest
+public sealed class CookieRouteTests : WebApplicationFactoryBaseTest
 {
-    public CookiesControllerTests(IServiceProvider provider) : base(provider)
+    public CookieRouteTests(IServiceProvider provider) : base(provider)
     {
+
     }
 
     [Theory]
@@ -88,5 +89,69 @@ public sealed class CookiesControllerTests : WebApplicationFactoryBaseTest
             "expires=",
             cookie,
             StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task Save_Without_AntiForgery_RequestToken_Is_Rejected()
+    {
+        // Arrange
+        CancellationToken ct = TestContext.Current.CancellationToken;
+        Factory.ClientOptions.HandleCookies = false;
+        using HttpClient client = Factory.CreateClient();
+
+        AntiForgeryContext antiForgery = await client.GetAntiforgeryTokensAsync(ct);
+
+        using HttpRequestMessage request = new(
+            HttpMethod.Post,
+            "/cookies")
+        {
+            Content = new FormUrlEncodedContent(
+                new Dictionary<string, string>
+                {
+                    ["analytics"] = "false"
+                })
+        };
+
+        request.Headers.Add(
+            "Cookie",
+            antiForgery.CookieHeader);
+
+        // Act
+        using HttpResponseMessage response =
+            await client.SendAsync(request, ct);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Save_Without_AntiForgery_Cookie_Is_Rejected()
+    {
+        // Arrange
+        CancellationToken ct = TestContext.Current.CancellationToken;
+        Factory.ClientOptions.HandleCookies = false;
+        using HttpClient client = Factory.CreateClient();
+
+        AntiForgeryContext antiForgery = await client.GetAntiforgeryTokensAsync(ct);
+
+        using HttpRequestMessage request = new(
+            HttpMethod.Post,
+            "/cookies")
+        {
+            Content = new FormUrlEncodedContent(
+                new Dictionary<string, string>
+                {
+                    ["analytics"] = "false",
+                    [antiForgery.FormFieldName] = antiForgery.RequestToken
+                })
+        };
+
+        // Act
+        using HttpResponseMessage response = await client.SendAsync(request, ct);
+
+        // Assert
+        Assert.Equal(
+            HttpStatusCode.NotFound,
+            response.StatusCode);
     }
 }

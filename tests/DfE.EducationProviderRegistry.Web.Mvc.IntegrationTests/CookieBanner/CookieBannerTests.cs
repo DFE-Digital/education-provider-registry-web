@@ -34,31 +34,6 @@ public sealed class CookieBannerTests : WebApplicationFactoryBaseTest
         Assert.True(banner.Exists());
     }
 
-    [Fact]
-    public async Task Submit_CookieBanner_Requests_Without_AntiForgery_RequestToken_Is_Rejected()
-    {
-        // Arrange
-        CancellationToken ct = TestContext.Current.CancellationToken;
-
-        using HttpClient client = Factory.CreateClient();
-        using HttpResponseMessage pageResponse = await client.GetAsync("/", ct);
-        CookieBanner cookieBanner = new(await pageResponse.AssertSuccessfulHtmlResponseAsync());
-        HtmlForm form = cookieBanner.GetForm(analytics: false);
-
-        using HttpRequestMessage request = form.ToHttpRequestMessage();
-
-        AntiForgeryContext antiForgery = await client.GetAntiforgeryTokensAsync(ct);
-        request.Headers.Add("Cookie", antiForgery.CookieHeader);
-
-        // Act
-        using HttpResponseMessage response = await client.SendAsync(request, ct);
-
-        // Assert
-        // note: app.UseStatusCodePagesWithReExecute("/not-found");
-        // re-executes a failed antiforgery response (BadRequest)
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-    }
-
     [Theory]
     [InlineData("/", true)]
     [InlineData("/cookies", true)]
@@ -72,10 +47,9 @@ public sealed class CookieBannerTests : WebApplicationFactoryBaseTest
         using HttpClient client = Factory.CreateClient();
 
         HttpRequestMessage request = new(HttpMethod.Get, path);
-
+        
         request.Headers.Add
-            ("Cookie",
-            CookieFactory.AnalyticsCookie(Factory.Server.BaseAddress, enableAnalytics).ToString());
+            ("Cookie", CookieFactory.AnalyticsCookie(client.BaseAddress!, enableAnalytics).ToString());
 
         // Act
         using HttpResponseMessage response = await client.SendAsync(request, ct);

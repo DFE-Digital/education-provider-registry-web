@@ -17,7 +17,6 @@ public abstract class WebApplicationFactoryBaseTest : IntegrationTestsBase, IAsy
     protected WebApplicationFactoryBaseTest(IServiceProvider provider)
     {
         _dbProvider = provider.GetRequiredService<IPostgresDatabaseProvider>();
-
     }
 
 #nullable disable

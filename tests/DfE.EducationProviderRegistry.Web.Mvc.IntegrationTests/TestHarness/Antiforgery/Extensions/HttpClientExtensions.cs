@@ -23,7 +23,8 @@ internal static class HttpClientExtensions
         const string aspAntiForgeryCookieName = ".AspNetCore.Antiforgery";
         string antiForgeryCookieValue;
 
-        // If the request already has a cookie
+        // If the request already has a cookie (which it could obtain from above call)
+
         // the response won't contain another AntiForgeryCookie through Set-Cookie and rather the client will reuse the existing
         // (e.g. over HTTP Secure Cookies are not transmitted)
         

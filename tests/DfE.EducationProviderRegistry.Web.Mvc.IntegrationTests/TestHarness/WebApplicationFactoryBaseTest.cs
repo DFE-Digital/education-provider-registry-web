@@ -1,25 +1,38 @@
 ﻿using DfE.Core.Libraries.IntegrationTests.Abstractions;
 using DfE.Core.Libraries.IntegrationTests.Database.Abstractions;
 using DfE.Core.Libraries.IntegrationTests.Database.Postgres.Container.Providers;
+using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness.Antiforgery;
+using DfE.EducationProviderRegistry.Web.Mvc.Settings;
 using Microsoft.Extensions.DependencyInjection;
+using System.Net.Http.Json;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests;
+namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness;
 
-public abstract class WebApplicationFactoryBaseIntegrationTest : IntegrationTestsBase, IAsyncLifetime
+public abstract class WebApplicationFactoryBaseTest : IntegrationTestsBase, IAsyncLifetime
 {
     private IDatabase? _db;
     private readonly IPostgresDatabaseProvider _dbProvider;
     private string? _postgresConnectionString;
 
-    protected WebApplicationFactoryBaseIntegrationTest(IServiceProvider provider)
+    protected WebApplicationFactoryBaseTest(IServiceProvider provider)
     {
         _dbProvider = provider.GetRequiredService<IPostgresDatabaseProvider>();
-
     }
 
 #nullable disable
     protected EducationProviderRegistryWebApplicationFactory Factory { get; private set; }
 #nullable enable
+
+    protected virtual void ConfigureServices(IServiceCollection services)
+    {
+        // Valid clarity
+        services.PostConfigure<ClaritySettings>((opts) =>
+        {
+            opts.Enabled = true;
+            opts.ProjectId = "STUB-PROJECTID";
+        });
+    }
+
 
     public async ValueTask InitializeAsync()
     {
@@ -32,7 +45,7 @@ public abstract class WebApplicationFactoryBaseIntegrationTest : IntegrationTest
 
         _postgresConnectionString = await _dbProvider.GetConnectionStringAsync(dbKey, cancellationToken: ct);
 
-        Factory = new(_postgresConnectionString);
+        Factory = new(_postgresConnectionString, ConfigureServices);
     }
 
     protected override async Task BeforeDisposeAsync()

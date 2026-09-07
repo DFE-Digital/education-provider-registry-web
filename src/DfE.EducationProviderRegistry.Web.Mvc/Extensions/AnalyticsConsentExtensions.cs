@@ -18,8 +18,7 @@ public static class AnalyticsConsentExtensions
     {
         const string CookieName = "cookies_policy";
 
-        if (!context.Request.Cookies.TryGetValue(
-            CookieName, out string? rawCookie) ||
+        if (!context.Request.Cookies.TryGetValue(CookieName, out string? rawCookie) ||
             string.IsNullOrWhiteSpace(rawCookie))
         {
             return false;
@@ -27,18 +26,15 @@ public static class AnalyticsConsentExtensions
 
         rawCookie = Uri.UnescapeDataString(rawCookie);
 
-        if (!TryParseAnalyticsFlag(rawCookie, out bool analytics))
-        {
-            return false;
-        }
+        return (TryParseAnalyticsFlag(rawCookie, out bool analytics) && analytics);
 
-        return analytics;
     }
 
     /// <summary>
-    /// Attempts to parse the JSON cookie and extract the "analytics" boolean.
-    /// Returns false if JSON is malformed, the property is missing, or the value
-    /// is not a boolean. This ensures strict fail-closed behaviour.
+    /// Attempts to read the analytics flag from valid JSON.
+    /// Returns true when the analytics property is present, regardless of its type.
+    /// Only the literal JSON boolean value <c>true</c> sets <paramref name="value"/>
+    /// to true; all other values are treated as no consent.
     /// </summary>
     private static bool TryParseAnalyticsFlag(string json, out bool value)
     {
@@ -53,7 +49,7 @@ public static class AnalyticsConsentExtensions
             // Try to get the "analytics" property; fail closed if missing.
             if (!root.TryGetProperty("analytics", out JsonElement analyticsElement))
             {
-                return true; // JSON was valid, but no consent.
+                return false; // JSON was valid, but no consent.
             }
 
             // Only treat explicit true as consent.

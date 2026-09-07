@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests;
@@ -8,12 +10,17 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests;
 public sealed class EducationProviderRegistryWebApplicationFactory : WebApplicationFactory<Program>
 {
     private readonly string _connectionString;
+    private readonly Action<IServiceCollection> _configureHostServices;
 
-    public EducationProviderRegistryWebApplicationFactory(string connectionString)
+    public EducationProviderRegistryWebApplicationFactory(string connectionString, Action<IServiceCollection> configureHostServices)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(connectionString);
         _connectionString = connectionString;
 
+        ArgumentNullException.ThrowIfNull(configureHostServices);
+        _configureHostServices = configureHostServices;
+
+        // default WebApplicationFactoryOptions to not auto-handle redirects
         ClientOptions.AllowAutoRedirect = false;
     }
 
@@ -23,7 +30,10 @@ public sealed class EducationProviderRegistryWebApplicationFactory : WebApplicat
         {
             // TODO configure host
         });
+
+        builder.ConfigureTestServices(_configureHostServices);
     }
+
 
     protected override IHost CreateHost(IHostBuilder builder)
     {

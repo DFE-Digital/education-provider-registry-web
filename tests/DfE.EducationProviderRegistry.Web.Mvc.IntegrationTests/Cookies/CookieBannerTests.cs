@@ -5,9 +5,9 @@ using System.Net;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Cookies;
 
-public sealed class CookiesTests : WebApplicationFactoryBaseIntegrationTest
+public sealed class CookieBannerTests : WebApplicationFactoryBaseIntegrationTest
 {
-    public CookiesTests(IServiceProvider provider) : base(provider)
+    public CookieBannerTests(IServiceProvider provider) : base(provider)
     {
     }
 
@@ -45,7 +45,7 @@ public sealed class CookiesTests : WebApplicationFactoryBaseIntegrationTest
 
         // Create HttpRequest and add AntiForgery request token
         using HttpRequestMessage request =
-            cookieBanner.CreateSubmitCookieBannerHttpRequest(addAntiForgeryToken: true, analytics: analytics);
+            cookieBanner.SubmitCookieBannerHttpRequest(addAntiForgeryToken: true, analytics: analytics);
 
         request.AddAspNetCoreAntiForgeryCookie(cookieBannerHttpResponse);
 
@@ -91,7 +91,7 @@ public sealed class CookiesTests : WebApplicationFactoryBaseIntegrationTest
         using HttpResponseMessage cookieBannerHttpResponse = await client.GetAsync("/", ct);
         CookieBanner cookieBanner = new(document: await cookieBannerHttpResponse.AssertSuccessfulHtmlResponseAsync());
 
-        using HttpRequestMessage request = cookieBanner.CreateSubmitCookieBannerHttpRequest(addAntiForgeryToken: true);
+        using HttpRequestMessage request = cookieBanner.SubmitCookieBannerHttpRequest(addAntiForgeryToken: true);
 
         // Act
         using HttpResponseMessage response = await client.SendAsync(request, ct);
@@ -106,7 +106,7 @@ public sealed class CookiesTests : WebApplicationFactoryBaseIntegrationTest
     [InlineData("/cookies", true)]
     [InlineData("/cookies", false)]
     [InlineData("/search", false)]
-    public async Task GET_Any_Route_With_Analytics_Cookie_Does_Not_Display_Cookie_Banner(string path, bool analytics)
+    public async Task GET_Any_Route_With_Analytics_Cookie_Does_Not_Display_Cookie_Banner(string path, bool enableAnalytics)
     {
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
@@ -114,9 +114,9 @@ public sealed class CookiesTests : WebApplicationFactoryBaseIntegrationTest
         CookieContainer cookieContainer = new();
 
         cookieContainer.Add(
-            AnalyticsCookie(
-                Factory.Server.BaseAddress,
-                analytics));
+            CookieFactory.AnalyticsCookie(
+                domain: Factory.Server.BaseAddress,
+                analyticsValue: enableAnalytics));
 
         CookieContainerHandler handler = new(cookieContainer);
 
@@ -130,23 +130,4 @@ public sealed class CookiesTests : WebApplicationFactoryBaseIntegrationTest
         CookieBanner banner = new(doc);
         Assert.False(banner.Exists());
     }
-
-    private static Cookie AnalyticsCookie(Uri domain, bool analytics)
-    {
-        return new Cookie(
-            name: "cookies_policy",
-            value: Uri.EscapeDataString(
-                $$"""
-                    {
-                        "analytics":{{analytics.ToString().ToLowerInvariant()}}
-                    }
-                """
-            ))
-        {
-            Path = "/",
-            Domain = domain.Host
-        };
-    }
-
-    // Invalid JSON errors and displays cookie policy
 }

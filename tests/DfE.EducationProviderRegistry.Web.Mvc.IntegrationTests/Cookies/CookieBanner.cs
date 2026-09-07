@@ -1,7 +1,7 @@
 ﻿using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness.Anglesharp;
 using HttpMethod = System.Net.Http.HttpMethod;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.CookieBanner;
+namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Cookies;
 
 internal sealed class CookieBanner
 {

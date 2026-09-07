@@ -1,12 +1,8 @@
 ﻿using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness;
-using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness.Anglesharp;
 using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness.Anglesharp.Extensions;
-using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness.Antiforgery;
-using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness.Antiforgery.Extensions;
-using System.Net;
 using HttpMethod = System.Net.Http.HttpMethod;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.CookieBanner;
+namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Cookies;
 
 public sealed class CookieBannerTests : WebApplicationFactoryBaseTest
 {
@@ -47,7 +43,7 @@ public sealed class CookieBannerTests : WebApplicationFactoryBaseTest
         using HttpClient client = Factory.CreateClient();
 
         HttpRequestMessage request = new(HttpMethod.Get, path);
-        
+
         request.Headers.Add
             ("Cookie", CookieFactory.AnalyticsCookie(client.BaseAddress!, enableAnalytics).ToString());
 

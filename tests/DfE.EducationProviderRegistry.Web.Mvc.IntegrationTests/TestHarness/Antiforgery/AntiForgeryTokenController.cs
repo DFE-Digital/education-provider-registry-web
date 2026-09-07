@@ -30,5 +30,5 @@ public sealed class AntiforgeryTokenController : ControllerBase
 }
 
 public sealed record AntiForgeryRequestToken(
-    string FormFieldName, 
+    string FormFieldName,
     string RequestToken);

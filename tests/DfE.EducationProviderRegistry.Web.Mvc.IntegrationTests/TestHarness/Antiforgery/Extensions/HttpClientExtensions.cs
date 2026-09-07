@@ -27,7 +27,7 @@ internal static class HttpClientExtensions
 
         // the response won't contain another AntiForgeryCookie through Set-Cookie and rather the client will reuse the existing
         // (e.g. over HTTP Secure Cookies are not transmitted)
-        
+
         // Parse either to get a valid SessionCookie
 
         if (response.Headers.TryGetValues("Set-Cookie", out IEnumerable<string>? cookies))
@@ -43,7 +43,7 @@ internal static class HttpClientExtensions
                 .Single()
                 .Split(';')
                 .Single(x => x.Contains(aspAntiForgeryCookieName))
-                .Trim() ?? 
+                .Trim() ??
                     throw new InvalidOperationException("Could not find antiforgery cookie.");
         }
 

@@ -41,16 +41,16 @@ public sealed class CookiesPageTests : WebApplicationFactoryBaseTest
         CancellationToken ct = TestContext.Current.CancellationToken;
         Factory.ClientOptions.AllowAutoRedirect = true;
         using HttpClient client = Factory.CreateClient();
-        
+
         AntiForgeryContext antiForgery = await client.GetAntiforgeryTokensAsync(ct);
 
-        CookiesPageAnalyticsForm page = 
+        CookiesPageAnalyticsForm page =
             new(
                 await (
                     await client.GetAsync("/cookies", ct))
                         .AssertSuccessfulHtmlResponseAsync());
 
-        HtmlForm form = 
+        HtmlForm form =
             page.GetForm(analytics)
                 .AddField(antiForgery.FormFieldName, antiForgery.RequestToken);
 

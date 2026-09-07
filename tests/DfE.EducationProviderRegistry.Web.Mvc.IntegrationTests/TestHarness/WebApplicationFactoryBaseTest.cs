@@ -1,8 +1,10 @@
 ﻿using DfE.Core.Libraries.IntegrationTests.Abstractions;
 using DfE.Core.Libraries.IntegrationTests.Database.Abstractions;
 using DfE.Core.Libraries.IntegrationTests.Database.Postgres.Container.Providers;
+using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness.Antiforgery;
 using DfE.EducationProviderRegistry.Web.Mvc.Settings;
 using Microsoft.Extensions.DependencyInjection;
+using System.Net.Http.Json;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness;
 
@@ -18,6 +20,10 @@ public abstract class WebApplicationFactoryBaseTest : IntegrationTestsBase, IAsy
 
     }
 
+#nullable disable
+    protected EducationProviderRegistryWebApplicationFactory Factory { get; private set; }
+#nullable enable
+
     protected virtual void ConfigureServices(IServiceCollection services)
     {
         // Valid clarity
@@ -28,9 +34,6 @@ public abstract class WebApplicationFactoryBaseTest : IntegrationTestsBase, IAsy
         });
     }
 
-#nullable disable
-    protected EducationProviderRegistryWebApplicationFactory Factory { get; private set; }
-#nullable enable
 
     public async ValueTask InitializeAsync()
     {

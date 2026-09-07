@@ -1,5 +1,4 @@
 ﻿using AngleSharp.Html.Dom;
-using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Cookies;
 using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness;
 using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness.Anglesharp.Extensions;
 using DfE.EducationProviderRegistry.Web.Mvc.Settings;

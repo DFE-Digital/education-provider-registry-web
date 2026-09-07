@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness.Antiforgery;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
@@ -20,6 +22,8 @@ public sealed class EducationProviderRegistryWebApplicationFactory : WebApplicat
         ArgumentNullException.ThrowIfNull(configureHostServices);
         _configureHostServices = configureHostServices;
 
+        // Removes https redirect warnings 
+        ClientOptions.BaseAddress = new("https://localhost");
         // default WebApplicationFactoryOptions to not auto-handle redirects
         ClientOptions.AllowAutoRedirect = false;
     }
@@ -28,7 +32,12 @@ public sealed class EducationProviderRegistryWebApplicationFactory : WebApplicat
     {
         builder.ConfigureServices((services) =>
         {
-            // TODO configure host
+            services.AddControllersWithViews()
+            .PartManager
+            .ApplicationParts
+            .Add(
+                new AssemblyPart(
+                    typeof(AntiforgeryTokenController).Assembly));
         });
 
         builder.ConfigureTestServices(_configureHostServices);

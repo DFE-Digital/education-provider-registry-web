@@ -4,15 +4,15 @@ using DfE.Core.Libraries.IntegrationTests.Database.Postgres.Container.Providers;
 using DfE.EducationProviderRegistry.Web.Mvc.Settings;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests;
+namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness;
 
-public abstract class WebApplicationFactoryBaseIntegrationTest : IntegrationTestsBase, IAsyncLifetime
+public abstract class WebApplicationFactoryBaseTest : IntegrationTestsBase, IAsyncLifetime
 {
     private IDatabase? _db;
     private readonly IPostgresDatabaseProvider _dbProvider;
     private string? _postgresConnectionString;
 
-    protected WebApplicationFactoryBaseIntegrationTest(IServiceProvider provider)
+    protected WebApplicationFactoryBaseTest(IServiceProvider provider)
     {
         _dbProvider = provider.GetRequiredService<IPostgresDatabaseProvider>();
 

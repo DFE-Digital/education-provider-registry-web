@@ -1,6 +1,7 @@
 ﻿using AngleSharp.Html.Dom;
 using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Cookies;
-using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Extensions;
+using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness;
+using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness.Anglesharp.Extensions;
 using DfE.EducationProviderRegistry.Web.Mvc.Settings;
 using Microsoft.AspNetCore.Mvc.Testing.Handlers;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,7 +9,7 @@ using System.Net;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Analytics;
 
-public sealed class ClarityTests : WebApplicationFactoryBaseIntegrationTest
+public sealed class ClarityTests : WebApplicationFactoryBaseTest
 {
     public ClarityTests(IServiceProvider provider) : base(provider)
     {

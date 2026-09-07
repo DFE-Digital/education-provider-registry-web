@@ -1,6 +1,7 @@
 ﻿using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
-using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Extensions;
+using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness.Anglesharp.Extensions;
+using AngleSharp.Io;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Cookies;
 
@@ -28,8 +29,10 @@ internal sealed class CookieBanner
             throw new InvalidOperationException($"Could not find CookieBanner with {CookieBannerSelector}");
         }
 
-        IElement formContainer = GetCookieBannerContainer!.Closest("form") ??
+        IHtmlFormElement formContainer = GetCookieBannerContainer!.Closest("form") as IHtmlFormElement ??
             throw new ArgumentException("Could not find form for CookieBanner");
+
+        //DocumentRequest? form = formContainer.GetSubmission();
 
         IHtmlCollection<IElement> formElementsWithValue =
             _document.QuerySelectorAll(".govuk-cookie-banner [value]") ??
@@ -66,7 +69,7 @@ internal sealed class CookieBanner
             formData["__RequestVerificationToken"] = antiForgeryToken;
         }
 
-        (HttpMethod method, string? action) = formContainer.ParseFormAttributes();
+        (System.Net.Http.HttpMethod method, string? action) = formContainer.ParseFormAttributes();
 
         HttpRequestMessage request = new(method, action)
         {

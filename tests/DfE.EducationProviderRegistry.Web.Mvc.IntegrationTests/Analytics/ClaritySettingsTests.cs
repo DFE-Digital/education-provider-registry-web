@@ -1,11 +1,12 @@
 ﻿using AngleSharp.Html.Dom;
-using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Extensions;
+using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness;
+using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness.Anglesharp.Extensions;
 using DfE.EducationProviderRegistry.Web.Mvc.Settings;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Analytics;
 
-public sealed class ClaritySettingsTests : WebApplicationFactoryBaseIntegrationTest
+public sealed class ClaritySettingsTests : WebApplicationFactoryBaseTest
 {
     public ClaritySettingsTests(IServiceProvider provider) : base(provider)
     {

@@ -1,4 +1,4 @@
-﻿namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Extensions
+﻿namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness.Http.Extensions
 {
     internal static class HttpRequestMessageExtensions
     {

@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests;
+namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness;
 
 public sealed class EducationProviderRegistryWebApplicationFactory : WebApplicationFactory<Program>
 {

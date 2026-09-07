@@ -19,7 +19,7 @@ internal sealed class CookieBanner
 
     private IElement? GetCookieBannerContainer => _document.QuerySelector(CookieBannerSelector);
 
-    public HttpRequestMessage CreateSubmitCookieBannerHttpRequest(
+    public HttpRequestMessage SubmitCookieBannerHttpRequest(
         bool addAntiForgeryToken = false,
         bool analytics = false)
     {

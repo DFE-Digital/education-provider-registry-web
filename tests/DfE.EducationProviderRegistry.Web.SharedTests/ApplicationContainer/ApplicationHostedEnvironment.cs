@@ -2,6 +2,7 @@
 using DfE.Core.Libraries.IntegrationTests.Database.Abstractions;
 using DfE.Core.Libraries.IntegrationTests.Database.Postgres.Container.Providers;
 using DotNet.Testcontainers.Containers;
+using System.Reflection.Metadata.Ecma335;
 
 namespace DfE.EducationProviderRegistry.Web.SharedTests.ApplicationContainer;
 
@@ -37,13 +38,19 @@ public sealed class ApplicationHostedEnvironment
             throw new ArgumentException($"Host environment has not been started with {nameof(InitialiseAsync)}");
         }
 
-        return new($"http://localhost:{_applicationContainer.GetMappedPublicPort(8080)}");
+        UriBuilder builder = new()
+        {
+            Scheme = "http",
+            Host = "localhost",
+            Port = _applicationContainer.GetMappedPublicPort(8080)
+        };
+
+        return builder.Uri;
     }
 
-    public async Task<string> GetLogsAsync()
+    public async Task<string> GetApplicationLogsAsync()
     {
-        (string stdout, string stderr) =
-            await _applicationContainer!.GetLogsAsync();
+        (string stdout, string stderr) = await _applicationContainer!.GetLogsAsync();
 
         return $"""
         === STDOUT ===

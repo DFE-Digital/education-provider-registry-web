@@ -1,4 +1,6 @@
-﻿namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Search;
+﻿using System.Text;
+
+namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Search;
 
 internal static class SearchRoutes
 {
@@ -9,15 +11,11 @@ internal static class SearchRoutes
         string? locationTerm = null,
         string? sort = null)
     {
-        UriBuilder builder = new()
-        {
-            Path = "/search/results",
-            Query =
-                $"SearchKeywords={identityTerm ?? string.Empty}" +
-                $"&Address={locationTerm ?? string.Empty}" +
-                $"&sort={sort}"
-        };
-
-        return builder.Uri;
+        return new Uri(
+            "search/results" +
+            $"?SearchKeywords={identityTerm ?? string.Empty}" +
+            $"&Address={locationTerm ?? string.Empty}" +
+            $"&sort={sort}",
+            UriKind.Relative);
     }
 }

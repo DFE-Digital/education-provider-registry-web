@@ -125,7 +125,7 @@ public sealed class AccessibilityScanTests
 
         await File.WriteAllTextAsync(
             Path.Combine(outputDirectory, "application.log"),
-            await _hostedEnvironment.GetLogsAsync(),
+            await _hostedEnvironment.GetApplicationLogsAsync(),
             _ct);
 
         if (results.Violations.Length != 0)

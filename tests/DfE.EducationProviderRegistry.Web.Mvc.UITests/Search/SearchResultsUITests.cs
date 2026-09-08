@@ -1,37 +1,13 @@
-﻿using DfE.EducationProviderRegistry.Web.SharedTests.ApplicationContainer;
-using DfE.WebDriver.Public.Session;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using static DfE.EducationProviderRegistry.Web.MVC.UITests.Search.SearchPanelComponent;
 
 namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Search;
 
-public sealed class SearchResultsUITests : IAsyncLifetime
+public sealed class SearchResultsUITests : UIBaseTest
 {
-    private readonly ApplicationHostedEnvironment _application;
-    private readonly IWebDriverSessionBuilder _webDriverSessionBuilder;
-
-    public SearchResultsUITests(
-        ApplicationHostedEnvironment application,
-        IWebDriverSessionBuilder webDriverSessionBuilder)
+    public SearchResultsUITests(IServiceProvider provider) : base(provider)
     {
-        _application = application;
-        _webDriverSessionBuilder = webDriverSessionBuilder;
-
-        _webDriverSessionBuilder
-            .WithChrome()
-            .WithHeadless(true)
-            .WithViewport(1920, 1080)
-            .WithStartMaximised(true)
-            .WithAllowInsecureLocalConnections(true)
-            .Build();
     }
-
-    public async ValueTask InitializeAsync()
-    {
-        await _application.InitialiseAsync(TestContext.Current.CancellationToken);
-    }
-
-    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
     // TODO BiDI await network traffic that sort submitted
     [Fact]
@@ -40,9 +16,9 @@ public sealed class SearchResultsUITests : IAsyncLifetime
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
 
-        using IWebDriver driver = await _webDriverSessionBuilder.Build().StartDriverAsync(ct);
+        using IWebDriver driver = await WebDriverBuilder.Build().StartDriverAsync(ct);
 
-        Uri uri = GetSearchResultUriFor(_application, identityTerm: "sch");
+        Uri uri = new(baseUri: ApplicationEnvironment.GetApplicationUrl(), relativeUri: SearchRoutes.SearchResults(identityTerm: "sch"));
 
         await driver.Navigate().GoToUrlAsync(uri);
 
@@ -69,9 +45,9 @@ public sealed class SearchResultsUITests : IAsyncLifetime
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
 
-        using IWebDriver driver = await _webDriverSessionBuilder.Build().StartDriverAsync(ct);
+        using IWebDriver driver = await WebDriverBuilder.Build().StartDriverAsync(ct);
 
-        Uri uri = GetSearchResultUriFor(_application, identityTerm: "sch");
+        Uri uri = new(baseUri: ApplicationEnvironment.GetApplicationUrl(), relativeUri: SearchRoutes.SearchResults(identityTerm: "sch"));
 
         await driver.Navigate().GoToUrlAsync(uri);
 
@@ -102,29 +78,6 @@ public sealed class SearchResultsUITests : IAsyncLifetime
         Assert.Equal(
             ConvertFacetSelectionToRemovalValue(filters, targetFacet, targetFacetValueLabel),
             actualSingleSelectedFilter.Value);
-    }
-
-    private static Uri GetSearchResultUriFor(
-        ApplicationHostedEnvironment application,
-        string? identityTerm = null,
-        string? locationTerm = null,
-        string? sort = null)
-    {
-        Uri baseUri = application.GetApplicationUrl();
-
-        UriBuilder builder = new()
-        {
-            Scheme = baseUri.Scheme,
-            Host = baseUri.Host,
-            Port = baseUri.Port,
-            Path = "/search/results",
-            Query =
-                $"SearchKeywords={identityTerm ?? string.Empty}" +
-                $"&Address={locationTerm ?? string.Empty}" +
-                $"&sort={sort}"
-        };
-
-        return builder.Uri;
     }
 
     private static string ConvertFacetSelectionToRemovalValue(SearchFiltersComponent filters, string targetFacet, string targetFacetValueLabel)

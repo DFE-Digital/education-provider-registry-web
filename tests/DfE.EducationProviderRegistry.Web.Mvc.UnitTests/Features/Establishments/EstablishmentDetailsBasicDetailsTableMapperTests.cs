@@ -42,6 +42,7 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
             "Religious character",
             "Type of SEN provision",
             "Website",
+            "Telephone number",
             "Ofsted",
             "School profiles service"
         ];
@@ -75,9 +76,9 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
         AssertValue(table, "Headteacher", "testHeadteacher");
         AssertValue(table, "Type", "testType");
         AssertValue(table, "Phase of education", "testPhase");
-        AssertValue(table, "Address", "testAddressLine1");
+        AssertValue(table, "Address", "testAddressLine1, testAddressLine2, testTown, testCounty, testPostcode");
         AssertValue(table, "Local authority", "testLocalAuthority");
-        AssertValue(table, "Part of", "testGroupName");
+        AssertValue(table, "Part of", "Testgroupname");
         AssertValue(table, "Age range", "testAgeRange");
         AssertValue(table, "Gender", "Yet to be provisioned");
         AssertValue(table, "Number of pupils", "Yet to be provisioned");
@@ -91,6 +92,7 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
             "Type of SEN provision",
             "testSenProvision");
         AssertValue(table, "Website", "testWebsite");
+        AssertValue(table, "Telephone number", "testTelephoneNumber");
         AssertValue(
             table,
             "School profiles service",
@@ -183,8 +185,13 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
         AssertValue(table, "Age range", string.Empty);
         AssertValue(table, "Pupils capacity", string.Empty);
         AssertValue(table, "Religious character", string.Empty);
-        AssertValue(table, "Type of SEN provision", string.Empty);
-        AssertValue(table, "Website", string.Empty);
+        AssertValue(table, "Type of SEN provision", "Not recorded");
+
+        // The "Website" and "Telephone number" rows should not be present in the table when the contact details are missing.
+        Assert.Null(table.Rows.SingleOrDefault(
+            candidate => candidate.Cells[0].Text == "Website"));
+        Assert.Null(table.Rows.SingleOrDefault(
+            candidate => candidate.Cells[0].Text == "Telephone number"));
 
         TableCell idNumbersCell = GetValueCell(
             table,
@@ -240,7 +247,8 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
                 localAuthorityName: "testLocalAuthority",
                 localAuthorityCode: "testLocalAuthorityCode"),
             Group = new EstablishmentGroupModel(
-                GroupName: "testGroupName", Code: "testGroupCode"),
+                GroupName: "testGroupName",
+                Code: "testGroupCode"),
             AgeRange = "testAgeRange",
             Gender = "testGender",
             ReligiousCharacter = "testReligiousCharacter",

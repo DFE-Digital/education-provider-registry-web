@@ -3,7 +3,7 @@ using DfE.EducationProviderRegistry.Web.SharedTests.ApplicationContainer;
 using DfE.WebDriver.Public.Session;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DfE.EducationProviderRegistry.Web.MVC.UITests;
+namespace DfE.EducationProviderRegistry.Web.Mvc.UITests;
 
 public class UIBaseTest : IntegrationTestsBase, IAsyncLifetime
 {

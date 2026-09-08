@@ -1,6 +1,6 @@
 ﻿using OpenQA.Selenium;
 
-namespace DfE.EducationProviderRegistry.Web.MVC.UITests;
+namespace DfE.EducationProviderRegistry.Web.Mvc.UITests;
 
 internal sealed class RequestToUriNetworkHandler : NetworkRequestHandler
 {

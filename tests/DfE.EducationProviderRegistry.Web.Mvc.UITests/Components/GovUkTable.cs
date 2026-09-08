@@ -1,4 +1,4 @@
-﻿namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Components;
+﻿namespace DfE.EducationProviderRegistry.Web.Mvc.UITests.Components;
 
 internal sealed class GovUkTable
 {

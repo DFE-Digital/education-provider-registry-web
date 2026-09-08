@@ -1,7 +1,7 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 
-namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Search;
+namespace DfE.EducationProviderRegistry.Web.Mvc.UITests.Search;
 
 internal sealed class SearchPanelComponent
 {

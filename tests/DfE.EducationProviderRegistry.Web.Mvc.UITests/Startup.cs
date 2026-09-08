@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Xunit.DependencyInjection.Logging;
 
-namespace DfE.EducationProviderRegistry.Web.MVC.UITests;
+namespace DfE.EducationProviderRegistry.Web.Mvc.UITests;
 
 public sealed class Startup
 {

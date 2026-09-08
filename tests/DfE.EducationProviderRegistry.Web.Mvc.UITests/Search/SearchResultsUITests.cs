@@ -1,7 +1,7 @@
 ﻿using OpenQA.Selenium;
-using static DfE.EducationProviderRegistry.Web.MVC.UITests.Search.SearchPanelComponent;
+using static DfE.EducationProviderRegistry.Web.Mvc.UITests.Search.SearchPanelComponent;
 
-namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Search;
+namespace DfE.EducationProviderRegistry.Web.Mvc.UITests.Search;
 
 public sealed class SearchResultsUITests : UIBaseTest
 {

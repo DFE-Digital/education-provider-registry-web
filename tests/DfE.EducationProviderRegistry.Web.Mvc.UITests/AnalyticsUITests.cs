@@ -1,9 +1,9 @@
-﻿using DfE.EducationProviderRegistry.Web.MVC.UITests.Components;
-using DfE.EducationProviderRegistry.Web.MVC.UITests.Search;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.UITests.Components;
+using DfE.EducationProviderRegistry.Web.Mvc.UITests.Search;
 using DfE.EducationProviderRegistry.Web.SharedTests.ApplicationContainer;
 using OpenQA.Selenium;
 
-namespace DfE.EducationProviderRegistry.Web.MVC.UITests;
+namespace DfE.EducationProviderRegistry.Web.Mvc.UITests;
 
 public sealed class AnalyticsUITests : UIBaseTest
 {

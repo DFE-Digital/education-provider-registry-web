@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Search;
+namespace DfE.EducationProviderRegistry.Web.Mvc.UITests.Search;
 
 internal static class SearchRoutes
 {

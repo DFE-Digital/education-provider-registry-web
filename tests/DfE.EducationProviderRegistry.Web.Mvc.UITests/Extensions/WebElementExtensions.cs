@@ -1,7 +1,7 @@
-﻿using DfE.EducationProviderRegistry.Web.MVC.UITests.Components;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.UITests.Components;
 using OpenQA.Selenium;
 
-namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Extensions;
+namespace DfE.EducationProviderRegistry.Web.Mvc.UITests.Extensions;
 
 internal static class WebElementExtensions
 {

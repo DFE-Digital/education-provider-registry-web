@@ -1,7 +1,7 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 
-namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Search;
+namespace DfE.EducationProviderRegistry.Web.Mvc.UITests.Search;
 
 internal sealed class SearchFiltersComponent
 {
@@ -14,6 +14,7 @@ internal sealed class SearchFiltersComponent
     public SearchFiltersComponent(IWebDriver driver)
     {
         ArgumentNullException.ThrowIfNull(driver);
+
         _defaultWait = new(driver, TimeSpan.FromSeconds(15));
     }
 
@@ -26,72 +27,86 @@ internal sealed class SearchFiltersComponent
         _defaultWait.ClickOn(SubmitFilters);
     }
 
-
     public IReadOnlyCollection<SelectedFilter> GetSelectedFilters()
     {
-        return [..
-                _defaultWait
-                    .FindMany(SelectedFilters)
-                    .Select((element) =>
-                        new SelectedFilter(element))
-            ];
+        return
+        [
+            .._defaultWait
+                .FindMany(SelectedFilters)
+                .Select(element => new SelectedFilter(element))
+        ];
     }
 
-    public string? GetFacetValueValue(string facetLabel, string targetFacetValueLabel)
+    public string? GetFacetValueValue(
+        string facetLabel,
+        string targetFacetValueLabel)
     {
-        By targetId = GetFacetValueLocator(_defaultWait, facetLabel, targetFacetValueLabel);
+        IWebElement facet = FindFacet(facetLabel);
 
-        return _defaultWait.Until(
-            (wait) =>
-                wait.FindElement(targetId).GetAttribute("id"));
+        DefaultWait<IWebElement> facetWait = new(facet);
 
+        IWebElement label =
+            FindFacetValueLabel(
+                facetWait,
+                targetFacetValueLabel);
+
+        return label.GetAttribute("for");
     }
 
-    private void ExpandFacet(string filterContainerLabel) =>
-        _defaultWait
-            .ClickOn((context) =>
-                FindFacet(_defaultWait, filterContainerLabel));
-
-    private void SelectFacetValue(string facetLabel, string facetValueLabel)
+    private void ExpandFacet(string facetLabel)
     {
-        _defaultWait.ClickOn((context) =>
-            context.FindElement(
-                GetFacetValueLocator(_defaultWait, facetLabel, facetValueLabel)));
+        _defaultWait.ClickOn(_ => FindFacet(facetLabel));
     }
 
-    private static By GetFacetValueLocator(IWait<IWebDriver> context, string facetLabel, string targetFacetValueLabel)
+    private void SelectFacetValue(
+        string facetLabel,
+        string facetValueLabel)
     {
-        IWebElement? targetFacet = FindFacet(context, facetLabel);
+        IWebElement facet = FindFacet(facetLabel);
 
-        DefaultWait<IWebElement> wait = new(targetFacet);
+        DefaultWait<IWebElement> facetWait = new(facet);
 
-        // Facet value from facet that matches target label
+        IWebElement label =
+            FindFacetValueLabel(
+                facetWait,
+                facetValueLabel);
 
-        IWebElement? matchingLabel =
-            wait
-                .FindMany(By.CssSelector(".govuk-label"))
-                // details behaviour when collapsed .Text behaves incorrectly, so we use GetAttribute("textContent") to get the correct label text
-                .SingleOrDefault((label) => label.GetAttribute("textContent")?.Contains(targetFacetValueLabel, StringComparison.OrdinalIgnoreCase) ?? false);
+        string id =
+            label.GetAttribute("for")
+            ?? throw new InvalidOperationException(
+                $"Could not determine input id for facet value '{facetValueLabel}'");
 
-        string id = matchingLabel?.GetAttribute("for") ?? throw new InvalidOperationException($"Could not find label with text {targetFacetValueLabel}");
+        By locator = By.Id(id);
 
-        return By.Id(id);
+        facetWait.ClickOn(locator);
     }
 
-    private static IWebElement FindFacet(IWait<IWebDriver> waitContext, string label)
+    private IWebElement FindFacet(string label)
     {
-        IWebElement facetContainer =
-            waitContext.Until((context) =>
-            {
-                // Matches text
-                return waitContext
-                    .FindMany(FiltersDropdowns)
-                    .Select((filter) => filter.FindElement(By.CssSelector(".govuk-details__summary-text")))
-                    .SingleOrDefault((filter) => filter.Text.Contains(label, StringComparison.OrdinalIgnoreCase));
-            });
+        return _defaultWait.Until(driver =>
+            driver
+                .FindElements(FiltersDropdowns)
+                .Select((filter) =>
+                    filter.FindElement(
+                        By.CssSelector(".govuk-details__summary-text")))
+                .SingleOrDefault(filter =>
+                    filter.Text.Contains(
+                        label,
+                        StringComparison.OrdinalIgnoreCase)));
+    }
 
-        return facetContainer;
-
+    private static IWebElement FindFacetValueLabel(
+        IWait<IWebElement> facetWait,
+        string valueLabel)
+    {
+        return facetWait
+            .FindMany(By.CssSelector(".govuk-label"))
+            .SingleOrDefault(label =>
+                label.GetAttribute("textContent")?.Contains(
+                        valueLabel,
+                        StringComparison.OrdinalIgnoreCase) == true)
+            ?? throw new InvalidOperationException(
+                $"Could not find label with text '{valueLabel}'");
     }
 }
 

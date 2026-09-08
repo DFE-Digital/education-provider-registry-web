@@ -86,16 +86,14 @@ internal sealed class SearchFiltersComponent
 
     private IWebElement FindFacet(string label)
     {
-        return _defaultWait.Until(driver =>
-            driver
-                .FindElements(FiltersDropdowns)
-                .Select((filter) =>
-                    filter.FindElement(
-                        By.CssSelector(".govuk-details__summary-text")))
-                .SingleOrDefault(filter =>
-                    filter.Text.Contains(
-                        label,
-                        StringComparison.OrdinalIgnoreCase)));
+        return 
+            _defaultWait.Until(driver =>
+                driver
+                    .FindElements(FiltersDropdowns)
+                    .SingleOrDefault(filter =>
+                        filter.FindElements(By.CssSelector(".govuk-details__summary-text"))
+                            .Any((element) => 
+                                element.Text.Contains(label, StringComparison.OrdinalIgnoreCase))));
     }
 
     private static IWebElement FindFacetValueLabel(

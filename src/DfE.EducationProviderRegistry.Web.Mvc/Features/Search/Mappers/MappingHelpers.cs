@@ -13,7 +13,7 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers
 
         public static string CombineAddress(SiteAddressModel? siteAddress, string? establishmentName)
         {
-            if(siteAddress is null)
+            if (siteAddress is null)
             {
                 return string.Empty;
             }

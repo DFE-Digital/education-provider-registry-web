@@ -62,7 +62,7 @@ public class EstablishmentDetailsBasicDetailsTableMapper :
 
         builder.AddRow(
             new TableCell { Text = "Address", IsBold = true },
-            new TableCell { Text = MappingHelpers.CombineAddress(dto.Address, dto.Name?.Value)});
+            new TableCell { Text = MappingHelpers.CombineAddress(dto.Address, dto.Name?.Value) });
 
         builder.AddRow(
             new TableCell { Text = "Local authority", IsBold = true },
@@ -70,8 +70,8 @@ public class EstablishmentDetailsBasicDetailsTableMapper :
 
         builder.AddRow(
             new TableCell { Text = "Part of", IsBold = true },
-            new TableCell 
-            { 
+            new TableCell
+            {
                 Text = dto.Group?.GroupName is null ? string.Empty : CultureInfo.CurrentCulture.TextInfo.ToTitleCase(dto.Group?.GroupName.ToLower()!) ?? string.Empty,
                 Href = MappingHelpers.CreateLinkUrl("/groups/", dto.Group?.Code)
             });
@@ -107,7 +107,7 @@ public class EstablishmentDetailsBasicDetailsTableMapper :
                 new TableCell { Text = dto.ContactDetails.Website, Href = dto.ContactDetails.Website, OpenInNewTab = true });
         }
 
-        if(dto.ContactDetails?.TelephoneNumber is not null)
+        if (dto.ContactDetails?.TelephoneNumber is not null)
         {
             builder.AddRow(
                 new TableCell { Text = "Telephone number", IsBold = true },

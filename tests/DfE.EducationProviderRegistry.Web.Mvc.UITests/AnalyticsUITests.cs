@@ -2,7 +2,6 @@
 using DfE.EducationProviderRegistry.Web.MVC.UITests.Search;
 using DfE.EducationProviderRegistry.Web.SharedTests.ApplicationContainer;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Support.UI;
 
 namespace DfE.EducationProviderRegistry.Web.MVC.UITests;
 
@@ -19,7 +18,7 @@ public sealed class AnalyticsUITests : UIBaseTest
         CancellationToken ct = TestContext.Current.CancellationToken;
 
         using IWebDriver webDriver = await WebDriverBuilder.Build().StartDriverAsync(ct);
-        UrlRequestsCounterNetworkHandler tracker = await RegisterNetworkMonitoringAsync(webDriver, ApplicationEnvironment);
+        RequestToUriNetworkHandler tracker = await RegisterNetworkMonitoringAsync(webDriver, ApplicationEnvironment);
         CookieBanner banner = new(webDriver);
 
         // Act
@@ -40,7 +39,7 @@ public sealed class AnalyticsUITests : UIBaseTest
         CancellationToken ct = TestContext.Current.CancellationToken;
 
         using IWebDriver webDriver = await WebDriverBuilder.Build().StartDriverAsync(ct);
-        UrlRequestsCounterNetworkHandler tracker = await RegisterNetworkMonitoringAsync(webDriver, ApplicationEnvironment);
+        RequestToUriNetworkHandler tracker = await RegisterNetworkMonitoringAsync(webDriver, ApplicationEnvironment);
         CookieBanner banner = new(webDriver);
 
         // Act
@@ -62,14 +61,14 @@ public sealed class AnalyticsUITests : UIBaseTest
         Assert.NotNull(cookie);
     }
 
-    private static async Task<UrlRequestsCounterNetworkHandler> RegisterNetworkMonitoringAsync(IWebDriver webDriver, ApplicationHostedEnvironment application)
+    private static async Task<RequestToUriNetworkHandler> RegisterNetworkMonitoringAsync(IWebDriver webDriver, ApplicationHostedEnvironment application)
     {
         const string ClarityDomain = "clarity.ms";
 
         await webDriver.Manage().Network.StartMonitoring();
         await webDriver.Navigate().GoToUrlAsync(application.GetApplicationUrl());
 
-        UrlRequestsCounterNetworkHandler handler = new(ClarityDomain, transformer: UrlRequestsCounterNetworkHandler.RouteUrlToUnknownDomain);
+        RequestToUriNetworkHandler handler = new(ClarityDomain, transformer: RequestToUriNetworkHandler.RouteUrlToUnknownDomain);
 
         webDriver.Manage().Network.AddRequestHandler(handler);
         return handler;
@@ -80,38 +79,5 @@ public sealed class AnalyticsUITests : UIBaseTest
         Uri uriTriggeringAnalytics = new(application.GetApplicationUrl(), SearchRoutes.Search());
         return webDriver.Navigate().GoToUrlAsync(uriTriggeringAnalytics);
     }
-}
-
-internal sealed class UrlRequestsCounterNetworkHandler : NetworkRequestHandler
-{
-    internal static HttpRequestData RouteUrlToUnknownDomain(HttpRequestData data)
-    {
-        // Sink off to invalid domain - browser should ignore or failed DNS
-        // RFC 2606 reserves .invalid TLD
-        // RFC 6761 documents how special-use domains should be treated
-        data.Url = "somewhere.invalid";
-        return data;
-    }
-
-    public UrlRequestsCounterNetworkHandler(string url, Func<HttpRequestData, HttpRequestData>? transformer = null)
-    {
-        RequestMatcher = (httpData) =>
-        {
-            bool match = httpData.Url?.Contains(url, StringComparison.OrdinalIgnoreCase) ?? false;
-            if (match)
-            {
-                RequestsMatchCounter++;
-            }
-            return match;
-        };
-
-        RequestTransformer = transformer;
-
-        // Empty
-
-        RequestsMatchCounter = 0;
-    }
-
-    public int RequestsMatchCounter { get; private set; }
 }
 

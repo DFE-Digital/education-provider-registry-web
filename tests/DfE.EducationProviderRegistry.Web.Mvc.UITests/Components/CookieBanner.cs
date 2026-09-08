@@ -14,11 +14,11 @@ internal sealed class CookieBanner
 
     public void Reject()
     {
-        _defaultWait.Click(By.CssSelector(".govuk-cookie-banner button[value='false']"));
+        _defaultWait.ClickOn(By.CssSelector(".govuk-cookie-banner button[value='false']"));
     }
 
     internal void Accept()
     {
-        _defaultWait.Click(By.CssSelector(".govuk-cookie-banner button[value='true']"));
+        _defaultWait.ClickOn(By.CssSelector(".govuk-cookie-banner button[value='true']"));
     }
 }

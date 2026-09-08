@@ -10,12 +10,11 @@ internal sealed class SearchFiltersComponent
     private static By SelectedFilters => By.CssSelector(".app-selected-filters__list li");
 
     private readonly WebDriverWait _defaultWait;
-    private readonly IWebDriver _driver;
 
     public SearchFiltersComponent(IWebDriver driver)
     {
+        ArgumentNullException.ThrowIfNull(driver);
         _defaultWait = new(driver, TimeSpan.FromSeconds(15));
-        _driver = driver;
     }
 
     public void FilterBy(string facetLabel, string facetValueLabel)
@@ -24,85 +23,85 @@ internal sealed class SearchFiltersComponent
 
         SelectFacetValue(facetLabel, facetValueLabel);
 
-        ApplyFilters();
+        _defaultWait.ClickOn(SubmitFilters);
     }
 
 
     public IReadOnlyCollection<SelectedFilter> GetSelectedFilters()
     {
-        return
-        [
-            .. _defaultWait.Until(
-                driver => driver.FindElements(SelectedFilters))
-            .Select(element => new SelectedFilter(element))
-        ];
+        return [..
+                _defaultWait
+                    .FindMany(SelectedFilters)
+                    .Select((element) =>
+                        new SelectedFilter(element))
+            ];
     }
 
     public string? GetFacetValueValue(string facetLabel, string targetFacetValueLabel)
     {
-        string targetId = GetFacetValueId(_driver, facetLabel, targetFacetValueLabel);
-        return _defaultWait.Until((driver) => driver.FindElement(By.Id(targetId))).GetAttribute("id");
+        By targetId = GetFacetValueLocator(_defaultWait, facetLabel, targetFacetValueLabel);
+
+        return _defaultWait.Until(
+            (wait) =>
+                wait.FindElement(targetId).GetAttribute("id"));
+
     }
 
     private void ExpandFacet(string filterContainerLabel) =>
-        _defaultWait.Until(
-            (driver) =>
-                FindFacet(driver, filterContainerLabel)
-                .Click());
+        _defaultWait
+            .ClickOn((context) =>
+                FindFacet(_defaultWait, filterContainerLabel));
 
     private void SelectFacetValue(string facetLabel, string facetValueLabel)
     {
-        _defaultWait.Until(
-            (driver) =>
-                driver.FindElement(
-                    By.Id(
-                        GetFacetValueId(
-                            driver,
-                            facetLabel,
-                            facetValueLabel)))
-                .Click());
+        _defaultWait.ClickOn((context) =>
+            context.FindElement(
+                GetFacetValueLocator(_defaultWait, facetLabel, facetValueLabel)));
     }
 
-
-    private void ApplyFilters()
-        => _defaultWait.Until((driver)
-            => driver.FindElement(SubmitFilters).Click());
-
-    private static string GetFacetValueId(IWebDriver driver, string facetLabel, string targetFacetValueLabel)
+    private static By GetFacetValueLocator(IWait<IWebDriver> context, string facetLabel, string targetFacetValueLabel)
     {
-        IWebElement? targetFacet =
-            FindFacet(driver, facetLabel)
-                .FindElements(By.CssSelector(".govuk-label"))
+        IWebElement? targetFacet = FindFacet(context, facetLabel);
+
+        DefaultWait<IWebElement> wait = new(targetFacet);
+
+        // Facet value from facet that matches target label
+
+        IWebElement? matchingLabel =
+            wait
+                .FindMany(By.CssSelector(".govuk-label"))
                 // details behaviour when collapsed .Text behaves incorrectly, so we use GetAttribute("textContent") to get the correct label text
-                .SingleOrDefault((label) =>
-                    label.GetAttribute("textContent")?.Contains(targetFacetValueLabel, StringComparison.OrdinalIgnoreCase) ?? false);
+                .SingleOrDefault((label) => label.GetAttribute("textContent")?.Contains(targetFacetValueLabel, StringComparison.OrdinalIgnoreCase) ?? false);
 
-        return targetFacet?.GetAttribute("for") ?? throw new InvalidOperationException($"Could not find label with text {targetFacetValueLabel}");
+        string id = matchingLabel?.GetAttribute("for") ?? throw new InvalidOperationException($"Could not find label with text {targetFacetValueLabel}");
+
+        return By.Id(id);
     }
 
-    private static IWebElement FindFacet(IWebDriver driver, string label)
+    private static IWebElement FindFacet(IWait<IWebDriver> waitContext, string label)
     {
-        IWebElement? container =
-            driver
-                .FindElements(FiltersDropdowns)
-                .SingleOrDefault((filter) =>
-                    filter.FindElement(By.CssSelector(".govuk-details__summary-text")).Text
-                        .Contains(label, StringComparison.OrdinalIgnoreCase));
+        IWebElement facetContainer =
+            waitContext.Until((context) =>
+            {
+                // Matches text
+                return waitContext
+                    .FindMany(FiltersDropdowns)
+                    .Select((filter) => filter.FindElement(By.CssSelector(".govuk-details__summary-text")))
+                    .SingleOrDefault((filter) => filter.Text.Contains(label, StringComparison.OrdinalIgnoreCase));
+            });
 
-        return container is null ?
-            throw new ArgumentException($"Could not find filter container with label {label}")
-                : container;
+        return facetContainer;
+
     }
 }
 
 public sealed record SelectedFilter
 {
-    public SelectedFilter(IWebElement element)
+    public SelectedFilter(ISearchContext context)
     {
-        ArgumentNullException.ThrowIfNull(element);
+        ArgumentNullException.ThrowIfNull(context);
 
-        IWebElement button =
-            element.FindElement(By.CssSelector("button"));
+        IWebElement button = context.FindElement(By.CssSelector("button"));
 
         Name = button.GetAttribute("name")
             ?? throw new ArgumentException("Selected filter does not have a name attribute");

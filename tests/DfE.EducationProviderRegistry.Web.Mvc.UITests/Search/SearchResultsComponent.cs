@@ -1,6 +1,5 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
-using System.Collections.ObjectModel;
 
 namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Search;
 
@@ -20,19 +19,14 @@ internal sealed class SearchResultsComponent
 
     public IReadOnlyCollection<SearchResult> GetSearchResults()
     {
-
-        _defaultWaiter.Until((driver) => FindResults(driver).Count > 0);
-
-        return [.. _defaultWaiter.Until((driver) =>
-            FindResults(driver))
-            .Select((result) => result.ToGovUkTable())
-            .Select((table) => new SearchResult(
-                Name: table.Caption ?? string.Empty,
-                Type: table.Rows["Type"]))
+        return [..
+            _defaultWaiter.FindMany(ResultRecords)
+                .Select((result) => result.ToGovUkTable())
+                .Select((table) => new SearchResult(
+                    Name: table.Caption ?? string.Empty,
+                    Type: table.Rows["Type"]))
             ];
     }
-
-    private static ReadOnlyCollection<IWebElement> FindResults(IWebDriver driver) => driver.FindElements(ResultRecords);
 }
 
 public sealed record SearchResult(string Name, string Type);

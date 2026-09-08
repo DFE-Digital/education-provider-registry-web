@@ -116,10 +116,8 @@ internal static class SearchContextWaitExtensions
                 {
                     IWebElement current = located[index];
 
-                    if (ElementIfVisibleOrDefault(current) is not null)
-                    {
-                        output.Add(current);
-                    }
+                    // TODO visibility of element
+                    output.Add(current);
                 }
 
                 // No visible results

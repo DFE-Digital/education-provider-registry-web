@@ -40,10 +40,9 @@ public sealed class ApplicationHostedEnvironment
         return new($"http://localhost:{_applicationContainer.GetMappedPublicPort(8080)}");
     }
 
-    public async Task<string> GetLogsAsync()
+    public async Task<string> GetApplicationLogsAsync()
     {
-        (string stdout, string stderr) =
-            await _applicationContainer!.GetLogsAsync();
+        (string stdout, string stderr) = await _applicationContainer!.GetLogsAsync();
 
         return $"""
         === STDOUT ===

@@ -64,7 +64,10 @@ internal sealed class SearchFiltersComponent
     {
         IWebElement facet = FindFacet(facetLabel);
 
-        DefaultWait<IWebElement> facetWait = new(facet);
+        DefaultWait<IWebElement> facetWait = new(facet)
+        {
+            Timeout = TimeSpan.FromSeconds(15)
+        };
 
         IWebElement label =
             FindFacetValueLabel(

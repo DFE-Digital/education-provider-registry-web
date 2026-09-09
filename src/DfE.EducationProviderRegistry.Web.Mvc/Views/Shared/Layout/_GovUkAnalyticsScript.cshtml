@@ -4,20 +4,12 @@
 @inject IOptions<GoogleAnalyticsSettings> Options
 
 @{
-    bool analyticsGranted = Context.IsAnalyticsConsentGranted();
-    
     var googleAnalyticsSettings = Options.Value;
 
-    string environmentParameters =
-        !string.IsNullOrWhiteSpace(googleAnalyticsSettings.AuthenticationId) && !string.IsNullOrWhiteSpace(googleAnalyticsSettings.PreviewValue)
-            ? $"&gtm_auth={Uri.EscapeDataString(googleAnalyticsSettings.AuthenticationId)}" +
-              $"&gtm_preview={Uri.EscapeDataString(googleAnalyticsSettings.PreviewValue)}" +
-              "&gtm_cookies_win=x"
-            : string.Empty;
+    string environmentParameters = googleAnalyticsSettings.TagManagerQueryString;
 }
 
-@if (!string.IsNullOrWhiteSpace(googleAnalyticsSettings.ContainerId)
-    && analyticsGranted)
+@if (googleAnalyticsSettings.IsGoogleTagManagerEnabled(Context))
 {
     <!-- Google Tag Manager -->
     <script>
@@ -31,7 +23,7 @@
                 j = d.createElement(s),
                 dl = l != 'dataLayer' ? '&l=' + l : '';
             j.async = true;
-            j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl + '@Html.Raw(environmentParameters)';
+            j.src = '@googleAnalyticsSettings.Domain/gtm.js?id=' + i + dl + '@Html.Raw(environmentParameters)';
             f.parentNode.insertBefore(j, f);
         })(window, document, 'script', 'dataLayer', '@googleAnalyticsSettings.ContainerId');
     </script>

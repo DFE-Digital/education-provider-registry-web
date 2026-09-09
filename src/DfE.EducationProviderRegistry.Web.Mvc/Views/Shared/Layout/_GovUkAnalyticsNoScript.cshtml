@@ -4,23 +4,17 @@
 @inject IOptions<GoogleAnalyticsSettings> Options
 
 @{
-    bool analyticsGranted = Context.IsAnalyticsConsentGranted();
-
-    var googleAnalyticsSettings = Options.Value;
+    GoogleAnalyticsSettings googleAnalyticsSettings = Options.Value;
 }
 
-@if (!string.IsNullOrWhiteSpace(googleAnalyticsSettings.ContainerId)
-    && analyticsGranted)
+@if (googleAnalyticsSettings.IsGoogleTagManagerEnabled(Context))
 {
-    string environmentParameters =
-        !string.IsNullOrWhiteSpace(googleAnalyticsSettings.AuthenticationId) && !string.IsNullOrWhiteSpace(googleAnalyticsSettings.PreviewValue)
-            ? $"&gtm_auth={Uri.EscapeDataString(googleAnalyticsSettings.AuthenticationId)}" +
-              $"&gtm_preview={Uri.EscapeDataString(googleAnalyticsSettings.PreviewValue)}" +
-              "&gtm_cookies_win=x"
-            : string.Empty;
+    string environmentParameters = googleAnalyticsSettings.TagManagerQueryString;
 
     string googleTagManagerUrl =
-        $"https://www.googletagmanager.com/ns.html?id={Uri.EscapeDataString(googleAnalyticsSettings.ContainerId)}{environmentParameters}";
+        $"{googleAnalyticsSettings.Domain}/ns.html?id=" +
+        $"{Uri.EscapeDataString(googleAnalyticsSettings.ContainerId!)}" +
+        googleAnalyticsSettings.TagManagerQueryString;
 
     <!-- Google Tag Manager (noscript) -->
     <noscript>

@@ -1,5 +1,7 @@
-﻿using OpenQA.Selenium;
+﻿using Docker.DotNet.Models;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
+using System.Collections.ObjectModel;
 
 namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Components;
 
@@ -10,13 +12,12 @@ internal sealed class GovUkCheckboxComponent
     {
         _wait = new(driver, TimeSpan.FromSeconds(15));
     }
+
     // TODO don't rich model e.g. Checkbox (label, value, map yet....
     // all checkbox components returned - Client forced to filter for which checkbox component they want on page and map
     public IReadOnlyCollection<IWebElement> Find()
     {
-        return _wait.Until((driver) =>
-            driver.FindElements(
-                By.CssSelector(".govuk-checkboxes")));
+        return _wait.Until((driver) => FindCheckboxes(driver));
     }
 
     // how do I find which checkbox I want to click
@@ -24,10 +25,9 @@ internal sealed class GovUkCheckboxComponent
     {
         _wait.Until((driver) =>
         {
-            IReadOnlyCollection<IWebElement> all = Find();
-
             IReadOnlyCollection<IWebElement> labelsThatMatches =
-                all.Select((checkboxComponent) => checkboxComponent.FindElement(By.CssSelector(".govuk-checkboxes__label")))
+                FindCheckboxes(driver)
+                    .Select((checkboxComponent) => checkboxComponent.FindElement(By.CssSelector(".govuk-checkboxes__label")))
                     .Where((label) => label.Text.Contains(text, StringComparison.OrdinalIgnoreCase))
                     .ToList();
 
@@ -44,4 +44,8 @@ internal sealed class GovUkCheckboxComponent
             labelsThatMatches.Single().Click();
         });
     }
+
+    private static ReadOnlyCollection<IWebElement> FindCheckboxes(ISearchContext context) =>
+            context.FindElements(
+                By.CssSelector(".govuk-checkboxes"));
 }

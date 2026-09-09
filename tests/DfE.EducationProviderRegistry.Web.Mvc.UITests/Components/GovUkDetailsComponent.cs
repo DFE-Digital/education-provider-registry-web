@@ -1,11 +1,12 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
+using System.Collections.ObjectModel;
 
 namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Components;
 
 public sealed class GovUkDetailsComponent
 {
-    private readonly WebDriverWait _wait; 
+    private readonly WebDriverWait _wait;
     public GovUkDetailsComponent(IWebDriver webDriver)
     {
         ArgumentNullException.ThrowIfNull(webDriver);
@@ -14,18 +15,17 @@ public sealed class GovUkDetailsComponent
 
     public IReadOnlyCollection<IWebElement> Find()
     {
-        return _wait.Until((driver) 
-            => driver.FindElements(By.CssSelector(".govuk-details")));
+        return _wait.Until((driver) => FindDetails(driver));
     }
 
     public void Expand(string text)
     {
         _wait.Until((driver) =>
         {
-            Func<IReadOnlyList<IWebElement>> matchingDetails = 
+            Func<IReadOnlyList<IWebElement>> matchingDetails =
                 () =>
-                    Find()
-                        .Where((details) => 
+                    FindDetails(driver)                        
+                        .Where((details) =>
                             details.FindElement(By.CssSelector(".govuk-details__summary-text")).Text
                                 .Contains(text, StringComparison.OrdinalIgnoreCase))
                         .ToList();
@@ -33,12 +33,12 @@ public sealed class GovUkDetailsComponent
             IReadOnlyList<IWebElement> locatedMatchingDetails = matchingDetails();
 
             // better errors than .Single()
-            if(locatedMatchingDetails.Count == 0)
+            if (locatedMatchingDetails.Count == 0)
             {
                 throw new ArgumentException($"Could not locate GovUkDetails with text {text}");
             }
 
-            if(locatedMatchingDetails.Count > 1)
+            if (locatedMatchingDetails.Count > 1)
             {
                 throw new InvalidOperationException($"Located multiple GovUkDetails with text {text}");
             }
@@ -54,4 +54,7 @@ public sealed class GovUkDetailsComponent
             return result;
         });
     }
+
+    private static ReadOnlyCollection<IWebElement> FindDetails(IWebDriver driver) => 
+        driver.FindElements(By.CssSelector(".govuk-details"));
 }

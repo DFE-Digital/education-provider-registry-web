@@ -5,8 +5,6 @@
 
 @{
     var googleAnalyticsSettings = Options.Value;
-
-    string environmentParameters = googleAnalyticsSettings.TagManagerQueryString;
 }
 
 @if (googleAnalyticsSettings.IsGoogleTagManagerEnabled(Context))
@@ -23,7 +21,7 @@
                 j = d.createElement(s),
                 dl = l != 'dataLayer' ? '&l=' + l : '';
             j.async = true;
-            j.src = '@googleAnalyticsSettings.Domain/gtm.js?id=' + i + dl + '@Html.Raw(environmentParameters)';
+            j.src = '@googleAnalyticsSettings.Domain/gtm.js?id=' + i + dl + '@Html.Raw(googleAnalyticsSettings.TagManagerQueryString)';
             f.parentNode.insertBefore(j, f);
         })(window, document, 'script', 'dataLayer', '@googleAnalyticsSettings.ContainerId');
     </script>

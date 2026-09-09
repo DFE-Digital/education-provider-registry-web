@@ -9,8 +9,6 @@
 
 @if (googleAnalyticsSettings.IsGoogleTagManagerEnabled(Context))
 {
-    string environmentParameters = googleAnalyticsSettings.TagManagerQueryString;
-
     string googleTagManagerUrl =
         $"{googleAnalyticsSettings.Domain}/ns.html?id=" +
         $"{Uri.EscapeDataString(googleAnalyticsSettings.ContainerId!)}" +

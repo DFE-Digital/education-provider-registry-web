@@ -21,7 +21,7 @@ public class GoogleAnalyticsSettings
 
     public bool IsGoogleTagManagerEnabled(HttpContext context)
     {
-        ArgumentNullException.ThrowIfNull(context);
+        if (context == null) return false;
 
         return !string.IsNullOrWhiteSpace(ContainerId)
             && context.IsAnalyticsConsentGranted();

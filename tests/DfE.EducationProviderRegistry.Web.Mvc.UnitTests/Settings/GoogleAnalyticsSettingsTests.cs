@@ -107,8 +107,11 @@ public class GoogleAnalyticsSettingsTests
 
         if (consentValue is not null)
         {
+            string analyticsValue = consentValue == "yes" ? "true" : "false";
+            string json = $"{{\"analytics\":{analyticsValue}}}";
+
             context.Request.Headers.Cookie =
-                $"cookies_analytics={consentValue}";
+                $"cookies_policy={Uri.EscapeDataString(json)}";
         }
 
         return context;

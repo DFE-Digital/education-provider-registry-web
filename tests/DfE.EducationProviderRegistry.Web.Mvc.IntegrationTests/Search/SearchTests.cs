@@ -48,7 +48,8 @@ public sealed class SearchTests : WebApplicationFactoryBaseTest
 
         // Assert
         IHtmlDocument doc = await response.AssertSuccessfulHtmlResponseAsync();
-        // TODO results
+        SearchResultsComponent results = new(doc);
+        Assert.NotEmpty(results.GetSearchResults());
     }
 
     [Fact]
@@ -61,15 +62,15 @@ public sealed class SearchTests : WebApplicationFactoryBaseTest
         HttpRequestMessage message =
             SearchHttpRequestBuilder.Create()
                 .WithBaseUri(Factory.Server.BaseAddress)
-                .WithLocationTerm("London")
+                .WithLocationTerm("LN1")
                 .Build();
         // Act
         HttpResponseMessage response = await client.SendAsync(message, ct);
 
         // Assert
         IHtmlDocument doc = await response.AssertSuccessfulHtmlResponseAsync();
-
-        // TODO SearchResults
+        SearchResultsComponent results = new(doc);
+        Assert.NotEmpty(results.GetSearchResults());
     }
 
     [Fact]
@@ -83,15 +84,15 @@ public sealed class SearchTests : WebApplicationFactoryBaseTest
             SearchHttpRequestBuilder.Create()
                 .WithBaseUri(Factory.Server.BaseAddress)
                 .WithIdentitySearchTerm("sch")
-                .WithLocationTerm("London")
+                .WithLocationTerm("LN1")
                 .Build();
         // Act
         HttpResponseMessage response = await client.SendAsync(message, ct);
 
         // Assert
         IHtmlDocument doc = await response.AssertSuccessfulHtmlResponseAsync();
-
-        // TODO SearchResults
+        SearchResultsComponent results = new(doc);
+        Assert.NotEmpty(results.GetSearchResults());
     }
 
     [Fact]
@@ -114,11 +115,12 @@ public sealed class SearchTests : WebApplicationFactoryBaseTest
         HttpResponseMessage response = await client.SendAsync(message, ct);
 
         // Assert
-        SearchFiltersComponent filters = new(document: await response.AssertSuccessfulHtmlResponseAsync());
+        IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
+        SearchFiltersComponent filters = new(document);
+        SearchResultsComponent results = new(document);
 
-        // TODO FilteredSearchResults
+        Assert.NotEmpty(results.GetSearchResults());
 
-        // Assert Filter
         // Only selected filters are displayed
         Filter selected = Assert.Single(filters.GetFilters());
         Assert.Equal("Establishment Type", selected.Name);
@@ -150,9 +152,11 @@ public sealed class SearchTests : WebApplicationFactoryBaseTest
         HttpResponseMessage response = await client.SendAsync(message, ct);
 
         // Assert
-        SearchFiltersComponent filters = new(document: await response.AssertSuccessfulHtmlResponseAsync());
+        IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
+        SearchFiltersComponent filters = new(document);
+        SearchResultsComponent results = new(document);
 
-        // TODO FilteredResults
+        Assert.NotEmpty(results.GetSearchResults());
 
         // Assert Filter
         Filter selected = Assert.Single(filters.GetFilters());
@@ -203,10 +207,13 @@ public sealed class SearchTests : WebApplicationFactoryBaseTest
                 facetValue: "1",
                 ct);
 
-        // Assert
-        SearchFiltersComponent removedFilters = new(document: await removalResponse.AssertSuccessfulHtmlResponseAsync());
-        // TODO FilteredResults
+        IHtmlDocument document = await removalResponse.AssertSuccessfulHtmlResponseAsync();
 
+        // Assert
+        SearchFiltersComponent removedFilters = new(document);
+        SearchResultsComponent results = new(document);
+
+        Assert.NotEmpty(results.GetSearchResults());
         Filter remainingSelectedFilter = Assert.Single(removedFilters.GetFilters());
         Assert.Equal("Establishment Type", remainingSelectedFilter.Name);
 
@@ -240,8 +247,11 @@ public sealed class SearchTests : WebApplicationFactoryBaseTest
         HttpResponseMessage removalResponse = await filtersApplied.ClearFiltersAsync(client, ct);
 
         // Assert
-        SearchFiltersComponent clearedFilters = new(document: await removalResponse.AssertSuccessfulHtmlResponseAsync());
-        // TODO FilteredResults
+        IHtmlDocument document = await removalResponse.AssertSuccessfulHtmlResponseAsync();
+        SearchFiltersComponent clearedFilters = new(document);
+        SearchResultsComponent results = new(document);
+
+        Assert.NotEmpty(results.GetSearchResults());
 
         Filter filters = Assert.Single(clearedFilters.GetFilters());
         Assert.Equal("Establishment Type", filters.Name);

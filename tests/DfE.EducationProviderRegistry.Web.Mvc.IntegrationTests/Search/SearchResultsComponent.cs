@@ -18,5 +18,6 @@ public sealed class SearchResultsComponent
                     Name: element.QuerySelector(".govuk-table__caption")?.Text() ?? string.Empty))
             .ToList();
     }
-    public sealed record SearchResult(string Name);
 }
+
+public sealed record SearchResult(string Name);

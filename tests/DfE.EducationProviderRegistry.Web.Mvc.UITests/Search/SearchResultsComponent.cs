@@ -9,7 +9,7 @@ internal sealed class SearchResultsComponent
     private readonly WebDriverWait _defaultWaiter;
     private readonly IWebDriver _driver;
 
-    private static By ResultRecords => By.CssSelector(".search-results .govuk-table");
+    private static By ResultTables => By.CssSelector(".search-results .govuk-table");
 
     public SearchResultsComponent(IWebDriver driver)
     {
@@ -32,7 +32,7 @@ internal sealed class SearchResultsComponent
             ];
     }
 
-    private static ReadOnlyCollection<IWebElement> FindResults(IWebDriver driver) => driver.FindElements(ResultRecords);
+    private static ReadOnlyCollection<IWebElement> FindResults(IWebDriver driver) => driver.FindElements(ResultTables);
 }
 
 public sealed record SearchResult(string Name, string Type);

@@ -24,7 +24,7 @@ public sealed class GovUkDetailsComponent
         {
             Func<IReadOnlyList<IWebElement>> matchingDetails =
                 () =>
-                    FindDetails(driver)                        
+                    FindDetails(driver)
                         .Where((details) =>
                             details.FindElement(By.CssSelector(".govuk-details__summary-text")).Text
                                 .Contains(text, StringComparison.OrdinalIgnoreCase))
@@ -55,6 +55,6 @@ public sealed class GovUkDetailsComponent
         });
     }
 
-    private static ReadOnlyCollection<IWebElement> FindDetails(IWebDriver driver) => 
+    private static ReadOnlyCollection<IWebElement> FindDetails(IWebDriver driver) =>
         driver.FindElements(By.CssSelector(".govuk-details"));
 }

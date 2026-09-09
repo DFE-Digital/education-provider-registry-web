@@ -1,21 +1,22 @@
-﻿@inject IConfiguration Configuration
+﻿@using DfE.EducationProviderRegistry.Web.Mvc.Settings
+@using Microsoft.Extensions.Options
+
+@inject IOptions<GoogleAnalyticsSettings> Options
 
 @{
     bool analyticsGranted = Context.IsAnalyticsConsentGranted();
-
-    string? containerId = Configuration["GoogleTagManager:ContainerId"];
-    string? auth = Configuration["GoogleTagManager:Auth"];
-    string? preview = Configuration["GoogleTagManager:Preview"];
+    
+    var googleAnalyticsSettings = Options.Value;
 
     string environmentParameters =
-        !string.IsNullOrWhiteSpace(auth) && !string.IsNullOrWhiteSpace(preview)
-            ? $"&gtm_auth={Uri.EscapeDataString(auth)}" +
-              $"&gtm_preview={Uri.EscapeDataString(preview)}" +
+        !string.IsNullOrWhiteSpace(googleAnalyticsSettings.AuthenticationId) && !string.IsNullOrWhiteSpace(googleAnalyticsSettings.PreviewValue)
+            ? $"&gtm_auth={Uri.EscapeDataString(googleAnalyticsSettings.AuthenticationId)}" +
+              $"&gtm_preview={Uri.EscapeDataString(googleAnalyticsSettings.PreviewValue)}" +
               "&gtm_cookies_win=x"
             : string.Empty;
 }
 
-@if (!string.IsNullOrWhiteSpace(containerId)
+@if (!string.IsNullOrWhiteSpace(googleAnalyticsSettings.ContainerId)
     && analyticsGranted)
 {
     <!-- Google Tag Manager -->
@@ -32,7 +33,7 @@
             j.async = true;
             j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl + '@Html.Raw(environmentParameters)';
             f.parentNode.insertBefore(j, f);
-        })(window, document, 'script', 'dataLayer', '@containerId');
+        })(window, document, 'script', 'dataLayer', '@googleAnalyticsSettings.ContainerId');
     </script>
     <!-- End Google Tag Manager -->
 }

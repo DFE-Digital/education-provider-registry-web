@@ -1,25 +1,26 @@
-﻿@inject IConfiguration Configuration
+﻿@using DfE.EducationProviderRegistry.Web.Mvc.Settings
+@using Microsoft.Extensions.Options
+
+@inject IOptions<GoogleAnalyticsSettings> Options
 
 @{
     bool analyticsGranted = Context.IsAnalyticsConsentGranted();
 
-    string? containerId = Configuration["GoogleTagManager:ContainerId"];
-    string? auth = Configuration["GoogleTagManager:Auth"];
-    string? preview = Configuration["GoogleTagManager:Preview"];
+    var googleAnalyticsSettings = Options.Value;
 }
 
-@if (!string.IsNullOrWhiteSpace(containerId)
+@if (!string.IsNullOrWhiteSpace(googleAnalyticsSettings.ContainerId)
     && analyticsGranted)
 {
     string environmentParameters =
-        !string.IsNullOrWhiteSpace(auth) && !string.IsNullOrWhiteSpace(preview)
-            ? $"&gtm_auth={Uri.EscapeDataString(auth)}" +
-              $"&gtm_preview={Uri.EscapeDataString(preview)}" +
+        !string.IsNullOrWhiteSpace(googleAnalyticsSettings.AuthenticationId) && !string.IsNullOrWhiteSpace(googleAnalyticsSettings.PreviewValue)
+            ? $"&gtm_auth={Uri.EscapeDataString(googleAnalyticsSettings.AuthenticationId)}" +
+              $"&gtm_preview={Uri.EscapeDataString(googleAnalyticsSettings.PreviewValue)}" +
               "&gtm_cookies_win=x"
             : string.Empty;
 
     string googleTagManagerUrl =
-        $"https://www.googletagmanager.com/ns.html?id={Uri.EscapeDataString(containerId)}{environmentParameters}";
+        $"https://www.googletagmanager.com/ns.html?id={Uri.EscapeDataString(googleAnalyticsSettings.ContainerId)}{environmentParameters}";
 
     <!-- Google Tag Manager (noscript) -->
     <noscript>

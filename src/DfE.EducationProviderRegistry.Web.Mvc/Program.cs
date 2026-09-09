@@ -42,6 +42,10 @@ builder.Services.Configure<ClaritySettings>(
     builder.Configuration.GetSection("Clarity")
 );
 
+builder.Services.Configure<GoogleAnalyticsSettings>(
+    builder.Configuration.GetSection("GoogleTagManager")
+);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

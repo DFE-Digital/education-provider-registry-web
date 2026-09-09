@@ -3,7 +3,7 @@ using AngleSharp.Html.Dom;
 using AngleSharp.Io;
 using System.Net.Http.Headers;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests;
+namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness.Anglesharp;
 
 internal static class HtmlHelpers
 {

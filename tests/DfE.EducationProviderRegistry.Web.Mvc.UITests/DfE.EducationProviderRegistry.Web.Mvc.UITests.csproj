@@ -15,6 +15,7 @@
 	<PackageReference Include="Xunit.DependencyInjection" />
 	<PackageReference Include="Xunit.DependencyInjection.Logging" />
     <PackageReference Include="xunit.v3.mtp-v2" />
+	<PackageReference Include="DfE.Core.Libraries.IntegrationTests" />
   </ItemGroup>
 
   <ItemGroup>

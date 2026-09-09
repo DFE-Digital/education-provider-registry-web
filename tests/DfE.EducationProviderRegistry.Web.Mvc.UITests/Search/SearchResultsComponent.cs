@@ -24,11 +24,11 @@ internal sealed class SearchResultsComponent
         _defaultWaiter.Until((driver) => FindResults(driver).Count > 0);
 
         return [.. _defaultWaiter.Until((driver) =>
-            FindResults(driver))
+            FindResults(driver)
             .Select((result) => result.ToGovUkTable())
             .Select((table) => new SearchResult(
                 Name: table.Caption ?? string.Empty,
-                Type: table.Rows["Type"]))
+                Type: table.Rows["Type"])))
             ];
     }
 

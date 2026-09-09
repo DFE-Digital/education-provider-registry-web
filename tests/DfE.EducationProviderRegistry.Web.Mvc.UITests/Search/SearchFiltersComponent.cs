@@ -43,11 +43,9 @@ internal sealed class SearchFiltersComponent
     {
         IWebElement facet = FindFacet(facetLabel);
 
-        DefaultWait<IWebElement> facetWait = new(facet);
-
         IWebElement label =
             FindFacetValueLabel(
-                facetWait,
+                facet,
                 targetFacetValueLabel);
 
         return label.GetAttribute("for");
@@ -62,26 +60,15 @@ internal sealed class SearchFiltersComponent
         string facetLabel,
         string facetValueLabel)
     {
-        IWebElement facet = FindFacet(facetLabel);
-
-        DefaultWait<IWebElement> facetWait = new(facet)
+        _defaultWait.ClickOn((driver) =>
         {
-            Timeout = TimeSpan.FromSeconds(15)
-        };
+            IWebElement facet = FindFacet(facetLabel);
 
-        IWebElement label =
-            FindFacetValueLabel(
-                facetWait,
-                facetValueLabel);
-
-        string id =
-            label.GetAttribute("for")
-            ?? throw new InvalidOperationException(
-                $"Could not determine input id for facet value '{facetValueLabel}'");
-
-        By locator = By.Id(id);
-
-        facetWait.ClickOn(locator);
+            return
+                FindFacetValueLabel(
+                    facet,
+                    facetValueLabel);
+        });
     }
 
     private IWebElement FindFacet(string label)
@@ -92,22 +79,21 @@ internal sealed class SearchFiltersComponent
                     .FindElements(FiltersDropdowns)
                     .SingleOrDefault(filter =>
                         filter.FindElements(By.CssSelector(".govuk-details__summary-text"))
-                            .Any((element) => 
+                            .Any((element) =>  
                                 element.Text.Contains(label, StringComparison.OrdinalIgnoreCase))));
     }
 
     private static IWebElement FindFacetValueLabel(
-        IWait<IWebElement> facetWait,
+        IWebElement facet,
         string valueLabel)
     {
-        return facetWait
-            .FindMany(By.CssSelector(".govuk-label"))
-            .SingleOrDefault(label =>
-                label.GetAttribute("textContent")?.Contains(
-                        valueLabel,
-                        StringComparison.OrdinalIgnoreCase) == true)
-            ?? throw new InvalidOperationException(
-                $"Could not find label with text '{valueLabel}'");
+        return facet
+            .FindElements(By.CssSelector(".govuk-label"))
+            .SingleOrDefault((facetValueLabelElement) =>
+                facetValueLabelElement
+                    .GetAttribute("textContent")?
+                    .Contains(valueLabel, StringComparison.OrdinalIgnoreCase) ?? false) ?? 
+                            throw new InvalidOperationException($"Could not find label with text '{valueLabel}'");
     }
 }
 

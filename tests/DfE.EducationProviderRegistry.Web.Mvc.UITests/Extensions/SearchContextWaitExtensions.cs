@@ -6,7 +6,8 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.UITests.Extensions;
 
 internal static class SearchContextWaitExtensions
 {
-    public static void Until<TSearchContext>(this IWait<TSearchContext> wait, Action<TSearchContext> action) where TSearchContext : ISearchContext
+    public static void Until<TSearchContext>(this IWait<TSearchContext> wait, Action<TSearchContext> action) 
+        where TSearchContext : ISearchContext
     {
         ArgumentNullException.ThrowIfNull(wait);
         ArgumentNullException.ThrowIfNull(action);

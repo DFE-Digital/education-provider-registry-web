@@ -10,7 +10,7 @@ public sealed class AnalyticsUITests : UIBaseTest
     private readonly UrlRequestsCounterNetworkHandler clarityTracker;
     private readonly UrlRequestsCounterNetworkHandler tagManagerTracker;
     private readonly IReadOnlyList<NetworkRequestHandler> _requestHandlers;
-    
+
     public AnalyticsUITests(IServiceProvider provider) : base(provider)
     {
         clarityTracker = new("clarity.ms", UrlRequestsCounterNetworkHandler.RouteUrlToUnknownDomain);
@@ -72,11 +72,11 @@ public sealed class AnalyticsUITests : UIBaseTest
     }
 
     private static async Task RegisterNetworkMonitoringAsync(
-        IWebDriver webDriver, 
-        ApplicationHostedEnvironment application, 
+        IWebDriver webDriver,
+        ApplicationHostedEnvironment application,
         IEnumerable<NetworkRequestHandler> handlers)
     {
-        
+
 
         await webDriver.Manage().Network.StartMonitoring();
         await webDriver.Navigate().GoToUrlAsync(application.GetApplicationUrl());

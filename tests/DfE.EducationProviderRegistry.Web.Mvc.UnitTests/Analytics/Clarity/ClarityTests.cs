@@ -13,7 +13,7 @@ public sealed class ClarityTests
 {
 
     [Fact]
-    public async Task ClaritySettings_Disabled_Does_Not_Display_Clarity_In_Html()
+    public async Task ClaritySettings_Disabled_Does_Not_Render_Clarity()
     {
         // Arrange
         using WebApplicationFactory<Program> factory = new WebApplicationFactory<Program>()
@@ -45,7 +45,7 @@ public sealed class ClarityTests
     }
 
     [Fact]
-    public async Task GET_When_Analytics_Consent_No_Choice_Made_Does_Not_Auto_Load_Clarity()
+    public async Task No_AnalyticsConsent_Choice_Does_Not_Run_Clarity()
     {
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
@@ -69,7 +69,7 @@ public sealed class ClarityTests
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public async Task GET_Given_No_Analytics_Consent_Choice_Then_Does_Not_Load_Clarity(bool analyticsConsent)
+    public async Task Runs_Clarity_When_AnalyticsConsent_Given(bool analyticsConsent)
     {
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;

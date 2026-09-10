@@ -13,7 +13,7 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Analytics.GoogleTagMan
 public sealed class GoogleTagManagerTests
 {
     [Fact]
-    public async Task GoogleAnalyticsSettings_Disabled_Does_Not_Display_TagManager_In_Html()
+    public async Task GoogleAnalyticsSettings_Disabled_Does_Not_Render_TagManager()
     {
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
@@ -48,7 +48,7 @@ public sealed class GoogleTagManagerTests
     }
 
     [Fact]
-    public async Task GET_Given_No_Analytics_Consent_Choice_Then_Does_Not_Render_TagManager()
+    public async Task No_AnalyticsConsent_Choice_Does_Not_Render_TagManager()
     {
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
@@ -74,7 +74,7 @@ public sealed class GoogleTagManagerTests
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public async Task GET_When_Analytics_Only_When_Consent_Granted_Renders_GoogleTagManager(bool analyticsConsent)
+    public async Task Renders_TagManager_When_AnalyticsConsent_Given(bool analyticsConsent)
     {
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;

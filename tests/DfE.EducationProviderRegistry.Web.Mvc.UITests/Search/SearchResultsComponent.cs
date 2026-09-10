@@ -9,7 +9,7 @@ internal sealed class SearchResultsComponent
     private readonly WebDriverWait _defaultWaiter;
     private readonly IWebDriver _driver;
 
-    private static By ResultRecords => By.CssSelector(".search-results .govuk-table");
+    private static By ResultTables => By.CssSelector(".search-results .govuk-table");
 
     public SearchResultsComponent(IWebDriver driver)
     {
@@ -24,15 +24,15 @@ internal sealed class SearchResultsComponent
         _defaultWaiter.Until((driver) => FindResults(driver).Count > 0);
 
         return [.. _defaultWaiter.Until((driver) =>
-            FindResults(driver))
+            FindResults(driver)
             .Select((result) => result.ToGovUkTable())
             .Select((table) => new SearchResult(
                 Name: table.Caption ?? string.Empty,
-                Type: table.Rows["Type"]))
+                Type: table.Rows["Type"])))
             ];
     }
 
-    private static ReadOnlyCollection<IWebElement> FindResults(IWebDriver driver) => driver.FindElements(ResultRecords);
+    private static ReadOnlyCollection<IWebElement> FindResults(IWebDriver driver) => driver.FindElements(ResultTables);
 }
 
 public sealed record SearchResult(string Name, string Type);

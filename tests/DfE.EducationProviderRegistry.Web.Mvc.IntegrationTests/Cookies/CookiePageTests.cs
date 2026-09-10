@@ -1,8 +1,7 @@
 ﻿using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness;
 using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness.Anglesharp;
-using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness.Anglesharp.Extensions;
 using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness.Antiforgery;
-using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness.Antiforgery.Extensions;
+
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Cookies;
 

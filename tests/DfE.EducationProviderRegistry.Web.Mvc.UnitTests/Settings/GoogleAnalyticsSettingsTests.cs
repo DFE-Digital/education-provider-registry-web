@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Xunit;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.Tests.Settings;
+namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Settings;
 
 public class GoogleAnalyticsSettingsTests
 {

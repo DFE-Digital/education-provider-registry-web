@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Analytics;
+namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Analytics.Clarity;
 
 internal static class ClarityConstants
 {

@@ -1,7 +1,7 @@
 ﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Services;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Services;
+namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Controllers;
 
 public sealed class SearchFilterSelectionHandlerTests
 {

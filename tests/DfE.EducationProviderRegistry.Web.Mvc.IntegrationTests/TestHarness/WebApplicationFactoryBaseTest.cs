@@ -31,6 +31,12 @@ public abstract class WebApplicationFactoryBaseTest : IntegrationTestsBase, IAsy
             opts.Enabled = true;
             opts.ProjectId = "STUB-PROJECTID";
         });
+
+        // Valid GTM
+        services.PostConfigure<GoogleAnalyticsSettings>((opts) =>
+        {
+            opts.ContainerId = "STUB-GTM-CONTAINERID";
+        });
     }
 
 

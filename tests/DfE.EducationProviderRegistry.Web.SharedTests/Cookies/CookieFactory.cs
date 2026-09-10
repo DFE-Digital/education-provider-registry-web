@@ -2,9 +2,9 @@
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness;
 
-internal static class CookieFactory
+public static class CookieFactory
 {
-    internal static Cookie AnalyticsCookie(Uri domain, bool analyticsValue)
+    public static Cookie AnalyticsCookie(Uri domain, bool analyticsValue)
     {
         return new Cookie(
             name: "cookies_policy",

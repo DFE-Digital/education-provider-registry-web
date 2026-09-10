@@ -2,6 +2,7 @@
 using DfE.EducationProviderRegistry.Web.MVC.UITests.Search;
 using DfE.EducationProviderRegistry.Web.SharedTests.ApplicationContainer;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
 
 namespace DfE.EducationProviderRegistry.Web.MVC.UITests;
 
@@ -64,10 +65,15 @@ public sealed class AnalyticsUITests : UIBaseTest
 
     private static void AssertPreferenceCookieSet(IWebDriver driver)
     {
-        const string AnalyticsCookieName = "cookies_policy";
-
         // Cookie preference is now set
-        Cookie? cookie = driver.Manage().Cookies.GetCookieNamed(AnalyticsCookieName);
+        DefaultWait<IWebDriver> wait = new(driver)
+        {
+            Timeout = TimeSpan.FromSeconds(10)
+        };
+
+        Cookie? cookie = wait.Until(driver =>
+            driver.Manage().Cookies.GetCookieNamed("cookies_policy"));
+
         Assert.NotNull(cookie);
     }
 

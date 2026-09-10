@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Testing.Handlers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System.Net;
+using DfE.EducationProviderRegistry.Web.SharedTests.WebApplicationFactory.Extensions;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Analytics.GoogleTagManger;
 
@@ -18,18 +19,11 @@ public sealed class GoogleTagManagerTests
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
 
-        using WebApplicationFactory<Program> factory = new WebApplicationFactory<Program>()
-            .WithWebHostBuilder((builder) =>
-            {
-                builder.ConfigureServices((services) =>
-                {
-                    services.PostConfigure<GoogleAnalyticsSettings>((opts) =>
-                    {
-                        // Tag manager disabled
-                        opts.ContainerId = string.Empty;
-                    });
-                });
-            });
+        using WebApplicationFactory<Program> factory =
+            new WebApplicationFactory<Program>()
+                .WithWebHostBuilder((builder) =>
+                    builder.ConfigureServices((services)
+                        => services.WithDisabledGoogleTagManager()));
 
         using HttpClient client = factory.CreateClient();
 
@@ -53,7 +47,11 @@ public sealed class GoogleTagManagerTests
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
 
-        using WebApplicationFactory<Program> factory = new();
+        using WebApplicationFactory<Program> factory =
+            new WebApplicationFactory<Program>()
+                .WithWebHostBuilder((builder) =>
+                    builder.ConfigureServices((services)
+                        => services.WithGoogleTagManager()));
 
         using HttpClient client = factory.CreateClient();
 
@@ -79,7 +77,11 @@ public sealed class GoogleTagManagerTests
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
 
-        using WebApplicationFactory<Program> factory = new();
+        using WebApplicationFactory<Program> factory =
+            new WebApplicationFactory<Program>()
+                .WithWebHostBuilder((builder) =>
+                    builder.ConfigureServices((services)
+                        => services.WithGoogleTagManager()));
 
         CookieContainer cookieContainer = new();
 

@@ -1,10 +1,9 @@
 ﻿using AngleSharp.Html.Dom;
 using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness;
-using DfE.EducationProviderRegistry.Web.Mvc.Settings;
 using DfE.EducationProviderRegistry.Web.SharedTests.AngleSharp.Extensions;
+using DfE.EducationProviderRegistry.Web.SharedTests.WebApplicationFactory.Extensions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.Mvc.Testing.Handlers;
-using Microsoft.Extensions.DependencyInjection;
 using System.Net;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Analytics.Clarity;
@@ -18,15 +17,8 @@ public sealed class ClarityTests
         // Arrange
         using WebApplicationFactory<Program> factory = new WebApplicationFactory<Program>()
             .WithWebHostBuilder((builder) =>
-            {
-                builder.ConfigureServices((services) =>
-                {
-                    services.PostConfigure<ClaritySettings>((opts) =>
-                    {
-                        opts.Enabled = false;
-                    });
-                });
-            });
+                builder.ConfigureServices((services)
+                    => services.WithDisabledClarity()));
 
         CancellationToken ct = TestContext.Current.CancellationToken;
 
@@ -50,7 +42,10 @@ public sealed class ClarityTests
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
 
-        using WebApplicationFactory<Program> factory = new();
+        using WebApplicationFactory<Program> factory = new WebApplicationFactory<Program>()
+                    .WithWebHostBuilder((builder) =>
+                        builder.ConfigureServices((services)
+                            => services.WithClarity()));
 
         using HttpClient client = factory.CreateClient();
 

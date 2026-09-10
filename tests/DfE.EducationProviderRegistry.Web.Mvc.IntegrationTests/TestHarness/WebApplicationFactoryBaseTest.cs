@@ -1,10 +1,8 @@
 ﻿using DfE.Core.Libraries.IntegrationTests.Abstractions;
 using DfE.Core.Libraries.IntegrationTests.Database.Abstractions;
 using DfE.Core.Libraries.IntegrationTests.Database.Postgres.Container.Providers;
-using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness.Antiforgery;
-using DfE.EducationProviderRegistry.Web.Mvc.Settings;
+using DfE.EducationProviderRegistry.Web.SharedTests.WebApplicationFactory.Extensions;
 using Microsoft.Extensions.DependencyInjection;
-using System.Net.Http.Json;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness;
 
@@ -25,20 +23,10 @@ public abstract class WebApplicationFactoryBaseTest : IntegrationTestsBase, IAsy
 
     protected virtual void ConfigureServices(IServiceCollection services)
     {
-        // Valid clarity
-        services.PostConfigure<ClaritySettings>((opts) =>
-        {
-            opts.Enabled = true;
-            opts.ProjectId = "STUB-PROJECTID";
-        });
-
-        // Valid GTM
-        services.PostConfigure<GoogleAnalyticsSettings>((opts) =>
-        {
-            opts.ContainerId = "STUB-GTM-CONTAINERID";
-        });
+        services
+            .WithClarity()
+            .WithGoogleTagManager();
     }
-
 
     public async ValueTask InitializeAsync()
     {

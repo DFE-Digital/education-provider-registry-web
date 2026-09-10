@@ -13,4 +13,8 @@
     <PackageReference Include="xunit.v3.assert" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\DfE.EducationProviderRegistry.Web.Mvc\DfE.EducationProviderRegistry.Web.Mvc.csproj" />
+  </ItemGroup>
+
 </Project>

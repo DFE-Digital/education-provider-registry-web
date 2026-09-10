@@ -2,6 +2,7 @@ using DfE.EducationProviderRegistry.Web.Mvc.Extensions;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search;
+using DfE.EducationProviderRegistry.Web.Mvc.Middleware;
 using DfE.EducationProviderRegistry.Web.Mvc.Settings;
 using Microsoft.AspNetCore.CookiePolicy;
 
@@ -38,7 +39,11 @@ builder.Services
     .AddPostgresDatabase(builder.Configuration);
 
 builder.Services.Configure<ClaritySettings>(
-    builder.Configuration.GetSection("Clarity")
+    builder.Configuration.GetSection(nameof(ClaritySettings))
+);
+
+builder.Services.Configure<GoogleAnalyticsSettings>(
+    builder.Configuration.GetSection(nameof(GoogleAnalyticsSettings))
 );
 
 var app = builder.Build();
@@ -56,6 +61,8 @@ else
 }
 
 app.UseStatusCodePagesWithReExecute("/not-found");
+
+app.UseSecurityHeaders();
 
 app.UseHttpsRedirection();
 

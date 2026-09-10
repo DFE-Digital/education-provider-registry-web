@@ -1,10 +1,12 @@
-﻿using OpenQA.Selenium;
+﻿using DfE.EducationProviderRegistry.Web.MVC.UITests.Components;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 
 namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Search;
 
 internal sealed class SearchFiltersComponent
 {
+    private readonly GovUkComponents _govUkComponents;
     private static By FiltersDropdowns => By.CssSelector(".filter-section");
     private static By SubmitFilters => By.CssSelector(".filter-panel [type=submit]");
     private static By SelectedFilters => By.CssSelector(".app-selected-filters__list li");
@@ -16,15 +18,16 @@ internal sealed class SearchFiltersComponent
     {
         _defaultWait = new(driver, TimeSpan.FromSeconds(15));
         _driver = driver;
+        _govUkComponents = new(driver);
     }
 
     public void FilterBy(string facetLabel, string facetValueLabel)
     {
-        ExpandFacet(facetLabel);
+        _govUkComponents.Details.Expand(facetLabel);
 
-        SelectFacetValue(facetLabel, facetValueLabel);
+        _govUkComponents.Checkbox.Click(facetValueLabel);
 
-        ApplyFilters();
+        _defaultWait.Until((driver) => driver.FindElement(SubmitFilters).Click());
     }
 
 
@@ -43,30 +46,6 @@ internal sealed class SearchFiltersComponent
         string targetId = GetFacetValueId(_driver, facetLabel, targetFacetValueLabel);
         return _defaultWait.Until((driver) => driver.FindElement(By.Id(targetId))).GetAttribute("id");
     }
-
-    private void ExpandFacet(string filterContainerLabel) =>
-        _defaultWait.Until(
-            (driver) =>
-                FindFacet(driver, filterContainerLabel)
-                .Click());
-
-    private void SelectFacetValue(string facetLabel, string facetValueLabel)
-    {
-        _defaultWait.Until(
-            (driver) =>
-                driver.FindElement(
-                    By.Id(
-                        GetFacetValueId(
-                            driver,
-                            facetLabel,
-                            facetValueLabel)))
-                .Click());
-    }
-
-
-    private void ApplyFilters()
-        => _defaultWait.Until((driver)
-            => driver.FindElement(SubmitFilters).Click());
 
     private static string GetFacetValueId(IWebDriver driver, string facetLabel, string targetFacetValueLabel)
     {
@@ -133,3 +112,5 @@ public sealed record SelectedFilter
 
     public string Text { get; }
 }
+
+

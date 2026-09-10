@@ -5,7 +5,7 @@ using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments.ViewModels;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 using Moq;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Establishments.Mappers;
+namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Establishments;
 
 public sealed class EstablishmentDetailsPageViewModelMapperTests
 {

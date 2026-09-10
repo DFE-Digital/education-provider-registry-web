@@ -1,14 +1,15 @@
 ﻿using AngleSharp.Html.Dom;
 using System.Net;
+using Xunit;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness.Anglesharp.Extensions;
+namespace DfE.EducationProviderRegistry.Web.SharedTests.AngleSharp.Extensions;
 
-internal static class VerifyHttpResponseMessageExtensions
+public static class VerifyHttpResponseMessageExtensions
 {
-    internal static Task<IHtmlDocument> AssertSuccessfulHtmlResponseAsync(this HttpResponseMessage httpResponse) =>
+    public static Task<IHtmlDocument> AssertSuccessfulHtmlResponseAsync(this HttpResponseMessage httpResponse) =>
         AssertAndParseHttpResponseMessage(httpResponse, HttpStatusCode.OK);
 
-    internal static async Task<IHtmlDocument> AssertAndParseHttpResponseMessage(HttpResponseMessage httpResponse, HttpStatusCode statusCode)
+    public static async Task<IHtmlDocument> AssertAndParseHttpResponseMessage(HttpResponseMessage httpResponse, HttpStatusCode statusCode)
     {
         Assert.True(
             httpResponse.IsSuccessStatusCode,

@@ -3,11 +3,11 @@ using OpenQA.Selenium.Support.UI;
 
 namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Components;
 
-internal sealed class CookieBanner
+internal sealed class GovUkCookieBanner
 {
     private readonly WebDriverWait _defaultWait;
 
-    public CookieBanner(IWebDriver driver)
+    public GovUkCookieBanner(IWebDriver driver)
     {
         _defaultWait = new(driver, TimeSpan.FromSeconds(15));
     }

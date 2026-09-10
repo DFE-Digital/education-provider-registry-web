@@ -8,19 +8,27 @@ namespace DfE.EducationProviderRegistry.Web.MVC.UITests;
 
 public sealed class AnalyticsUITests : UIBaseTest
 {
+    private readonly UrlRequestsCounterNetworkHandler clarityTracker;
+    private readonly UrlRequestsCounterNetworkHandler tagManagerTracker;
+    private readonly IReadOnlyList<NetworkRequestHandler> _requestHandlers;
+
     public AnalyticsUITests(IServiceProvider provider) : base(provider)
     {
+        clarityTracker = new("clarity.ms", UrlRequestsCounterNetworkHandler.RouteUrlToUnknownDomain);
+        tagManagerTracker = new("googletagmanager.com", UrlRequestsCounterNetworkHandler.RouteUrlToUnknownDomain);
+        _requestHandlers = [clarityTracker, tagManagerTracker];
     }
 
     [Fact]
-    public async Task Reject_Analytics_Sets_Cookie_And_Does_Not_Send_Traffic_To_Clarity()
+    public async Task Reject_Analytics_Sets_Cookie_And_Does_Not_Send_AnalyticsTraffic()
     {
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
 
         using IWebDriver webDriver = await WebDriverBuilder.Build().StartDriverAsync(ct);
-        UrlRequestsCounterNetworkHandler tracker = await RegisterNetworkMonitoringAsync(webDriver, ApplicationEnvironment);
-        CookieBanner banner = new(webDriver);
+
+        await RegisterNetworkMonitoringAsync(webDriver, ApplicationEnvironment, _requestHandlers);
+        GovUkCookieBanner banner = new(webDriver);
 
         // Act
         banner.Reject();
@@ -30,7 +38,8 @@ public sealed class AnalyticsUITests : UIBaseTest
         AssertPreferenceCookieSet(webDriver);
         await TriggerAnalyticsWithBrowserActionAsync(webDriver, ApplicationEnvironment);
 
-        Assert.Equal(0, tracker.RequestsMatchCounter);
+        Assert.Equal(0, clarityTracker.RequestsMatchCounter);
+        Assert.Equal(0, tagManagerTracker.RequestsMatchCounter);
     }
 
     [Fact]
@@ -40,8 +49,8 @@ public sealed class AnalyticsUITests : UIBaseTest
         CancellationToken ct = TestContext.Current.CancellationToken;
 
         using IWebDriver webDriver = await WebDriverBuilder.Build().StartDriverAsync(ct);
-        UrlRequestsCounterNetworkHandler tracker = await RegisterNetworkMonitoringAsync(webDriver, ApplicationEnvironment);
-        CookieBanner banner = new(webDriver);
+        await RegisterNetworkMonitoringAsync(webDriver, ApplicationEnvironment, _requestHandlers);
+        GovUkCookieBanner banner = new(webDriver);
 
         // Act
         banner.Accept();
@@ -50,29 +59,38 @@ public sealed class AnalyticsUITests : UIBaseTest
         AssertPreferenceCookieSet(webDriver);
         await TriggerAnalyticsWithBrowserActionAsync(webDriver, ApplicationEnvironment);
 
-        Assert.True(tracker.RequestsMatchCounter > 0, "Clarity should be called when analytics events are triggered and user has agreed to analytics");
+        Assert.True(clarityTracker.RequestsMatchCounter > 0, "Clarity should be called when analytics events are triggered and user has agreed to analytics");
+        Assert.True(tagManagerTracker.RequestsMatchCounter > 0, "TagManager should be called when analytics events are triggered and user has agreed to analytics");
     }
 
     private static void AssertPreferenceCookieSet(IWebDriver driver)
     {
-        const string AnalyticsCookieName = "cookies_policy";
-
         // Cookie preference is now set
-        Cookie? cookie = driver.Manage().Cookies.GetCookieNamed(AnalyticsCookieName);
+        DefaultWait<IWebDriver> wait = new(driver)
+        {
+            Timeout = TimeSpan.FromSeconds(10)
+        };
+
+        Cookie? cookie = wait.Until(driver =>
+            driver.Manage().Cookies.GetCookieNamed("cookies_policy"));
+
         Assert.NotNull(cookie);
     }
 
-    private static async Task<UrlRequestsCounterNetworkHandler> RegisterNetworkMonitoringAsync(IWebDriver webDriver, ApplicationHostedEnvironment application)
+    private static async Task RegisterNetworkMonitoringAsync(
+        IWebDriver webDriver,
+        ApplicationHostedEnvironment application,
+        IEnumerable<NetworkRequestHandler> handlers)
     {
-        const string ClarityDomain = "clarity.ms";
+
 
         await webDriver.Manage().Network.StartMonitoring();
         await webDriver.Navigate().GoToUrlAsync(application.GetApplicationUrl());
 
-        UrlRequestsCounterNetworkHandler handler = new(ClarityDomain, transformer: UrlRequestsCounterNetworkHandler.RouteUrlToUnknownDomain);
-
-        webDriver.Manage().Network.AddRequestHandler(handler);
-        return handler;
+        foreach (var handler in handlers)
+        {
+            webDriver.Manage().Network.AddRequestHandler(handler);
+        }
     }
 
     private static Task TriggerAnalyticsWithBrowserActionAsync(IWebDriver webDriver, ApplicationHostedEnvironment application)

@@ -3,9 +3,9 @@ using AngleSharp.Html.Dom;
 using AngleSharp.Io;
 using System.Net.Http.Headers;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness.Anglesharp;
+namespace DfE.EducationProviderRegistry.Web.SharedTests.AngleSharp;
 
-internal static class HtmlHelpers
+public static class HtmlHelpers
 {
     public static async Task<IHtmlDocument> GetDocumentAsync(HttpResponseMessage response)
     {

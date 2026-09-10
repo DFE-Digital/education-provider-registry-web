@@ -1,0 +1,27 @@
+﻿@using DfE.EducationProviderRegistry.Web.Mvc.Settings
+@using Microsoft.Extensions.Options
+
+@inject IOptions<GoogleAnalyticsSettings> Options
+
+@{
+    GoogleAnalyticsSettings googleAnalyticsSettings = Options.Value;
+}
+
+@if (googleAnalyticsSettings.IsGoogleTagManagerEnabled(Context))
+{
+    string googleTagManagerUrl =
+        $"{googleAnalyticsSettings.Domain}/ns.html?id=" +
+        $"{Uri.EscapeDataString(googleAnalyticsSettings.ContainerId!)}" +
+        googleAnalyticsSettings.TagManagerQueryString;
+
+    <!-- Google Tag Manager (noscript) -->
+    <noscript>
+        <iframe src="@googleTagManagerUrl"
+                title="Google Tag Manager"
+                height="0"
+                width="0"
+                style="display:none;visibility:hidden">
+        </iframe>
+    </noscript>
+    <!-- End Google Tag Manager (noscript) -->
+}

@@ -39,11 +39,11 @@ builder.Services
     .AddPostgresDatabase(builder.Configuration);
 
 builder.Services.Configure<ClaritySettings>(
-    builder.Configuration.GetSection("Clarity")
+    builder.Configuration.GetSection(nameof(ClaritySettings))
 );
 
 builder.Services.Configure<GoogleAnalyticsSettings>(
-    builder.Configuration.GetSection("GoogleTagManager")
+    builder.Configuration.GetSection(nameof(GoogleAnalyticsSettings))
 );
 
 var app = builder.Build();

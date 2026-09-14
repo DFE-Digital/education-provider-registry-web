@@ -15,20 +15,10 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Controllers;
 [Route("search")]
 public sealed class SearchController : Controller
 {
-    private readonly IUseCase<
-        SearchRequest,
-        UseCaseResponse<SearchResponse>> _searchUseCase;
-
-    private readonly IMapper<
-        SearchResultsMappingContext,
-        SearchResultsViewModel> _searchResponseToViewModelMapper;
-
-    private readonly IMapper<
-        Dictionary<string, List<string>>?,
-        ReadOnlyCollection<FilterRequest>> _selectedFacetsToFilterRequestsMapper;
-
-    private readonly ISearchFilterSelectionHandler
-        _searchFilterSelectionHandler;
+    private readonly IUseCase<SearchRequest, UseCaseResponse<SearchResponse>> _searchUseCase;
+    private readonly IMapper<SearchResultsMappingContext, SearchResultsViewModel> _searchResponseToViewModelMapper;
+    private readonly IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>> _selectedFacetsToFilterRequestsMapper;
+    private readonly ISearchFilterSelectionHandler _searchFilterSelectionHandler;
 
     public SearchController(
         IUseCase<SearchRequest, UseCaseResponse<SearchResponse>> searchUseCase,
@@ -37,28 +27,20 @@ public sealed class SearchController : Controller
         ISearchFilterSelectionHandler searchFilterSelectionHandler)
     {
         ArgumentNullException.ThrowIfNull(searchUseCase);
-        ArgumentNullException.ThrowIfNull(
-            searchResponseToViewModelMapper);
-        ArgumentNullException.ThrowIfNull(
-            selectedFacetsToFilterRequestsMapper);
-        ArgumentNullException.ThrowIfNull(
-            searchFilterSelectionHandler);
+        ArgumentNullException.ThrowIfNull(searchResponseToViewModelMapper);
+        ArgumentNullException.ThrowIfNull(selectedFacetsToFilterRequestsMapper);
+        ArgumentNullException.ThrowIfNull(searchFilterSelectionHandler);
 
         _searchUseCase = searchUseCase;
-        _searchResponseToViewModelMapper =
-            searchResponseToViewModelMapper;
-        _selectedFacetsToFilterRequestsMapper =
-            selectedFacetsToFilterRequestsMapper;
-        _searchFilterSelectionHandler =
-            searchFilterSelectionHandler;
+        _searchResponseToViewModelMapper = searchResponseToViewModelMapper;
+        _selectedFacetsToFilterRequestsMapper = selectedFacetsToFilterRequestsMapper;
+        _searchFilterSelectionHandler = searchFilterSelectionHandler;
     }
 
     [HttpGet("")]
     public IActionResult Index()
     {
-        return View(
-            "Index",
-            new SearchRequestViewModel());
+        return View("Index", new SearchRequestViewModel());
     }
 
     [HttpGet("results")]

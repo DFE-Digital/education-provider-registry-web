@@ -216,7 +216,7 @@ public sealed class SearchResultsViewModelTests
     {
         return new SearchResultsViewModel
         {
-            EstablishmentResults = [],
+            ProviderResults = [],
             SearchRequest = new SearchRequestViewModel
             {
                 PageNumber = 1,

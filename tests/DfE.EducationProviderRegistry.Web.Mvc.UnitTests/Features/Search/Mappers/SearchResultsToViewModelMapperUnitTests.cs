@@ -111,10 +111,10 @@ public sealed class SearchResultsToViewModelMapperTests
         SearchResultsViewModel vm = mapper.Map(input);
 
         // assert
-        Assert.Single(vm.EstablishmentResults);
-        Assert.Equal("School A", vm.EstablishmentResults[0].Caption);
-        Assert.Equal("testColumn", vm.EstablishmentResults[0].Columns[0].Text);
-        Assert.Equal("Test Cell", vm.EstablishmentResults[0].Rows[0].Cells[0].Text);
+        Assert.Single(vm.ProviderResults);
+        Assert.Equal("School A", vm.ProviderResults[0].Caption);
+        Assert.Equal("testColumn", vm.ProviderResults[0].Columns[0].Text);
+        Assert.Equal("Test Cell", vm.ProviderResults[0].Rows[0].Cells[0].Text);
         establishmentMapper.Verify(m => m.Map(establishmentResults), Times.Once);
     }
 
@@ -182,7 +182,7 @@ public sealed class SearchResultsToViewModelMapperTests
         SearchResultsViewModel vm = mapper.Map(input);
 
         // assert
-        Assert.Empty(vm.EstablishmentResults);
+        Assert.Empty(vm.ProviderResults);
         Assert.Empty(vm.Facets!);
         establishmentMapper.Verify(mapper => mapper.Map(It.IsAny<IReadOnlyCollection<EstablishmentSearchResult>>()), Times.Never);
         facetsMapper.Verify(mapper => mapper.Map(It.IsAny<IReadOnlyCollection<SearchFacet>>()), Times.Never);

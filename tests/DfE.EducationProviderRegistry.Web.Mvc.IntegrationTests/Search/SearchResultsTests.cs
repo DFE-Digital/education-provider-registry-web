@@ -107,8 +107,8 @@ public sealed class SearchResultsTests
         SearchResultsComponent results = new(doc);
 
         string resultsHeading = results.GetHeading();
-        Assert.StartsWith($"Search results for \"sch\"", resultsHeading);
-        Assert.EndsWith($"\"LN1\"", resultsHeading);
+        Assert.StartsWith($"Search results for ", resultsHeading);
+        Assert.EndsWith($"\"sch\"\n \"LN1\"", resultsHeading);
         Assert.Equal($"{searchResponse.EstablishmentResults!.Count} results", results.GetTotalResults());
         AssertSearchResultsDisplayed(results, searchResponse);
     }

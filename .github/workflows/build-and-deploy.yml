@@ -163,7 +163,6 @@ jobs:
           coverage-report-path: coverage-sonar/SonarQube.xml
           sonarscan-exclusions: "src/**/wwwroot/css/site.css"
 
-
     - name: Update application image in accessibility tests
       run: |
         TAG="${{ needs.build.outputs.docker-image-tag }}"
@@ -192,6 +191,9 @@ jobs:
     - name: Run UI Tests
       run: dotnet test tests/DfE.EducationProviderRegistry.Web.Mvc.UITests
     # TODO artifacts from UI tests
+
+    - name: Run System Tests
+      run: dotnet test tests/DfE.EducationProviderRegistry.Web.Mvc.SystemTests
 
     - name: Validate formatting
       run: dotnet format --verify-no-changes --verbosity diagnostic

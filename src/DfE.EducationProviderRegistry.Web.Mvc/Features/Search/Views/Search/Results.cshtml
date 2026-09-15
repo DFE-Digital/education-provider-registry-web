@@ -2,10 +2,16 @@
 @model SearchResultsViewModel
 
 <h1 class="govuk-heading-xl">
-    @if (!string.IsNullOrWhiteSpace(Model.PrimarySearchTerms))
+    @if (!string.IsNullOrWhiteSpace(Model.PrimarySearchTerms)
+         || !string.IsNullOrWhiteSpace(Model.SecondarySearchTerms))
     {
         <span>
-            Search results for "@Model.PrimarySearchTerms"
+            Search results for 
+
+            @if (!string.IsNullOrWhiteSpace(Model.PrimarySearchTerms))
+            {
+                <text> "@Model.PrimarySearchTerms"</text>
+            }
 
             @if (!string.IsNullOrWhiteSpace(Model.SecondarySearchTerms))
             {

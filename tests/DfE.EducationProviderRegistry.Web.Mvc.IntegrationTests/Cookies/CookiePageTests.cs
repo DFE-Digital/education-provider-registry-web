@@ -1,23 +1,20 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness;
-using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness.Anglesharp;
-using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness.Antiforgery;
+﻿using DfE.EducationProviderRegistry.Web.SharedTests.AngleSharp;
+using DfE.EducationProviderRegistry.Web.SharedTests.Features.Cookies;
+using Microsoft.AspNetCore.TestHost;
 
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Cookies;
 
-public sealed class CookiesPageTests : WebApplicationFactoryBaseTest
+public sealed class CookiesPageTests
 {
-    public CookiesPageTests(IServiceProvider provider) : base(provider)
-    {
-    }
-
     [Fact]
     public async Task GET_CookiesPage_With_No_Cookie_Has_No_Selection()
     {
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
 
-        using HttpClient client = Factory.CreateClient();
+        using WebApplicationFactory<Program> factory = new();
+        using HttpClient client = factory.CreateClient();
 
         // Act
         using HttpResponseMessage response = await client.GetAsync("/cookies", ct);
@@ -25,7 +22,7 @@ public sealed class CookiesPageTests : WebApplicationFactoryBaseTest
         // Assert
         using IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
 
-        CookiesPageAnalyticsForm page = new(document);
+        CookiesPageAnalyticsFormComponent page = new(document);
 
         Assert.False(page.AcceptAnalyticsSelected());
         Assert.False(page.RejectAnalyticsSelected());
@@ -38,12 +35,21 @@ public sealed class CookiesPageTests : WebApplicationFactoryBaseTest
     {
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
-        Factory.ClientOptions.AllowAutoRedirect = true;
-        using HttpClient client = Factory.CreateClient();
+
+        using WebApplicationFactory<Program> factory =
+            new WebApplicationFactory<Program>()
+                .WithWebHostBuilder((builder) =>
+                    builder.ConfigureTestServices((services)
+                        => services.AddTestAntiForgeryTokenServices()));
+
+        // Must be set else Secure Cookies are not sent
+        factory.ClientOptions.BaseAddress = new("https://localhost");
+
+        using HttpClient client = factory.CreateClient();
 
         AntiForgeryContext antiForgery = await client.GetAntiforgeryTokensAsync(ct);
 
-        CookiesPageAnalyticsForm page =
+        CookiesPageAnalyticsFormComponent page =
             new(
                 await (
                     await client.GetAsync("/cookies", ct))
@@ -62,7 +68,7 @@ public sealed class CookiesPageTests : WebApplicationFactoryBaseTest
         // Assert
         using IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
 
-        CookiesPageAnalyticsForm updatedPage = new(document);
+        CookiesPageAnalyticsFormComponent updatedPage = new(document);
 
         if (analytics)
         {

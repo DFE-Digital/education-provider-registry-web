@@ -4,8 +4,10 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="AngleSharp" Version="1.7.2" />
+    <PackageVersion Include="Bogus" Version="35.6.5" />
     <PackageVersion Include="coverlet.msbuild" Version="10.0.1" />
     <PackageVersion Include="Deque.AxeCore.Selenium" Version="4.13.0" />
+    <PackageVersion Include="DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles" Version="0.0.19" />
     <PackageVersion Include="DfE.Core.Libraries.IntegrationTests" Version="1.0.40" />
     <PackageVersion Include="DfE.Core.Libraries.IntegrationTests.Database.Postgres" Version="1.0.40" />
     <PackageVersion Include="DfE.Core.Libraries.Testing" Version="1.0.40" />

@@ -1,5 +1,5 @@
 ﻿using DfE.Core.Libraries.IntegrationTests.Abstractions;
-using DfE.EducationProviderRegistry.Web.SharedTests.ApplicationContainer;
+using DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.ApplicationContainer;
 using DfE.WebDriver.Public.Session;
 using Microsoft.Extensions.DependencyInjection;
 

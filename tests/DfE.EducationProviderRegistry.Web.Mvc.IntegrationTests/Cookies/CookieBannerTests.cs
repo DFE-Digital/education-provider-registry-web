@@ -1,15 +1,11 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness;
-using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness.Anglesharp.Extensions;
+﻿using DfE.EducationProviderRegistry.Web.SharedTests.Features.Cookies;
+using Microsoft.AspNetCore.Mvc.Testing;
 using HttpMethod = System.Net.Http.HttpMethod;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Cookies;
 
-public sealed class CookieBannerTests : WebApplicationFactoryBaseTest
+public sealed class CookieBannerTests
 {
-    public CookieBannerTests(IServiceProvider provider) : base(provider)
-    {
-    }
-
     [Theory]
     [InlineData("/")]
     [InlineData("/cookies")]
@@ -18,7 +14,8 @@ public sealed class CookieBannerTests : WebApplicationFactoryBaseTest
     {
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
-        using HttpClient client = Factory.CreateClient();
+        using WebApplicationFactory<Program> factory = new();
+        using HttpClient client = factory.CreateClient();
 
         // Act
         using HttpResponseMessage response = await client.GetAsync(path, ct);
@@ -26,7 +23,7 @@ public sealed class CookieBannerTests : WebApplicationFactoryBaseTest
         // Assert
         using IHtmlDocument doc = await response.AssertSuccessfulHtmlResponseAsync();
 
-        CookieBanner banner = new(doc);
+        CookieBannerComponent banner = new(doc);
         Assert.True(banner.Exists());
     }
 
@@ -39,8 +36,8 @@ public sealed class CookieBannerTests : WebApplicationFactoryBaseTest
     {
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
-
-        using HttpClient client = Factory.CreateClient();
+        using WebApplicationFactory<Program> factory = new();
+        using HttpClient client = factory.CreateClient();
 
         HttpRequestMessage request = new(HttpMethod.Get, path);
 
@@ -52,7 +49,7 @@ public sealed class CookieBannerTests : WebApplicationFactoryBaseTest
 
         // Assert
         using IHtmlDocument doc = await response.AssertSuccessfulHtmlResponseAsync();
-        CookieBanner banner = new(doc);
+        CookieBannerComponent banner = new(doc);
         Assert.False(banner.Exists());
     }
 }

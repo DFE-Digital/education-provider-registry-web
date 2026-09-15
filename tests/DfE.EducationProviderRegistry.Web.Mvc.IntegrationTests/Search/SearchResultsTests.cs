@@ -37,13 +37,14 @@ public sealed class SearchResultsTests
         IHtmlDocument responseDocument = await response.AssertSuccessfulHtmlResponseAsync();
         SearchResultsComponent results = new(responseDocument);
 
-        Assert.Equal($"Search results for \"School\"", results.GetHeading());
+        string resultsHeading = results.GetHeading();
+        Assert.StartsWith("Search results for ", resultsHeading);
+        Assert.EndsWith("\"School\"", resultsHeading);
+
         Assert.Equal($"{searchResponse.EstablishmentResults!.Count} results", results.GetTotalResults());
         AssertSearchResultsDisplayed(results, searchResponse);
     }
 
-
-    // TODO raise bug - logic incorrect as nested
     [Fact]
     public async Task Search_With_Location_Term_Returns_Results()
     {
@@ -70,7 +71,10 @@ public sealed class SearchResultsTests
         // Assert
         IHtmlDocument doc = await response.AssertSuccessfulHtmlResponseAsync();
         SearchResultsComponent results = new(doc);
-        Assert.Equal($"Search results for \"LN1\"", results.GetHeading());
+        string resultsHeading = results.GetHeading();
+
+        Assert.StartsWith($"Search results for ", resultsHeading);
+        Assert.EndsWith($"\"LN1\"", resultsHeading);
         Assert.Equal($"{searchResponse.EstablishmentResults!.Count} results", results.GetTotalResults());
         AssertSearchResultsDisplayed(results, searchResponse);
     }

@@ -16,7 +16,7 @@
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
 		<PackageReference Include="DfE.Core.Libraries.CrossCutting" Version="1.0.40" />
 		<PackageReference Include="DfE.Core.Libraries.CleanArchitecture" Version="1.0.40" />
-		<!--<PackageReference Include="DfE.EducationProviderRegistry.Core.Query" Version="0.0.18" />-->
+		<PackageReference Include="DfE.EducationProviderRegistry.Core.Query" Version="0.0.20" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -24,7 +24,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\education-provider-registry-core\src\DfE.EducationProviderRegistry.Core.Query\DfE.EducationProviderRegistry.Core.Query.csproj" />
 		<ProjectReference Include="..\DfE.EducationProviderRegistry.Web.ViewComponents\DfE.EducationProviderRegistry.Web.ViewComponents.csproj" />
 	</ItemGroup>
 

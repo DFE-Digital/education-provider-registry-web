@@ -5,16 +5,16 @@ using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 
-public sealed class SearchProviderResultsToViewModelMapper
-    : IMapper<IReadOnlyCollection<SearchProviderResult>, List<GovUkTable>>
+public sealed class SearchAggregateResultsToViewModelMapper
+    : IMapper<IReadOnlyCollection<SearchAggregateResult>, List<GovUkTable>>
 {
-    public List<GovUkTable> Map(IReadOnlyCollection<SearchProviderResult> input)
+    public List<GovUkTable> Map(IReadOnlyCollection<SearchAggregateResult> input)
     {
         ArgumentNullException.ThrowIfNull(input);
 
         List<GovUkTable> tables = new(input.Count);
 
-        foreach (SearchProviderResult result in input)
+        foreach (SearchAggregateResult result in input)
         {
             tables.Add(MapItem(result));
         }
@@ -22,7 +22,7 @@ public sealed class SearchProviderResultsToViewModelMapper
         return tables;
     }
 
-    private static GovUkTable MapItem(SearchProviderResult input)
+    private static GovUkTable MapItem(SearchAggregateResult input)
     {
         ArgumentNullException.ThrowIfNull(input);
 
@@ -34,7 +34,7 @@ public sealed class SearchProviderResultsToViewModelMapper
         };
     }
 
-    private static GovUkTable MapEstablishment(SearchProviderResult input)
+    private static GovUkTable MapEstablishment(SearchAggregateResult input)
     {
         TableColumn[] columns =
         [
@@ -78,7 +78,7 @@ public sealed class SearchProviderResultsToViewModelMapper
         return builder.Build();
     }
 
-    private static GovUkTable MapGroup(SearchProviderResult input)
+    private static GovUkTable MapGroup(SearchAggregateResult input)
     {
         TableColumn[] columns =
         [

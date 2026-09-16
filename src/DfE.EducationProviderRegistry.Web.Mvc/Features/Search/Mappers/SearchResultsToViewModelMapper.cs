@@ -1,5 +1,4 @@
 ﻿using DfE.Core.Libraries.CrossCutting.Mapper;
-using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Establishment;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
@@ -8,17 +7,17 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 
 public sealed class SearchResultsToViewModelMapper : IMapper<SearchResultsMappingContext, SearchResultsViewModel>
 {
-    private readonly IMapper<IReadOnlyCollection<SearchProviderResult>, List<GovUkTable>> _searchProviderResultsToViewModelMapper;
+    private readonly IMapper<IReadOnlyCollection<SearchAggregateResult>, List<GovUkTable>> _searchAggregateResultsToViewModelMapper;
     private readonly IMapper<IReadOnlyCollection<SearchFacet>, List<FacetViewModel>> _facetResultsToFacetsViewModelMapper;
 
     public SearchResultsToViewModelMapper(
-        IMapper<IReadOnlyCollection<SearchProviderResult>, List<GovUkTable>> searchProviderResultsToViewModelMapper,
+        IMapper<IReadOnlyCollection<SearchAggregateResult>, List<GovUkTable>> searchAggregateResultsToViewModelMapper,
         IMapper<IReadOnlyCollection<SearchFacet>, List<FacetViewModel>> facetResultsToFacetsViewModelMapper)
     {
-        ArgumentNullException.ThrowIfNull(searchProviderResultsToViewModelMapper);
+        ArgumentNullException.ThrowIfNull(searchAggregateResultsToViewModelMapper);
         ArgumentNullException.ThrowIfNull(facetResultsToFacetsViewModelMapper);
 
-        _searchProviderResultsToViewModelMapper = searchProviderResultsToViewModelMapper;
+        _searchAggregateResultsToViewModelMapper = searchAggregateResultsToViewModelMapper;
         _facetResultsToFacetsViewModelMapper = facetResultsToFacetsViewModelMapper;
     }
 
@@ -57,7 +56,7 @@ public sealed class SearchResultsToViewModelMapper : IMapper<SearchResultsMappin
 
             ProviderResults =
                 searchResponse.SearchProviderResults is not null
-                    ? _searchProviderResultsToViewModelMapper.Map(
+                    ? _searchAggregateResultsToViewModelMapper.Map(
                         searchResponse
                             .SearchProviderResults
                             .SearchResultCollection)

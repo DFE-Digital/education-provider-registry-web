@@ -1,6 +1,5 @@
 ﻿using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Search;
-using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Establishment;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Filter;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
@@ -31,7 +30,7 @@ internal static class SearchServiceCollectionExtensions
             .AddSingleton<IMapper<
                 IReadOnlyCollection<SearchFacet>, List<FacetViewModel>>, FacetResultsToViewModelMapper>()
             .AddSingleton<IMapper<
-                IReadOnlyCollection<SearchProviderResult>, List<GovUkTable>>, SearchProviderResultsToViewModelMapper>()
+                IReadOnlyCollection<SearchAggregateResult>, List<GovUkTable>>, SearchAggregateResultsToViewModelMapper>()
             .AddSingleton<IMapper<
                 Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>, SelectedFacetsToFilterRequestsMapper>()
             .AddSingleton<ISearchFilterSelectionHandler, SearchFilterSelectionHandler>();

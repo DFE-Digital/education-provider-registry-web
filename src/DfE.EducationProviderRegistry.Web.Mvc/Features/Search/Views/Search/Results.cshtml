@@ -45,7 +45,7 @@
 
                 <div class="search-results">
 
-                    @foreach (var result in Model.ProviderResults)
+                    @foreach (var result in Model.SearchAggregateResults)
                     {
                         @await Component.InvokeAsync(
                             "SharedGovUkTable",

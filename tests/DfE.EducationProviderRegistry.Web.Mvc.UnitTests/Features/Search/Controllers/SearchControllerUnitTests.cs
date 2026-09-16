@@ -1,9 +1,12 @@
-using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Establishment;
+using DfE.Core.Libraries.CleanArchitecture.Application;
+using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Filter;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Request;
+using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Controllers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Services;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Controllers.TestDoubles;
 using Microsoft.AspNetCore.Mvc;
@@ -105,23 +108,23 @@ public sealed class SearchControllerUnitTests
         SearchRequestViewModel model = SearchRequestViewModelStub.AcademyWithFacet();
         ReadOnlyCollection<FilterRequest> mappedFilters = FilterRequestStub.EstablishmentTypeFacet();
 
-        EstablishmentSearchResults establishmentResults = EstablishmentSearchResultsStub.Empty();
+        SearchAggregateResults searchAggregateResults = SearchAggregateResultsStub.Empty();
         SearchFacets facets = SearchFacetsStub.Empty();
 
         SearchResultsViewModel mappedViewModel =
             SearchResultsViewModelStub.WithEstablishmentResults([]);
 
-        var searchUseCase =
+        Mock<IUseCase<SearchRequest, UseCaseResponse<SearchResponse>>> searchUseCase =
             SearchUseCaseTestDouble.MockFor(
-                UseCaseResponseSearchResponseTestDouble.Success(establishmentResults, facets));
+                UseCaseResponseSearchResponseTestDouble.Success(searchAggregateResults, facets));
 
-        var searchResultsMapper =
+        Mock<IMapper<SearchResultsMappingContext, SearchResultsViewModel>> searchResultsMapper =
             SearchResultsMapperTestDouble.MockFor(mappedViewModel);
 
-        var searchFacetsResultsMapper =
+        Mock<IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>> searchFacetsResultsMapper =
             SearchFacetsResultsMapperTestDouble.MockFor(mappedFilters);
 
-        var searchFilterSelectionHandler = SearchFilterSelectionHandlerStub.MockFor();
+        Mock<ISearchFilterSelectionHandler> searchFilterSelectionHandler = SearchFilterSelectionHandlerStub.MockFor();
 
         SearchController sut =
             new(
@@ -166,24 +169,24 @@ public sealed class SearchControllerUnitTests
         SearchRequestViewModel model = SearchRequestViewModelStub.AcademyWithoutFacet();
         ReadOnlyCollection<FilterRequest> mappedFilters = FilterRequestStub.EstablishmentTypeFacet();
 
-        EstablishmentSearchResults establishmentResults = EstablishmentSearchResultsStub.Empty();
+        SearchAggregateResults searchAggregateResults = SearchAggregateResultsStub.Empty();
         SearchFacets facets = SearchFacetsStub.Empty();
 
         SearchResultsViewModel mappedViewModel =
             SearchResultsViewModelStub.WithEstablishmentResults([]);
 
-        var searchUseCase =
+        Mock<IUseCase<SearchRequest, UseCaseResponse<SearchResponse>>> searchUseCase =
             SearchUseCaseTestDouble.MockFor(
-                UseCaseResponseSearchResponseTestDouble.Success(establishmentResults, facets));
+                UseCaseResponseSearchResponseTestDouble.Success(searchAggregateResults, facets));
 
-        var searchResultsMapper =
+        Mock<IMapper<SearchResultsMappingContext, SearchResultsViewModel>> searchResultsMapper =
             SearchResultsMapperTestDouble.MockFor(mappedViewModel);
 
-        var searchFacetsResultsMapper =
+        Mock<IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>> searchFacetsResultsMapper =
             SearchFacetsResultsMapperTestDouble.MockFor(mappedFilters);
 
 
-        var searchFilterSelectionHandler = SearchFilterSelectionHandlerStub.MockFor();
+        Mock<ISearchFilterSelectionHandler> searchFilterSelectionHandler = SearchFilterSelectionHandlerStub.MockFor();
 
         SearchController sut =
             new(

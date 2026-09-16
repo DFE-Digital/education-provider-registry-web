@@ -54,7 +54,7 @@ public sealed class SearchResultsToViewModelMapper : IMapper<SearchResultsMappin
 
             SelectedSortDirection = input.SearchRequest.Sort,
 
-            ProviderResults =
+            SearchAggregateResults =
                 searchResponse.SearchProviderResults is not null
                     ? _searchAggregateResultsToViewModelMapper.Map(
                         searchResponse
@@ -62,7 +62,7 @@ public sealed class SearchResultsToViewModelMapper : IMapper<SearchResultsMappin
                             .SearchResultCollection)
                     : [],
 
-            TotalEstablishmentResults =
+            TotalSearchResults =
                 searchResponse.TotalNumberOfResults,
 
             Facets = facets

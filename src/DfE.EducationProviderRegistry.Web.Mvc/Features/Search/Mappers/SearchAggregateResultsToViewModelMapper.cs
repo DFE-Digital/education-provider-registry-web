@@ -8,33 +8,47 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 public sealed class SearchAggregateResultsToViewModelMapper
     : IMapper<IReadOnlyCollection<SearchAggregateResult>, List<GovUkTable>>
 {
-    public List<GovUkTable> Map(IReadOnlyCollection<SearchAggregateResult> input)
+    private readonly IReadOnlyCollection<ISearchAggregateCategoryToModelMapper> _mappers;
+
+    public SearchAggregateResultsToViewModelMapper(IEnumerable<ISearchAggregateCategoryToModelMapper> mappers)
     {
-        ArgumentNullException.ThrowIfNull(input);
-
-        List<GovUkTable> tables = new(input.Count);
-
-        foreach (SearchAggregateResult result in input)
-        {
-            tables.Add(MapItem(result));
-        }
-
-        return tables;
+        _mappers = mappers.ToList();
     }
 
-    private static GovUkTable MapItem(SearchAggregateResult input)
+    public List<GovUkTable> Map(
+        IReadOnlyCollection<SearchAggregateResult> input)
     {
-        ArgumentNullException.ThrowIfNull(input);
-
-        return input.ProviderCategory.Category switch
-        {
-            "Establishment" => MapEstablishment(input),
-            "Group" => MapGroup(input),
-            _ => throw new ArgumentOutOfRangeException(nameof(input))
-        };
+        return input
+            .Select(MapItem)
+            .ToList();
     }
 
-    private static GovUkTable MapEstablishment(SearchAggregateResult input)
+    private GovUkTable MapItem(SearchAggregateResult input)
+    {
+        ISearchAggregateCategoryToModelMapper mapper =
+            _mappers.SingleOrDefault(x => x.CanMap(input))
+            ?? throw new InvalidOperationException(
+                $"No mapper registered for {input.ProviderCategory.Category}");
+
+        return mapper.Map(input);
+    }
+}
+
+
+
+public interface ISearchAggregateCategoryToModelMapper
+{
+    bool CanMap(SearchAggregateResult input);
+
+    GovUkTable Map(SearchAggregateResult input);
+}
+
+public sealed class SearchAggregateCategoryEstablishmentMapper : ISearchAggregateCategoryToModelMapper
+{
+    public bool CanMap(SearchAggregateResult input) =>
+        string.Equals(input.ProviderCategory.Category, "Establishment", StringComparison.OrdinalIgnoreCase);
+
+    public GovUkTable Map(SearchAggregateResult input)
     {
         TableColumn[] columns =
         [
@@ -77,8 +91,14 @@ public sealed class SearchAggregateResultsToViewModelMapper
 
         return builder.Build();
     }
+}
 
-    private static GovUkTable MapGroup(SearchAggregateResult input)
+public sealed class SearchAggregateCategoryGroupMapper : ISearchAggregateCategoryToModelMapper
+{
+    public bool CanMap(SearchAggregateResult input) =>
+        string.Equals(input.ProviderCategory.Category, "Group", StringComparison.OrdinalIgnoreCase);
+
+    public GovUkTable Map(SearchAggregateResult input)
     {
         TableColumn[] columns =
         [

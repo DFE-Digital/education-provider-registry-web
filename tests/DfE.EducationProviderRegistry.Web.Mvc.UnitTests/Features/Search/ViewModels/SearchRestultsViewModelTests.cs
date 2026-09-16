@@ -51,7 +51,7 @@ public sealed class SearchResultsViewModelTests
     {
         // Arrange
         SearchResultsViewModel model = CreateModel();
-        model.TotalEstablishmentResults = totalEstablishmentResults;
+        model.TotalSearchResults = totalEstablishmentResults;
 
         // Act
         bool result = model.HasResults;
@@ -70,7 +70,7 @@ public sealed class SearchResultsViewModelTests
     {
         // Arrange
         SearchResultsViewModel model = CreateModel();
-        model.TotalEstablishmentResults = totalEstablishmentResults;
+        model.TotalSearchResults = totalEstablishmentResults;
 
         // Act
         bool result = model.HasMoreThanOneResult;
@@ -141,7 +141,7 @@ public sealed class SearchResultsViewModelTests
         // Arrange
         SearchResultsViewModel model = CreateModel();
 
-        model.TotalEstablishmentResults = totalEstablishmentResults;
+        model.TotalSearchResults = totalEstablishmentResults;
         model.SearchRequest.RecordsPerPage = recordsPerPage;
 
         // Act
@@ -160,7 +160,7 @@ public sealed class SearchResultsViewModelTests
         // Arrange
         SearchResultsViewModel model = CreateModel();
 
-        model.TotalEstablishmentResults = 100;
+        model.TotalSearchResults = 100;
         model.SearchRequest.RecordsPerPage = recordsPerPage;
 
         // Act
@@ -201,7 +201,7 @@ public sealed class SearchResultsViewModelTests
         // Arrange
         SearchResultsViewModel model = CreateModel();
 
-        model.TotalEstablishmentResults = totalEstablishmentResults;
+        model.TotalSearchResults = totalEstablishmentResults;
         model.SearchRequest.PageNumber = pageNumber;
         model.SearchRequest.RecordsPerPage = 20;
 
@@ -216,7 +216,7 @@ public sealed class SearchResultsViewModelTests
     {
         return new SearchResultsViewModel
         {
-            ProviderResults = [],
+            SearchAggregateResults = [],
             SearchRequest = new SearchRequestViewModel
             {
                 PageNumber = 1,

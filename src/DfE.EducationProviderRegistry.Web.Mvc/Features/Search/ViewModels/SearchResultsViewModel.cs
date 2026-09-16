@@ -4,7 +4,7 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 
 public sealed class SearchResultsViewModel
 {
-    public required List<GovUkTable> ProviderResults { get; set; }
+    public required List<GovUkTable> SearchAggregateResults { get; set; }
 
     private List<FacetViewModel>? _facets;
 
@@ -23,19 +23,19 @@ public sealed class SearchResultsViewModel
 
     public string? SelectedSortDirection { get; set; }
 
-    public bool HasResults => TotalEstablishmentResults >= 1;
-    public bool HasMoreThanOneResult => TotalEstablishmentResults > 1;
+    public bool HasResults => TotalSearchResults >= 1;
+    public bool HasMoreThanOneResult => TotalSearchResults > 1;
     public bool HasFilters => Facets?.Count > 0;
 
     public SearchRequestViewModel SearchRequest { get; set; } = new();
 
-    public int TotalEstablishmentResults { get; set; }
+    public int TotalSearchResults { get; set; }
 
     public int TotalPages =>
         SearchRequest.RecordsPerPage <= 0
             ? 0
             : (int)Math.Ceiling(
-                TotalEstablishmentResults / (double)SearchRequest.RecordsPerPage);
+                TotalSearchResults / (double)SearchRequest.RecordsPerPage);
 
     public bool HasPreviousPage =>
         SearchRequest.PageNumber > 1;

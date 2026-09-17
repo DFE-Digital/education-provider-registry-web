@@ -1,18 +1,11 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness;
-using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness.Antiforgery;
-using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestHarness.Antiforgery.Extensions;
+﻿using Microsoft.AspNetCore.TestHost;
 using System.Net;
 using HttpMethod = System.Net.Http.HttpMethod;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Cookies;
 
-public sealed class CookieRouteTests : WebApplicationFactoryBaseTest
+public sealed class CookieRouteTests
 {
-    public CookieRouteTests(IServiceProvider provider) : base(provider)
-    {
-
-    }
-
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
@@ -20,8 +13,9 @@ public sealed class CookieRouteTests : WebApplicationFactoryBaseTest
     {
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
+        using WebApplicationFactory<Program> factory = CreateFactory();
 
-        using HttpClient client = Factory.CreateClient();
+        using HttpClient client = factory.CreateClient();
 
         AntiForgeryContext antiforgery = await client.GetAntiforgeryTokensAsync(ct);
 
@@ -96,9 +90,11 @@ public sealed class CookieRouteTests : WebApplicationFactoryBaseTest
     {
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
-        Factory.ClientOptions.HandleCookies = false;
-        using HttpClient client = Factory.CreateClient();
 
+        using WebApplicationFactory<Program> factory = CreateFactory();
+        using HttpClient client = factory.CreateClient();
+
+        factory.ClientOptions.HandleCookies = false;
         AntiForgeryContext antiForgery = await client.GetAntiforgeryTokensAsync(ct);
 
         using HttpRequestMessage request = new(
@@ -129,8 +125,9 @@ public sealed class CookieRouteTests : WebApplicationFactoryBaseTest
     {
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
-        Factory.ClientOptions.HandleCookies = false;
-        using HttpClient client = Factory.CreateClient();
+        using WebApplicationFactory<Program> factory = CreateFactory();
+
+        using HttpClient client = factory.CreateClient();
 
         AntiForgeryContext antiForgery = await client.GetAntiforgeryTokensAsync(ct);
 
@@ -153,5 +150,18 @@ public sealed class CookieRouteTests : WebApplicationFactoryBaseTest
         Assert.Equal(
             HttpStatusCode.NotFound,
             response.StatusCode);
+    }
+
+    private static WebApplicationFactory<Program> CreateFactory()
+    {
+        WebApplicationFactory<Program> factory = new WebApplicationFactory<Program>()
+            .WithWebHostBuilder((builder)
+                => builder.ConfigureTestServices((services)
+                    => services.AddTestAntiForgeryTokenServices()));
+
+        // Disable auto-redirecting for Set-Cookie
+        factory.ClientOptions.AllowAutoRedirect = false;
+
+        return factory;
     }
 }

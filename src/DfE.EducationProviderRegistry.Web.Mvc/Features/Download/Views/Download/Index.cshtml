@@ -10,4 +10,17 @@
     <partial name="_Breadcrumbs" model="breadcrumbs" />
 }
 
-<h1 class="govuk-heading-xl govuk-!-margin-bottom-6">Download datasets</h1>
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">Download datasets</h1>
+        <p class="govuk-body-l">
+            Download datasets of education providers, provider groups and governance for analysis or creating your own databases.
+        </p>
+    </div>
+</div>
+
+<form asp-action="Downloading"
+    asp-controller="Download"
+    method="post">
+    @await Html.PartialAsync("_DownloadPanel")
+</form>

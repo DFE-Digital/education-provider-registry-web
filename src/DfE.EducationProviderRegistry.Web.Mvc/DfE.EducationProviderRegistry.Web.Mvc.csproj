@@ -28,6 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Features\Download\ViewModels\" />
     <Folder Include="Features\Search\ViewModels\FilterViewModels\" />
     <Folder Include="ViewComponentsBuilders\" />
     <Folder Include="wwwroot\" />

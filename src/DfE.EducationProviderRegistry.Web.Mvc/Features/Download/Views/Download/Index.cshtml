@@ -1,0 +1,13 @@
+﻿@{
+    var breadcrumbs = new List<BreadcrumbViewModel>
+    {
+        new("Home", "Home", "Index"),
+    };
+}
+
+@section Breadcrumbs
+{
+    <partial name="_Breadcrumbs" model="breadcrumbs" />
+}
+
+<h1 class="govuk-heading-xl govuk-!-margin-bottom-6">Download datasets</h1>

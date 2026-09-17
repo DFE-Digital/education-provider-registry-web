@@ -3,7 +3,7 @@ using DfE.EducationProviderRegistry.Core.Query.Shared;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments.Mappers;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Establishments.Mappers;
+namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Establishments;
 
 public sealed class EstablishmentDetailsGovernorsTableMapperTests
 {

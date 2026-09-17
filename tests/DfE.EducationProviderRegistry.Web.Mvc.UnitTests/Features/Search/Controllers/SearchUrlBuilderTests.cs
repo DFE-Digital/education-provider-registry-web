@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Primitives;
 using Moq;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search;
+namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Controllers;
 
 public sealed class SearchUrlBuilderTests
 {

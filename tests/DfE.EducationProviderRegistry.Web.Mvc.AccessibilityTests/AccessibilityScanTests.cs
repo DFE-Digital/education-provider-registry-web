@@ -1,7 +1,7 @@
 ﻿using Deque.AxeCore.Commons;
 using Deque.AxeCore.Selenium;
 using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Actions;
-using DfE.EducationProviderRegistry.Web.SharedTests.ApplicationContainer;
+using DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.ApplicationContainer;
 using DfE.WebDriver.Public.Session;
 using Microsoft.Extensions.Configuration;
 using OpenQA.Selenium;
@@ -125,7 +125,7 @@ public sealed class AccessibilityScanTests
 
         await File.WriteAllTextAsync(
             Path.Combine(outputDirectory, "application.log"),
-            await _hostedEnvironment.GetLogsAsync(),
+            await _hostedEnvironment.GetApplicationLogsAsync(),
             _ct);
 
         if (results.Violations.Length != 0)

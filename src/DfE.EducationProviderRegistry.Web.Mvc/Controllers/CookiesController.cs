@@ -4,12 +4,13 @@ using System.Text.Json;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Controllers;
 
+[Route("cookies")]
 public class CookiesController : Controller
 {
     private const string CookieName = "cookies_policy";
     private const int CookieExpiryDays = 365;
 
-    [HttpGet("/cookies")]
+    [HttpGet("")]
     public IActionResult Index([FromQuery] bool saved = false)
     {
         CookiesViewModel viewModel = new()
@@ -21,7 +22,7 @@ public class CookiesController : Controller
         return View(viewModel);
     }
 
-    [HttpPost("/cookies")]
+    [HttpPost("")]
     [ValidateAntiForgeryToken]
     public IActionResult Save(bool? analytics)
     {

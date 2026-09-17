@@ -12,6 +12,7 @@
 	</ItemGroup>
 
   <ItemGroup>
+	<PackageReference Include="AngleSharp" />
 	<PackageReference Include="coverlet.msbuild">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -26,6 +27,7 @@
 
   <ItemGroup>
 	<ProjectReference Include="..\..\src\DfE.EducationProviderRegistry.Web.Mvc\DfE.EducationProviderRegistry.Web.Mvc.csproj" />
+	<ProjectReference Include="..\DfE.EducationProviderRegistry.Web.SharedTests\DfE.EducationProviderRegistry.Web.SharedTests.csproj" />
   </ItemGroup>
 
 </Project>

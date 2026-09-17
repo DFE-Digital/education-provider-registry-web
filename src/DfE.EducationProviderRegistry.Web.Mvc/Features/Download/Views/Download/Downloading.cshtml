@@ -19,7 +19,7 @@
                     <p class="govuk-body-l dfe-download-status__text" id="download-status" role="status" aria-live="polite">
                         Preparing file for download …
                     </p>
-                    <div class="dfe-spinner" id="download-spinner" aria-hidden="true"></div>
+                    @await Html.PartialAsync("_Spinner", false)
                 </div>
                 <noscript>
                     <p class="govuk-body">
@@ -33,18 +33,32 @@
 
 <script>
     (function() {
-        var statusEl = document.getElementById('download-status');
-        var spinnerEl = document.getElementById('download-spinner');
+        const statusEl = document.getElementById('download-status');
+        const spinnerEl = document.getElementById('download-spinner');
 
         if (!statusEl) return;
 
-        window.setTimeout(function() {
-            statusEl.textContent = 'File ready, downloading …';
-            if (spinnerEl) spinnerEl.hidden = true;
+        async function poll() {
+            try {
+                const response = await fetch('@Url.Action("Status", "Download")');
+                const data = await response.json();
 
-            window.setTimeout(function() {
-                window.location.href = '@Url.Action("Complete", "Download")';
-            }, 1000);
-        }, 3000);
+                if (data.ready) {
+                    statusEl.textContent = 'File ready, downloading …';
+                    if (spinnerEl) spinnerEl.hidden = true;
+
+                    window.location.href = '@Url.Action("Complete", "Download")';
+                    return;
+                }
+            } catch (e) {
+                console.error('Polling failed', e);
+            }
+
+            // Poll again in 1 second
+            setTimeout(poll, 1000);
+        }
+
+        poll();
     })();
 </script>
+

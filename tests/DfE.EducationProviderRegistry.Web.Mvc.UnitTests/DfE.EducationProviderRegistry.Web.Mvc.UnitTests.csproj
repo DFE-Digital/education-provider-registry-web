@@ -30,4 +30,8 @@
 	<ProjectReference Include="..\DfE.EducationProviderRegistry.Web.SharedTests\DfE.EducationProviderRegistry.Web.SharedTests.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\Download\ViewModels\" />
+  </ItemGroup>
+
 </Project>

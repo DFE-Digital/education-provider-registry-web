@@ -25,7 +25,7 @@ public sealed class ApplicationHostedEnvironment : IAsyncDisposable
 
     public async Task InitialiseAsync(CancellationToken ct = default)
     {
-        await DatabaseFixture.StartAsync(key: "posgres", ct);
+        await DatabaseFixture.StartAsync(ct: ct);
 
         _applicationContainer = await _containerRegistry.GetOrCreateContainerAsync("epr-web", ct);
         await _applicationContainer.StartAsync(ct);

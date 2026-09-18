@@ -16,7 +16,7 @@ public sealed class SearchFacetsTests
 
         StubSearchUseCase useCase =
             SearchUseCaseTestDoubles.StubFor(
-                searchResults: EstablishmentSearchResultsTestDouble.EmptyStub(),
+                searchResults: SearchAggregateResults.CreateEmpty(),
                 responseFacets);
 
         using WebApplicationFactory<Program> factory = SearchWebApplicationFactoryProvider.CreateFactory(useCase);
@@ -48,7 +48,7 @@ public sealed class SearchFacetsTests
 
         StubSearchUseCase useCase =
             SearchUseCaseTestDoubles.StubFor(
-                searchResults: EstablishmentSearchResultsTestDouble.EmptyStub(),
+                searchResults: SearchAggregateResults.CreateEmpty(),
                 responseFacets);
 
         using WebApplicationFactory<Program> factory = SearchWebApplicationFactoryProvider.CreateFactory(useCase);

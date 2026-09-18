@@ -1,31 +1,31 @@
 ﻿using DfE.Core.Libraries.IntegrationTests.Abstractions.Containers.Registry;
-using DfE.Core.Libraries.IntegrationTests.Database.Abstractions;
-using DfE.Core.Libraries.IntegrationTests.Database.Postgres.Container.Providers;
+using DfE.EducationProviderRegistry.Core.Query.Test.Database;
 using DotNet.Testcontainers.Containers;
-using System.Reflection.Metadata.Ecma335;
 
 namespace DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.ApplicationContainer;
 
-public sealed class ApplicationHostedEnvironment
+public sealed class ApplicationHostedEnvironment : IAsyncDisposable
 {
-    private IDatabase? _database;
-    private IContainer? _applicationContainer;
     private readonly IContainerRegistry _containerRegistry;
-    private readonly IPostgresDatabaseProvider _dbProvider;
+    private IContainer? _applicationContainer;
+
 
     public ApplicationHostedEnvironment(
         IContainerRegistry containerRegistry,
-        IPostgresDatabaseProvider dbProvider)
+        EducationProviderRegistryDatabaseFixture dbFixture)
     {
+        ArgumentNullException.ThrowIfNull(containerRegistry);
+        ArgumentNullException.ThrowIfNull(dbFixture);
+
         _containerRegistry = containerRegistry;
-        _dbProvider = dbProvider;
+        DatabaseFixture = dbFixture;
     }
 
-    public async Task InitialiseAsync(
-        CancellationToken ct = default)
+    public EducationProviderRegistryDatabaseFixture DatabaseFixture { get; }
+
+    public async Task InitialiseAsync(CancellationToken ct = default)
     {
-        _database = await _dbProvider.GetDatabaseAsync("postgres", ct);
-        await _database.StartAsync(ct);
+        await DatabaseFixture.StartAsync(key: "posgres", ct);
 
         _applicationContainer = await _containerRegistry.GetOrCreateContainerAsync("epr-web", ct);
         await _applicationContainer.StartAsync(ct);
@@ -59,5 +59,10 @@ public sealed class ApplicationHostedEnvironment
         === STDERR ===
         {stderr}
         """;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await DatabaseFixture.DisposeAsync();
     }
 }

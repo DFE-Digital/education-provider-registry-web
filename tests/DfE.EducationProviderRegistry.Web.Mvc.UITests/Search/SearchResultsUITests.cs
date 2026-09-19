@@ -1,7 +1,7 @@
 ﻿using DfE.EducationProviderRegistry.Core.Query.Test.Database.Data.Search;
 using DfE.EducationProviderRegistry.Data.DatabaseModels.Models;
+using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
 using OpenQA.Selenium;
-using static DfE.EducationProviderRegistry.Web.MVC.UITests.Search.SearchPanelComponent;
 
 namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Search;
 
@@ -18,7 +18,7 @@ public sealed class SearchResultsUITests : UIBaseTest
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
 
-        IReadOnlyCollection<SearchAggregate> seed = CreateResults(10);
+        IReadOnlyCollection<SearchAggregate> seed = SearchAggregateTestDouble.CreateResults(10);
 
         await HostedEnvironment.DatabaseFixture
             .SeedAsync<IEnumerable<SearchAggregate>, SearchableAggregates>(seed, ct);
@@ -35,7 +35,7 @@ public sealed class SearchResultsUITests : UIBaseTest
         SearchResult preSortFirstResult = results.GetSearchResults().First();
 
         // Act
-        panel.SortBy("name", SortDirection.Descending);
+        panel.SortBy("name", SearchPanelComponent.SortDirection.Descending);
 
         // Assert
         SearchResult postSortFirstResult = results.GetSearchResults().First();
@@ -52,7 +52,7 @@ public sealed class SearchResultsUITests : UIBaseTest
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
 
-        IReadOnlyCollection<SearchAggregate> seed = CreateResults(10);
+        IReadOnlyCollection<SearchAggregate> seed = SearchAggregateTestDouble.CreateResults(10);
 
         await HostedEnvironment.DatabaseFixture
             .SeedAsync<IEnumerable<SearchAggregate>, SearchableAggregates>(seed, ct);
@@ -100,27 +100,6 @@ public sealed class SearchResultsUITests : UIBaseTest
                 targetFacetValueLabel)!.Split("-");
 
         return string.Concat(preselectionFilterValueParts[1], "|", preselectionFilterValueParts[2]);
-    }
-
-    private static IReadOnlyCollection<SearchAggregate> CreateResults(int count = 10)
-    {
-        List<SearchAggregate> output = [];
-
-        for (int index = 0; index < count; index++)
-        {
-            bool isMulti = index % 2 == 0;
-
-            SearchAggregateBuilder builder = 
-                SearchAggregateBuilder.Create()
-                    .WithProviderName($"school {index}")
-                    .WithProviderTypeId(isMulti ? 1L : 2L)
-                    .WithProviderTypeName(isMulti ? "Mutli-Academy Trust" : "Single-Academy Trust");
-
-            SearchAggregate model = builder.Build();
-            output.Add(model);
-        }
-
-        return output;
     }
 }
 

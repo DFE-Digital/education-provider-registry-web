@@ -1,4 +1,6 @@
 ﻿using AngleSharp.Html.Dom;
+using DfE.EducationProviderRegistry.Core.Query.Test.Database.Data.Search;
+using DfE.EducationProviderRegistry.Data.DatabaseModels.Models;
 using DfE.EducationProviderRegistry.Web.SharedTests.AngleSharp.Extensions;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
 
@@ -10,12 +12,17 @@ public sealed class SearchTests : WebApplicationFactoryBaseTest
     {
     }
 
+    // TODO stub UseCaseResponse with results
+
     [Fact]
     public async Task Apply_A_Filter_Returns_Filtered_Results()
     {
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
-        // TODO stub UseCaseResponse with results
+
+        await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableAggregates>(
+            SearchAggregateTestDouble.CreateResults(10), ct);
+
         using HttpClient client = Factory.CreateClient();
 
         string[] filterValueApplied = ["1"];
@@ -24,7 +31,7 @@ public sealed class SearchTests : WebApplicationFactoryBaseTest
             SearchHttpRequestBuilder.Create()
                 .WithBaseUri(Factory.Server.BaseAddress)
                 .WithIdentitySearchTerm("sch")
-                .WithFilter("EstablishmentTypeId", filterValueApplied)
+                .WithFilter("searchprovidertypeid", filterValueApplied)
                 .Build();
 
         // Act
@@ -39,7 +46,7 @@ public sealed class SearchTests : WebApplicationFactoryBaseTest
 
         // Only selected filters are displayed
         Filter selected = Assert.Single(filters.GetFilters());
-        Assert.Equal("Establishment Type", selected.Name);
+        Assert.Equal("searchprovidertypeid", selected.Name);
 
         // Assert FilterValue
         FilterValue value = Assert.Single(selected.FilterValues);
@@ -54,7 +61,10 @@ public sealed class SearchTests : WebApplicationFactoryBaseTest
     {
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
-        // TODO stub UseCaseResponse with results
+
+        await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableAggregates>(
+            SearchAggregateTestDouble.CreateResults(10), ct);
+
         using HttpClient client = Factory.CreateClient();
 
         string[] filtersToApply = ["1", "2"];
@@ -63,7 +73,7 @@ public sealed class SearchTests : WebApplicationFactoryBaseTest
             SearchHttpRequestBuilder.Create()
                 .WithBaseUri(Factory.Server.BaseAddress)
                 .WithIdentitySearchTerm("sch")
-                .WithFilter("EstablishmentTypeId", filtersToApply)
+                .WithFilter("searchprovidertypeid", filtersToApply)
                 .Build();
         // Act
         HttpResponseMessage response = await client.SendAsync(message, ct);
@@ -77,7 +87,7 @@ public sealed class SearchTests : WebApplicationFactoryBaseTest
 
         // Assert Filter
         Filter selected = Assert.Single(filters.GetFilters());
-        Assert.Equal("Establishment Type", selected.Name);
+        Assert.Equal("searchprovidertypeid", selected.Name);
 
         // Assert FilterValues
         Assert.Equal(2, selected.FilterValues.Count);
@@ -103,7 +113,10 @@ public sealed class SearchTests : WebApplicationFactoryBaseTest
     {
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
-        // TODO stub UseCaseResponse with results
+
+        await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableAggregates>(
+            SearchAggregateTestDouble.CreateResults(10), ct);
+
         using HttpClient client = Factory.CreateClient();
 
         string[] filtersToApply = ["1", "2"];
@@ -112,7 +125,7 @@ public sealed class SearchTests : WebApplicationFactoryBaseTest
             SearchHttpRequestBuilder.Create()
                 .WithBaseUri(Factory.Server.BaseAddress)
                 .WithIdentitySearchTerm("sch")
-                .WithFilter("EstablishmentTypeId", filtersToApply)
+                .WithFilter("searchprovidertypeid", filtersToApply)
                 .Build();
 
         HttpResponseMessage filteredResults = await client.SendAsync(message, ct);
@@ -122,7 +135,7 @@ public sealed class SearchTests : WebApplicationFactoryBaseTest
         HttpResponseMessage removalResponse =
             await filtersApplied.RemoveFilterAsync(
                 client,
-                facetLabel: "EstablishmentTypeId",
+                facetLabel: "searchprovidertypeid",
                 facetValue: "1",
                 ct);
 
@@ -134,7 +147,7 @@ public sealed class SearchTests : WebApplicationFactoryBaseTest
 
         Assert.NotEmpty(results.GetSearchResults());
         Filter remainingSelectedFilter = Assert.Single(removedFilters.GetFilters());
-        Assert.Equal("Establishment Type", remainingSelectedFilter.Name);
+        Assert.Equal("searchprovidertypeid", remainingSelectedFilter.Name);
 
         FilterValue remainingSelectedFilterValue = remainingSelectedFilter.FilterValues.Single();
         Assert.True(remainingSelectedFilterValue.Selected);
@@ -150,13 +163,16 @@ public sealed class SearchTests : WebApplicationFactoryBaseTest
         // TODO stub UseCaseResponse with results
         using HttpClient client = Factory.CreateClient();
 
+        await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableAggregates>(
+            SearchAggregateTestDouble.CreateResults(10), ct);
+
         string[] filtersToApply = ["1", "2"];
 
         HttpRequestMessage message =
             SearchHttpRequestBuilder.Create()
                 .WithBaseUri(Factory.Server.BaseAddress)
                 .WithIdentitySearchTerm("sch")
-                .WithFilter("EstablishmentTypeId", filtersToApply)
+                .WithFilter("searchprovidertypeid", filtersToApply)
                 .Build();
 
         HttpResponseMessage filteredResults = await client.SendAsync(message, ct);
@@ -173,7 +189,7 @@ public sealed class SearchTests : WebApplicationFactoryBaseTest
         Assert.NotEmpty(results.GetSearchResults());
 
         Filter filters = Assert.Single(clearedFilters.GetFilters());
-        Assert.Equal("Establishment Type", filters.Name);
+        Assert.Equal("searchprovidertypeid", filters.Name);
 
         // static 2 filter values in data. None selected
         FilterValue value1 = filters.FilterValues.Single(v => v.Value == filtersToApply[0]);

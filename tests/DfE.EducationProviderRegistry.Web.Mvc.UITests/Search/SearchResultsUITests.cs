@@ -1,4 +1,6 @@
-﻿using OpenQA.Selenium;
+﻿using DfE.EducationProviderRegistry.Core.Query.Test.Database.Data.Search;
+using DfE.EducationProviderRegistry.Data.DatabaseModels.Models;
+using OpenQA.Selenium;
 using static DfE.EducationProviderRegistry.Web.MVC.UITests.Search.SearchPanelComponent;
 
 namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Search;
@@ -16,9 +18,14 @@ public sealed class SearchResultsUITests : UIBaseTest
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
 
+        IReadOnlyCollection<SearchAggregate> seed = CreateResults(10);
+
+        await HostedEnvironment.DatabaseFixture
+            .SeedAsync<IEnumerable<SearchAggregate>, SearchableAggregates>(seed, ct);
+
         using IWebDriver driver = await WebDriverBuilder.Build().StartDriverAsync(ct);
 
-        Uri uri = new(baseUri: ApplicationEnvironment.GetApplicationUrl(), relativeUri: SearchRoutes.SearchResults(identityTerm: "sch"));
+        Uri uri = new(baseUri: HostedEnvironment.GetApplicationUrl(), relativeUri: SearchRoutes.SearchResults(identityTerm: "sch"));
 
         await driver.Navigate().GoToUrlAsync(uri);
 
@@ -45,17 +52,22 @@ public sealed class SearchResultsUITests : UIBaseTest
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
 
+        IReadOnlyCollection<SearchAggregate> seed = CreateResults(10);
+
+        await HostedEnvironment.DatabaseFixture
+            .SeedAsync<IEnumerable<SearchAggregate>, SearchableAggregates>(seed, ct);
+
         using IWebDriver driver = await WebDriverBuilder.Build().StartDriverAsync(ct);
 
-        Uri uri = new(baseUri: ApplicationEnvironment.GetApplicationUrl(), relativeUri: SearchRoutes.SearchResults(identityTerm: "sch"));
+        Uri uri = new(baseUri: HostedEnvironment.GetApplicationUrl(), relativeUri: SearchRoutes.SearchResults(identityTerm: "sch"));
 
         await driver.Navigate().GoToUrlAsync(uri);
 
         SearchResultsComponent results = new(driver);
         SearchFiltersComponent filters = new(driver);
 
-        const string targetFacet = "Establishment Type";
-        const string targetFacetValueLabel = "Primary School";
+        const string targetFacet = "searchprovidertypeid";
+        const string targetFacetValueLabel = "Single-Academy Trust";
 
         // Act
         filters.FilterBy(
@@ -88,6 +100,27 @@ public sealed class SearchResultsUITests : UIBaseTest
                 targetFacetValueLabel)!.Split("-");
 
         return string.Concat(preselectionFilterValueParts[1], "|", preselectionFilterValueParts[2]);
+    }
+
+    private static IReadOnlyCollection<SearchAggregate> CreateResults(int count = 10)
+    {
+        List<SearchAggregate> output = [];
+
+        for (int index = 0; index < count; index++)
+        {
+            bool isMulti = index % 2 == 0;
+
+            SearchAggregateBuilder builder = 
+                SearchAggregateBuilder.Create()
+                    .WithProviderName($"school {index}")
+                    .WithProviderTypeId(isMulti ? 1L : 2L)
+                    .WithProviderTypeName(isMulti ? "Mutli-Academy Trust" : "Single-Academy Trust");
+
+            SearchAggregate model = builder.Build();
+            output.Add(model);
+        }
+
+        return output;
     }
 }
 

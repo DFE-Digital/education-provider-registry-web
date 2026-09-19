@@ -7,8 +7,8 @@
     <PackageVersion Include="Bogus" Version="35.6.5" />
     <PackageVersion Include="coverlet.msbuild" Version="10.0.1" />
     <PackageVersion Include="Deque.AxeCore.Selenium" Version="4.13.0" />
-    <PackageVersion Include="DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles" Version="0.0.24" />
-    <PackageVersion Include="DfE.EducationProviderRegistry.Core.Query.Test.Database" Version="0.0.24" />
+    <PackageVersion Include="DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles" Version="0.0.26" />
+    <PackageVersion Include="DfE.EducationProviderRegistry.Core.Query.Test.Database" Version="0.0.26" />
     <PackageVersion Include="DfE.Core.Libraries.IntegrationTests" Version="1.0.40" />
     <PackageVersion Include="DfE.Core.Libraries.IntegrationTests.Database.Postgres" Version="1.0.40" />
     <PackageVersion Include="DfE.Core.Libraries.Testing" Version="1.0.40" />

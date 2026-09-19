@@ -17,7 +17,6 @@
 		<PrivateAssets>all</PrivateAssets>
 		<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
-	<PackageReference Include="DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles" />
 	<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
 	<PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
 	<PackageReference Include="xunit.v3.mtp-v2" />

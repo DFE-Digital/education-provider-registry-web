@@ -22,12 +22,11 @@ public class UIBaseTest : IntegrationTestsBase, IAsyncLifetime
             .WithAllowInsecureLocalConnections(true)
             .Build();
 
-        ApplicationEnvironment = provider.GetRequiredService<ApplicationHostedEnvironment>();
+        HostedEnvironment = provider.GetRequiredService<ApplicationHostedEnvironment>();
     }
 
     protected IWebDriverSessionBuilder WebDriverBuilder { get; }
-
-    protected ApplicationHostedEnvironment ApplicationEnvironment { get; }
+    protected ApplicationHostedEnvironment HostedEnvironment { get; }
 
     public async ValueTask InitializeAsync()
     {
@@ -36,6 +35,6 @@ public class UIBaseTest : IntegrationTestsBase, IAsyncLifetime
 
     protected async override Task StartTestDependenciesAsync(CancellationToken ct = default)
     {
-        await ApplicationEnvironment.InitialiseAsync(TestContext.Current.CancellationToken);
+        await HostedEnvironment.InitialiseAsync(TestContext.Current.CancellationToken);
     }
 }

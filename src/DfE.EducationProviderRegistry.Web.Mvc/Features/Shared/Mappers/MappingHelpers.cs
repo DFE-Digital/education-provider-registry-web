@@ -1,6 +1,6 @@
 ﻿using DfE.EducationProviderRegistry.Core.Query.Shared;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
+namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Mappers;
 
 public static class MappingHelpers
 {
@@ -14,9 +14,7 @@ public static class MappingHelpers
     internal static string? CreateWebsiteUrl(string? website)
     {
         if (string.IsNullOrWhiteSpace(website))
-        {
             return null;
-        }
 
         website = website.Trim();
 

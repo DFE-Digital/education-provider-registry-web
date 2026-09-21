@@ -40,14 +40,14 @@
 
         async function poll() {
             try {
-                const response = await fetch('@Url.Action("Status", "Download")');
+                const response = await fetch('@Url.Action("Status", "DownloadDatasets")');
                 const data = await response.json();
 
                 if (data.ready) {
                     statusEl.textContent = 'File ready, downloading …';
                     if (spinnerEl) spinnerEl.hidden = true;
 
-                    window.location.href = '@Url.Action("Complete", "Download")';
+                    window.location.href = '@Url.Action("Complete", "DownloadDatasets")';
                     return;
                 }
             } catch (e) {

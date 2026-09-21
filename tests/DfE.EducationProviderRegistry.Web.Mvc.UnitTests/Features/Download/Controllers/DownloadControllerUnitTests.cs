@@ -10,7 +10,7 @@ public sealed class DownloadControllerUnitTests
     {
         // arrange
 
-        DownloadController sut = new();
+        DownloadDatasetsController sut = new();
 
         // act
         IActionResult result = sut.Index();

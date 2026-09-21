@@ -1,10 +1,21 @@
+using DfE.Core.Libraries.CleanArchitecture.Application;
+using DfE.Core.Libraries.CrossCutting.Mapper;
+using DfE.EducationProviderRegistry.Core.Query.DownloadDatasets.Application.UseCases;
+using DfE.EducationProviderRegistry.Core.Query.DownloadDatasets.Application.UseCases.Request;
+using DfE.EducationProviderRegistry.Core.Query.DownloadDatasets.Application.UseCases.Response;
+using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Filter;
+using DfE.EducationProviderRegistry.Core.Query.Search.Infrastructure.Filtering;
 using DfE.EducationProviderRegistry.Web.Mvc.Extensions;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.DownloadDatasets.Mappers;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.DownloadDatasets.ViewModels;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search;
 using DfE.EducationProviderRegistry.Web.Mvc.Middleware;
 using DfE.EducationProviderRegistry.Web.Mvc.Settings;
 using Microsoft.AspNetCore.CookiePolicy;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Collections.ObjectModel;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +48,21 @@ builder.Services
     .AddGroups()
     .AddSearch(builder.Configuration)
     .AddPostgresDatabase(builder.Configuration);
+
+// TODO: temp addition web side!-----------------------------------------------------
+builder.Services
+    .AddScoped<IUseCase<
+        DownloadDatasetsRequest,
+        UseCaseResponse<DownloadDatasetsResponse>>, DownloadDatasetsUseCase>();
+
+builder.Services
+    .TryAddSingleton<IMapper<
+        DownloadDatasetsResponse,
+        DownloadedDatasetViewModel>,
+        DownloadResponseToViewModelMapper>();
+
+//----------------------------------------------------------------------------------
+
 
 builder.Services.Configure<ClaritySettings>(
     builder.Configuration.GetSection(nameof(ClaritySettings))

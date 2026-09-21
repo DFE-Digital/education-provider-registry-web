@@ -20,28 +20,31 @@ internal sealed class GovUkCheckboxComponent
         return _wait.Until((driver) => FindCheckboxes(driver));
     }
 
-    // how do I find which checkbox I want to click
+    // how do I find which checkboxes on the page to click (there may be multiple checkbox components - pass ISearchContext?
     public void Click(string text)
     {
+        // TODO exception messages on timeout based on context?
+        // _wait.Message = (labelThatMatches.Count == 0) or labelThatMatches > 0
         _wait.Until((driver) =>
         {
             IReadOnlyCollection<IWebElement> labelsThatMatches =
-                FindCheckboxes(driver)
-                    .Select((checkboxComponent) => checkboxComponent.FindElement(By.CssSelector(".govuk-checkboxes__label")))
-                    .Where((label) => label.Text.Contains(text, StringComparison.OrdinalIgnoreCase))
-                    .ToList();
+                [.. FindCheckboxes(driver)
+                    .SelectMany((checkboxComponent) => checkboxComponent.FindElements(By.CssSelector(".govuk-checkboxes__label")))
+                    .Where((label) => label.Text.Contains(text, StringComparison.OrdinalIgnoreCase))];
 
             if (labelsThatMatches.Count == 0)
             {
-                throw new InvalidOperationException($"No checkboxes found with label text {text}");
+                return null;
             }
 
             if (labelsThatMatches.Count > 1)
             {
-                throw new ArgumentException($"Multiple click targets available with text {text}");
+                return null;
             }
 
             labelsThatMatches.Single().Click();
+
+            return labelsThatMatches;
         });
     }
 

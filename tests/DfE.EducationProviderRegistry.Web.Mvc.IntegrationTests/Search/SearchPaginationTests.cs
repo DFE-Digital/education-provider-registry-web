@@ -1,10 +1,12 @@
 ﻿using DfE.Core.Libraries.CleanArchitecture.Application;
 using DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles.Search;
-using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Establishment;
+using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Request;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
+using DfE.EducationProviderRegistry.Core.Query.UnitTests.Search.Application.UseCases.TestDoubles;
 using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Search.TestDoubles;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
+using Docker.DotNet.Models;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Search;
 
@@ -19,7 +21,7 @@ public sealed class SearchPaginationTests
         // Arrange
         StubSearchUseCase useCase =
             SearchUseCaseTestDoubles.StubFor(
-                EstablishmentSearchResultsTestDouble.EmptyStub(),
+                SearchAggregateResults.CreateEmpty(),
                 SearchFacetsTestDouble.StubEmpty());
 
         using WebApplicationFactory<Program> factory = SearchWebApplicationFactoryProvider.CreateFactory(useCase);
@@ -50,7 +52,7 @@ public sealed class SearchPaginationTests
     {
         // Arrange
         const int defaultPageSize = 10;
-        EstablishmentSearchResults searchResults = CreateResults(defaultPageSize);
+        SearchAggregateResults searchResults = SearchAggregateResultsTestDouble.Stub(defaultPageSize);
 
         StubSearchUseCase useCase =
             SearchUseCaseTestDoubles.StubFor(
@@ -85,8 +87,7 @@ public sealed class SearchPaginationTests
     public async Task Displays_Pagination_When_Multiple_Pages_Exist()
     {
         // Arrange
-        EstablishmentSearchResults searchResults =
-            CreateResults(11);
+        SearchAggregateResults searchResults = SearchAggregateResultsTestDouble.Stub(11);
 
         IUseCase<SearchRequest, UseCaseResponse<SearchResponse>> useCase =
             SearchUseCaseTestDoubles.StubFor(
@@ -122,7 +123,7 @@ public sealed class SearchPaginationTests
     public async Task Does_Not_Display_Previous_Link_On_First_Page()
     {
         // Arrange
-        EstablishmentSearchResults searchResults = CreateResults(11);
+        SearchAggregateResults searchResults = SearchAggregateResultsTestDouble.Stub(11);
 
         IUseCase<SearchRequest, UseCaseResponse<SearchResponse>> useCase =
             SearchUseCaseTestDoubles.StubFor(
@@ -157,7 +158,7 @@ public sealed class SearchPaginationTests
     public async Task Does_Not_Display_Next_Link_On_Last_Page()
     {
         // Arrange
-        EstablishmentSearchResults searchResults = CreateResults(30);
+        SearchAggregateResults searchResults = SearchAggregateResultsTestDouble.Stub(30);
 
         IUseCase<SearchRequest, UseCaseResponse<SearchResponse>> useCase =
             SearchUseCaseTestDoubles.StubFor(
@@ -190,20 +191,5 @@ public sealed class SearchPaginationTests
         Assert.Equal("3", paginationComponent.GetCurrentPage());
         Assert.True(paginationComponent.DisplaysPreviousLink());
         Assert.False(paginationComponent.DisplaysNextLink());
-    }
-
-    private static EstablishmentSearchResults CreateResults(
-        int count)
-    {
-        List<EstablishmentSearchResult> results = [];
-
-        for (int index = 1; index <= count; index++)
-        {
-            results.Add(
-                EstablishmentSearchResultTestDouble.WithUrn(
-                    index.ToString("000000")));
-        }
-
-        return new EstablishmentSearchResults(results);
     }
 }

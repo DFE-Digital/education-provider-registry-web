@@ -14,15 +14,17 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Mapper
 
 public sealed class SearchResultsToViewModelMapperTests
 {
-    private static EstablishmentSearchResult MakeEstablishment(string urn = "111111", string name = "School A")
+    private static SearchAggregateResult MakeSearchAggregate(string identifier = "111111", string name = "School A")
     {
-        return new EstablishmentSearchResult(
-            new UniqueReferenceNumber(urn),
+        return SearchAggregateResult.Create(
+            new ProviderIdentifier(identifier),
             new Name(name),
-            new SiteAddressModel(name, "Street", "Street 2", "Town", "County", "AB1 2CD"),
-            new EstablishmentType("Academy"),
-            new GroupDetail("Group Name", "G123"),
-            new LocalAuthority("LA Name", "123"));
+            new SearchAddress("Street, Street 2, Town, County, AB1 2CD"),
+            new SearchType("Academy", 1),
+            new GroupDetail("Group Name", "1234"),
+            new SearchLocalAuthority("LA Name"),
+            new SearchCategory("Establishment"),
+            0);
     }
 
     private static SearchFacet MakeFacet(string name = "Phase")
@@ -40,9 +42,9 @@ public sealed class SearchResultsToViewModelMapperTests
     {
         // arrange
         Mock<IMapper<
-            IReadOnlyCollection<EstablishmentSearchResult>,
-            List<GovUkTable>>> establishmentMapper =
-                EstablishmentsMapperTestDouble.Mock();
+            IReadOnlyCollection<SearchAggregateResult>,
+            List<GovUkTable>>> searchAggregateMapper =
+                SearchAggregatesMapperTestDouble.Mock();
 
         Mock<IMapper<
             IReadOnlyCollection<SearchFacet>,
@@ -50,7 +52,7 @@ public sealed class SearchResultsToViewModelMapperTests
                 FacetsMapperTestDouble.Mock();
 
         SearchResultsToViewModelMapper mapper =
-            new(establishmentMapper.Object, facetsMapper.Object);
+            new(searchAggregateMapper.Object, facetsMapper.Object);
 
         // act/assert
         Assert.Throws<ArgumentNullException>(() => mapper.Map(null!));
@@ -61,9 +63,9 @@ public sealed class SearchResultsToViewModelMapperTests
     {
         // arrange
         Mock<IMapper<
-            IReadOnlyCollection<EstablishmentSearchResult>,
-            List<GovUkTable>>> establishmentMapper =
-                EstablishmentsMapperTestDouble.Mock();
+            IReadOnlyCollection<SearchAggregateResult>,
+            List<GovUkTable>>> searchAggregateMapper =
+                SearchAggregatesMapperTestDouble.Mock();
 
         Mock<IMapper<
             IReadOnlyCollection<SearchFacet>,
@@ -71,7 +73,7 @@ public sealed class SearchResultsToViewModelMapperTests
                 FacetsMapperTestDouble.Mock();
 
         SearchResultsToViewModelMapper mapper =
-            new(establishmentMapper.Object, facetsMapper.Object);
+            new(searchAggregateMapper.Object, facetsMapper.Object);
 
         // UseCaseResponse<T>.Failure creates a response with Model = null
         SearchResultsMappingContext input = new(new SearchRequestViewModel(), UseCaseResponse<SearchResponse>.Failure("error"));
@@ -84,13 +86,13 @@ public sealed class SearchResultsToViewModelMapperTests
     public void Map_MapsEstablishmentResults_WhenPresent()
     {
         // arrange
-        List<EstablishmentSearchResult> establishmentResults = [MakeEstablishment()];
-        List<GovUkTable> establishmentTables = [new([new TableColumn { Text = "testColumn" }], [new TableRow { Cells = [new TableCell { Text = "Test Cell" }] }], "School A")];
+        List<SearchAggregateResult> searchAggregateResults = [MakeSearchAggregate()];
+        List<GovUkTable> searchAggregateTables = [new([new TableColumn { Text = "testColumn" }], [new TableRow { Cells = [new TableCell { Text = "Test Cell" }] }], "School A")];
 
         Mock<IMapper<
-            IReadOnlyCollection<EstablishmentSearchResult>,
-            List<GovUkTable>>> establishmentMapper =
-                EstablishmentsMapperTestDouble.MockFor(establishmentResults, establishmentTables);
+            IReadOnlyCollection<SearchAggregateResult>,
+            List<GovUkTable>>> searchAggregateMapper =
+                SearchAggregatesMapperTestDouble.MockFor(searchAggregateResults, searchAggregateTables);
 
         Mock<IMapper<
             IReadOnlyCollection<SearchFacet>,
@@ -98,11 +100,11 @@ public sealed class SearchResultsToViewModelMapperTests
                 FacetsMapperTestDouble.Mock();
 
         SearchResultsToViewModelMapper mapper =
-            new(establishmentMapper.Object, facetsMapper.Object);
+            new(searchAggregateMapper.Object, facetsMapper.Object);
 
         SearchResponse response =
             new(
-                new EstablishmentSearchResults(establishmentResults),
+                new SearchAggregateResults(searchAggregateResults),
                 null, 1);
 
         SearchResultsMappingContext input = new(new SearchRequestViewModel(), UseCaseResponse<SearchResponse>.Success(response));
@@ -111,11 +113,11 @@ public sealed class SearchResultsToViewModelMapperTests
         SearchResultsViewModel vm = mapper.Map(input);
 
         // assert
-        Assert.Single(vm.EstablishmentResults);
-        Assert.Equal("School A", vm.EstablishmentResults[0].Caption);
-        Assert.Equal("testColumn", vm.EstablishmentResults[0].Columns[0].Text);
-        Assert.Equal("Test Cell", vm.EstablishmentResults[0].Rows[0].Cells[0].Text);
-        establishmentMapper.Verify(m => m.Map(establishmentResults), Times.Once);
+        Assert.Single(vm.SearchAggregateResults);
+        Assert.Equal("School A", vm.SearchAggregateResults[0].Caption);
+        Assert.Equal("testColumn", vm.SearchAggregateResults[0].Columns[0].Text);
+        Assert.Equal("Test Cell", vm.SearchAggregateResults[0].Rows[0].Cells[0].Text);
+        searchAggregateMapper.Verify(m => m.Map(searchAggregateResults), Times.Once);
     }
 
     [Fact]
@@ -130,9 +132,9 @@ public sealed class SearchResultsToViewModelMapperTests
         ];
 
         Mock<IMapper<
-            IReadOnlyCollection<EstablishmentSearchResult>,
-            List<GovUkTable>>> establishmentMapper =
-                EstablishmentsMapperTestDouble.Mock();
+            IReadOnlyCollection<SearchAggregateResult>,
+            List<GovUkTable>>> searchAggregateMapper =
+                SearchAggregatesMapperTestDouble.Mock();
 
         Mock<IMapper<
             IReadOnlyCollection<SearchFacet>,
@@ -140,7 +142,7 @@ public sealed class SearchResultsToViewModelMapperTests
                 FacetsMapperTestDouble.MockFor(facets, facetVMs);
 
         SearchResultsToViewModelMapper mapper =
-            new(establishmentMapper.Object, facetsMapper.Object);
+            new(searchAggregateMapper.Object, facetsMapper.Object);
 
         SearchResponse response =
             new(
@@ -163,9 +165,9 @@ public sealed class SearchResultsToViewModelMapperTests
     {
         // arrange
         Mock<IMapper<
-            IReadOnlyCollection<EstablishmentSearchResult>,
-            List<GovUkTable>>> establishmentMapper =
-                EstablishmentsMapperTestDouble.Mock();
+            IReadOnlyCollection<SearchAggregateResult>,
+            List<GovUkTable>>> searchAggregateMapper =
+                SearchAggregatesMapperTestDouble.Mock();
 
         Mock<IMapper<
             IReadOnlyCollection<SearchFacet>,
@@ -173,7 +175,7 @@ public sealed class SearchResultsToViewModelMapperTests
                 FacetsMapperTestDouble.Mock();
 
         SearchResultsToViewModelMapper mapper =
-            new(establishmentMapper.Object, facetsMapper.Object);
+            new(searchAggregateMapper.Object, facetsMapper.Object);
 
         var response = new SearchResponse(null!, null, 1);
         SearchResultsMappingContext input = new(new SearchRequestViewModel(), UseCaseResponse<SearchResponse>.Success(response));
@@ -182,9 +184,9 @@ public sealed class SearchResultsToViewModelMapperTests
         SearchResultsViewModel vm = mapper.Map(input);
 
         // assert
-        Assert.Empty(vm.EstablishmentResults);
+        Assert.Empty(vm.SearchAggregateResults);
         Assert.Empty(vm.Facets!);
-        establishmentMapper.Verify(mapper => mapper.Map(It.IsAny<IReadOnlyCollection<EstablishmentSearchResult>>()), Times.Never);
+        searchAggregateMapper.Verify(mapper => mapper.Map(It.IsAny<IReadOnlyCollection<SearchAggregateResult>>()), Times.Never);
         facetsMapper.Verify(mapper => mapper.Map(It.IsAny<IReadOnlyCollection<SearchFacet>>()), Times.Never);
     }
 
@@ -218,9 +220,9 @@ public sealed class SearchResultsToViewModelMapperTests
         ];
 
         Mock<IMapper<
-            IReadOnlyCollection<EstablishmentSearchResult>,
-            List<GovUkTable>>> establishmentMapper =
-                EstablishmentsMapperTestDouble.Mock();
+            IReadOnlyCollection<SearchAggregateResult>,
+            List<GovUkTable>>> searchAggregateMapper =
+                SearchAggregatesMapperTestDouble.Mock();
 
         Mock<IMapper<
             IReadOnlyCollection<SearchFacet>,
@@ -231,7 +233,7 @@ public sealed class SearchResultsToViewModelMapperTests
 
         SearchResultsToViewModelMapper mapper =
             new(
-                establishmentMapper.Object,
+                searchAggregateMapper.Object,
                 facetsMapper.Object);
 
         SearchRequestViewModel searchRequest = new()
@@ -306,9 +308,9 @@ public sealed class SearchResultsToViewModelMapperTests
         ];
 
         Mock<IMapper<
-            IReadOnlyCollection<EstablishmentSearchResult>,
+            IReadOnlyCollection<SearchAggregateResult>,
             List<GovUkTable>>> establishmentMapper =
-                EstablishmentsMapperTestDouble.Mock();
+                SearchAggregatesMapperTestDouble.Mock();
 
         Mock<IMapper<
             IReadOnlyCollection<SearchFacet>,

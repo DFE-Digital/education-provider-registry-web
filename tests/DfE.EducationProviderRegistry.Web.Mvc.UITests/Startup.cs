@@ -1,4 +1,5 @@
 ﻿using DfE.Core.Libraries.IntegrationTests.Database.Postgres.Container.Extensions;
+using DfE.EducationProviderRegistry.Core.Query.Test.Database.Extensions;
 using DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.ApplicationContainer.Extensions;
 using DfE.WebDriver;
 using MartinCostello.Logging.XUnit;
@@ -39,6 +40,8 @@ public sealed class Startup
         services.AddPostgres(context.Configuration);
 
         services.AddApplicationContainer(context.Configuration);
+
+        services.AddEducationProviderRegistryDatabaseFixture();
 
         services.AddWebDriver();
     }

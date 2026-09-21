@@ -1,5 +1,6 @@
 ﻿using DfE.Core.Libraries.CleanArchitecture.Application;
 using DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles.Search;
+using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Request;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
 using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Search.TestDoubles;
@@ -18,7 +19,7 @@ public sealed class SearchSortTests
         // Arrange
         StubSearchUseCase useCase =
             SearchUseCaseTestDoubles.StubFor(
-                EstablishmentSearchResultsTestDouble.EmptyStub(),
+                SearchAggregateResults.CreateEmpty(),
                 SearchFacetsTestDouble.StubEmpty());
 
         using WebApplicationFactory<Program> factory = SearchWebApplicationFactoryProvider.CreateFactory(useCase);

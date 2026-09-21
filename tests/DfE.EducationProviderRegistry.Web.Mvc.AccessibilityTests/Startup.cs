@@ -1,4 +1,5 @@
 ﻿using DfE.Core.Libraries.IntegrationTests.Database.Postgres.Container.Extensions;
+using DfE.EducationProviderRegistry.Core.Query.Test.Database.Extensions;
 using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Actions;
 using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Actions.Handlers;
 using DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.ApplicationContainer.Extensions;
@@ -61,6 +62,8 @@ public sealed class Startup
                 { "navigate", () => new NavigateActionHandler() }
             };
         });
+
+        services.AddEducationProviderRegistryDatabaseFixture();
 
         services.AddWebDriver();
     }

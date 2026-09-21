@@ -1,6 +1,5 @@
 ﻿using DfE.Core.Libraries.IntegrationTests.Abstractions;
-using DfE.Core.Libraries.IntegrationTests.Database.Abstractions;
-using DfE.Core.Libraries.IntegrationTests.Database.Postgres.Container.Providers;
+using DfE.EducationProviderRegistry.Core.Query.Test.Database;
 using DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.WebApplicationFactory.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -8,15 +7,12 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.SystemTests;
 
 public abstract class WebApplicationFactoryBaseTest : IntegrationTestsBase, IAsyncLifetime
 {
-    private IDatabase? _db;
-    private readonly IPostgresDatabaseProvider _dbProvider;
-    private string? _postgresConnectionString;
-
     protected WebApplicationFactoryBaseTest(IServiceProvider provider)
     {
-        _dbProvider = provider.GetRequiredService<IPostgresDatabaseProvider>();
+        DatabaseFixture = provider.GetRequiredService<EducationProviderRegistryDatabaseFixture>();
     }
 
+    protected EducationProviderRegistryDatabaseFixture DatabaseFixture { get; }
 #nullable disable
     protected EducationProviderRegistryWebApplicationFactory Factory { get; private set; }
 #nullable enable
@@ -32,26 +28,14 @@ public abstract class WebApplicationFactoryBaseTest : IntegrationTestsBase, IAsy
     {
         CancellationToken ct = TestContext.Current.CancellationToken;
 
-        const string dbKey = "postgres";
-
-        _db = await _dbProvider.GetDatabaseAsync(dbKey, ct);
-        await _db.StartAsync(ct);
-
-        _postgresConnectionString = await _dbProvider.GetConnectionStringAsync(dbKey, cancellationToken: ct);
-
-        Factory = new(_postgresConnectionString, ConfigureServices);
+        await DatabaseFixture.StartAsync(ct: ct);
+        Factory = new(DatabaseFixture.ConnectionString, ConfigureServices);
     }
 
-    protected override async Task BeforeDisposeAsync()
-    {
-        if (_db != null)
-        {
-            await _db.DisposeAsync();
-        }
 
-        if (Factory != null)
-        {
-            await Factory.DisposeAsync();
-        }
+    protected async override Task DisposeApplicationAsync()
+    {
+        await DatabaseFixture.DisposeAsync();
+        await Factory.DisposeAsync();
     }
 }

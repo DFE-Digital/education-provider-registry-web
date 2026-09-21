@@ -104,7 +104,7 @@ public class EstablishmentDetailsBasicDetailsTableMapper :
         {
             builder.AddRow(
                 new TableCell { Text = "Website", IsBold = true },
-                new TableCell { Text = dto.ContactDetails.Website, Href = dto.ContactDetails.Website, OpenInNewTab = true });
+                new TableCell { Text = dto.ContactDetails.Website, Href = MappingHelpers.CreateWebsiteUrl(dto.ContactDetails.Website), OpenInNewTab = true });
         }
 
         if (dto.ContactDetails?.TelephoneNumber is not null)

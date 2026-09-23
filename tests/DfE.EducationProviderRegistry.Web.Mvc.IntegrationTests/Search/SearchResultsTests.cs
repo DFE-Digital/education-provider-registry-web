@@ -1,5 +1,5 @@
 ﻿using DfE.Core.Libraries.CleanArchitecture.Application;
-using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Establishment;
+using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Request;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
 using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Search.TestDoubles;
@@ -41,7 +41,7 @@ public sealed class SearchResultsTests
         Assert.StartsWith("Search results for ", resultsHeading);
         Assert.EndsWith("\"School\"", resultsHeading);
 
-        Assert.Equal($"{searchResponse.EstablishmentResults!.Count} results", results.GetTotalResults());
+        Assert.Equal($"{searchResponse.SearchProviderResults!.Count} results", results.GetTotalResults());
         AssertSearchResultsDisplayed(results, searchResponse);
     }
 
@@ -75,7 +75,7 @@ public sealed class SearchResultsTests
 
         Assert.StartsWith($"Search results for ", resultsHeading);
         Assert.EndsWith($"\"LN1\"", resultsHeading);
-        Assert.Equal($"{searchResponse.EstablishmentResults!.Count} results", results.GetTotalResults());
+        Assert.Equal($"{searchResponse.SearchProviderResults!.Count} results", results.GetTotalResults());
         AssertSearchResultsDisplayed(results, searchResponse);
     }
 
@@ -109,7 +109,7 @@ public sealed class SearchResultsTests
         string resultsHeading = results.GetHeading();
         Assert.StartsWith($"Search results for ", resultsHeading);
         Assert.EndsWith($"\"sch\"\n \"LN1\"", resultsHeading);
-        Assert.Equal($"{searchResponse.EstablishmentResults!.Count} results", results.GetTotalResults());
+        Assert.Equal($"{searchResponse.SearchProviderResults!.Count} results", results.GetTotalResults());
         AssertSearchResultsDisplayed(results, searchResponse);
     }
 
@@ -118,11 +118,11 @@ public sealed class SearchResultsTests
         IReadOnlyList<SearchResult> searchResults = results.GetSearchResults();
 
         Assert.NotEmpty(searchResults);
-        Assert.Equal(searchResults.Count, response.EstablishmentResults!.Count);
+        Assert.Equal(searchResults.Count, response.SearchProviderResults!.Count);
 
-        List<EstablishmentSearchResult> responseExpectedResults = response.EstablishmentResults.EstablishmentCollection.ToList();
+        List<SearchAggregateResult> responseExpectedResults = response.SearchProviderResults.SearchResultCollection.ToList();
 
-        foreach (EstablishmentSearchResult current in responseExpectedResults)
+        foreach (SearchAggregateResult current in responseExpectedResults)
         {
             var searchResult = searchResults.Single(
                 (result) =>

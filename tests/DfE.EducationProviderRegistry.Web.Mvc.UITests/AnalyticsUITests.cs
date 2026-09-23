@@ -27,7 +27,7 @@ public sealed class AnalyticsUITests : UIBaseTest
 
         using IWebDriver webDriver = await WebDriverBuilder.Build().StartDriverAsync(ct);
 
-        await RegisterNetworkMonitoringAsync(webDriver, ApplicationEnvironment, _requestHandlers);
+        await RegisterNetworkMonitoringAsync(webDriver, HostedEnvironment, _requestHandlers);
         GovUkCookieBanner banner = new(webDriver);
 
         // Act
@@ -36,7 +36,7 @@ public sealed class AnalyticsUITests : UIBaseTest
         // Assert
         // Cookie preference is now set
         AssertPreferenceCookieSet(webDriver);
-        await TriggerAnalyticsWithBrowserActionAsync(webDriver, ApplicationEnvironment);
+        await TriggerAnalyticsWithBrowserActionAsync(webDriver, HostedEnvironment);
 
         Assert.Equal(0, clarityTracker.RequestsMatchCounter);
         Assert.Equal(0, tagManagerTracker.RequestsMatchCounter);
@@ -49,7 +49,7 @@ public sealed class AnalyticsUITests : UIBaseTest
         CancellationToken ct = TestContext.Current.CancellationToken;
 
         using IWebDriver webDriver = await WebDriverBuilder.Build().StartDriverAsync(ct);
-        await RegisterNetworkMonitoringAsync(webDriver, ApplicationEnvironment, _requestHandlers);
+        await RegisterNetworkMonitoringAsync(webDriver, HostedEnvironment, _requestHandlers);
         GovUkCookieBanner banner = new(webDriver);
 
         // Act
@@ -57,7 +57,7 @@ public sealed class AnalyticsUITests : UIBaseTest
 
         // Assert
         AssertPreferenceCookieSet(webDriver);
-        await TriggerAnalyticsWithBrowserActionAsync(webDriver, ApplicationEnvironment);
+        await TriggerAnalyticsWithBrowserActionAsync(webDriver, HostedEnvironment);
 
         Assert.True(clarityTracker.RequestsMatchCounter > 0, "Clarity should be called when analytics events are triggered and user has agreed to analytics");
         Assert.True(tagManagerTracker.RequestsMatchCounter > 0, "TagManager should be called when analytics events are triggered and user has agreed to analytics");
@@ -82,8 +82,6 @@ public sealed class AnalyticsUITests : UIBaseTest
         ApplicationHostedEnvironment application,
         IEnumerable<NetworkRequestHandler> handlers)
     {
-
-
         await webDriver.Manage().Network.StartMonitoring();
         await webDriver.Navigate().GoToUrlAsync(application.GetApplicationUrl());
 

@@ -1,5 +1,5 @@
 ﻿@{
-    var breadcrumbs = new List<BreadcrumbViewModel>
+    List<BreadcrumbViewModel> breadcrumbs = new()
     {
         new("Home", "Home", "Index"),
     };
@@ -19,8 +19,8 @@
     </div>
 </div>
 
-<form asp-action="Downloading"
-    asp-controller="DownloadDatasets"
+<form asp-action="downloading"
+    asp-controller="Datasets"
     method="post">
     @await Html.PartialAsync("_DownloadPanel")
 </form>

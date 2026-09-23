@@ -1,5 +1,7 @@
-﻿using OpenQA.Selenium;
-using static DfE.EducationProviderRegistry.Web.MVC.UITests.Search.SearchPanelComponent;
+﻿using DfE.EducationProviderRegistry.Core.Query.Test.Database.Data.Search;
+using DfE.EducationProviderRegistry.Data.DatabaseModels.Models;
+using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
+using OpenQA.Selenium;
 
 namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Search;
 
@@ -16,9 +18,14 @@ public sealed class SearchResultsUITests : UIBaseTest
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
 
+        IReadOnlyCollection<SearchAggregate> seed = SearchAggregateTestDouble.CreateResults(10);
+
+        await HostedEnvironment.DatabaseFixture
+            .SeedAsync<IEnumerable<SearchAggregate>, SearchableAggregates>(seed, ct);
+
         using IWebDriver driver = await WebDriverBuilder.Build().StartDriverAsync(ct);
 
-        Uri uri = new(baseUri: ApplicationEnvironment.GetApplicationUrl(), relativeUri: SearchRoutes.SearchResults(identityTerm: "sch"));
+        Uri uri = new(baseUri: HostedEnvironment.GetApplicationUrl(), relativeUri: SearchRoutes.SearchResults(identityTerm: "sch"));
 
         await driver.Navigate().GoToUrlAsync(uri);
 
@@ -28,7 +35,7 @@ public sealed class SearchResultsUITests : UIBaseTest
         SearchResult preSortFirstResult = results.GetSearchResults().First();
 
         // Act
-        panel.SortBy("name", SortDirection.Descending);
+        panel.SortBy("name", SearchPanelComponent.SortDirection.Descending);
 
         // Assert
         SearchResult postSortFirstResult = results.GetSearchResults().First();
@@ -45,17 +52,22 @@ public sealed class SearchResultsUITests : UIBaseTest
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
 
+        IReadOnlyCollection<SearchAggregate> seed = SearchAggregateTestDouble.CreateResults(10);
+
+        await HostedEnvironment.DatabaseFixture
+            .SeedAsync<IEnumerable<SearchAggregate>, SearchableAggregates>(seed, ct);
+
         using IWebDriver driver = await WebDriverBuilder.Build().StartDriverAsync(ct);
 
-        Uri uri = new(baseUri: ApplicationEnvironment.GetApplicationUrl(), relativeUri: SearchRoutes.SearchResults(identityTerm: "sch"));
+        Uri uri = new(baseUri: HostedEnvironment.GetApplicationUrl(), relativeUri: SearchRoutes.SearchResults(identityTerm: "sch"));
 
         await driver.Navigate().GoToUrlAsync(uri);
 
         SearchResultsComponent results = new(driver);
         SearchFiltersComponent filters = new(driver);
 
-        const string targetFacet = "Establishment Type";
-        const string targetFacetValueLabel = "Primary School";
+        const string targetFacet = "searchprovidertypeid";
+        const string targetFacetValueLabel = "Single-Academy Trust";
 
         // Act
         filters.FilterBy(

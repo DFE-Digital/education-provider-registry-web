@@ -10,16 +10,16 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Contro
 internal static class UseCaseResponseSearchResponseTestDouble
 {
     public static UseCaseResponse<SearchResponse> Success(
-        EstablishmentSearchResults establishmentResults,
+        SearchAggregateResults searchAggregateResults,
         SearchFacets? facets = null)
     {
-        SearchResponse response = new(establishmentResults, facets, 1);
+        SearchResponse response = new(searchAggregateResults, facets, 1);
         return UseCaseResponse<SearchResponse>.Success(response);
     }
 
     public static UseCaseResponse<SearchResponse> EmptySuccess()
     {
-        EstablishmentSearchResults emptyResults = new([]);
+        SearchAggregateResults emptyResults = new([]);
         SearchFacets emptyFacets = new([]);
         SearchResponse response = new(emptyResults, emptyFacets, 1);
 

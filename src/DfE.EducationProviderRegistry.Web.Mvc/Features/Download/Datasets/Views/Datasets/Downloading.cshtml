@@ -1,0 +1,56 @@
+﻿@{
+    List<BreadcrumbViewModel> breadcrumbs =
+        new(){
+            new("Home", "Home", "Index"),
+        };
+}
+
+@section Breadcrumbs
+{
+    <partial name="_Breadcrumbs" model="breadcrumbs" />
+}
+
+<div class="govuk-width-container">
+    <main class="govuk-main-wrapper" id="main-content">
+        <h1 class="govuk-heading-l">Preparing your download…</h1>
+
+        <p id="download-status" class="govuk-body">
+            Preparing file…
+        </p>
+
+        <div id="download-spinner" class="govuk-spinner"></div>
+
+        <!-- Hidden iframe triggers the actual download -->
+        <iframe id="downloadFrame"
+                src="/datasets/file"
+                style="display:none;"></iframe>
+
+        <noscript>
+            <meta http-equiv="refresh" content="0; url=/datasets/file">
+        </noscript>
+    </main>
+</div>
+
+<script>
+    function checkStatus() {
+        fetch('/datasets/status')
+            .then(r => r.json())
+            .then(data => {
+                if (data.ready) {
+                    window.location.href = '/datasets/complete';
+                } else {
+                    setTimeout(checkStatus, 500);
+                }
+            });
+    }
+
+    // Start polling
+    checkStatus();
+
+    // Trigger the download
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = '/datasets/file';
+    document.body.appendChild(iframe);
+</script>
+

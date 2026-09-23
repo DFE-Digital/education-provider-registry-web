@@ -1,6 +1,5 @@
 ﻿using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Filter;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Mappers;
 

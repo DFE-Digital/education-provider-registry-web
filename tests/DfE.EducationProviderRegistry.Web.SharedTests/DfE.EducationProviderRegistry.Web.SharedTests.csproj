@@ -8,6 +8,8 @@
 	<PackageReference Include="Anglesharp" />
 	<PackageReference Include="DfE.Core.Libraries.IntegrationTests" />
 	<PackageReference Include="DfE.Core.Libraries.IntegrationTests.Database.Postgres" />
+	<PackageReference Include="DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles" />
+	<PackageReference Include="DfE.EducationProviderRegistry.Core.Query.Test.Database" />
 	<PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     <PackageReference Include="xunit.v3.assert" />

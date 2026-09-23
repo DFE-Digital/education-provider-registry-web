@@ -1,45 +1,24 @@
 ﻿using DfE.Core.Libraries.CrossCutting.Mapper;
-using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Establishment;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 
-public sealed class SearchResultsToViewModelMapper :
-    IMapper<SearchResultsMappingContext, SearchResultsViewModel>
+public sealed class SearchResultsToViewModelMapper : IMapper<SearchResultsMappingContext, SearchResultsViewModel>
 {
-    private readonly IMapper<
-        IReadOnlyCollection<EstablishmentSearchResult>,
-        List<GovUkTable>>
-        _establishmentSearchResultsToViewModelMapper;
-
-    private readonly IMapper<
-        IReadOnlyCollection<SearchFacet>,
-        List<FacetViewModel>>
-        _facetResultsToFacetsViewModelMapper;
+    private readonly IMapper<IReadOnlyCollection<SearchAggregateResult>, List<GovUkTable>> _searchAggregateResultsToViewModelMapper;
+    private readonly IMapper<IReadOnlyCollection<SearchFacet>, List<FacetViewModel>> _facetResultsToFacetsViewModelMapper;
 
     public SearchResultsToViewModelMapper(
-        IMapper<
-            IReadOnlyCollection<EstablishmentSearchResult>,
-            List<GovUkTable>>
-            establishmentSearchResultsToViewModelMapper,
-        IMapper<
-            IReadOnlyCollection<SearchFacet>,
-            List<FacetViewModel>>
-            facetResultsToFacetsViewModelMapper)
+        IMapper<IReadOnlyCollection<SearchAggregateResult>, List<GovUkTable>> searchAggregateResultsToViewModelMapper,
+        IMapper<IReadOnlyCollection<SearchFacet>, List<FacetViewModel>> facetResultsToFacetsViewModelMapper)
     {
-        ArgumentNullException.ThrowIfNull(
-            establishmentSearchResultsToViewModelMapper);
+        ArgumentNullException.ThrowIfNull(searchAggregateResultsToViewModelMapper);
+        ArgumentNullException.ThrowIfNull(facetResultsToFacetsViewModelMapper);
 
-        ArgumentNullException.ThrowIfNull(
-            facetResultsToFacetsViewModelMapper);
-
-        _establishmentSearchResultsToViewModelMapper =
-            establishmentSearchResultsToViewModelMapper;
-
-        _facetResultsToFacetsViewModelMapper =
-            facetResultsToFacetsViewModelMapper;
+        _searchAggregateResultsToViewModelMapper = searchAggregateResultsToViewModelMapper;
+        _facetResultsToFacetsViewModelMapper = facetResultsToFacetsViewModelMapper;
     }
 
     public SearchResultsViewModel Map(
@@ -75,15 +54,15 @@ public sealed class SearchResultsToViewModelMapper :
 
             SelectedSortDirection = input.SearchRequest.Sort,
 
-            EstablishmentResults =
-                searchResponse.EstablishmentResults is not null
-                    ? _establishmentSearchResultsToViewModelMapper.Map(
+            SearchAggregateResults =
+                searchResponse.SearchProviderResults is not null
+                    ? _searchAggregateResultsToViewModelMapper.Map(
                         searchResponse
-                            .EstablishmentResults
-                            .EstablishmentCollection)
+                            .SearchProviderResults
+                            .SearchResultCollection)
                     : [],
 
-            TotalEstablishmentResults =
+            TotalSearchResults =
                 searchResponse.TotalNumberOfResults,
 
             Facets = facets

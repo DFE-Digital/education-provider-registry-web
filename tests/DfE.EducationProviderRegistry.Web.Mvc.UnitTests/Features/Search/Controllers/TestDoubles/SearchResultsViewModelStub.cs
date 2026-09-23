@@ -10,7 +10,7 @@ internal static class SearchResultsViewModelStub
     public static SearchResultsViewModel Empty() =>
         new()
         {
-            EstablishmentResults = [],
+            SearchAggregateResults = [],
             Facets = null
         };
 
@@ -18,7 +18,7 @@ internal static class SearchResultsViewModelStub
         List<GovUkTable> results) =>
         new()
         {
-            EstablishmentResults = results,
+            SearchAggregateResults = results,
             Facets = null
         };
 
@@ -27,7 +27,7 @@ internal static class SearchResultsViewModelStub
         List<GovUkTable> results) =>
         new()
         {
-            EstablishmentResults = results,
+            SearchAggregateResults = results,
             Facets = null,
             PrimarySearchTerms = searchTerms
         };

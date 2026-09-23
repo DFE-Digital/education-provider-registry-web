@@ -1,4 +1,7 @@
-﻿@{
+﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Download.Datasets.ViewModels
+@model DownloadedDatasetViewModel
+
+@{
     var breadcrumbs = new List<BreadcrumbViewModel>
     {
         new("Home", "Home", "Index"),
@@ -19,11 +22,11 @@
                     Download complete
                 </h1>
                 <div class="govuk-panel__body">
-                    Your file<br><strong>FEPI-All_Data-2026_07_13.zip</strong>
+                    Your file<br><strong>@Model.ZipFilename</strong>
                 </div>
             </div>
             <p class="govuk-body">
-                Your file <strong>FEPI-All_Data-2026_07_13.zip</strong> has downloaded.
+                Your file <strong>@Model.ZipFilename</strong> has downloaded.
                 <br>
                 Check your browser's downloads folder to open it.
             </p>
@@ -34,32 +37,29 @@
                         Data
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        All information
+                        @Model.ContentType
                     </dd>
-
                 </div>
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
                         Format
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        CSV
+                        @Model.FileFormat
                     </dd>
-
                 </div>
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
                         File size
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        345 MB
+                        @Model.FormattedFileSize
                     </dd>
-
                 </div>
             </dl>
             <h2 class="govuk-heading-m govuk-!-margin-top-8">What you can do now</h2>
             <ul class="govuk-list govuk-list--spaced">
-                <li><a class="govuk-link govuk-link--no-visited-state" href="/downloaddatasets">Download another extract</a></li>
+                <li><a class="govuk-link govuk-link--no-visited-state" href="/datasets">Download another extract</a></li>
                 <li><a class="govuk-link govuk-link--no-visited-state" href="/home">Return to the service home page</a></li>
             </ul>
             <h2 class="govuk-heading-m govuk-!-margin-top-8">Using this data</h2>

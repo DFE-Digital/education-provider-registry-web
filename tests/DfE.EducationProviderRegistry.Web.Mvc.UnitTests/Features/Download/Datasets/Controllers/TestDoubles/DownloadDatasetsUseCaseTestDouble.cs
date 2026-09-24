@@ -4,7 +4,7 @@ using DfE.EducationProviderRegistry.Core.Query.Download.Datasets.Application.Use
 using Moq;
 using System.Diagnostics.CodeAnalysis;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Download.Controllers.TestDoubles;
+namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Download.Datasets.Controllers.TestDoubles;
 
 [ExcludeFromCodeCoverage]
 internal class DownloadDatasetsUseCaseTestDouble

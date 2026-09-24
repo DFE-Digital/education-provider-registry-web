@@ -5,14 +5,14 @@ using DfE.EducationProviderRegistry.Core.Query.Download.Datasets.Application.Use
 using DfE.EducationProviderRegistry.Core.Query.Download.Datasets.Application.UseCases.Response;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Download.Datasets.Controllers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Download.Datasets.ViewModels;
-using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Download.Controllers.TestDoubles;
+using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Download.Datasets.Controllers.TestDoubles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using System.Text.Json;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Download.Controllers;
+namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Download.Datasets.Controllers;
 
 public sealed class DatasetsControllerTests
 {
@@ -35,6 +35,7 @@ public sealed class DatasetsControllerTests
     [Fact]
     public void Index_ReturnsIndexView()
     {
+        // arrange
         Mock<IUseCase<DownloadDatasetsRequest, UseCaseResponse<DownloadDatasetsResponse>>> useCaseMock =
             DownloadDatasetsUseCaseTestDouble.Mock();
 
@@ -43,8 +44,10 @@ public sealed class DatasetsControllerTests
 
         DatasetsController controller = CreateController(useCaseMock, mapperMock);
 
+        // act
         IActionResult result = controller.Index();
 
+        // asssert
         ViewResult view = Assert.IsType<ViewResult>(result);
         Assert.Equal("Index", view.ViewName);
     }
@@ -52,6 +55,7 @@ public sealed class DatasetsControllerTests
     [Fact]
     public async Task StartDownloading_RedirectsToDownloading()
     {
+        // arrange
         Mock<IUseCase<DownloadDatasetsRequest, UseCaseResponse<DownloadDatasetsResponse>>> useCaseMock =
             DownloadDatasetsUseCaseTestDouble.Mock();
 
@@ -60,8 +64,10 @@ public sealed class DatasetsControllerTests
 
         DatasetsController controller = CreateController(useCaseMock, mapperMock);
 
+        // act
         IActionResult result = await controller.StartDownloading();
 
+        // assert
         RedirectToActionResult redirect = Assert.IsType<RedirectToActionResult>(result);
         Assert.Equal("Downloading", redirect.ActionName);
     }
@@ -69,6 +75,7 @@ public sealed class DatasetsControllerTests
     [Fact]
     public void Downloading_ReturnsDownloadingView()
     {
+        // arrange
         Mock<IUseCase<DownloadDatasetsRequest, UseCaseResponse<DownloadDatasetsResponse>>> useCaseMock =
             DownloadDatasetsUseCaseTestDouble.Mock();
 
@@ -77,8 +84,10 @@ public sealed class DatasetsControllerTests
 
         DatasetsController controller = CreateController(useCaseMock, mapperMock);
 
+        // act
         IActionResult result = controller.Downloading();
 
+        // assert
         ViewResult view = Assert.IsType<ViewResult>(result);
         Assert.Equal("Downloading", view.ViewName);
     }
@@ -86,6 +95,7 @@ public sealed class DatasetsControllerTests
     [Fact]
     public async Task FileDownload_ReturnsFileResult_AndStoresTempData()
     {
+        // arrange
         Dataset dataset = new(
             Filename: "test-dataset",
             DataType: "All Establishments",
@@ -115,8 +125,10 @@ public sealed class DatasetsControllerTests
 
         DatasetsController controller = CreateController(useCaseMock, mapperMock);
 
+        // act
         IActionResult result = await controller.FileDownload();
 
+        // assert
         FileContentResult fileResult = Assert.IsType<FileContentResult>(result);
         Assert.Equal("application/zip", fileResult.ContentType);
         Assert.Equal("test-dataset.zip", fileResult.FileDownloadName);
@@ -128,6 +140,7 @@ public sealed class DatasetsControllerTests
     [Fact]
     public void Status_ReturnsJsonReadyFalse_WhenNoTempData()
     {
+        // arrange
         Mock<IUseCase<DownloadDatasetsRequest, UseCaseResponse<DownloadDatasetsResponse>>> useCaseMock =
             DownloadDatasetsUseCaseTestDouble.Mock();
 
@@ -136,8 +149,10 @@ public sealed class DatasetsControllerTests
 
         DatasetsController controller = CreateController(useCaseMock, mapperMock);
 
+        // act
         IActionResult result = controller.Status();
 
+        // assert
         JsonResult json = Assert.IsType<JsonResult>(result);
         Assert.False((bool)json.Value!.GetType().GetProperty("ready")!.GetValue(json.Value)!);
     }
@@ -145,6 +160,7 @@ public sealed class DatasetsControllerTests
     [Fact]
     public void Status_ReturnsJsonReadyTrue_WhenTempDataExists()
     {
+        // arrange
         Mock<IUseCase<DownloadDatasetsRequest, UseCaseResponse<DownloadDatasetsResponse>>> useCaseMock =
             DownloadDatasetsUseCaseTestDouble.Mock();
 
@@ -155,8 +171,10 @@ public sealed class DatasetsControllerTests
 
         controller.TempData["DownloadedViewModel"] = "{}";
 
+        // act
         IActionResult result = controller.Status();
 
+        // assert
         JsonResult json = Assert.IsType<JsonResult>(result);
         Assert.True((bool)json.Value!.GetType().GetProperty("ready")!.GetValue(json.Value)!);
     }
@@ -164,6 +182,7 @@ public sealed class DatasetsControllerTests
     [Fact]
     public void Complete_ReturnsCompleteView_WithDeserializedModel()
     {
+        // arrange
         Mock<IUseCase<DownloadDatasetsRequest, UseCaseResponse<DownloadDatasetsResponse>>> useCaseMock =
             DownloadDatasetsUseCaseTestDouble.Mock();
 
@@ -182,8 +201,10 @@ public sealed class DatasetsControllerTests
         controller.TempData["DownloadedViewModel"] =
             JsonSerializer.Serialize(viewModel);
 
+        // act
         IActionResult result = controller.Complete();
 
+        // assert
         ViewResult view = Assert.IsType<ViewResult>(result);
         Assert.Equal("Complete", view.ViewName);
 

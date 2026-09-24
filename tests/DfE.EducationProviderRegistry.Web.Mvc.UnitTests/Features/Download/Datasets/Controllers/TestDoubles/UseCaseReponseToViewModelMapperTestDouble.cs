@@ -4,7 +4,7 @@ using DfE.EducationProviderRegistry.Web.Mvc.Features.Download.Datasets.ViewModel
 using Moq;
 using System.Diagnostics.CodeAnalysis;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Download.Controllers.TestDoubles;
+namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Download.Datasets.Controllers.TestDoubles;
 
 [ExcludeFromCodeCoverage]
 internal static class UseCaseReponseToViewModelMapperTestDouble

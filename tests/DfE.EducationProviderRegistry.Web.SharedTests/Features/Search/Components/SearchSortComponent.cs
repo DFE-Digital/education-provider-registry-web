@@ -1,6 +1,6 @@
 ﻿using AngleSharp.Html.Dom;
 
-namespace DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
+namespace DfE.EducationProviderRegistry.Web.SharedTests.Features.Search.Components;
 
 public sealed class SearchSortComponent
 {

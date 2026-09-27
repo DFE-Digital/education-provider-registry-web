@@ -10,6 +10,7 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.SystemTests;
 
 public sealed class Startup
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "XUnit.DependencyInjection calls this through Reflection as part of test startup")]
     public void ConfigureHost(IHostBuilder hostBuilder) =>
         hostBuilder
             .UseDefaultServiceProvider((options) =>
@@ -25,6 +26,7 @@ public sealed class Startup
                 builder.AddEnvironmentVariables();
             });
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "XUnit.DependencyInjection calls this through Reflection as part of test startup")]
     public void ConfigureServices(IServiceCollection services, HostBuilderContext context)
     {
         services.AddOptions<XUnitLoggerOptions>();

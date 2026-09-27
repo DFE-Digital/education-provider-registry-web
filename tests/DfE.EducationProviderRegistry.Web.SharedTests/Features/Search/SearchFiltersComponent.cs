@@ -1,6 +1,6 @@
-﻿using AngleSharp.Dom;
+﻿using System.Text;
+using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
-using System.Text;
 using HttpMethod = System.Net.Http.HttpMethod;
 
 namespace DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;

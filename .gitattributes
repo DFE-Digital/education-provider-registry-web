@@ -12,6 +12,13 @@
 
 *.jpg binary
 *.png binary
+*.jpeg binary
+*.svg binary
 *.gif binary
 *.pdf binary
 *.nupkg binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary

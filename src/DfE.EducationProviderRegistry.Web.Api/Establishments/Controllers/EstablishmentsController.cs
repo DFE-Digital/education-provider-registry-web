@@ -1,10 +1,10 @@
-﻿using DfE.Core.Libraries.CleanArchitecture.Application;
+﻿using System.Runtime.CompilerServices;
+using DfE.Core.Libraries.CleanArchitecture.Application;
 using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.Model;
 using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.UseCases.GetEstablishments.Request;
 using DfE.EducationProviderRegistry.Web.Api.Establishments.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using System.Runtime.CompilerServices;
 
 namespace DfE.EducationProviderRegistry.Web.Api.Establishments.Controllers;
 

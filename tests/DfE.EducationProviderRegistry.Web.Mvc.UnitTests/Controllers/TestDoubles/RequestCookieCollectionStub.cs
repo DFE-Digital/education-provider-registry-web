@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Http;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Controllers.TestDoubles;
 

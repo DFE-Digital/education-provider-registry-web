@@ -1,6 +1,6 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.ViewModels;
+﻿using System.Text.Json;
+using DfE.EducationProviderRegistry.Web.Mvc.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Controllers;
 

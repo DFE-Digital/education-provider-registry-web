@@ -65,7 +65,7 @@ public class GoogleAnalyticsSettingsTests
             ContainerId = containerId
         };
 
-        var context = CreateContext("yes");
+        DefaultHttpContext context = CreateContext("yes");
 
         Assert.False(settings.IsGoogleTagManagerEnabled(context));
     }
@@ -83,7 +83,7 @@ public class GoogleAnalyticsSettingsTests
             ContainerId = "GTM-TEST123"
         };
 
-        var context = CreateContext(consentValue);
+        DefaultHttpContext context = CreateContext(consentValue);
 
         Assert.Equal(
             expected,

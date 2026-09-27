@@ -1,5 +1,5 @@
-﻿using AngleSharp.Html.Dom;
-using System.Net;
+﻿using System.Net;
+using AngleSharp.Html.Dom;
 using Xunit;
 
 namespace DfE.EducationProviderRegistry.Web.SharedTests.AngleSharp.Extensions;

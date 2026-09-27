@@ -1,20 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.Extensions
+namespace DfE.EducationProviderRegistry.Web.Mvc.Extensions;
+
+public static class HtmlExtensions
 {
-    public static class HtmlExtensions
+    public static string ActiveClassForPath(this IHtmlHelper html, string routePrefix)
     {
-        public static string ActiveClassForPath(this IHtmlHelper html, string routePrefix)
+        string path = html.ViewContext.HttpContext.Request.Path.Value?.ToLower() ?? "";
+        routePrefix = routePrefix.ToLower();
+
+        if (path == routePrefix || path.StartsWith(routePrefix + "/"))
         {
-            var path = html.ViewContext.HttpContext.Request.Path.Value?.ToLower() ?? "";
-            routePrefix = routePrefix.ToLower();
-
-            if (path == routePrefix || path.StartsWith(routePrefix + "/"))
-            {
-                return "govuk-service-navigation__item--active";
-            }
-
-            return string.Empty;
+            return "govuk-service-navigation__item--active";
         }
+
+        return string.Empty;
     }
 }

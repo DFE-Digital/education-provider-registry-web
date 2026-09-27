@@ -1,4 +1,5 @@
-﻿using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Filter;
+﻿using System.Collections.ObjectModel;
+using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Filter;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Mappers;
@@ -12,7 +13,7 @@ public sealed class SelectedFacetsToFilterRequestsMapperTests
         SelectedFacetsToFilterRequestsMapper mapper = new();
 
         // act
-        var result = mapper.Map(null);
+        ReadOnlyCollection<FilterRequest> result = mapper.Map(null);
 
         // assert
         Assert.Empty(result);
@@ -26,7 +27,7 @@ public sealed class SelectedFacetsToFilterRequestsMapperTests
         Dictionary<string, List<string>> input = [];
 
         // act
-        var result = mapper.Map(input);
+        ReadOnlyCollection<FilterRequest> result = mapper.Map(input);
 
         // assert
         Assert.Empty(result);
@@ -44,7 +45,7 @@ public sealed class SelectedFacetsToFilterRequestsMapperTests
         };
 
         // act
-        var result = mapper.Map(input);
+        ReadOnlyCollection<FilterRequest> result = mapper.Map(input);
 
         // assert
         Assert.Single(result);
@@ -69,7 +70,7 @@ public sealed class SelectedFacetsToFilterRequestsMapperTests
         };
 
         // act
-        var result = mapper.Map(input);
+        ReadOnlyCollection<FilterRequest> result = mapper.Map(input);
 
         // assert
         Assert.Equal(2, result.Count);
@@ -103,10 +104,10 @@ public sealed class SelectedFacetsToFilterRequestsMapperTests
         };
 
         // act
-        var result = mapper.Map(input);
+        ReadOnlyCollection<FilterRequest> result = mapper.Map(input);
 
         // assert
-        var values = result[0].FilterValues;
+        IList<object> values = result[0].FilterValues;
 
         Assert.All(values, value => Assert.IsType<string>(value));
         Assert.Equal("1", values[0]);

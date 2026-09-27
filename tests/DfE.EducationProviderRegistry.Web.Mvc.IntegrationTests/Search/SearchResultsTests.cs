@@ -4,6 +4,7 @@ using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Reque
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
 using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Search.TestDoubles;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
+using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search.Components;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Search;
 
@@ -120,11 +121,11 @@ public sealed class SearchResultsTests
         Assert.NotEmpty(searchResults);
         Assert.Equal(searchResults.Count, response.SearchProviderResults!.Count);
 
-        List<SearchAggregateResult> responseExpectedResults = response.SearchProviderResults.SearchResultCollection.ToList();
+        List<SearchAggregateResult> responseExpectedResults = [.. response.SearchProviderResults.SearchResultCollection];
 
         foreach (SearchAggregateResult current in responseExpectedResults)
         {
-            var searchResult = searchResults.Single(
+            SearchResult searchResult = searchResults.Single(
                 (result) =>
                     result.Name!.Equals(current.Name.Value, StringComparison.OrdinalIgnoreCase));
 

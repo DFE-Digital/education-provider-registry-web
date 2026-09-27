@@ -1,7 +1,7 @@
 ﻿using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 
-namespace DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
+namespace DfE.EducationProviderRegistry.Web.SharedTests.Features.Search.Components;
 
 public sealed class SearchResultsComponent
 {
@@ -28,14 +28,13 @@ public sealed class SearchResultsComponent
 
     public IReadOnlyList<SearchResult> GetSearchResults()
     {
-        return _document.QuerySelectorAll(".search-results .govuk-table")
+        return [.. _document.QuerySelectorAll(".search-results .govuk-table")
             .Select((element) =>
                 new SearchResult(
                     Name: element.QuerySelector(".govuk-table__caption")?
                             .Text()
                             .ReplaceLineEndings()
-                            .Trim() ?? throw new ArgumentException("Search result did not have caption")))
-            .ToList();
+                            .Trim() ?? throw new ArgumentException("Search result did not have caption")))];
     }
 }
 

@@ -19,11 +19,17 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
     {
         configurationBuilder.AddSearchUseCaseConfiguration((builder) =>
         {
-            builder.WithSearchTerm(
-                "what",
-                (field) =>
-                    field.WithFieldName(nameof(SearchAggregate.ProviderName))
-                        .AppendContainsMatchBehaviour());
+            builder
+                .WithSearchTerm(
+                    "what",
+                    (field) =>
+                        field.WithFieldName(nameof(SearchAggregate.ProviderName))
+                            .AppendContainsMatchBehaviour())
+                .WithSearchTerm(
+                    "where",
+                    (field) =>
+                        field.WithFieldName(nameof(SearchAggregate.Postcode))
+                            .AppendStartsWithMatchBehaviour());
         });
     }
 
@@ -64,23 +70,5 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
         SearchResultsComponent resultsComponent = new(document);
         SearchResult displayedResult = Assert.Single(resultsComponent.GetSearchResults());
         Assert.Equal(match.ProviderName, displayedResult.Name);
-    }
-
-    [Fact]
-    public async Task Results_Returned_When_Search_By_Multiple_Terms()
-    {
-
-    }
-
-    [Fact]
-    public async Task Results_Paged_When_Results_Paged()
-    {
-
-    }
-
-    [Fact]
-    public async Task Results_Sorted_When_Results_Sort_Applied()
-    {
-
     }
 }

@@ -1,5 +1,6 @@
 ﻿using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 

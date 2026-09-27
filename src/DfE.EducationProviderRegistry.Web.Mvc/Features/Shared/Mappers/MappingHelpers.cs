@@ -18,13 +18,9 @@ public static class MappingHelpers
 
         website = website.Trim();
 
-        if (website.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
-            website.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
-        {
-            return website;
-        }
-
-        return $"https://{website}";
+        return Uri.TryCreate(website, UriKind.Absolute, out Uri? _) ?
+            website :
+            $"https://{website}";
     }
 
     public static string CombineAddress(

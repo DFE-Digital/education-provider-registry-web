@@ -2,7 +2,7 @@
 using AngleSharp.Html.Dom;
 using HttpMethod = System.Net.Http.HttpMethod;
 
-namespace DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
+namespace DfE.EducationProviderRegistry.Web.SharedTests.Features.Search.Components;
 
 public sealed class SearchPanelComponent
 {

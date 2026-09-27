@@ -1,4 +1,5 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.Settings;
+﻿using DfE.EducationProviderRegistry.Core.Query.Search.Infrastructure.QueryProcessing.Configuration;
+using DfE.EducationProviderRegistry.Web.Mvc.Settings;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.WebApplicationFactory.Extensions;
@@ -23,7 +24,6 @@ public static class WebApplicationFactoryFeatureExtensions
         {
             opts.Enabled = false;
         });
-
         return services;
     }
 

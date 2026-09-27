@@ -3,16 +3,15 @@ using DfE.EducationProviderRegistry.Core.Query.Test.Database.Data.Search;
 using DfE.EducationProviderRegistry.Data.DatabaseModels.Models;
 using DfE.EducationProviderRegistry.Web.SharedTests.AngleSharp.Extensions;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
+using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search.Components;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.SystemTests.Search;
 
-public sealed class SearchTests : WebApplicationFactoryBaseTest
+public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
 {
-    public SearchTests(IServiceProvider provider) : base(provider)
+    public SearchFilterTests(IServiceProvider provider) : base(provider)
     {
     }
-
-    // TODO stub UseCaseResponse with results
 
     [Fact]
     public async Task Apply_A_Filter_Returns_Filtered_Results()

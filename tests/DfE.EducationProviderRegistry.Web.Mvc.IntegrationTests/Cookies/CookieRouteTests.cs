@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.TestHost;
-using System.Net;
+﻿using System.Net;
+using Microsoft.AspNetCore.TestHost;
 using HttpMethod = System.Net.Http.HttpMethod;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Cookies;

@@ -1,4 +1,5 @@
-﻿global using DfE.Core.Libraries.IntegrationTests.Abstractions.Containers.Options;
+﻿global using DfE.Core.Libraries.IntegrationTests.Abstractions.Containers.Extensions;
+global using DfE.Core.Libraries.IntegrationTests.Abstractions.Containers.Options;
 global using DfE.Core.Libraries.IntegrationTests.Database.Abstractions;
 global using DfE.Core.Libraries.IntegrationTests.Database.Postgres.Container;
 global using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Options;
@@ -7,4 +8,3 @@ global using DotNet.Testcontainers.Configurations;
 global using DotNet.Testcontainers.Containers;
 global using DotNet.Testcontainers.Networks;
 global using Npgsql;
-global using DfE.Core.Libraries.IntegrationTests.Abstractions.Containers.Extensions;

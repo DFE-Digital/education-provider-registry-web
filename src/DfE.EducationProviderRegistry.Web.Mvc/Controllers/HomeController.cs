@@ -1,6 +1,6 @@
+using System.Diagnostics;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Controllers;
 

@@ -1,6 +1,6 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+﻿using System.Diagnostics.CodeAnalysis;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
-using System.Diagnostics.CodeAnalysis;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Controllers.TestDoubles;
 

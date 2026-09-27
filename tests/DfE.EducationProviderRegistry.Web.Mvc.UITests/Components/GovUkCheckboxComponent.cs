@@ -1,7 +1,7 @@
-﻿using Docker.DotNet.Models;
+﻿using System.Collections.ObjectModel;
+using Docker.DotNet.Models;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
-using System.Collections.ObjectModel;
 
 namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Components;
 

@@ -1,6 +1,6 @@
-﻿using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Filter;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
+using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Filter;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Controllers.TestDoubles;
 

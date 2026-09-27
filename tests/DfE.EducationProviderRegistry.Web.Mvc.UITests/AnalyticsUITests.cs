@@ -85,7 +85,7 @@ public sealed class AnalyticsUITests : UIBaseTest
         await webDriver.Manage().Network.StartMonitoring();
         await webDriver.Navigate().GoToUrlAsync(application.GetApplicationUrl());
 
-        foreach (var handler in handlers)
+        foreach (NetworkRequestHandler handler in handlers)
         {
             webDriver.Manage().Network.AddRequestHandler(handler);
         }

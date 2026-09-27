@@ -1,10 +1,10 @@
-﻿using AngleSharp.Html.Dom;
+﻿using System.Net;
+using AngleSharp.Html.Dom;
 using DfE.EducationProviderRegistry.Web.SharedTests.AngleSharp.Extensions;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Cookies;
 using DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.WebApplicationFactory.Extensions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.Mvc.Testing.Handlers;
-using System.Net;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Analytics.Clarity;
 

@@ -1,4 +1,5 @@
-﻿using DfE.EducationProviderRegistry.Web.ViewComponents.SummaryList;
+﻿using System.Diagnostics;
+using DfE.EducationProviderRegistry.Web.ViewComponents.SummaryList;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,6 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
-using System.Diagnostics;
 
 namespace DfE.EducationProviderRegistry.Web.ViewComponents.UnitTests;
 

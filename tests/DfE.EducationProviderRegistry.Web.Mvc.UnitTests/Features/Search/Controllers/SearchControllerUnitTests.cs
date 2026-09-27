@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using DfE.Core.Libraries.CleanArchitecture.Application;
 using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Filter;
@@ -11,7 +12,6 @@ using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Controllers.TestDoubles;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using System.Collections.ObjectModel;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Controllers;
 
@@ -81,9 +81,9 @@ public sealed class SearchControllerUnitTests
     public void Index_ReturnsCorrectViewAndModel()
     {
         // arrange
-        var useCase = SearchUseCaseTestDouble.Mock();
-        var searchResultsMapper = SearchResultsMapperTestDouble.Mock();
-        var searchFacetsResultsMapper = SearchFacetsResultsMapperTestDouble.Mock();
+        Mock<IUseCase<SearchRequest, UseCaseResponse<SearchResponse>>> useCase = SearchUseCaseTestDouble.Mock();
+        Mock<IMapper<SearchResultsMappingContext, SearchResultsViewModel>> searchResultsMapper = SearchResultsMapperTestDouble.Mock();
+        Mock<IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>> searchFacetsResultsMapper = SearchFacetsResultsMapperTestDouble.Mock();
 
         SearchController sut =
             new(

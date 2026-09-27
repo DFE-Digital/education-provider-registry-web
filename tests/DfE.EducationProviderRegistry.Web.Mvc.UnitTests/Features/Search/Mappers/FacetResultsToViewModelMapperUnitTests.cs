@@ -12,7 +12,7 @@ public sealed class FacetResultsToViewModelMapperUnitTests
     {
         List<FacetResult> facetResults = new();
 
-        foreach (var (key, value, count) in results)
+        foreach ((string? key, string? value, int count) in results)
         {
             facetResults.Add(new FacetResult(key, value, count));
         }

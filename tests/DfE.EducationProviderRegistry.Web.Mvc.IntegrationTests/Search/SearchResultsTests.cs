@@ -125,7 +125,7 @@ public sealed class SearchResultsTests
 
         foreach (SearchAggregateResult current in responseExpectedResults)
         {
-            var searchResult = searchResults.Single(
+            SearchResult searchResult = searchResults.Single(
                 (result) =>
                     result.Name!.Equals(current.Name.Value, StringComparison.OrdinalIgnoreCase));
 

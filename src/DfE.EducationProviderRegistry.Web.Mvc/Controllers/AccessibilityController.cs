@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.Controllers
+namespace DfE.EducationProviderRegistry.Web.Mvc.Controllers;
+
+public class AccessibilityController : Controller
 {
-    public class AccessibilityController : Controller
+    public IActionResult Index()
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        return View();
     }
 }

@@ -261,14 +261,7 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
                 .WithLocalAuthorityName("Stub local authority")
                 .Build();
 
-        SearchAggregate doesNotMatch =
-            SearchAggregateBuilder.Create()
-                .WithProviderName("College")
-                    .Build();
-
-        SearchAggregate[] seed = [match, doesNotMatch];
-
-        await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableAggregates>(seed, ct);
+        await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableAggregates>([match], ct);
 
         using HttpClient client = Factory.CreateClient();
 

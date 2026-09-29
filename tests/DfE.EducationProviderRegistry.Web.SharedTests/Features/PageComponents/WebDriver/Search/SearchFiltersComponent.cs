@@ -1,10 +1,11 @@
-﻿using DfE.EducationProviderRegistry.Web.MVC.UITests.Components;
+﻿using DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents.WebDriver;
+using DfE.WebDriver.WebDriver.Extensions;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 
-namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Search;
+namespace DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents.WebDriver.Search;
 
-internal sealed class SearchFiltersComponent
+public sealed class SearchFiltersComponent
 {
     private readonly GovUkComponents _govUkComponents;
     private static By FiltersDropdowns => By.CssSelector(".filter-section");

@@ -1,6 +1,6 @@
-﻿namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Components;
+﻿namespace DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents.WebDriver;
 
-internal sealed class GovUkTable
+public sealed class GovUkTable
 {
     public string? Caption { get; init; }
 

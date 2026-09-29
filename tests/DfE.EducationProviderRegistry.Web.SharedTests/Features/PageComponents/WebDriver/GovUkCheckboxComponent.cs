@@ -1,11 +1,10 @@
 ﻿using System.Collections.ObjectModel;
-using Docker.DotNet.Models;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 
-namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Components;
+namespace DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents.WebDriver;
 
-internal sealed class GovUkCheckboxComponent
+public sealed class GovUkCheckboxComponent
 {
     private readonly WebDriverWait _wait;
     public GovUkCheckboxComponent(IWebDriver driver)

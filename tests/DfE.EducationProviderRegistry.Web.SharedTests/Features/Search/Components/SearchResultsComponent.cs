@@ -1,16 +1,20 @@
 ﻿using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
+using DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents;
+using DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents.AngleSharp;
 
 namespace DfE.EducationProviderRegistry.Web.SharedTests.Features.Search.Components;
 
 public sealed class SearchResultsComponent
 {
     private readonly IHtmlDocument _document;
+    private readonly TextComponent _textComponent;
 
     public SearchResultsComponent(IHtmlDocument document)
     {
         ArgumentNullException.ThrowIfNull(document);
         _document = document;
+        _textComponent = new();
     }
 
     public string GetHeading()
@@ -18,7 +22,7 @@ public sealed class SearchResultsComponent
         return _document.QuerySelector("h1")?.Text().Trim() ?? string.Empty;
     }
 
-    public string GetTotalResults()
+    public string GetTotalResultsLabel()
     {
         const string locator = ".results-header .govuk-body";
 
@@ -29,13 +33,18 @@ public sealed class SearchResultsComponent
     public IReadOnlyList<SearchResult> GetSearchResults()
     {
         return [.. _document.QuerySelectorAll(".search-results .govuk-table")
-            .Select((element) =>
+            .Select((element) => //TODO map to GDS table and then map over to SearchResult
                 new SearchResult(
-                    Name: element.QuerySelector(".govuk-table__caption")?
-                            .Text()
-                            .ReplaceLineEndings()
-                            .Trim() ?? throw new ArgumentException("Search result did not have caption")))];
+                    Name: _textComponent.GetContent(element.QuerySelector(".govuk-table__caption")!),
+                    Values:
+                        element.QuerySelectorAll("tbody tr").ToDictionary(
+                            (row) => _textComponent.GetContent(row.QuerySelector("th")!),
+                            (row) => _textComponent.GetContent(row.QuerySelector("td")!))
+                )
+            )
+        ];
     }
 }
 
-public sealed record SearchResult(string Name);
+public sealed record class SearchResult(TextContent Name, IReadOnlyDictionary<TextContent, TextContent> Values);
+

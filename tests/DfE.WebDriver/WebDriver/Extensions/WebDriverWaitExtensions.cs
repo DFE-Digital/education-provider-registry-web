@@ -1,14 +1,21 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 
-namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Extensions;
+namespace DfE.WebDriver.WebDriver.Extensions;
 
-internal static class WebDriverWaitExtensions
+public static class WebDriverWaitExtensions
 {
     public static void Until(this IWait<IWebDriver> wait, Action<IWebDriver> action)
     {
-        ArgumentNullException.ThrowIfNull(wait);
-        ArgumentNullException.ThrowIfNull(action);
+        if (wait is null)
+        {
+            throw new ArgumentNullException(nameof(wait));
+        }
+
+        if (action is null)
+        {
+            throw new ArgumentNullException(nameof(action));
+        }
 
         wait.Until(driver =>
         {

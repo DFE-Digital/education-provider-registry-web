@@ -2,7 +2,7 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 
-namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Components;
+namespace DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents.WebDriver;
 
 public sealed class GovUkDetailsComponent
 {

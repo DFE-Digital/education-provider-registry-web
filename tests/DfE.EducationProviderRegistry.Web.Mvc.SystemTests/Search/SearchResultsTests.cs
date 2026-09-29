@@ -3,6 +3,7 @@ using DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles.Search.Conf
 using DfE.EducationProviderRegistry.Core.Query.Test.Database.Data.Search;
 using DfE.EducationProviderRegistry.Data.DatabaseModels.Models;
 using DfE.EducationProviderRegistry.Web.SharedTests.AngleSharp.Extensions;
+using DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search.Components;
 using Microsoft.Extensions.Configuration;
@@ -42,12 +43,12 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
         SearchAggregate match =
             SearchAggregateBuilder.Create()
                 .WithProviderName("school 1")
-                    .Build();
+                .Build();
 
         SearchAggregate doesNotMatch =
             SearchAggregateBuilder.Create()
                 .WithProviderName("College")
-                    .Build();
+                .Build();
 
         SearchAggregate[] seed = [match, doesNotMatch];
 
@@ -69,7 +70,7 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
 
         SearchResultsComponent resultsComponent = new(document);
         SearchResult displayedResult = Assert.Single(resultsComponent.GetSearchResults());
-        Assert.Equal(match.ProviderName, displayedResult.Name);
+        Assert.Equal("school 1", displayedResult.Name.Text);
     }
 
     [Fact]
@@ -113,7 +114,7 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
 
         SearchResultsComponent resultsComponent = new(document);
         IReadOnlyList<SearchResult> searchResults = resultsComponent.GetSearchResults();
-        IReadOnlyList<string> searchResultNames = searchResults.Select(t => t.Name).ToList();
+        IReadOnlyList<string> searchResultNames = searchResults.Select(t => t.Name.Text).ToList();
 
         Assert.Equal(2, searchResults.Count);
         Assert.Contains(match1.ProviderName, searchResultNames);
@@ -166,7 +167,7 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
         SearchResultsComponent resultsComponent = new(document);
 
         IReadOnlyList<SearchResult> searchResults = resultsComponent.GetSearchResults();
-        IReadOnlyList<string> searchResultNames = searchResults.Select(t => t.Name).ToList();
+        IReadOnlyList<string> searchResultNames = searchResults.Select(t => t.Name.Text).ToList();
 
         Assert.Equal(2, searchResults.Count);
         Assert.Contains(match1.ProviderName, searchResultNames);
@@ -241,6 +242,115 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
 
         Assert.Equal(
             sortedSeedResults.Select(t => t.ProviderName).Take(defaultPageSize),
-            searchResults.Select(t => t.Name));
+            searchResults.Select(t => t.Name.Text));
+    }
+
+    [Fact]
+    public async Task Establishment_Result_Displayed_When_Searched_For()
+    {
+        // Arrange
+        CancellationToken ct = TestContext.Current.CancellationToken;
+
+        SearchAggregate match =
+            SearchAggregateBuilder.Create()
+                .WithEstablishment()
+                .WithProviderName("school 1")
+                .WithProviderTypeName("Multi Academy Trust")
+                .WithUrn(100_000)
+                .WithAddress("1 test street, testville, TE1 5ST")
+                .WithLocalAuthorityName("Stub local authority")
+                .Build();
+
+        await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableAggregates>([match], ct);
+
+        using HttpClient client = Factory.CreateClient();
+
+        using HttpRequestMessage message =
+            SearchHttpRequestBuilder.Create()
+                .WithBaseUri(Factory.Server.BaseAddress)
+                .WithIdentitySearchTerm("sch")
+                .Build();
+
+        // Act
+        using HttpResponseMessage response = await client.SendAsync(message, ct);
+
+        // Assert
+        using IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
+
+        SearchResultsComponent resultsComponent = new(document);
+
+        SearchResult displayedResult = Assert.Single(resultsComponent.GetSearchResults());
+        List<KeyValuePair<TextContent, TextContent>> displayedResultContent = [.. displayedResult.Values];
+        Assert.Equal("school 1", displayedResult.Name.Text);
+
+        Assert.Equal("URN", displayedResultContent[0].Key.Text);
+        Assert.Equal("100000", displayedResultContent[0].Value.Text);
+
+        Assert.Equal("Type", displayedResultContent[1].Key.Text);
+        Assert.Equal("Multi Academy Trust", displayedResultContent[1].Value.Text);
+
+        Assert.Equal("Address", displayedResultContent[2].Key.Text);
+        Assert.Equal("1 test street, testville, TE1 5ST", displayedResultContent[2].Value.Text);
+
+        Assert.Equal("Local authority", displayedResultContent[3].Key.Text);
+        Assert.Equal("Stub local authority", displayedResultContent[3].Value.Text);
+
+        Assert.Equal("Part of a group", displayedResultContent[4].Key.Text);
+        // TODO GroupId is not mapped?
+        // TODO GroupName is mapped incorrectly - identical to Name
+
+    }
+
+    [Fact]
+    public async Task Group_Result_Displayed_When_Searched_For()
+    {
+        // Arrange
+        CancellationToken ct = TestContext.Current.CancellationToken;
+
+        SearchAggregate match =
+            SearchAggregateBuilder.Create()
+                .WithGroup()
+                .WithProviderName("group 1")
+                .WithProviderId(1234)
+                .WithProviderTypeName("STUB-provider-type")
+                .WithAddress("1 test street, testville, TE1 5ST")
+                .WithAcademyCount(97)
+                .Build();
+
+        await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableAggregates>([match], ct);
+
+        using HttpClient client = Factory.CreateClient();
+
+        using HttpRequestMessage message =
+            SearchHttpRequestBuilder.Create()
+                .WithBaseUri(Factory.Server.BaseAddress)
+                .WithIdentitySearchTerm("group")
+                .Build();
+
+        // Act
+        using HttpResponseMessage response = await client.SendAsync(message, ct);
+
+        // Assert
+        using IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
+
+        SearchResultsComponent resultsComponent = new(document);
+
+        SearchResult displayedResult = Assert.Single(resultsComponent.GetSearchResults());
+        List<KeyValuePair<TextContent, TextContent>> displayedResultContent = [.. displayedResult.Values];
+        Assert.Equal("group 1", displayedResult.Name.Text);
+
+        Assert.Equal(4, displayedResult.Values.Count);
+
+        Assert.Equal("Group ID", displayedResultContent[0].Key.Text);
+        Assert.Equal("1234", displayedResultContent[0].Value.Text);
+
+        Assert.Equal("Type", displayedResultContent[1].Key.Text);
+        Assert.Equal("STUB-provider-type", displayedResultContent[1].Value.Text);
+
+        Assert.Equal("Address", displayedResultContent[2].Key.Text);
+        Assert.Equal("1 test street, testville, TE1 5ST", displayedResultContent[2].Value.Text);
+
+        Assert.Equal("Academies", displayedResultContent[3].Key.Text);
+        Assert.Equal("97", displayedResultContent[3].Value.Text);
     }
 }

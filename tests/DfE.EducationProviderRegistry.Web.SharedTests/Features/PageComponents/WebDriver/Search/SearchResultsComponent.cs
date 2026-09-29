@@ -2,9 +2,9 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 
-namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Search;
+namespace DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents.WebDriver.Search;
 
-internal sealed class SearchResultsComponent
+public sealed class SearchResultsComponent
 {
     private readonly WebDriverWait _defaultWaiter;
     private readonly IWebDriver _driver;

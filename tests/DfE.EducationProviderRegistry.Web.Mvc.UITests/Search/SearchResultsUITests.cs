@@ -1,5 +1,6 @@
 ﻿using DfE.EducationProviderRegistry.Core.Query.Test.Database.Data.Search;
 using DfE.EducationProviderRegistry.Data.DatabaseModels.Models;
+using DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents.WebDriver.Search;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
 using OpenQA.Selenium;
 

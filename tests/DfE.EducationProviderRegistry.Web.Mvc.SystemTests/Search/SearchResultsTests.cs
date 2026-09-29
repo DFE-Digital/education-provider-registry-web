@@ -297,7 +297,7 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
 
         Assert.Equal("Part of a group", displayedResultContent[4].Key.Text);
         // TODO GroupId is not mapped?
-        // TODO GroupName is mapped incorrectly?
+        // TODO GroupName is mapped incorrectly - identical to Name
 
     }
 

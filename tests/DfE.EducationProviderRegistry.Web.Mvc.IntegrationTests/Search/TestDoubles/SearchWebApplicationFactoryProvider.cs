@@ -12,13 +12,13 @@ internal static class SearchWebApplicationFactoryProvider
     public static WebApplicationFactory<Program> CreateFactory(IUseCase<SearchRequest, UseCaseResponse<SearchResponse>> stubUseCase)
     {
         return new WebApplicationFactory<Program>()
-                .WithWebHostBuilder(builder =>
-                    builder.ConfigureTestServices(services =>
-                    {
-                        services.RemoveAll<
-                            IUseCase<SearchRequest, UseCaseResponse<SearchResponse>>>();
+            .WithWebHostBuilder(builder =>
+                builder.ConfigureTestServices(services =>
+                {
+                    services.RemoveAll<
+                        IUseCase<SearchRequest, UseCaseResponse<SearchResponse>>>();
 
-                        services.AddSingleton(_ => stubUseCase);
-                    }));
+                    services.AddSingleton(_ => stubUseCase);
+                }));
     }
 }

@@ -1,7 +1,8 @@
-﻿using AngleSharp;
+﻿using System.Net.Http.Headers;
+using AngleSharp;
+using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Io;
-using System.Net.Http.Headers;
 
 namespace DfE.EducationProviderRegistry.Web.SharedTests.AngleSharp;
 
@@ -9,8 +10,8 @@ public static class HtmlHelpers
 {
     public static async Task<IHtmlDocument> GetDocumentAsync(HttpResponseMessage response)
     {
-        var content = await response.Content.ReadAsStringAsync();
-        var document = await BrowsingContext.New()
+        string content = await response.Content.ReadAsStringAsync();
+        IDocument document = await BrowsingContext.New()
             .OpenAsync(ResponseFactory, CancellationToken.None);
         return (IHtmlDocument)document;
 
@@ -30,9 +31,9 @@ public static class HtmlHelpers
 
             void MapHeaders(HttpHeaders headers)
             {
-                foreach (var header in headers)
+                foreach (KeyValuePair<string, IEnumerable<string>> header in headers)
                 {
-                    foreach (var value in header.Value)
+                    foreach (string value in header.Value)
                     {
                         htmlResponse.Header(header.Key, value);
                     }

@@ -6,7 +6,7 @@ using DfE.EducationProviderRegistry.Web.Mvc.Middleware;
 using DfE.EducationProviderRegistry.Web.Mvc.Settings;
 using Microsoft.AspNetCore.CookiePolicy;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services
@@ -16,7 +16,7 @@ builder.Services
         options.ViewLocationExpanders.Add(new FeatureViewLocationExpander());
     })
     .AddApplicationPart(typeof(
-        DfE.EducationProviderRegistry.Web.ViewComponents.Table.SharedGovUkTableViewComponent).Assembly);
+        DfE.EducationProviderRegistry.Web.ViewComponents.Table.GovUkTableViewComponent).Assembly);
 
 
 builder.Services.AddRouting(options =>
@@ -46,7 +46,7 @@ builder.Services.Configure<GoogleAnalyticsSettings>(
     builder.Configuration.GetSection(nameof(GoogleAnalyticsSettings))
 );
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

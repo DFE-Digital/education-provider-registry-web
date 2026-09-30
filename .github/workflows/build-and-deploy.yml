@@ -154,7 +154,6 @@ jobs:
 
     - name: SonarCloud scan
       if: github.actor != 'dependabot[bot]'
-      # awaiting review of central github-actions repo https://github.com/DFE-Digital/github-actions/pull/242
       uses: DFE-Digital/github-actions/sonarscan-dotnet@e1f86e30746687554ae0aaabf7d8feb7a502f19a
       with:
           sonarcloud-project-key: DFE-Digital_education-provider-registry-web

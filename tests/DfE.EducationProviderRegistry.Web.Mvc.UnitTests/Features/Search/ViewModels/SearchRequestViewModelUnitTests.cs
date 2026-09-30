@@ -18,7 +18,7 @@ public sealed class SearchRequestViewModelUnitTests
         };
 
         // act
-        var result = vm.SelectedFacets;
+        Dictionary<string, List<string>> result = vm.SelectedFacets;
 
         // assert
         Assert.NotNull(result);

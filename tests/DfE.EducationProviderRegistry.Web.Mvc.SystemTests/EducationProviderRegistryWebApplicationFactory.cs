@@ -11,15 +11,20 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.SystemTests;
 public sealed class EducationProviderRegistryWebApplicationFactory : WebApplicationFactory<Program>
 {
     private readonly string _connectionString;
+    private readonly Action<IConfigurationBuilder>? _configureConfiguration;
     private readonly Action<IServiceCollection> _configureHostServices;
 
-    public EducationProviderRegistryWebApplicationFactory(string connectionString, Action<IServiceCollection> configureHostServices)
+    public EducationProviderRegistryWebApplicationFactory(
+        string connectionString,
+        Action<IServiceCollection>? configureHostServices = null,
+        Action<IConfigurationBuilder>? configureConfiguration = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(connectionString);
         _connectionString = connectionString;
+        _configureConfiguration = configureConfiguration;
+        _configureHostServices = configureHostServices ??= services => { };
 
-        ArgumentNullException.ThrowIfNull(configureHostServices);
-        _configureHostServices = configureHostServices;
+
 
         // Removes https redirect warnings 
         ClientOptions.BaseAddress = new("https://localhost");
@@ -37,7 +42,6 @@ public sealed class EducationProviderRegistryWebApplicationFactory : WebApplicat
         builder.ConfigureTestServices(_configureHostServices);
     }
 
-
     protected override IHost CreateHost(IHostBuilder builder)
     {
         // Application binds config directly limitation requires host configuration https://github.com/dotnet/aspnetcore/issues/37680
@@ -46,6 +50,8 @@ public sealed class EducationProviderRegistryWebApplicationFactory : WebApplicat
             config.AddInMemoryCollection([
                 new("eprweb_eprdat_dotnet_db_connection", _connectionString)
             ]);
+
+            _configureConfiguration?.Invoke(config);
         });
 
         return base.CreateHost(builder);

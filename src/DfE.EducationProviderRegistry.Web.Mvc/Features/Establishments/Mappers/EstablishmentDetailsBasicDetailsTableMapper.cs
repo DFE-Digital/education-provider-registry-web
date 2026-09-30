@@ -1,9 +1,9 @@
-﻿using DfE.Core.Libraries.CrossCutting.Mapper;
+﻿using System.Globalization;
+using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.Model;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
-using System.Globalization;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments.Mappers;
 
@@ -104,7 +104,7 @@ public class EstablishmentDetailsBasicDetailsTableMapper :
         {
             builder.AddRow(
                 new TableCell { Text = "Website", IsBold = true },
-                new TableCell { Text = dto.ContactDetails.Website, Href = dto.ContactDetails.Website, OpenInNewTab = true });
+                new TableCell { Text = dto.ContactDetails.Website, Href = MappingHelpers.CreateWebsiteUrl(dto.ContactDetails.Website), OpenInNewTab = true });
         }
 
         if (dto.ContactDetails?.TelephoneNumber is not null)

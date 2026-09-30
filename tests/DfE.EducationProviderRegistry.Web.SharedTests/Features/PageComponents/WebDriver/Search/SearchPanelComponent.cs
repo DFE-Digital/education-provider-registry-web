@@ -1,9 +1,10 @@
-﻿using OpenQA.Selenium;
+﻿using DfE.WebDriver.WebDriver.Extensions;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 
-namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Search;
+namespace DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents.WebDriver.Search;
 
-internal sealed class SearchPanelComponent
+public sealed class SearchPanelComponent
 {
     private readonly WebDriverWait _defaultWaiter;
 

@@ -1,11 +1,12 @@
-﻿using Deque.AxeCore.Commons;
+﻿using System.Text;
+using Deque.AxeCore.Commons;
 using Deque.AxeCore.Selenium;
 using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Actions;
+using DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Actions.Handlers;
 using DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.ApplicationContainer;
 using DfE.WebDriver.Public.Session;
 using Microsoft.Extensions.Configuration;
 using OpenQA.Selenium;
-using System.Text;
 using Xunit.Sdk;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests;

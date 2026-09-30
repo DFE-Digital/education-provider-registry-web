@@ -1,8 +1,8 @@
-﻿using DfE.Core.Libraries.CrossCutting.Mapper;
+﻿using System.Diagnostics.CodeAnalysis;
+using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 using Moq;
-using System.Diagnostics.CodeAnalysis;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Mappers.TestDoubles;
 
@@ -18,7 +18,7 @@ internal static class FacetsMapperTestDouble
         List<FacetViewModel>>> MockFor(
         List<SearchFacet> facets, List<FacetViewModel> results)
     {
-        var facetsMapper = Mock();
+        Mock<IMapper<IReadOnlyCollection<SearchFacet>, List<FacetViewModel>>> facetsMapper = Mock();
 
         facetsMapper.Setup(mapper =>
             mapper.Map(facets)).Returns(results);

@@ -1,4 +1,4 @@
-﻿namespace DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Actions;
+﻿namespace DfE.EducationProviderRegistry.Web.Mvc.AccessibilityTests.Actions.Handlers;
 
 public interface IAccessibilityScanActionHandler
 {

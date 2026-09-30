@@ -9,7 +9,7 @@ public class GoogleAnalyticsSettingsTests
     [Fact]
     public void Domain_ReturnsGoogleTagManagerBaseUrl()
     {
-        var settings = new GoogleAnalyticsSettings();
+        GoogleAnalyticsSettings settings = new GoogleAnalyticsSettings();
 
         Assert.Equal(
             "https://www.googletagmanager.com",
@@ -28,7 +28,7 @@ public class GoogleAnalyticsSettingsTests
         string? authenticationId,
         string? previewValue)
     {
-        var settings = new GoogleAnalyticsSettings
+        GoogleAnalyticsSettings settings = new GoogleAnalyticsSettings
         {
             AuthenticationId = authenticationId,
             PreviewValue = previewValue
@@ -40,7 +40,7 @@ public class GoogleAnalyticsSettingsTests
     [Fact]
     public void TagManagerQueryString_WhenCredentialsAreProvided_ReturnsEncodedQueryString()
     {
-        var settings = new GoogleAnalyticsSettings
+        GoogleAnalyticsSettings settings = new GoogleAnalyticsSettings
         {
             AuthenticationId = "a+b&c",
             PreviewValue = "env 3"
@@ -60,12 +60,12 @@ public class GoogleAnalyticsSettingsTests
     public void IsGoogleTagManagerEnabled_WhenContainerIdIsMissing_ReturnsFalse(
         string? containerId)
     {
-        var settings = new GoogleAnalyticsSettings
+        GoogleAnalyticsSettings settings = new GoogleAnalyticsSettings
         {
             ContainerId = containerId
         };
 
-        var context = CreateContext("yes");
+        DefaultHttpContext context = CreateContext("yes");
 
         Assert.False(settings.IsGoogleTagManagerEnabled(context));
     }
@@ -78,12 +78,12 @@ public class GoogleAnalyticsSettingsTests
         string? consentValue,
         bool expected)
     {
-        var settings = new GoogleAnalyticsSettings
+        GoogleAnalyticsSettings settings = new GoogleAnalyticsSettings
         {
             ContainerId = "GTM-TEST123"
         };
 
-        var context = CreateContext(consentValue);
+        DefaultHttpContext context = CreateContext(consentValue);
 
         Assert.Equal(
             expected,
@@ -93,7 +93,7 @@ public class GoogleAnalyticsSettingsTests
     [Fact]
     public void IsGoogleTagManagerEnabled_WhenContextIsNull_ReturnsFalse()
     {
-        var settings = new GoogleAnalyticsSettings
+        GoogleAnalyticsSettings settings = new GoogleAnalyticsSettings
         {
             ContainerId = "GTM-TEST123"
         };
@@ -103,7 +103,7 @@ public class GoogleAnalyticsSettingsTests
 
     private static DefaultHttpContext CreateContext(string? consentValue)
     {
-        var context = new DefaultHttpContext();
+        DefaultHttpContext context = new DefaultHttpContext();
 
         if (consentValue is not null)
         {

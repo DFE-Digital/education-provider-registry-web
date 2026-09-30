@@ -10,10 +10,8 @@
   </ItemGroup>
 
   <ItemGroup>
-	<PackageReference Include="Selenium.Support" />
-	<PackageReference Include="Selenium.WebDriver" />
-	<PackageReference Include="Xunit.DependencyInjection" />
-	<PackageReference Include="Xunit.DependencyInjection.Logging" />
+	  <PackageReference Include="Xunit.DependencyInjection" />
+	  <PackageReference Include="Xunit.DependencyInjection.Logging" />
     <PackageReference Include="xunit.v3.mtp-v2" />
   </ItemGroup>
 

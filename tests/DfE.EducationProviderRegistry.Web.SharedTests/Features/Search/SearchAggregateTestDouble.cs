@@ -5,7 +5,9 @@ namespace DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
 
 public static class SearchAggregateTestDouble
 {
-    public static IReadOnlyCollection<SearchAggregate> CreateResults(int count = 10)
+    public static IReadOnlyCollection<SearchAggregate> CreateResults(
+        int count = 10,
+        string namePrefix = "school")
     {
         List<SearchAggregate> output = [];
 
@@ -15,7 +17,7 @@ public static class SearchAggregateTestDouble
 
             SearchAggregateBuilder builder =
                 SearchAggregateBuilder.Create()
-                    .WithProviderName($"school {index}")
+                    .WithProviderName($"{namePrefix} {index}")
                     .WithProviderTypeId(isMulti ? 1L : 2L)
                     .WithProviderTypeName(isMulti ? "Mutli-Academy Trust" : "Single-Academy Trust");
 

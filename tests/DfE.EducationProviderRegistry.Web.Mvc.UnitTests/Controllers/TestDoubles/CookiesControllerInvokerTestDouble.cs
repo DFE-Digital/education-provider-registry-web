@@ -1,5 +1,5 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.Controllers;
-using System.Reflection;
+﻿using System.Reflection;
+using DfE.EducationProviderRegistry.Web.Mvc.Controllers;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Controllers.TestDoubles;
 

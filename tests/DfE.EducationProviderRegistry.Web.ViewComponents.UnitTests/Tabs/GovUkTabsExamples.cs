@@ -39,7 +39,7 @@ internal static class GovUkTabsExamples
 
     private static TabContent PastDayStatistics() =>
         new(
-            "SharedGovUkTable",
+            "GovUkTable",
             new GovUkTable(
                 columns:
                 [
@@ -56,7 +56,7 @@ internal static class GovUkTabsExamples
 
     private static TabContent PastWeekStatistics() =>
         new(
-            "SharedGovUkTable",
+            "GovUkTable",
             new GovUkTable(
                 columns:
                 [
@@ -73,7 +73,7 @@ internal static class GovUkTabsExamples
 
     private static TabContent PastMonthStatistics() =>
         new(
-            "SharedGovUkTable",
+            "GovUkTable",
             new GovUkTable(
                 columns:
                 [
@@ -90,7 +90,7 @@ internal static class GovUkTabsExamples
 
     private static TabContent PastYearStatistics() =>
         new(
-            "SharedGovUkTable",
+            "GovUkTable",
             new GovUkTable(
                 columns:
                 [

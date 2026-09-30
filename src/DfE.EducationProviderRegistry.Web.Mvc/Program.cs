@@ -16,7 +16,7 @@ builder.Services
         options.ViewLocationExpanders.Add(new FeatureViewLocationExpander());
     })
     .AddApplicationPart(typeof(
-        DfE.EducationProviderRegistry.Web.ViewComponents.Table.SharedGovUkTableViewComponent).Assembly);
+        DfE.EducationProviderRegistry.Web.ViewComponents.Table.GovUkTableViewComponent).Assembly);
 
 
 builder.Services.AddRouting(options =>

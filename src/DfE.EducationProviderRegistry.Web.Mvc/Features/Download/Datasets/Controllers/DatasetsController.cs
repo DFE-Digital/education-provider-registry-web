@@ -35,24 +35,30 @@ public sealed class DatasetsController : Controller
     }
 
     [HttpGet("")]
-    public IActionResult Index() => View("Index");
+    public IActionResult Index() => View(nameof(Index));
 
     [HttpPost("downloading")]
-    public async Task<IActionResult> StartDownloading() => 
-        RedirectToAction("Downloading");
+    public IActionResult StartDownloading(DownloadDatasetRequestViewModel viewModel)
+    {
+        TempData.Remove(DownloadedViewModelKey);
+        return RedirectToAction(nameof(Downloading), viewModel);
+    }
 
     [HttpGet("downloading")]
-    public IActionResult Downloading() => View("Downloading");
+    public IActionResult Downloading(DownloadDatasetRequestViewModel viewModel)
+    {
+        return View(nameof(Downloading), viewModel);
+    }
 
     [HttpGet("file")]
-    public async Task<IActionResult> FileDownload()
+    public async Task<IActionResult> FileDownload(string filename)
     {
-        DownloadDatasetsRequest request = new(filename: string.Empty);
+        DownloadDatasetsRequest request = new(filename);
 
         UseCaseResponse<DownloadDatasetsResponse> response =
             await _downloadDatasetUsecase.HandleRequestAsync(request) ??
                 throw new InvalidOperationException("Use case returned a null response.");
-        
+
         DownloadDatasetsResponse model = response.Model
             ?? throw new InvalidOperationException("Use case response.Model was null.");
 
@@ -66,9 +72,10 @@ public sealed class DatasetsController : Controller
             JsonSerializer.Serialize(viewModel);
 
         return File(
-            dataset.File,
+            dataset.FileStream,
             "application/zip",
-            dataset.Filename + ".zip");
+            dataset.Filename + ".zip",
+            enableRangeProcessing: true);
     }
 
     [HttpGet("status")]
@@ -81,12 +88,16 @@ public sealed class DatasetsController : Controller
     [HttpGet("complete")]
     public IActionResult Complete()
     {
-        string jsonViewModel =
-            TempData.Peek(DownloadedViewModelKey)!.ToString()!;
-        
+        if (!TempData.TryGetValue(DownloadedViewModelKey, out object? jsonObj) || jsonObj is null)
+        {
+            return RedirectToAction(nameof(Index));
+        }
+
+        string jsonViewModel = jsonObj.ToString()!;
+
         DownloadedDatasetViewModel viewModel =
             JsonSerializer.Deserialize<DownloadedDatasetViewModel>(jsonViewModel)!;
 
-        return View("Complete", viewModel);
+        return View(nameof(Complete), viewModel);
     }
 }

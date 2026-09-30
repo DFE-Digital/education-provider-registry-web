@@ -24,13 +24,15 @@ public sealed class UseCaseResponseToViewModelMapperTests
     public void Map_ThrowsInvalidOperationException_WhenFilenameIsNull()
     {
         // arrange
+        byte[] fileBytes = [];
+
         Dataset dataset =
             new(
-                Filename: "test-dataset",
+                Filename: null!,
                 DataType: "All Establishments",
                 DataFormat: "CSV",
                 FileSize: 123,
-                File: []
+                FileStream: new MemoryStream(fileBytes)
             );
 
         // act
@@ -47,13 +49,15 @@ public sealed class UseCaseResponseToViewModelMapperTests
     public void Map_ThrowsInvalidOperationException_WhenDataTypeIsNull()
     {
         // arrange
+        byte[] fileBytes = [];
+
         Dataset dataset =
             new(
                 Filename: "test-dataset",
                 DataType: null!,
                 DataFormat: "CSV",
                 FileSize: 123,
-                File: []
+                FileStream: new MemoryStream(fileBytes)
             );
 
         // act
@@ -70,13 +74,15 @@ public sealed class UseCaseResponseToViewModelMapperTests
     public void Map_ThrowsInvalidOperationException_WhenDataFormatIsNull()
     {
         // arrange
+        byte[] fileBytes = [];
+
         Dataset dataset =
             new(
                 Filename: "test-dataset",
                 DataType: "All Establishments",
                 DataFormat: null!,
-                FileSize: 123,
-                File: []
+                FileSize: fileBytes.Length,
+                FileStream: new MemoryStream(fileBytes)
             );
 
         // act
@@ -93,13 +99,15 @@ public sealed class UseCaseResponseToViewModelMapperTests
     public void Map_ReturnsCorrectViewModel_WhenInputIsValid()
     {
         // arrange
+        byte[] fileBytes = [1, 2, 3];
+
         Dataset dataset =
             new(
                 Filename: "test-dataset",
                 DataType: "All Establishments",
                 DataFormat: "CSV",
                 FileSize: 123,
-                File: [1,2,3]
+                FileStream: new MemoryStream(fileBytes)
             );
 
         UseCaseReponseToViewModelMapper mapper = new();

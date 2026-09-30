@@ -1,8 +1,16 @@
-﻿@{
-    List<BreadcrumbViewModel> breadcrumbs =
-        new(){
-            new("Home", "Home", "Index"),
-        };
+﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Download.Datasets.ViewModels
+@model DownloadDatasetRequestViewModel
+
+@{
+    List<BreadcrumbViewModel> breadcrumbs = new()
+    {
+        new("Home", "Home", "Index"),
+    };
+
+    string downloadUrl = Url.Action(
+        "FileDownload",
+        "Datasets",
+        new { filename = Model.Filename })!;
 }
 
 @section Breadcrumbs
@@ -20,37 +28,63 @@
 
         <div id="download-spinner" class="govuk-spinner"></div>
 
-        <!-- Hidden iframe triggers the actual download -->
-        <iframe id="downloadFrame"
-                src="/datasets/file"
-                style="display:none;"></iframe>
+        <!--
+          FIX: Set the src attribute immediately on page load.
+          This kicks off FileDownload in the background right away.
+        -->
+        <iframe id="download-frame" src="@downloadUrl" style="display: none;" aria-hidden="true"></iframe>
 
         <noscript>
-            <meta http-equiv="refresh" content="0; url=/datasets/file">
+            <p class="govuk-body">
+                JavaScript is required to monitor the download status.
+            </p>
+
+            <a href="@downloadUrl" class="govuk-link">Download the file manually</a>
         </noscript>
     </main>
 </div>
 
 <script>
+    const startTime = Date.now();
+    const minSpinnerTime = 500; // Minimum time to show spinner (1/2 second)
+
     function checkStatus() {
-        fetch('/datasets/status')
-            .then(r => r.json())
+        fetch('@Url.Action("Status", "Datasets")')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Status request failed: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.ready) {
-                    window.location.href = '/datasets/complete';
-                } else {
-                    setTimeout(checkStatus, 500);
+                    const elapsedTime = Date.now() - startTime;
+                    const remainingTime = Math.max(0, minSpinnerTime - elapsedTime);
+
+                    // Wait for the minimum spinner time, then redirect to the complete page.
+                    // (We do NOT touch the iframe here, because it already downloaded the file on page load.)
+                    window.setTimeout(() => {
+                        window.location.href = '@Url.Action("Complete", "Datasets")';
+                    }, remainingTime);
+
+                    return;
+                }
+
+                // Poll again after 500ms
+                window.setTimeout(checkStatus, 500);
+            })
+            .catch(error => {
+                console.error(error);
+                document.getElementById('download-status').textContent =
+                    'There was a problem preparing your download.';
+
+                const spinner = document.getElementById('download-spinner');
+                if (spinner) {
+                    spinner.style.display = 'none';
                 }
             });
     }
 
-    // Start polling
+    // Start polling immediately
     checkStatus();
-
-    // Trigger the download
-    const iframe = document.createElement('iframe');
-    iframe.style.display = 'none';
-    iframe.src = '/datasets/file';
-    document.body.appendChild(iframe);
 </script>
-

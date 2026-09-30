@@ -30,10 +30,4 @@
 	<ProjectReference Include="..\DfE.EducationProviderRegistry.Web.SharedTests\DfE.EducationProviderRegistry.Web.SharedTests.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="DfE.EducationProviderRegistry.Core.Query">
-      <HintPath>..\..\src\DfE.EducationProviderRegistry.Web.Mvc\TestAssemblies\DfE.EducationProviderRegistry.Core.Query.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>

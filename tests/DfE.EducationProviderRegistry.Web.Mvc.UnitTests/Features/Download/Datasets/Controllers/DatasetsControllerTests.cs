@@ -65,7 +65,12 @@ public sealed class DatasetsControllerTests
         DatasetsController controller = CreateController(useCaseMock, mapperMock);
 
         // act
-        IActionResult result = await controller.StartDownloading();
+        DownloadDatasetRequestViewModel viewModel =
+            new(){
+                Filename = "file",
+            };
+
+        IActionResult result = controller.StartDownloading(viewModel);
 
         // assert
         RedirectToActionResult redirect = Assert.IsType<RedirectToActionResult>(result);
@@ -85,7 +90,12 @@ public sealed class DatasetsControllerTests
         DatasetsController controller = CreateController(useCaseMock, mapperMock);
 
         // act
-        IActionResult result = controller.Downloading();
+        DownloadDatasetRequestViewModel viewModel =
+            new(){
+                Filename = "file",
+            };
+
+        IActionResult result = controller.Downloading(viewModel);
 
         // assert
         ViewResult view = Assert.IsType<ViewResult>(result);
@@ -96,13 +106,16 @@ public sealed class DatasetsControllerTests
     public async Task FileDownload_ReturnsFileResult_AndStoresTempData()
     {
         // arrange
-        Dataset dataset = new(
-            Filename: "test-dataset",
-            DataType: "All Establishments",
-            DataFormat: "CSV",
-            FileSize: 123,
-            File: [1, 2, 3]
-        );
+        byte[] fileBytes = [1, 2, 3];
+
+        Dataset dataset =
+            new(
+                Filename: "test-dataset",
+                DataType: "All Establishments",
+                DataFormat: "CSV",
+                FileSize: fileBytes.Length,
+                FileStream: new MemoryStream(fileBytes)
+            );
 
         DownloadDatasetsResponse responseModel = new(dataset);
 
@@ -126,13 +139,21 @@ public sealed class DatasetsControllerTests
         DatasetsController controller = CreateController(useCaseMock, mapperMock);
 
         // act
-        IActionResult result = await controller.FileDownload();
+        const string DatasetFileName = "test-dataset";
+        IActionResult result = await controller.FileDownload(DatasetFileName);
 
         // assert
-        FileContentResult fileResult = Assert.IsType<FileContentResult>(result);
+        FileStreamResult fileResult = Assert.IsType<FileStreamResult>(result);
         Assert.Equal("application/zip", fileResult.ContentType);
-        Assert.Equal("test-dataset.zip", fileResult.FileDownloadName);
-        Assert.Equal(dataset.File, fileResult.FileContents);
+        Assert.Equal($"{DatasetFileName}.zip", fileResult.FileDownloadName);
+
+        using (var memoryStream = new MemoryStream())
+        {
+            dataset.FileStream.CopyTo(memoryStream);
+            byte[] byteArray = memoryStream.ToArray();
+
+            Assert.Equal(byteArray, fileBytes);
+        }
 
         Assert.True(controller.TempData.ContainsKey("DownloadedViewModel"));
     }

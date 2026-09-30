@@ -1,8 +1,8 @@
-﻿using DfE.Core.Libraries.CleanArchitecture.Application;
+﻿using System.Diagnostics.CodeAnalysis;
+using DfE.Core.Libraries.CleanArchitecture.Application;
 using DfE.EducationProviderRegistry.Core.Query.Download.Datasets.Application.UseCases.Request;
 using DfE.EducationProviderRegistry.Core.Query.Download.Datasets.Application.UseCases.Response;
 using Moq;
-using System.Diagnostics.CodeAnalysis;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Download.Datasets.Controllers.TestDoubles;
 

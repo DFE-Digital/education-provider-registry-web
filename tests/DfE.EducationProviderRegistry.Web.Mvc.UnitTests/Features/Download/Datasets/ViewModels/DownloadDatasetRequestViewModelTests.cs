@@ -1,5 +1,5 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Download.Datasets.ViewModels;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Download.Datasets.ViewModels;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Download.Datasets.ViewModels;
 
@@ -18,7 +18,8 @@ public sealed class DownloadDatasetRequestViewModelTests
     {
         // arrange
         DownloadDatasetRequestViewModel viewModel =
-            new(){
+            new()
+            {
                 Filename = null
             };
 
@@ -36,7 +37,8 @@ public sealed class DownloadDatasetRequestViewModelTests
     {
         // arrange
         DownloadDatasetRequestViewModel viewModel =
-            new(){
+            new()
+            {
                 Filename = string.Empty
             };
 
@@ -54,7 +56,8 @@ public sealed class DownloadDatasetRequestViewModelTests
     {
         // arrange
         DownloadDatasetRequestViewModel viewModel =
-            new(){
+            new()
+            {
                 Filename = "dataset.csv"
             };
 

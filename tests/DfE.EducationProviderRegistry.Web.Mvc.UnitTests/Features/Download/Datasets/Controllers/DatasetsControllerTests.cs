@@ -1,4 +1,5 @@
-﻿using DfE.Core.Libraries.CleanArchitecture.Application;
+﻿using System.Text.Json;
+using DfE.Core.Libraries.CleanArchitecture.Application;
 using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Download.Datasets.Application.Models;
 using DfE.EducationProviderRegistry.Core.Query.Download.Datasets.Application.UseCases.Request;
@@ -10,7 +11,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
-using System.Text.Json;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Download.Datasets.Controllers;
 
@@ -66,7 +66,8 @@ public sealed class DatasetsControllerTests
 
         // act
         DownloadDatasetRequestViewModel viewModel =
-            new(){
+            new()
+            {
                 Filename = "file",
             };
 
@@ -91,7 +92,8 @@ public sealed class DatasetsControllerTests
 
         // act
         DownloadDatasetRequestViewModel viewModel =
-            new(){
+            new()
+            {
                 Filename = "file",
             };
 
@@ -126,7 +128,8 @@ public sealed class DatasetsControllerTests
             DownloadDatasetsUseCaseTestDouble.MockFor(useCaseResponse);
 
         DownloadedDatasetViewModel viewModel =
-            new() {
+            new()
+            {
                 Filename = dataset.Filename!,
                 FileSize = dataset.FileSize,
                 FileFormat = dataset.DataFormat,
@@ -213,11 +216,13 @@ public sealed class DatasetsControllerTests
         DatasetsController controller = CreateController(useCaseMock, mapperMock);
 
         DownloadedDatasetViewModel viewModel =
-            new() {
+            new()
+            {
                 Filename = "file",
                 FileFormat = "All Establishments",
                 ContentType = "CSV",
-                FileSize = 123 };
+                FileSize = 123
+            };
 
         controller.TempData["DownloadedViewModel"] =
             JsonSerializer.Serialize(viewModel);

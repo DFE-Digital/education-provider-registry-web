@@ -1,8 +1,8 @@
-﻿using DfE.Core.Libraries.CrossCutting.Mapper;
+﻿using System.Diagnostics.CodeAnalysis;
+using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Download.Datasets.Application.Models;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Download.Datasets.ViewModels;
 using Moq;
-using System.Diagnostics.CodeAnalysis;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Download.Datasets.Controllers.TestDoubles;
 

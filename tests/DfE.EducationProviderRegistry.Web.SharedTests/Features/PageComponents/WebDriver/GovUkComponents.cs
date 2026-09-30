@@ -1,8 +1,8 @@
 ﻿using OpenQA.Selenium;
 
-namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Components;
+namespace DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents.WebDriver;
 
-internal class GovUkComponents
+public class GovUkComponents
 {
     public GovUkComponents(IWebDriver driver)
     {

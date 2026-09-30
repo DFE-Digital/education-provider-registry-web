@@ -1,9 +1,10 @@
-﻿using OpenQA.Selenium;
+﻿using DfE.WebDriver.WebDriver.Extensions;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 
-namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Components;
+namespace DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents.WebDriver;
 
-internal sealed class GovUkCookieBanner
+public sealed class GovUkCookieBanner
 {
     private readonly WebDriverWait _defaultWait;
 
@@ -17,7 +18,7 @@ internal sealed class GovUkCookieBanner
         _defaultWait.Click(By.CssSelector(".govuk-cookie-banner button[value='false']"));
     }
 
-    internal void Accept()
+    public void Accept()
     {
         _defaultWait.Click(By.CssSelector(".govuk-cookie-banner button[value='true']"));
     }

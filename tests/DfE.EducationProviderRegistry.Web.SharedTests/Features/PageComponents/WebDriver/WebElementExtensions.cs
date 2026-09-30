@@ -1,9 +1,8 @@
-﻿using DfE.EducationProviderRegistry.Web.MVC.UITests.Components;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 
-namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Extensions;
+namespace DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents.WebDriver;
 
-internal static class WebElementExtensions
+public static class WebElementExtensions
 {
     public static GovUkTable ToGovUkTable(this IWebElement table)
     {

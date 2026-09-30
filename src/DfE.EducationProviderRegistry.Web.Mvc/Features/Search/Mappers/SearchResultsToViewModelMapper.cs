@@ -1,5 +1,6 @@
 ﻿using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
+using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 
@@ -26,7 +27,7 @@ public sealed class SearchResultsToViewModelMapper : IMapper<SearchResultsMappin
     {
         ArgumentNullException.ThrowIfNull(input);
 
-        var searchResponse = input.SearchResponse.Model
+        SearchResponse searchResponse = input.SearchResponse.Model
             ?? throw new ArgumentException(
                 "SearchResponse model cannot be null.",
                 nameof(input));

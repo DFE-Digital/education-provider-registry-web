@@ -1,8 +1,8 @@
-﻿using OpenQA.Selenium;
+﻿using System.Collections.ObjectModel;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
-using System.Collections.ObjectModel;
 
-namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Components;
+namespace DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents.WebDriver;
 
 public sealed class GovUkDetailsComponent
 {

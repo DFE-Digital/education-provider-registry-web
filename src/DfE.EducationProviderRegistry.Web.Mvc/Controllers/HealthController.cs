@@ -1,16 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.Controllers
+namespace DfE.EducationProviderRegistry.Web.Mvc.Controllers;
+
+public class HealthController : Controller
 {
-    public class HealthController : Controller
+    public IActionResult Index()
     {
-        public IActionResult Index()
+        return Ok(new
         {
-            return Ok(new
-            {
-                status = "Service is running",
-                timestamp = DateTime.UtcNow
-            });
-        }
+            status = "Service is running",
+            timestamp = DateTime.UtcNow
+        });
     }
 }

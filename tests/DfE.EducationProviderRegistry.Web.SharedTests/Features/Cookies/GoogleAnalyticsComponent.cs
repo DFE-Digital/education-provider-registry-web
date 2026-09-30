@@ -2,9 +2,9 @@
 using AngleSharp.Html.Dom;
 using DfE.EducationProviderRegistry.Web.Mvc.Settings;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Analytics.GoogleTagManger;
+namespace DfE.EducationProviderRegistry.Web.SharedTests.Features.Cookies;
 
-internal sealed class GoogleAnalyticsComponent
+public sealed class GoogleAnalyticsComponent
 {
     private readonly IHtmlDocument _doc;
     private readonly GoogleAnalyticsSettings _settings;

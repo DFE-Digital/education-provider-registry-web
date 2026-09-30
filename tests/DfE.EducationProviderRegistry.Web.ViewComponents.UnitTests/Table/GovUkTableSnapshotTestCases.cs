@@ -3,7 +3,7 @@
 internal static class GovUkTableSnapshotTestCases
 {
     private const string DefaultView =
-        "/Views/Shared/Components/SharedGovUkTable/Default.cshtml";
+        "/Views/Shared/Components/GovUkTable/Default.cshtml";
 
     public static IReadOnlyList<ViewComponentSnapshotTestCase> All =>
     [

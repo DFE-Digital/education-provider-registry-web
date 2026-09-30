@@ -1,9 +1,9 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.Controllers;
+﻿using System.Text.Json;
+using DfE.EducationProviderRegistry.Web.Mvc.Controllers;
 using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Controllers.TestDoubles;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Controllers;
 

@@ -1,13 +1,13 @@
-﻿using AngleSharp.Html.Dom;
+﻿using System.Net;
+using AngleSharp.Html.Dom;
 using DfE.EducationProviderRegistry.Web.Mvc.Settings;
 using DfE.EducationProviderRegistry.Web.SharedTests.AngleSharp.Extensions;
+using DfE.EducationProviderRegistry.Web.SharedTests.Features.Cookies;
+using DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.WebApplicationFactory.Extensions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.Mvc.Testing.Handlers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using System.Net;
-using DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.WebApplicationFactory.Extensions;
-using DfE.EducationProviderRegistry.Web.SharedTests.Features.Cookies;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Analytics.GoogleTagManger;
 

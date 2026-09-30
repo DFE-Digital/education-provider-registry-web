@@ -1,5 +1,5 @@
-﻿using DfE.EducationProviderRegistry.Web.MVC.UITests.Components;
-using DfE.EducationProviderRegistry.Web.MVC.UITests.Search;
+﻿using DfE.EducationProviderRegistry.Web.MVC.UITests.Search;
+using DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents.WebDriver;
 using DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.ApplicationContainer;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
@@ -85,7 +85,7 @@ public sealed class AnalyticsUITests : UIBaseTest
         await webDriver.Manage().Network.StartMonitoring();
         await webDriver.Navigate().GoToUrlAsync(application.GetApplicationUrl());
 
-        foreach (var handler in handlers)
+        foreach (NetworkRequestHandler handler in handlers)
         {
             webDriver.Manage().Network.AddRequestHandler(handler);
         }

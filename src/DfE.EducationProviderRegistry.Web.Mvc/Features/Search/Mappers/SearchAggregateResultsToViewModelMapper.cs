@@ -73,7 +73,7 @@ public sealed class SearchAggregateCategoryEstablishmentMapper : ISearchAggregat
 
         builder.AddRow(
             new TableCell { Text = "Address" },
-            new TableCell { Text = input.Address.FullAddress });
+            new TableCell { Text = input.Address?.FullAddress });
 
         builder.AddRow(
             new TableCell { Text = "Local authority" },

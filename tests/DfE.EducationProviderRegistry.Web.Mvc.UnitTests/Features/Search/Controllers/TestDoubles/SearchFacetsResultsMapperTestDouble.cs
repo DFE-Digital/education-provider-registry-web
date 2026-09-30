@@ -1,8 +1,8 @@
-﻿using DfE.Core.Libraries.CrossCutting.Mapper;
+﻿using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
+using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Filter;
 using Moq;
-using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Controllers.TestDoubles;
 

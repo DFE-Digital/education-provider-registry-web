@@ -2,13 +2,13 @@
 
 namespace DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 
-public class SharedGovUkTableViewComponent : ViewComponent
+public class GovUkTableViewComponent : ViewComponent
 {
     public Task<IViewComponentResult> InvokeAsync(GovUkTable model)
     {
         return Task.FromResult(
             View(
-                "/Views/Shared/Components/SharedGovUkTable/Default.cshtml",
+                "/Views/Shared/Components/GovUkTable/Default.cshtml",
                 model) as IViewComponentResult);
     }
 }

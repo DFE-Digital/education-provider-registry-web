@@ -40,6 +40,11 @@ public sealed class DatasetsController : Controller
     [HttpPost("downloading")]
     public IActionResult StartDownloading(DownloadDatasetRequestViewModel viewModel)
     {
+        if (!ModelState.IsValid)
+        {
+            return View(nameof(Index), viewModel);
+        }
+
         TempData.Remove(DownloadedViewModelKey);
         return RedirectToAction(nameof(Downloading), viewModel);
     }

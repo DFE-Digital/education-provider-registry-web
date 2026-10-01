@@ -20,7 +20,8 @@ public static class WebElementExtensions
                      {
                          IWebElement td = row.FindElement(By.CssSelector("td"));
 
-                         IWebElement? a = td.FindElement(By.CssSelector("a"));
+
+                         IWebElement? a = td.TryFind(By.CssSelector("a"));
 
                          TextContent content = new()
                          {
@@ -41,5 +42,17 @@ public static class WebElementExtensions
             Caption = caption,
             Rows = rows
         };
+    }
+
+    public static IWebElement? TryFind(this IWebElement element, By by)
+    {
+        try
+        {
+            return element.FindElement(by);
+        }
+        catch (NoSuchElementException)
+        {
+            return null!;
+        }
     }
 }

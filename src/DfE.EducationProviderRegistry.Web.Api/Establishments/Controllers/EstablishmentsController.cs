@@ -110,7 +110,7 @@ public sealed class EstablishmentsController : ControllerBase
         async IAsyncEnumerable<object?> StreamResults(
             [EnumeratorCancellation] CancellationToken ct = default)
         {
-            foreach (EstablishmentDetailsModel establishment in result.Model!)
+            foreach (EstablishmentDetailsModel establishment in result.Model)
             {
                 ct.ThrowIfCancellationRequested();
                 yield return _modelToViewModelMapper.Map(establishment);

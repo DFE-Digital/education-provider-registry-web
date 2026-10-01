@@ -26,17 +26,18 @@
             Preparing file…
         </p>
 
-        <div id="download-spinner" class="govuk-spinner"></div>
+        <!-- Hidden by default via CSS, shown only when JS is enabled -->
+        <div id="download-spinner" class="govuk-spinner app-js-spinner"></div>
 
-        <!--
-          FIX: Set the src attribute immediately on page load.
-          This kicks off FileDownload in the background right away.
-        -->
         <iframe id="download-frame" src="@downloadUrl" style="display: none;" aria-hidden="true"></iframe>
 
         <noscript>
             <p class="govuk-body">
-                JavaScript is required to monitor the download status.
+                JavaScript is required to monitor the download status automatically.
+            </p>
+
+            <p class="govuk-body">
+                If the file has not downloaded automatically, please use the link below.
             </p>
 
             <a href="@downloadUrl" class="govuk-link">Download the file manually</a>
@@ -61,8 +62,6 @@
                     const elapsedTime = Date.now() - startTime;
                     const remainingTime = Math.max(0, minSpinnerTime - elapsedTime);
 
-                    // Wait for the minimum spinner time, then redirect to the complete page.
-                    // (We do NOT touch the iframe here, because it already downloaded the file on page load.)
                     window.setTimeout(() => {
                         window.location.href = '@Url.Action("Complete", "Datasets")';
                     }, remainingTime);
@@ -70,7 +69,7 @@
                     return;
                 }
 
-                // Poll again after 500ms
+                // Poll again after 1/2 second.
                 window.setTimeout(checkStatus, 500);
             })
             .catch(error => {

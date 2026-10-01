@@ -9,6 +9,16 @@
     margin-top: 10px;
 }
 
+/* Hide the spinner by default (No-JS state) */
+.app-js-spinner {
+    display: none;
+}
+
+/* Show the spinner only when JavaScript is enabled */
+.js-enabled .app-js-spinner {
+    display: block;
+}
+
 @keyframes govuk-spinner {
     to {
         transform: rotate(360deg);

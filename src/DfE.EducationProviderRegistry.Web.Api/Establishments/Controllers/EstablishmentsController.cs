@@ -92,7 +92,7 @@ public sealed class EstablishmentsController : ControllerBase
                 statusCode: StatusCodes.Status500InternalServerError);
         }
 
-        if (!result.HasModel())
+        if (result.Model.Count == 0)
         {
             return Problem(
                 detail: "Use case returned no data.",
@@ -110,7 +110,7 @@ public sealed class EstablishmentsController : ControllerBase
         async IAsyncEnumerable<object?> StreamResults(
             [EnumeratorCancellation] CancellationToken ct = default)
         {
-            foreach (EstablishmentDetailsModel establishment in result.Model!)
+            foreach (EstablishmentDetailsModel establishment in result.Model)
             {
                 ct.ThrowIfCancellationRequested();
                 yield return _modelToViewModelMapper.Map(establishment);

@@ -150,7 +150,7 @@ public sealed class DatasetsControllerTests
         Assert.Equal("application/zip", fileResult.ContentType);
         Assert.Equal($"{DatasetFileName}.zip", fileResult.FileDownloadName);
 
-        using (var memoryStream = new MemoryStream())
+        using (MemoryStream memoryStream = new())
         {
             dataset.FileStream.CopyTo(memoryStream);
             byte[] byteArray = memoryStream.ToArray();
@@ -239,5 +239,79 @@ public sealed class DatasetsControllerTests
 
         Assert.Equal("file", model.Filename);
         Assert.Equal(123, model.FileSize);
+    }
+
+    [Fact]
+    public void StartDownloading_ReturnsIndexView_WhenModelStateIsInvalid()
+    {
+        // arrange
+        Mock<IUseCase<
+            DownloadDatasetsRequest,
+            UseCaseResponse<DownloadDatasetsResponse>>> useCaseMock =
+            DownloadDatasetsUseCaseTestDouble.Mock();
+
+        Mock<IMapper<Dataset, DownloadedDatasetViewModel>> mapperMock =
+            UseCaseReponseToViewModelMapperTestDouble.Mock();
+
+        DatasetsController controller = CreateController(useCaseMock, mapperMock);
+        controller.ModelState.AddModelError("Filename", "The Filename field is required.");
+
+        DownloadDatasetRequestViewModel viewModel = new();
+
+        // act
+        IActionResult result = controller.StartDownloading(viewModel);
+
+        // assert
+        ViewResult view = Assert.IsType<ViewResult>(result);
+        Assert.Equal("Index", view.ViewName);
+        Assert.Equal(viewModel, view.Model);
+    }
+
+    [Fact]
+    public void Downloading_ReturnsIndexView_WhenModelStateIsInvalid()
+    {
+        // arrange
+        Mock<IUseCase<
+            DownloadDatasetsRequest,
+            UseCaseResponse<DownloadDatasetsResponse>>> useCaseMock =
+            DownloadDatasetsUseCaseTestDouble.Mock();
+
+        Mock<IMapper<Dataset, DownloadedDatasetViewModel>> mapperMock =
+            UseCaseReponseToViewModelMapperTestDouble.Mock();
+
+        DatasetsController controller = CreateController(useCaseMock, mapperMock);
+        controller.ModelState.AddModelError("Filename", "The Filename field is required.");
+
+        DownloadDatasetRequestViewModel viewModel = new();
+
+        // act
+        IActionResult result = controller.Downloading(viewModel);
+
+        // assert
+        ViewResult view = Assert.IsType<ViewResult>(result);
+        Assert.Equal("Index", view.ViewName);
+        Assert.Equal(viewModel, view.Model);
+    }
+
+    [Fact]
+    public void Complete_RedirectsToIndex_WhenTempDataIsEmpty()
+    {
+        // arrange
+        Mock<IUseCase<
+            DownloadDatasetsRequest,
+            UseCaseResponse<DownloadDatasetsResponse>>> useCaseMock =
+            DownloadDatasetsUseCaseTestDouble.Mock();
+
+        Mock<IMapper<Dataset, DownloadedDatasetViewModel>> mapperMock =
+            UseCaseReponseToViewModelMapperTestDouble.Mock();
+
+        DatasetsController controller = CreateController(useCaseMock, mapperMock);
+
+        // act
+        IActionResult result = controller.Complete();
+
+        // assert
+        RedirectToActionResult redirect = Assert.IsType<RedirectToActionResult>(result);
+        Assert.Equal("Index", redirect.ActionName);
     }
 }

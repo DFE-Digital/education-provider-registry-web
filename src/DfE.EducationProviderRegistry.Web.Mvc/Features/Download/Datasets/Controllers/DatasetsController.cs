@@ -52,6 +52,11 @@ public sealed class DatasetsController : Controller
     [HttpGet("downloading")]
     public IActionResult Downloading(DownloadDatasetRequestViewModel viewModel)
     {
+        if (!ModelState.IsValid)
+        {
+            return View(nameof(Index), viewModel);
+        }
+
         return View(nameof(Downloading), viewModel);
     }
 

@@ -1,0 +1,73 @@
+﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Download.Datasets.ViewModels
+@model DownloadedDatasetViewModel
+
+@{
+    var breadcrumbs = new List<BreadcrumbViewModel>
+    {
+        new("Home", "Home", "Index"),
+    };
+}
+
+@section Breadcrumbs
+{
+    <partial name="_Breadcrumbs" model="breadcrumbs" />
+}
+<iframe src="@Url.Action("FakeFileDownload", "Download")" style="display:none;"></iframe>
+
+<main class="govuk-main-wrapper" id="main-content">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-panel govuk-panel--confirmation">
+                <h1 class="govuk-panel__title">
+                    Download complete
+                </h1>
+                <div class="govuk-panel__body">
+                    Your file<br><strong>@Model.ZipFilename</strong>
+                </div>
+            </div>
+            <p class="govuk-body">
+                Your file <strong>@Model.ZipFilename</strong> has downloaded.
+                <br>
+                Check your browser's downloads folder to open it.
+            </p>
+            <h2 class="govuk-heading-m govuk-!-margin-top-8">What you have downloaded</h2>
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Data
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.ContentType
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Format
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.FileFormat
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        File size
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.FormattedFileSize
+                    </dd>
+                </div>
+            </dl>
+            <h2 class="govuk-heading-m govuk-!-margin-top-8">What you can do now</h2>
+            <ul class="govuk-list govuk-list--spaced">
+                <li><a class="govuk-link govuk-link--no-visited-state" href="/datasets">Download another extract</a></li>
+                <li><a class="govuk-link govuk-link--no-visited-state" href="/home">Return to the service home page</a></li>
+            </ul>
+            <h2 class="govuk-heading-m govuk-!-margin-top-8">Using this data</h2>
+            <p class="govuk-body">
+                This data is available under the
+                <a class="govuk-link" href="#" rel="noreferrer noopener" target="_blank">Open Government Licence v3.0 (opens in a new tab)</a>.
+                You can use and reuse it, provided you follow the licence terms.
+            </p>
+        </div>
+    </div>
+</main>

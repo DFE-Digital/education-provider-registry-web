@@ -14,8 +14,8 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.10" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.10" />
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
-		<PackageReference Include="DfE.Core.Libraries.CrossCutting" Version="1.0.41" />
-		<PackageReference Include="DfE.Core.Libraries.CleanArchitecture" Version="1.0.41" />
+		<PackageReference Include="DfE.Core.Libraries.CrossCutting" Version="1.0.42" />
+		<PackageReference Include="DfE.Core.Libraries.CleanArchitecture" Version="1.0.42" />
 		<PackageReference Include="DfE.EducationProviderRegistry.Core.Query" Version="0.0.33" />
 	</ItemGroup>
 

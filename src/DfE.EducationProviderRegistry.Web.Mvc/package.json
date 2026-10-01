@@ -17,7 +17,7 @@
     "moj:js": "copyfiles -f node_modules/@ministryofjustice/frontend/moj/moj-frontend.min.js wwwroot/js"
   },
   "dependencies": {
-    "@ministryofjustice/frontend": "^9.0.0",
+    "@ministryofjustice/frontend": "^11.1.0",
     "@x-govuk/govuk-prototype-components": "^6.0.0",
     "dfe-frontend": "^2.0.1",
     "govuk-frontend": "^6.1.0"

@@ -92,7 +92,7 @@ public sealed class EstablishmentsController : ControllerBase
                 statusCode: StatusCodes.Status500InternalServerError);
         }
 
-        if (!result.HasModel())
+        if (result.Model.Count == 0)
         {
             return Problem(
                 detail: "Use case returned no data.",

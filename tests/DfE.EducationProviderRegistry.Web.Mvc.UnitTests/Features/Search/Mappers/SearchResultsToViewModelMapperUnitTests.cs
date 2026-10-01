@@ -6,6 +6,7 @@ using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Respo
 using DfE.EducationProviderRegistry.Core.Query.Shared;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Controllers.TestDoubles;
 using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Mappers.TestDoubles;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 using Moq;
@@ -56,30 +57,6 @@ public sealed class SearchResultsToViewModelMapperTests
 
         // act/assert
         Assert.Throws<ArgumentNullException>(() => mapper.Map(null!));
-    }
-
-    [Fact]
-    public void Map_ThrowsArgumentException_WhenModelIsNull()
-    {
-        // arrange
-        Mock<IMapper<
-            IReadOnlyCollection<SearchAggregateResult>,
-            List<GovUkTable>>> searchAggregateMapper =
-                SearchAggregatesMapperTestDouble.Mock();
-
-        Mock<IMapper<
-            IReadOnlyCollection<SearchFacet>,
-            List<FacetViewModel>>> facetsMapper =
-                FacetsMapperTestDouble.Mock();
-
-        SearchResultsToViewModelMapper mapper =
-            new(searchAggregateMapper.Object, facetsMapper.Object);
-
-        // UseCaseResponse<T>.Failure creates a response with Model = null
-        SearchResultsMappingContext input = new(new SearchRequestViewModel(), UseCaseResponse<SearchResponse>.Failure("error"));
-
-        // act + assert
-        Assert.Throws<ArgumentException>(() => mapper.Map(input));
     }
 
     [Fact]

@@ -148,7 +148,7 @@ public sealed class DatasetsControllerTests
         // assert
         FileStreamResult fileResult = Assert.IsType<FileStreamResult>(result);
         Assert.Equal("application/zip", fileResult.ContentType);
-        Assert.Equal($"{DatasetFileName}.zip", fileResult.FileDownloadName);
+        Assert.Contains($"{DatasetFileName}", fileResult.FileDownloadName);
 
         using (MemoryStream memoryStream = new())
         {

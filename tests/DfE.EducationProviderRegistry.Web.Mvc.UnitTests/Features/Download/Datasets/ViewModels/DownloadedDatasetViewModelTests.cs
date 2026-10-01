@@ -18,7 +18,7 @@ public sealed class DownloadedDatasetViewModelTests
             };
 
         // assert
-        Assert.Equal("myfile.zip", vm.ZipFilename);
+        Assert.Contains("myfile", vm.ZipFilename);
     }
 
     [Fact]

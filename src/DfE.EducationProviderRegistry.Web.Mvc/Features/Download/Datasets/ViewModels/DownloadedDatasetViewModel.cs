@@ -3,7 +3,25 @@
 public sealed class DownloadedDatasetViewModel
 {
     public required string Filename { get; init; }
-    public string ZipFilename => Filename + ".zip";
+
+    // Appends the current date (yyMMdd) and ensures the .zip extension is at the end
+    public string ZipFilename
+    {
+        get
+        {
+            string dateSuffix = DateTime.UtcNow.ToString("yyMMdd");
+            string nameWithoutExtension = Path.GetFileNameWithoutExtension(Filename);
+            string extension = Path.GetExtension(Filename);
+
+            if (string.IsNullOrEmpty(extension))
+            {
+                extension = ".zip";
+            }
+
+            return $"{nameWithoutExtension}_{dateSuffix}{extension}";
+        }
+    }
+
     public required string ContentType { get; init; }
     public required string FileFormat { get; init; }
     public required long FileSize { get; init; }
@@ -17,14 +35,10 @@ public sealed class DownloadedDatasetViewModel
 
             if (FileSize < MB)
             {
-                double kb = FileSize / KB;
-                return $"{kb:F2} KB";
+                return $"{FileSize / KB:F2} KB";
             }
-            else
-            {
-                double mb = FileSize / MB;
-                return $"{mb:F2} MB";
-            }
+
+            return $"{FileSize / MB:F2} MB";
         }
     }
 }

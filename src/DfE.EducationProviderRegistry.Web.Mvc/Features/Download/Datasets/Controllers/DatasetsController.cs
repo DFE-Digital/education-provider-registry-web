@@ -84,7 +84,7 @@ public sealed class DatasetsController : Controller
         return File(
             dataset.FileStream,
             "application/zip",
-            dataset.Filename + ".zip",
+            viewModel.ZipFilename,
             enableRangeProcessing: true);
     }
 

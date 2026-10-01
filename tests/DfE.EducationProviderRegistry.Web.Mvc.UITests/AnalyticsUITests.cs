@@ -1,5 +1,5 @@
-﻿using DfE.EducationProviderRegistry.Web.MVC.UITests.Search;
-using DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents.WebDriver;
+﻿using DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents.WebDriver;
+using DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents.WebDriver.Search;
 using DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.ApplicationContainer;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;

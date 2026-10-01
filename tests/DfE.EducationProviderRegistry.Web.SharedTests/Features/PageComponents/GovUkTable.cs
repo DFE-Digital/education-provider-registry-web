@@ -1,4 +1,4 @@
-﻿namespace DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents.WebDriver;
+﻿namespace DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents;
 
 public sealed class GovUkTable
 {

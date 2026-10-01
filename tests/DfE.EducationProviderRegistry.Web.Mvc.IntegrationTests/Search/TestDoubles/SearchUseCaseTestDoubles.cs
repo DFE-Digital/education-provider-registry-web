@@ -1,13 +1,14 @@
 ﻿using DfE.Core.Libraries.CleanArchitecture.Application;
 using DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles.Search;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
+using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Request;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Search.TestDoubles;
 
 internal static class SearchUseCaseTestDoubles
 {
-    internal static (StubSearchUseCase useCase, SearchResponse response) StubResponse()
+    internal static (UseCaseStub<SearchRequest, SearchResponse> useCase, SearchResponse response) StubResponse()
     {
         SearchResults<SearchAggregateResults, SearchFacets> result = SearchResultsTestDouble.Stub();
 
@@ -16,12 +17,12 @@ internal static class SearchUseCaseTestDoubles
 
         UseCaseResponse<SearchResponse> stubbedResponse = UseCaseResponse<SearchResponse>.Success(response);
 
-        StubSearchUseCase useCase = new(stubbedResponse);
+        UseCaseStub<SearchRequest, SearchResponse> useCase = new(stubbedResponse);
 
         return (useCase, response);
     }
 
-    internal static StubSearchUseCase StubFor(SearchAggregateResults searchResults, SearchFacets facets)
+    internal static UseCaseStub<SearchRequest, SearchResponse> StubFor(SearchAggregateResults searchResults, SearchFacets facets)
     {
         SearchResponse response =
             new(searchResults, facets, searchResults.Count);
@@ -29,6 +30,6 @@ internal static class SearchUseCaseTestDoubles
         UseCaseResponse<SearchResponse> stubbedResponse =
             UseCaseResponse<SearchResponse>.Success(response);
 
-        return new StubSearchUseCase(stubbedResponse);
+        return new UseCaseStub<SearchRequest, SearchResponse>(stubbedResponse);
     }
 }

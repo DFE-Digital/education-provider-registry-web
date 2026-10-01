@@ -4,12 +4,8 @@ public sealed class GovUkTable
 {
     public string? Caption { get; init; }
 
-    public IReadOnlyDictionary<string, string> Rows { get; init; } = new Dictionary<string, string>();
+    public IReadOnlyDictionary<string, TextContent> Rows { get; init; } = new Dictionary<string, TextContent>();
 
-    public string? this[string key]
-        => Rows.TryGetValue(key, out string? value) ?
-            value : null;
-
-    public string? this[int key]
+    public TextContent? this[int key]
         => Rows.ElementAtOrDefault(key).Value;
 }

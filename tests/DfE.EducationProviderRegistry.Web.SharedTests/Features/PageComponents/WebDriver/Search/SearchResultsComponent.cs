@@ -28,7 +28,7 @@ public sealed class SearchResultsComponent
             .Select((result) => result.ToGovUkTable())
             .Select((table) => new SearchResult(
                 Name: table.Caption ?? string.Empty,
-                Type: table.Rows["Type"])))
+                Type: table.Rows["Type"].Text)))
             ];
     }
 

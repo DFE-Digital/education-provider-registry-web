@@ -12,11 +12,29 @@ public static class WebElementExtensions
             .Text
             .Trim();
 
-        IReadOnlyDictionary<string, string> rows =
+        IReadOnlyDictionary<string, TextContent> rows =
             table.FindElements(By.CssSelector("tbody tr"))
                  .ToDictionary(
                      (row) => row.FindElement(By.CssSelector("th")).Text.Trim(),
-                     (row) => row.FindElement(By.CssSelector("td")).Text.Trim());
+                     (row) =>
+                     {
+                         IWebElement td = row.FindElement(By.CssSelector("td"));
+
+                         IWebElement? a = td.FindElement(By.CssSelector("a"));
+
+                         TextContent content = new()
+                         {
+                             Text = td.Text.Trim(),
+                             Link = a is not null ?
+                                new Link(
+                                    url: a.GetAttribute("href") ?? null,
+                                    securityAttributes: a.GetAttribute("rel")?.Split(" ", StringSplitOptions.RemoveEmptyEntries) ?? [],
+                                    opensInNewWindow: a.GetAttribute("target") == "_blank")
+                                : null
+                         };
+
+                         return content;
+                     });
 
         return new GovUkTable
         {

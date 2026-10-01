@@ -4,26 +4,27 @@ using DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles.Establishme
 using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.Model;
 using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.UseCases.GetEstablishmentById;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.EstablishmentDetails;
+using DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.EstablishmentDetails;
 
 public sealed class EstablishmentDetailsWebsiteDisplayTests : IntegrationTestsBase
 {
-    [Fact]
-    public async Task Website_With_No_Protocol()
+    [Theory]
+    [InlineData("https://test.example", "https://test.example")]
+    [InlineData("school.sh.example", "https://school.sh.example")]
+    public async Task Website_Protocol_Is_Normalised(string seededWebsite, string linkedWebsite)
     {
-        const string noProtocolWebsite = "test.example";
-
         EstablishmentDetailsModel establishment =
             EstablishmentDetailsBuilder.Create()
                 .WithUrn(100000)
-                .WithWebsite(noProtocolWebsite)
+                .WithWebsite(seededWebsite)
                 .Build();
 
-        // 
+        EstablishmentDetailsReadModel readModel = new() { Establishment = establishment };
 
-        UseCaseResponse<EstablishmentDetailsModel> stubResponse =
-            UseCaseResponse<EstablishmentDetailsReadModel>.Success(establishment);
+        UseCaseResponse<EstablishmentDetailsReadModel> stubResponse =
+            UseCaseResponse<EstablishmentDetailsReadModel>.Success(readModel);
 
         UseCaseStub<GetEstablishmentByIdRequest, EstablishmentDetailsReadModel> stubUseCase = new(stubResponse);
 
@@ -42,6 +43,16 @@ public sealed class EstablishmentDetailsWebsiteDisplayTests : IntegrationTestsBa
         using IHtmlDocument document = await httpResponseMessage.AssertSuccessfulHtmlResponseAsync();
         EstablishmentDetailsPage page = new(document);
 
-        Assert.Equal("https://test.example", page.GetEstablishmentDetailsTable().Rows["Website"]);
+        TextContent websiteValue = page.GetEstablishmentDetailsTable().Rows["Website"];
+
+        Assert.Equal(seededWebsite, websiteValue.Text);
+
+        Assert.NotNull(websiteValue.Link);
+        Assert.Equal(linkedWebsite, websiteValue.Link.Url);
+        Assert.True(websiteValue.Link.OpensInNewWindow);
+
+        string[] externalLinkSecurityAttributes = ["noreferrer", "noopener"];
+
+        Assert.Equivalent(externalLinkSecurityAttributes, websiteValue.Link.SecurityAttributes);
     }
 }

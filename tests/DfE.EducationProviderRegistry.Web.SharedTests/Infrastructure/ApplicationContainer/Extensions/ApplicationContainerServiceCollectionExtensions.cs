@@ -1,6 +1,5 @@
-﻿using DfE.Core.Libraries.IntegrationTests.Abstractions.Containers.Extensions;
-using DfE.Core.Libraries.IntegrationTests.Abstractions.Containers.Registry.BuilderHandler;
-using DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.ApplicationContainer;
+﻿using DfE.Core.Libraries.IntegrationTests.Containers.Extensions;
+using DfE.Core.Libraries.IntegrationTests.Containers.Registry.Builder;
 using DotNet.Testcontainers.Builders;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

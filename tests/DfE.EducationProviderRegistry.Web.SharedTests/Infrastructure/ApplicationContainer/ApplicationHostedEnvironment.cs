@@ -1,4 +1,4 @@
-﻿using DfE.Core.Libraries.IntegrationTests.Abstractions.Containers.Registry;
+﻿using DfE.Core.Libraries.IntegrationTests.Containers.Registry;
 using DfE.EducationProviderRegistry.Core.Query.Test.Database;
 using DotNet.Testcontainers.Containers;
 

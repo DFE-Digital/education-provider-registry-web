@@ -3,6 +3,10 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 
 public sealed class SearchRequestViewModel
 {
+#pragma warning disable IDE0032 // Use auto property
+    private int _pageNumber = 1;
+#pragma warning restore IDE0032 // Use auto property
+
     /// <summary>
     /// Gets or sets the dictionary of selected facet values, grouped by facet name.
     /// </summary>
@@ -51,7 +55,11 @@ public sealed class SearchRequestViewModel
     /// Used together with <see cref="RecordsPerPage"/> to calculate the
     /// <see cref="Offset"/> for pagination.
     /// </remarks>
-    public int PageNumber { get; set; } = 1;
+    public int PageNumber
+    {
+        get => _pageNumber;
+        set => _pageNumber = Math.Max(1, value);
+    }
 
     /// <summary>
     /// Gets or sets a value indicating whether the user pressed the

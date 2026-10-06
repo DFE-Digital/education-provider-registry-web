@@ -2,26 +2,16 @@
 @model SearchRequestViewModel
 
 @{
-    var breadcrumbs = new List<BreadcrumbViewModel>
-    {
-        new("Home", "Home", "Index"),
-    };
+    ViewData["Title"] = "Search";
 }
 
-@section Breadcrumbs
-{
-    <partial name="_Breadcrumbs" model="breadcrumbs" />
-}
 
 <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">Search the register</h1>
 
-
-
-<form 
-    asp-action="Search" 
-    asp-controller="Search" 
-    method="post">
-        @await Html.PartialAsync("_SearchPanel", Model)
+<form asp-action="Search"
+      asp-controller="Search"
+      method="get">
+    @await Html.PartialAsync("_SearchPanel", Model)
 </form>
 
 <div>

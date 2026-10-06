@@ -1,6 +1,7 @@
 ﻿using DfE.Core.Libraries.CleanArchitecture.Application;
 using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupById;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.NavigationJourney;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
@@ -11,19 +12,21 @@ public class GroupsController : Controller
     private readonly ILogger<GroupsController> _logger;
     private readonly IUseCase<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModelResponse>> _useCase;
     private readonly IMapper<GroupReadModel, GroupDetailsPageViewModel> _groupDetailsPageMapper;
-
+    private readonly INavigationJourneyService _navigation;
     public GroupsController(
         ILogger<GroupsController> logger,
         IUseCase<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModelResponse>> useCase,
-        IMapper<GroupReadModel, GroupDetailsPageViewModel> mapper)
+        IMapper<GroupReadModel, GroupDetailsPageViewModel> mapper,
+        INavigationJourneyService navigation)
     {
         ArgumentNullException.ThrowIfNull(logger);
         ArgumentNullException.ThrowIfNull(useCase);
         ArgumentNullException.ThrowIfNull(mapper);
-
+        ArgumentNullException.ThrowIfNull(navigation);
         _logger = logger;
         _useCase = useCase;
         _groupDetailsPageMapper = mapper;
+        _navigation = navigation;
     }
 
     [HttpGet("{groupId}", Name = "GetGroupByGroupId")]
@@ -60,6 +63,13 @@ public class GroupsController : Controller
         }
 
         GroupDetailsPageViewModel model = _groupDetailsPageMapper.Map(response.Model.Group);
+
+        _navigation.EnterGroup(
+            model.Heading,
+            Url.Action(
+                nameof(Details),
+                "Groups",
+                new { groupId })!);
 
         return View(model);
     }

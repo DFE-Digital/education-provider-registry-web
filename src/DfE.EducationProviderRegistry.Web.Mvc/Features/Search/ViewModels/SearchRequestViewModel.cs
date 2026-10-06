@@ -23,13 +23,13 @@ public sealed class SearchRequestViewModel
     /// This value is typically used to perform text‑based search across establishments.
     /// </remarks>
     //[Required(ErrorMessage = "Enter an establishment name")]
-    public string? SearchKeywords { get; set; }
+    public string? What { get; set; }
 
     /// <summary>
     ///     Gets or sets address location entered by user -- Temp wiring
     /// </summary>
     //[Required(ErrorMessage = "Enter an address name")]
-    public string? Address { get; set; }
+    public string? Where { get; set; }
 
     /// <summary>
     /// Gets or sets the number of records to display per page.

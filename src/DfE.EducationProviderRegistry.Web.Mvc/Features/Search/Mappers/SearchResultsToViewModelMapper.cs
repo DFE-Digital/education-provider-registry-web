@@ -42,10 +42,10 @@ public sealed class SearchResultsToViewModelMapper : IMapper<SearchResultsMappin
         return new SearchResultsViewModel
         {
             PrimarySearchTerms =
-                input.SearchRequest.SearchKeywords!,
+                input.SearchRequest.What!,
 
             SecondarySearchTerms =
-                input.SearchRequest.Address,
+                input.SearchRequest.Where,
 
             SearchRequest =
                 input.SearchRequest,

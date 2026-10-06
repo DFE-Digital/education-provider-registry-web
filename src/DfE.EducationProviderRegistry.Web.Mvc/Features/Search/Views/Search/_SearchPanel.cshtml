@@ -5,10 +5,10 @@
 
 @{
     ViewData["Title"] = "Search";
-    bool hasSearchKeywordsError = ViewData.HasErrorFor(nameof(Model.SearchKeywords));
+    bool hasSearchKeywordsError = ViewData.HasErrorFor(nameof(Model.What));
 
     bool hasAddressError =
-    ViewData.ModelState[nameof(Model.Address)]?.Errors.Count > 0;
+    ViewData.ModelState[nameof(Model.Where)]?.Errors.Count > 0;
 }
 
 <div class="dfe-search-panel govuk-grid-row govuk-!-margin-bottom-6">
@@ -18,32 +18,32 @@
 
             <div class="govuk-grid-column-one-half">
                 <div class="govuk-form-group @(hasSearchKeywordsError ? "govuk-form-group--error" : "")">
-                    <label asp-for="SearchKeywords" class="govuk-label govuk-label--s">
+                    <label asp-for="What" class="govuk-label govuk-label--s">
                         Enter a name or ID number
                     </label>
 
                     <div id="SearchKeywords-hint" class="govuk-hint">For example, a school or trust name.</div>
 
-                    <span asp-validation-for="SearchKeywords"
+                    <span asp-validation-for="What"
                           class="govuk-error-message"></span>
 
-                    <input asp-for="SearchKeywords"
+                    <input asp-for="What"
                            class="govuk-input @(hasSearchKeywordsError ? "govuk-input--error" : "")"
                            aria-describedby="SearchKeywords-hint" />
                 </div>
             </div>
             <div class="govuk-grid-column-one-half">
                 <div class="govuk-form-group @(hasAddressError ? "govuk-form-group--error" : "")">
-                    <label asp-for="Address" class="govuk-label govuk-label--s">
+                    <label asp-for="Where" class="govuk-label govuk-label--s">
                         Enter a location
                     </label>
 
                     <div id="Address-hint" class="govuk-hint">For example, a postcode, city or local authority.</div>
 
-                    <span asp-validation-for="Address"
+                    <span asp-validation-for="Where"
                           class="govuk-error-message"></span>
 
-                    <input asp-for="Address"
+                    <input asp-for="Where"
                            class="govuk-input @(hasAddressError ? "govuk-input--error" : "")"
                            aria-describedby="Address-hint" />
                 </div>

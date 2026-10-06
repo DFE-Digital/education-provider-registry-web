@@ -67,12 +67,12 @@ public sealed class SearchHttpRequestBuilder
 
         if (_identityTerm is not null)
         {
-            values.Add(nameof(SearchRequestViewModel.SearchKeywords), _identityTerm);
+            values.Add(nameof(SearchRequestViewModel.What), _identityTerm);
         }
 
         if (_locationTerm is not null)
         {
-            values.Add(nameof(SearchRequestViewModel.Address), _locationTerm);
+            values.Add(nameof(SearchRequestViewModel.Where), _locationTerm);
         }
 
         if (_uri is null)

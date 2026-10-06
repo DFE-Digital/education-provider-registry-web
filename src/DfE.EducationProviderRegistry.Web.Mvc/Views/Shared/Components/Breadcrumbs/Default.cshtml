@@ -1,0 +1,29 @@
+﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.NavigationJourney
+@model IReadOnlyCollection<NavigationNode>
+
+@if (Model.Any())
+{
+    <nav class="govuk-breadcrumbs" aria-label="Breadcrumb">
+        <ol class="govuk-breadcrumbs__list">
+
+            @foreach (NavigationNode breadcrumb in Model)
+            {
+                <li class="govuk-breadcrumbs__list-item">
+
+                    @if (!string.IsNullOrWhiteSpace(breadcrumb.Url))
+                    {
+                        <a href="@breadcrumb.Url">
+                            @breadcrumb.Title
+                        </a>
+                    }
+                    else
+                    {
+                        @breadcrumb.Title
+                    }
+
+                </li>
+            }
+
+        </ol>
+    </nav>
+}

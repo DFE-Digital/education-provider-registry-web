@@ -18,12 +18,12 @@ public sealed class SearchSortTests
     public async Task Maps_Sort_Direction_To_Search_Request(string sort, string expectedDirection)
     {
         // Arrange
-        StubSearchUseCase useCase =
+        UseCaseStub<SearchRequest, SearchResponse> useCase =
             SearchUseCaseTestDoubles.StubFor(
                 SearchAggregateResults.CreateEmpty(),
                 SearchFacetsTestDouble.StubEmpty());
 
-        using WebApplicationFactory<Program> factory = SearchWebApplicationFactoryProvider.CreateFactory(useCase);
+        using WebApplicationFactory<Program> factory = WebApplicationFactoryProvider.CreateFactory(useCase);
 
         using HttpClient client = factory.CreateClient();
 
@@ -56,7 +56,7 @@ public sealed class SearchSortTests
         (IUseCase<SearchRequest, UseCaseResponse<SearchResponse>> useCase,
             SearchResponse _) = SearchUseCaseTestDoubles.StubResponse();
 
-        using WebApplicationFactory<Program> factory = SearchWebApplicationFactoryProvider.CreateFactory(useCase);
+        using WebApplicationFactory<Program> factory = WebApplicationFactoryProvider.CreateFactory(useCase);
 
         using HttpClient client = factory.CreateClient();
 

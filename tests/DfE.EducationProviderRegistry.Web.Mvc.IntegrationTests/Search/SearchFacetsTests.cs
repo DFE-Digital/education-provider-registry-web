@@ -1,5 +1,7 @@
 ﻿using DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles.Search;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
+using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Request;
+using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
 using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Search.TestDoubles;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search.Components;
@@ -15,12 +17,12 @@ public sealed class SearchFacetsTests
         SearchFacets responseFacets =
             SearchFacetsTestDouble.Stub();
 
-        StubSearchUseCase useCase =
+        UseCaseStub<SearchRequest, SearchResponse> useCase =
             SearchUseCaseTestDoubles.StubFor(
                 searchResults: SearchAggregateResults.CreateEmpty(),
                 responseFacets);
 
-        using WebApplicationFactory<Program> factory = SearchWebApplicationFactoryProvider.CreateFactory(useCase);
+        using WebApplicationFactory<Program> factory = WebApplicationFactoryProvider.CreateFactory(useCase);
 
         using HttpClient client = factory.CreateClient();
 
@@ -47,12 +49,12 @@ public sealed class SearchFacetsTests
         SearchFacets responseFacets =
             SearchFacetsTestDouble.Stub();
 
-        StubSearchUseCase useCase =
+        UseCaseStub<SearchRequest, SearchResponse> useCase =
             SearchUseCaseTestDoubles.StubFor(
                 searchResults: SearchAggregateResults.CreateEmpty(),
                 responseFacets);
 
-        using WebApplicationFactory<Program> factory = SearchWebApplicationFactoryProvider.CreateFactory(useCase);
+        using WebApplicationFactory<Program> factory = WebApplicationFactoryProvider.CreateFactory(useCase);
 
         using HttpClient client = factory.CreateClient();
 

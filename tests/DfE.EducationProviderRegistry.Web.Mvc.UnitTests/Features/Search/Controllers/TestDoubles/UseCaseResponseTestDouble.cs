@@ -26,6 +26,15 @@ internal static class UseCaseResponseSearchResponseTestDouble
         return UseCaseResponse<SearchResponse>.Success(response);
     }
 
-    public static UseCaseResponse<SearchResponse> Failure(string errorMessage) =>
-        UseCaseResponse<SearchResponse>.Failure(errorMessage);
+    public static UseCaseResponse<SearchResponse> Failure(string errorMessage)
+    {
+
+        SearchAggregateResults? errResult = null;
+        SearchFacets? errFacets = null;
+
+        SearchResponse errorModel = new(errResult, errFacets, 0);
+        return UseCaseResponse<SearchResponse>.Failure(errorModel, errorMessage);
+    }
+
 }
+

@@ -1,4 +1,5 @@
-﻿using DfE.Core.Libraries.CleanArchitecture.Application;
+﻿using System.Net;
+using DfE.Core.Libraries.CleanArchitecture.Application;
 using DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles.Search;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Request;
@@ -12,21 +13,54 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Search;
 public sealed class SearchPaginationTests
 {
     [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public async Task Normalises_PageNumber_LessThan_1(int pageNumber)
+    {
+        // Arrange
+        UseCaseStub<SearchRequest, SearchResponse> useCase =
+            SearchUseCaseTestDoubles.StubFor(
+                SearchAggregateResults.CreateEmpty(),
+                SearchFacetsTestDouble.StubEmpty());
+
+        using WebApplicationFactory<Program> factory = WebApplicationFactoryProvider.CreateFactory(useCase);
+
+        using HttpClient client = factory.CreateClient();
+
+        using HttpRequestMessage message =
+            SearchHttpRequestBuilder.Create()
+                .WithBaseUri(factory.Server.BaseAddress)
+                .WithIdentitySearchTerm("sch")
+                .WithPage(pageNumber)
+                .Build();
+
+        // Act
+        using HttpResponseMessage response = await client.SendAsync(message, TestContext.Current.CancellationToken);
+
+        // Assert
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        // Offset calculates from PageSize and passes to UseCase.
+        // Page 1 offsets no results
+        Assert.Equal(0, useCase.ReceivedRequest!.Offset);
+
+    }
+
+    [Theory]
     [InlineData(1, 0)]
     [InlineData(2, 10)]
     [InlineData(3, 20)]
     public async Task Maps_Page_Number_To_Search_Request_Offset(int pageNumber, int expectedOffset)
     {
         // Arrange
-        StubSearchUseCase useCase =
+        UseCaseStub<SearchRequest, SearchResponse> useCase =
             SearchUseCaseTestDoubles.StubFor(
                 SearchAggregateResults.CreateEmpty(),
                 SearchFacetsTestDouble.StubEmpty());
 
-        using WebApplicationFactory<Program> factory = SearchWebApplicationFactoryProvider.CreateFactory(useCase);
+        using WebApplicationFactory<Program> factory = WebApplicationFactoryProvider.CreateFactory(useCase);
 
-        using HttpClient client =
-            factory.CreateClient();
+        using HttpClient client = factory.CreateClient();
 
         using HttpRequestMessage message =
             SearchHttpRequestBuilder.Create()
@@ -53,12 +87,12 @@ public sealed class SearchPaginationTests
         const int defaultPageSize = 10;
         SearchAggregateResults searchResults = SearchAggregateResultsTestDouble.Stub(defaultPageSize);
 
-        StubSearchUseCase useCase =
+        UseCaseStub<SearchRequest, SearchResponse> useCase =
             SearchUseCaseTestDoubles.StubFor(
                 searchResults: searchResults,
                 facets: SearchFacetsTestDouble.StubEmpty());
 
-        using WebApplicationFactory<Program> factory = SearchWebApplicationFactoryProvider.CreateFactory(useCase);
+        using WebApplicationFactory<Program> factory = WebApplicationFactoryProvider.CreateFactory(useCase);
 
         using HttpClient client =
             factory.CreateClient();
@@ -93,7 +127,7 @@ public sealed class SearchPaginationTests
                 searchResults,
                 SearchFacetsTestDouble.StubEmpty());
 
-        using WebApplicationFactory<Program> factory = SearchWebApplicationFactoryProvider.CreateFactory(useCase);
+        using WebApplicationFactory<Program> factory = WebApplicationFactoryProvider.CreateFactory(useCase);
 
         using HttpClient client = factory.CreateClient();
 
@@ -129,7 +163,7 @@ public sealed class SearchPaginationTests
                 searchResults,
                 SearchFacetsTestDouble.StubEmpty());
 
-        using WebApplicationFactory<Program> factory = SearchWebApplicationFactoryProvider.CreateFactory(useCase);
+        using WebApplicationFactory<Program> factory = WebApplicationFactoryProvider.CreateFactory(useCase);
 
         using HttpClient client = factory.CreateClient();
 
@@ -164,7 +198,7 @@ public sealed class SearchPaginationTests
                 searchResults,
                 SearchFacetsTestDouble.StubEmpty());
 
-        using WebApplicationFactory<Program> factory = SearchWebApplicationFactoryProvider.CreateFactory(useCase);
+        using WebApplicationFactory<Program> factory = WebApplicationFactoryProvider.CreateFactory(useCase);
 
         using HttpClient client = factory.CreateClient();
 

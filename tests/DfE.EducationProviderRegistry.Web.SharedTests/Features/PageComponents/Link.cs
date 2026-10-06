@@ -2,7 +2,7 @@
 
 public sealed record class Link
 {
-    public Link(string url, IReadOnlyCollection<string>? securityAttributes = null, bool opensInNewWindow = false)
+    public Link(string? url, IReadOnlyCollection<string>? securityAttributes = null, bool opensInNewWindow = false)
     {
         Url = url ?? string.Empty;
         SecurityAttributes = securityAttributes ?? [];

@@ -10,14 +10,12 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Controllers;
 [Route("establishments")]
 public class EstablishmentsController : Controller
 {
-    private readonly IMapper<EstablishmentDetailsModel, EstablishmentDetailsPageViewModel>
-        _establishmentDetailsPageMapper;
-    private readonly IUseCase<GetEstablishmentByIdRequest, UseCaseResponse<EstablishmentDetailsModel?>>
-        _getEstablishmentByIdUseCase;
+    private readonly IMapper<EstablishmentDetailsModel, EstablishmentDetailsPageViewModel> _establishmentDetailsPageMapper;
+    private readonly IUseCase<GetEstablishmentByIdRequest, UseCaseResponse<EstablishmentDetailsReadModel>> _getEstablishmentByIdUseCase;
 
     public EstablishmentsController(
         IMapper<EstablishmentDetailsModel, EstablishmentDetailsPageViewModel> basicMapper,
-        IUseCase<GetEstablishmentByIdRequest, UseCaseResponse<EstablishmentDetailsModel?>> getEstablishmentByIdUseCase)
+        IUseCase<GetEstablishmentByIdRequest, UseCaseResponse<EstablishmentDetailsReadModel>> getEstablishmentByIdUseCase)
     {
         ArgumentNullException.ThrowIfNull(basicMapper);
         ArgumentNullException.ThrowIfNull(getEstablishmentByIdUseCase);
@@ -28,16 +26,17 @@ public class EstablishmentsController : Controller
     [HttpGet("{urn}")]
     public async Task<IActionResult> Details(string urn)
     {
-        UseCaseResponse<EstablishmentDetailsModel?> response = await _getEstablishmentByIdUseCase
-            .HandleRequestAsync(new GetEstablishmentByIdRequest(urn));
+        UseCaseResponse<EstablishmentDetailsReadModel> response =
+            await _getEstablishmentByIdUseCase.HandleRequestAsync(
+                new GetEstablishmentByIdRequest(urn));
 
         // TODO: how do we want to handle unsuccessful responses vs null models?
-        if (!response.SuccessfulRequest || response.Model is null)
+        if (!response.SuccessfulRequest || response.Model.Establishment is null)
         {
             return NotFound();
         }
 
-        EstablishmentDetailsPageViewModel model = _establishmentDetailsPageMapper.Map(response.Model);
+        EstablishmentDetailsPageViewModel model = _establishmentDetailsPageMapper.Map(response.Model.Establishment);
 
         return View(model);
     }

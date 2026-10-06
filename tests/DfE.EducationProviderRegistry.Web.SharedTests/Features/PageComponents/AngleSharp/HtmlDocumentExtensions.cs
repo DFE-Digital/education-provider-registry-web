@@ -1,31 +1,32 @@
-﻿using OpenQA.Selenium;
+﻿using AngleSharp.Dom;
 
-namespace DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents.WebDriver;
+namespace DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents.AngleSharp;
 
-public static class WebElementExtensions
+internal static class HtmlDocumentExtensions
 {
-    public static GovUkTable ToGovUkTable(this IWebElement table)
+    internal static GovUkTable ToGovUkTable(this IElement element)
     {
-        string? caption = table
-            .FindElements(By.CssSelector("caption"))
+        ArgumentNullException.ThrowIfNull(element);
+        string? caption = element
+            .QuerySelectorAll("caption")
             .SingleOrDefault()?
-            .Text
+            .Text()
             .Trim();
 
         IReadOnlyDictionary<string, TextContent> rows =
-            table.FindElements(By.CssSelector("tbody tr"))
+            element.QuerySelectorAll("tbody tr")
                  .ToDictionary(
-                     (row) => row.FindElement(By.CssSelector("th")).Text.Trim(),
+                     (row) => row.QuerySelector("th")?.Text().Trim() ?? throw new ArgumentException("Could not find tbody > tr > th"),
                      (row) =>
                      {
-                         IWebElement td = row.FindElement(By.CssSelector("td"));
+                         IElement td = row.QuerySelector("td") ??
+                            throw new ArgumentException("Could not find tbody > tr > td");
 
-
-                         IWebElement? a = td.TryFind(By.CssSelector("a"));
+                         IElement? a = td.QuerySelector("a");
 
                          TextContent content = new()
                          {
-                             Text = td.Text.Trim(),
+                             Text = td.Text().Trim(),
                              Link = a is not null ?
                                 new Link(
                                     url: a.GetAttribute("href") ?? null,
@@ -42,17 +43,5 @@ public static class WebElementExtensions
             Caption = caption,
             Rows = rows
         };
-    }
-
-    public static IWebElement? TryFind(this IWebElement element, By by)
-    {
-        try
-        {
-            return element.FindElement(by);
-        }
-        catch (NoSuchElementException)
-        {
-            return null!;
-        }
     }
 }

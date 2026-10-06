@@ -1,8 +1,6 @@
-﻿using System.Text;
+﻿namespace DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents.WebDriver.Search;
 
-namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Search;
-
-internal static class SearchRoutes
+public static class SearchRoutes
 {
     public static Uri Search() => new("search", UriKind.Relative);
 

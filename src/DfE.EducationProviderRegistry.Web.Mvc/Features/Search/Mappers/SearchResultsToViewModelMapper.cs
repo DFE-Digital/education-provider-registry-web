@@ -27,10 +27,7 @@ public sealed class SearchResultsToViewModelMapper : IMapper<SearchResultsMappin
     {
         ArgumentNullException.ThrowIfNull(input);
 
-        SearchResponse searchResponse = input.SearchResponse.Model
-            ?? throw new ArgumentException(
-                "SearchResponse model cannot be null.",
-                nameof(input));
+        SearchResponse searchResponse = input.SearchResponse.Model;
 
         List<FacetViewModel> facets =
             searchResponse.FacetedResults is not null

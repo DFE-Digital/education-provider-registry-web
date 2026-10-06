@@ -9,12 +9,12 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 public class GroupsController : Controller
 {
     private readonly ILogger<GroupsController> _logger;
-    private readonly IUseCase<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModel>> _useCase;
+    private readonly IUseCase<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModelResponse>> _useCase;
     private readonly IMapper<GroupReadModel, GroupDetailsPageViewModel> _groupDetailsPageMapper;
 
     public GroupsController(
         ILogger<GroupsController> logger,
-        IUseCase<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModel>> useCase,
+        IUseCase<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModelResponse>> useCase,
         IMapper<GroupReadModel, GroupDetailsPageViewModel> mapper)
     {
         ArgumentNullException.ThrowIfNull(logger);
@@ -37,7 +37,7 @@ public class GroupsController : Controller
 
         _logger.LogInformation("Fetching group details for {GroupId}", groupId);
 
-        UseCaseResponse<GroupReadModel> response =
+        UseCaseResponse<GroupReadModelResponse> response =
             await _useCase.HandleRequestAsync(
                 new GetGroupByGroupUniqueIdentifierRequest(groupId));
 
@@ -50,7 +50,7 @@ public class GroupsController : Controller
             return StatusCode(500);
         }
 
-        if (!response.HasModel())
+        if (response.Model.Group is null)
         {
             _logger.LogError(
                 "Group not found for groupId {GroupId}",
@@ -59,7 +59,7 @@ public class GroupsController : Controller
             return NotFound();
         }
 
-        GroupDetailsPageViewModel model = _groupDetailsPageMapper.Map(response.Model!);
+        GroupDetailsPageViewModel model = _groupDetailsPageMapper.Map(response.Model.Group);
 
         return View(model);
     }

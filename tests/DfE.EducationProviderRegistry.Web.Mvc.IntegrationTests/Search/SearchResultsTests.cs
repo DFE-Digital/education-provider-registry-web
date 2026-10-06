@@ -21,7 +21,7 @@ public sealed class SearchResultsTests
             SearchResponse searchResponse) =
                 SearchUseCaseTestDoubles.StubResponse();
 
-        using WebApplicationFactory<Program> factory = SearchWebApplicationFactoryProvider.CreateFactory(useCase);
+        using WebApplicationFactory<Program> factory = WebApplicationFactoryProvider.CreateFactory(useCase);
 
         using HttpClient client = factory.CreateClient();
 
@@ -56,7 +56,7 @@ public sealed class SearchResultsTests
             SearchResponse searchResponse) =
                 SearchUseCaseTestDoubles.StubResponse();
 
-        using WebApplicationFactory<Program> factory = SearchWebApplicationFactoryProvider.CreateFactory(useCase);
+        using WebApplicationFactory<Program> factory = WebApplicationFactoryProvider.CreateFactory(useCase);
 
         using HttpClient client = factory.CreateClient();
 
@@ -90,7 +90,7 @@ public sealed class SearchResultsTests
             SearchResponse searchResponse) =
                 SearchUseCaseTestDoubles.StubResponse();
 
-        using WebApplicationFactory<Program> factory = SearchWebApplicationFactoryProvider.CreateFactory(useCase);
+        using WebApplicationFactory<Program> factory = WebApplicationFactoryProvider.CreateFactory(useCase);
 
         using HttpClient client = factory.CreateClient();
 

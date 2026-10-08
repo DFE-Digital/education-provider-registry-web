@@ -7,118 +7,66 @@ public sealed class BreadcrumbJourneyService : IBreadcrumbJourneyService
 {
     private readonly IBreadcrumbJourneyStore _store;
 
-    public BreadcrumbJourneyService(
-        IBreadcrumbJourneyStore store)
+    public BreadcrumbJourneyService(IBreadcrumbJourneyStore store)
     {
+        ArgumentNullException.ThrowIfNull(store);
         _store = store;
     }
 
-    public BreadcrumbJourney Get()
+    public BreadcrumbJourney Get() => _store.Get();
+
+    public void Clear() => _store.Clear();
+
+    public void StartSearchJourney(string searchResultsUrl)
     {
-        return _store.Get();
-    }
+        ArgumentException.ThrowIfNullOrWhiteSpace(searchResultsUrl);
 
-    public void Clear()
-    {
-        _store.Clear();
-    }
-
-    public void StartSearchJourney(
-        string searchResultsUrl)
-    {
-        BreadcrumbJourney context = new();
-
-        context.Items.Add(
-            new BreadcrumbItem(
-                BreadcrumbItemType.Home,
-                "Home",
-                "/"));
-
-        context.Items.Add(
-            new BreadcrumbItem(
-                BreadcrumbItemType.Search,
-                "Search",
-                "/search"));
-
-        context.Items.Add(
-            new BreadcrumbItem(
-                BreadcrumbItemType.SearchResults,
-                "Search Results",
-                searchResultsUrl));
-
-        _store.Save(context);
-    }
-
-    public void VisitEstablishment(
-        string name,
-        string url)
-    {
-        NavigateTo(
-            new BreadcrumbItem(
-                BreadcrumbItemType.Establishment,
-                name,
-                url));
-    }
-
-    public void VisitGroup(
-        string name,
-        string url)
-    {
-        NavigateTo(
-            new BreadcrumbItem(
-                BreadcrumbItemType.Group,
-                name,
-                url));
-    }
-
-    private void NavigateTo(
-        BreadcrumbItem node)
-    {
-        BreadcrumbJourney context =
-            _store.Get();
-
-        //
-        // Direct navigation.
-        //
-        if (!context.Items.Any())
+        BreadcrumbJourney journey = new()
         {
+            Items =
+            [
+                new BreadcrumbItem("Home", "/"),
+                new BreadcrumbItem("Search", "/search"),
+                new BreadcrumbItem("Search Results", searchResultsUrl)
+            ]
+        };
+
+        _store.Save(journey);
+    }
+
+    public void NavigateTo(BreadcrumbDestination destination)
+    {
+        ArgumentNullException.ThrowIfNull(destination);
+
+        BreadcrumbJourney journey = _store.Get();
+        if (journey.Items.Count is 0)
             return;
-        }
 
-        //
-        // Refresh protection.
-        //
-        BreadcrumbItem? current =
-            context.Items.LastOrDefault();
-
-        if (current?.Url == node.Url)
-        {
+        BreadcrumbItem? current = journey.Items.LastOrDefault();
+        if (current?.Url.Equals(destination.Url, StringComparison.OrdinalIgnoreCase) is true)
             return;
-        }
 
-        //
-        // Already exists in trail.
-        //
         int existingIndex =
-            context.Items.FindIndex(
+            journey.Items.FindIndex(
                 x => x.Url.Equals(
-                    node.Url,
+                    destination.Url,
                     StringComparison.OrdinalIgnoreCase));
 
         if (existingIndex >= 0)
         {
-            context.Items =
-                context.Items
+            journey.Items =
+                journey.Items
                     .Take(existingIndex + 1)
                     .ToList();
 
-            _store.Save(context);
+            _store.Save(journey);
 
             return;
         }
 
-        context.Items.Add(node);
+        journey.Items.Add(
+            new BreadcrumbItem(destination.Text, destination.Url));
 
-        _store.Save(context);
+        _store.Save(journey);
     }
 }

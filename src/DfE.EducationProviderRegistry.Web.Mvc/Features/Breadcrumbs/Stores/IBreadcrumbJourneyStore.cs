@@ -2,7 +2,6 @@
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Breadcrumbs.Stores;
 
-// INTERFACES
 public interface IBreadcrumbJourneyStore
 {
     BreadcrumbJourney Get();

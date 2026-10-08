@@ -2,6 +2,7 @@
 using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.Model;
 using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.UseCases.GetEstablishmentById;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Breadcrumbs.Models;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Breadcrumbs.Services;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -43,12 +44,13 @@ public class EstablishmentsController : Controller
 
         EstablishmentDetailsPageViewModel model = _establishmentDetailsPageMapper.Map(response.Model.Establishment);
 
-        _navigation.VisitEstablishment(
-            model.Heading,
-            Url.Action(
-                nameof(Details),
-                "Establishments",
-                new { urn })!);
+        _navigation.NavigateTo(
+            new BreadcrumbDestination(
+                model.Heading ?? string.Empty,
+                Url.Action(
+                    nameof(Details),
+                    "Establishments",
+                    new { urn })!));
 
         return View(model);
     }

@@ -1,6 +1,7 @@
 ﻿using DfE.Core.Libraries.CleanArchitecture.Application;
 using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupById;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Breadcrumbs.Models;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Breadcrumbs.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -64,12 +65,13 @@ public class GroupsController : Controller
 
         GroupDetailsPageViewModel model = _groupDetailsPageMapper.Map(response.Model.Group);
 
-        _navigation.VisitGroup(
-            model.Heading,
-            Url.Action(
-                nameof(Details),
-                "Groups",
-                new { groupId })!);
+        _navigation.NavigateTo(
+            new BreadcrumbDestination(
+                model.Heading ?? string.Empty,
+                Url.Action(
+                    nameof(Details),
+                    "Groups",
+                    new { groupId })!));
 
         return View(model);
     }

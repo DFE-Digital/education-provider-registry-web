@@ -9,9 +9,9 @@ public sealed class SessionBreadcrumbJourneyStore : IBreadcrumbJourneyStore
 
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public SessionBreadcrumbJourneyStore(
-        IHttpContextAccessor httpContextAccessor)
+    public SessionBreadcrumbJourneyStore(IHttpContextAccessor httpContextAccessor)
     {
+        ArgumentNullException.ThrowIfNull(httpContextAccessor);
         _httpContextAccessor = httpContextAccessor;
     }
 
@@ -24,9 +24,7 @@ public sealed class SessionBreadcrumbJourneyStore : IBreadcrumbJourneyStore
                 .GetString(SessionKey);
 
         if (string.IsNullOrWhiteSpace(json))
-        {
             return new BreadcrumbJourney();
-        }
 
         return JsonSerializer.Deserialize<BreadcrumbJourney>(json)
             ?? new BreadcrumbJourney();

@@ -1,0 +1,89 @@
+﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Download.Datasets.ViewModels
+@model DownloadDatasetRequestViewModel
+
+@{
+    List<BreadcrumbViewModel> breadcrumbs = new()
+    {
+        new("Home", "Home", "Index"),
+    };
+
+    string downloadUrl = Url.Action(
+        "FileDownload",
+        "Datasets",
+        new { filename = Model.Filename })!;
+}
+
+@section Breadcrumbs
+{
+    <partial name="_Breadcrumbs" model="breadcrumbs" />
+}
+
+<div class="govuk-width-container">
+    <main class="govuk-main-wrapper" id="main-content">
+        <h1 class="govuk-heading-l">Preparing your download…</h1>
+
+        <p id="download-status" class="govuk-body">
+            Preparing file…
+        </p>
+
+        <!-- Hidden by default via CSS, shown only when JS is enabled -->
+        <div id="download-spinner" class="govuk-spinner app-js-spinner"></div>
+
+        <iframe id="download-frame" title="download-frame" src="@downloadUrl" style="display: none;" aria-hidden="true"></iframe>
+
+        <noscript>
+            <p class="govuk-body">
+                JavaScript is required to monitor the download status automatically.
+            </p>
+
+            <p class="govuk-body">
+                If the file has not downloaded automatically, please use the link below.
+            </p>
+
+            <a href="@downloadUrl" class="govuk-link">Download the file manually</a>
+        </noscript>
+    </main>
+</div>
+
+<script>
+    const startTime = Date.now();
+    const minSpinnerTime = 500; // Minimum time to show spinner (1/2 second)
+
+    function checkStatus() {
+        fetch('@Url.Action("Status", "Datasets")')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Status request failed: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.ready) {
+                    const elapsedTime = Date.now() - startTime;
+                    const remainingTime = Math.max(0, minSpinnerTime - elapsedTime);
+
+                    window.setTimeout(() => {
+                        window.location.href = '@Url.Action("Complete", "Datasets")';
+                    }, remainingTime);
+
+                    return;
+                }
+
+                // Poll again after 1/2 second.
+                window.setTimeout(checkStatus, 500);
+            })
+            .catch(error => {
+                console.error(error);
+                document.getElementById('download-status').textContent =
+                    'There was a problem preparing your download.';
+
+                const spinner = document.getElementById('download-spinner');
+                if (spinner) {
+                    spinner.style.display = 'none';
+                }
+            });
+    }
+
+    // Start polling immediately
+    checkStatus();
+</script>

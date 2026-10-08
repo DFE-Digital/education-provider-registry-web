@@ -1,10 +1,13 @@
 using DfE.EducationProviderRegistry.Web.Mvc.Extensions;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Download;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Download.Datasets.Views;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search;
 using DfE.EducationProviderRegistry.Web.Mvc.Middleware;
 using DfE.EducationProviderRegistry.Web.Mvc.Settings;
 using Microsoft.AspNetCore.CookiePolicy;
+using Microsoft.AspNetCore.Mvc.Razor;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +20,6 @@ builder.Services
     })
     .AddApplicationPart(typeof(
         DfE.EducationProviderRegistry.Web.ViewComponents.Table.GovUkTableViewComponent).Assembly);
-
 
 builder.Services.AddRouting(options =>
 {
@@ -36,7 +38,8 @@ builder.Services
     .AddEstablishments()
     .AddGroups()
     .AddSearch(builder.Configuration)
-    .AddPostgresDatabase(builder.Configuration);
+    .AddPostgresDatabase(builder.Configuration)
+    .AddDownloadDatasets();
 
 builder.Services.Configure<ClaritySettings>(
     builder.Configuration.GetSection(nameof(ClaritySettings))
@@ -45,6 +48,11 @@ builder.Services.Configure<ClaritySettings>(
 builder.Services.Configure<GoogleAnalyticsSettings>(
     builder.Configuration.GetSection(nameof(GoogleAnalyticsSettings))
 );
+
+builder.Services.Configure<RazorViewEngineOptions>(options =>
+{
+    options.ViewLocationExpanders.Add(new DownloadDatasetsViewLocationExpander());
+});
 
 WebApplication app = builder.Build();
 
@@ -61,11 +69,8 @@ else
 }
 
 app.UseStatusCodePagesWithReExecute("/not-found");
-
 app.UseSecurityHeaders();
-
 app.UseHttpsRedirection();
-
 app.Use(async (context, next) =>
 {
     // Remove server header
@@ -75,8 +80,6 @@ app.Use(async (context, next) =>
     context.Response.Headers["X-Frame-Options"] = "DENY";
     context.Response.Headers["X-Content-Type-Options"] = "nosniff";
     context.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
-
-    // Restrict browser features ect
     context.Response.Headers["Permissions-Policy"] =
         "geolocation=(), microphone=(), camera=(), browsing-topics=()";
 
@@ -84,13 +87,10 @@ app.Use(async (context, next) =>
 });
 
 app.UseCookiePolicy();
-
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapStaticAssets();
-
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")

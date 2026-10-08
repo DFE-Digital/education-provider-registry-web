@@ -13,21 +13,21 @@ public class GroupsController : Controller
     private readonly ILogger<GroupsController> _logger;
     private readonly IUseCase<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModelResponse>> _useCase;
     private readonly IMapper<GroupReadModel, GroupDetailsPageViewModel> _groupDetailsPageMapper;
-    private readonly IBreadcrumbJourneyService _navigation;
+    private readonly IBreadcrumbJourneyService _breadcrumbJourney;
     public GroupsController(
         ILogger<GroupsController> logger,
         IUseCase<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModelResponse>> useCase,
         IMapper<GroupReadModel, GroupDetailsPageViewModel> mapper,
-        IBreadcrumbJourneyService navigation)
+        IBreadcrumbJourneyService breadcrumbJourney)
     {
         ArgumentNullException.ThrowIfNull(logger);
         ArgumentNullException.ThrowIfNull(useCase);
         ArgumentNullException.ThrowIfNull(mapper);
-        ArgumentNullException.ThrowIfNull(navigation);
+        ArgumentNullException.ThrowIfNull(breadcrumbJourney);
         _logger = logger;
         _useCase = useCase;
         _groupDetailsPageMapper = mapper;
-        _navigation = navigation;
+        _breadcrumbJourney = breadcrumbJourney;
     }
 
     [HttpGet("{groupId}", Name = "GetGroupByGroupId")]
@@ -65,8 +65,8 @@ public class GroupsController : Controller
 
         GroupDetailsPageViewModel model = _groupDetailsPageMapper.Map(response.Model.Group);
 
-        _navigation.NavigateTo(
-            new BreadcrumbDestination(
+        _breadcrumbJourney.NavigateTo(
+            new BreadcrumbItem(
                 model.Heading ?? string.Empty,
                 Url.Action(
                     nameof(Details),

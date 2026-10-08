@@ -20,32 +20,32 @@ public sealed class SearchController : Controller
     private readonly IMapper<SearchResultsMappingContext, SearchResultsViewModel> _searchResponseToViewModelMapper;
     private readonly IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>> _selectedFacetsToFilterRequestsMapper;
     private readonly ISearchFilterSelectionHandler _searchFilterSelectionHandler;
-    private readonly IBreadcrumbJourneyService _navigation;
+    private readonly IBreadcrumbJourneyService _breadcrumbJourney;
 
     public SearchController(
         IUseCase<SearchRequest, UseCaseResponse<SearchResponse>> searchUseCase,
         IMapper<SearchResultsMappingContext, SearchResultsViewModel> searchResponseToViewModelMapper,
         IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>> selectedFacetsToFilterRequestsMapper,
         ISearchFilterSelectionHandler searchFilterSelectionHandler,
-        IBreadcrumbJourneyService navigation)
+        IBreadcrumbJourneyService breadcrumbJourney)
     {
         ArgumentNullException.ThrowIfNull(searchUseCase);
         ArgumentNullException.ThrowIfNull(searchResponseToViewModelMapper);
         ArgumentNullException.ThrowIfNull(selectedFacetsToFilterRequestsMapper);
         ArgumentNullException.ThrowIfNull(searchFilterSelectionHandler);
-        ArgumentNullException.ThrowIfNull(navigation);
+        ArgumentNullException.ThrowIfNull(breadcrumbJourney);
 
         _searchUseCase = searchUseCase;
         _searchResponseToViewModelMapper = searchResponseToViewModelMapper;
         _selectedFacetsToFilterRequestsMapper = selectedFacetsToFilterRequestsMapper;
         _searchFilterSelectionHandler = searchFilterSelectionHandler;
-        _navigation = navigation;
+        _breadcrumbJourney = breadcrumbJourney;
     }
 
     [HttpGet("")]
     public IActionResult Index()
     {
-        _navigation.Clear();
+        _breadcrumbJourney.Clear();
 
         return View("Index", new SearchRequestViewModel());
     }
@@ -101,7 +101,7 @@ public sealed class SearchController : Controller
 
         ModelState.Clear();
 
-        _navigation.StartSearchJourney(
+        _breadcrumbJourney.StartSearchJourney(
             $"{Request.Path}{Request.QueryString}");
 
         return View("Results", updatedModel);

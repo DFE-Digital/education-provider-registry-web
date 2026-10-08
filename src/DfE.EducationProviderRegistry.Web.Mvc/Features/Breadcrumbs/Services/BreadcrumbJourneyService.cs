@@ -34,16 +34,21 @@ public sealed class BreadcrumbJourneyService : IBreadcrumbJourneyService
         _store.Save(journey);
     }
 
-    public void NavigateTo(BreadcrumbDestination destination)
+    public void NavigateTo(BreadcrumbItem destination)
     {
-        ArgumentNullException.ThrowIfNull(destination);
+        BreadcrumbJourney journey =
+            _store.Get();
 
-        BreadcrumbJourney journey = _store.Get();
         if (journey.Items.Count is 0)
-            return;
+        {
+            journey.Items.Add(destination);
+            _store.Save(journey);
 
-        BreadcrumbItem? current = journey.Items.LastOrDefault();
-        if (current?.Url.Equals(destination.Url, StringComparison.OrdinalIgnoreCase) is true)
+            return;
+        }
+
+        BreadcrumbItem current = journey.Items.Last();
+        if (current.Url.Equals(destination.Url, StringComparison.OrdinalIgnoreCase))
             return;
 
         int existingIndex =
@@ -64,9 +69,7 @@ public sealed class BreadcrumbJourneyService : IBreadcrumbJourneyService
             return;
         }
 
-        journey.Items.Add(
-            new BreadcrumbItem(destination.Text, destination.Url));
-
+        journey.Items.Add(destination);
         _store.Save(journey);
     }
 }

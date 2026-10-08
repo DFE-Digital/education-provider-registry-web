@@ -14,19 +14,19 @@ public class EstablishmentsController : Controller
 {
     private readonly IMapper<EstablishmentDetailsModel, EstablishmentDetailsPageViewModel> _establishmentDetailsPageMapper;
     private readonly IUseCase<GetEstablishmentByIdRequest, UseCaseResponse<EstablishmentDetailsReadModel>> _getEstablishmentByIdUseCase;
-    private readonly IBreadcrumbJourneyService _navigation;
+    private readonly IBreadcrumbJourneyService _breadcrumbJourney;
 
     public EstablishmentsController(
         IMapper<EstablishmentDetailsModel, EstablishmentDetailsPageViewModel> basicMapper,
         IUseCase<GetEstablishmentByIdRequest, UseCaseResponse<EstablishmentDetailsReadModel>> getEstablishmentByIdUseCase,
-        IBreadcrumbJourneyService navigation)
+        IBreadcrumbJourneyService breadcrumbJourney)
     {
         ArgumentNullException.ThrowIfNull(basicMapper);
         ArgumentNullException.ThrowIfNull(getEstablishmentByIdUseCase);
-        ArgumentNullException.ThrowIfNull(navigation);
+        ArgumentNullException.ThrowIfNull(breadcrumbJourney);
         _establishmentDetailsPageMapper = basicMapper;
         _getEstablishmentByIdUseCase = getEstablishmentByIdUseCase;
-        _navigation = navigation;
+        _breadcrumbJourney = breadcrumbJourney;
     }
 
     [HttpGet("{urn}")]
@@ -44,8 +44,8 @@ public class EstablishmentsController : Controller
 
         EstablishmentDetailsPageViewModel model = _establishmentDetailsPageMapper.Map(response.Model.Establishment);
 
-        _navigation.NavigateTo(
-            new BreadcrumbDestination(
+        _breadcrumbJourney.NavigateTo(
+            new BreadcrumbItem(
                 model.Heading ?? string.Empty,
                 Url.Action(
                     nameof(Details),

@@ -8,7 +8,7 @@ public interface IBreadcrumbJourneyService
 
     void StartSearchJourney(string searchResultsUrl);
 
-    void NavigateTo(BreadcrumbDestination destination);
+    void NavigateTo(BreadcrumbItem destination);
 
     void Clear();
 }

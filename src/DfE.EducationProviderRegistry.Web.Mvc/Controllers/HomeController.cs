@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.NavigationJourney;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Breadcrumbs.Services;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,8 +7,8 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly INavigationJourneyService _navigation;
-    public HomeController(INavigationJourneyService navigation)
+    private readonly IBreadcrumbJourneyService _navigation;
+    public HomeController(IBreadcrumbJourneyService navigation)
     {
         ArgumentNullException.ThrowIfNull(navigation);
         _navigation = navigation;

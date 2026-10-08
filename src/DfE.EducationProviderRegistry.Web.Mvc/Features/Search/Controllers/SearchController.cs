@@ -5,7 +5,7 @@ using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Filter;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Sort;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Request;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.NavigationJourney;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Breadcrumbs.Services;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Services;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
@@ -20,14 +20,14 @@ public sealed class SearchController : Controller
     private readonly IMapper<SearchResultsMappingContext, SearchResultsViewModel> _searchResponseToViewModelMapper;
     private readonly IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>> _selectedFacetsToFilterRequestsMapper;
     private readonly ISearchFilterSelectionHandler _searchFilterSelectionHandler;
-    private readonly INavigationJourneyService _navigation;
+    private readonly IBreadcrumbJourneyService _navigation;
 
     public SearchController(
         IUseCase<SearchRequest, UseCaseResponse<SearchResponse>> searchUseCase,
         IMapper<SearchResultsMappingContext, SearchResultsViewModel> searchResponseToViewModelMapper,
         IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>> selectedFacetsToFilterRequestsMapper,
         ISearchFilterSelectionHandler searchFilterSelectionHandler,
-        INavigationJourneyService navigation)
+        IBreadcrumbJourneyService navigation)
     {
         ArgumentNullException.ThrowIfNull(searchUseCase);
         ArgumentNullException.ThrowIfNull(searchResponseToViewModelMapper);

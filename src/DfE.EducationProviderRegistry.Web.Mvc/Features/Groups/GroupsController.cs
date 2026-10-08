@@ -1,7 +1,7 @@
 ﻿using DfE.Core.Libraries.CleanArchitecture.Application;
 using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupById;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.NavigationJourney;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Breadcrumbs.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
@@ -12,12 +12,12 @@ public class GroupsController : Controller
     private readonly ILogger<GroupsController> _logger;
     private readonly IUseCase<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModelResponse>> _useCase;
     private readonly IMapper<GroupReadModel, GroupDetailsPageViewModel> _groupDetailsPageMapper;
-    private readonly INavigationJourneyService _navigation;
+    private readonly IBreadcrumbJourneyService _navigation;
     public GroupsController(
         ILogger<GroupsController> logger,
         IUseCase<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModelResponse>> useCase,
         IMapper<GroupReadModel, GroupDetailsPageViewModel> mapper,
-        INavigationJourneyService navigation)
+        IBreadcrumbJourneyService navigation)
     {
         ArgumentNullException.ThrowIfNull(logger);
         ArgumentNullException.ThrowIfNull(useCase);
@@ -64,7 +64,7 @@ public class GroupsController : Controller
 
         GroupDetailsPageViewModel model = _groupDetailsPageMapper.Map(response.Model.Group);
 
-        _navigation.EnterGroup(
+        _navigation.VisitGroup(
             model.Heading,
             Url.Action(
                 nameof(Details),

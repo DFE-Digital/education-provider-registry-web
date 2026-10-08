@@ -1,7 +1,8 @@
 using DfE.EducationProviderRegistry.Web.Mvc.Extensions;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Breadcrumbs.Services;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Breadcrumbs.Stores;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.NavigationJourney;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search;
 using DfE.EducationProviderRegistry.Web.Mvc.Middleware;
 using DfE.EducationProviderRegistry.Web.Mvc.Settings;
@@ -49,8 +50,8 @@ builder.Services.Configure<GoogleAnalyticsSettings>(
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession();
-builder.Services.AddScoped<INavigationContextStore, SessionNavigationContextStore>();
-builder.Services.AddScoped<INavigationJourneyService, NavigationJourneyService>();
+builder.Services.AddScoped<IBreadcrumbJourneyStore, SessionBreadcrumbJourneyStore>();
+builder.Services.AddScoped<IBreadcrumbJourneyService, BreadcrumbJourneyService>();
 
 WebApplication app = builder.Build();
 

@@ -1,6 +1,8 @@
 ﻿using DfE.Core.Libraries.CleanArchitecture.Application;
 using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupById;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Breadcrumbs.Models;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
@@ -11,19 +13,21 @@ public class GroupsController : Controller
     private readonly ILogger<GroupsController> _logger;
     private readonly IUseCase<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModelResponse>> _useCase;
     private readonly IMapper<GroupReadModel, GroupDetailsPageViewModel> _groupDetailsPageMapper;
-
+    private readonly IBreadcrumbJourneyService _breadcrumbJourney;
     public GroupsController(
         ILogger<GroupsController> logger,
         IUseCase<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModelResponse>> useCase,
-        IMapper<GroupReadModel, GroupDetailsPageViewModel> mapper)
+        IMapper<GroupReadModel, GroupDetailsPageViewModel> mapper,
+        IBreadcrumbJourneyService breadcrumbJourney)
     {
         ArgumentNullException.ThrowIfNull(logger);
         ArgumentNullException.ThrowIfNull(useCase);
         ArgumentNullException.ThrowIfNull(mapper);
-
+        ArgumentNullException.ThrowIfNull(breadcrumbJourney);
         _logger = logger;
         _useCase = useCase;
         _groupDetailsPageMapper = mapper;
+        _breadcrumbJourney = breadcrumbJourney;
     }
 
     [HttpGet("{groupId}", Name = "GetGroupByGroupId")]
@@ -60,6 +64,14 @@ public class GroupsController : Controller
         }
 
         GroupDetailsPageViewModel model = _groupDetailsPageMapper.Map(response.Model.Group);
+
+        _breadcrumbJourney.NavigateTo(
+            new BreadcrumbItem(
+                model.Heading ?? string.Empty,
+                Url.Action(
+                    nameof(Details),
+                    "Groups",
+                    new { groupId })!));
 
         return View(model);
     }

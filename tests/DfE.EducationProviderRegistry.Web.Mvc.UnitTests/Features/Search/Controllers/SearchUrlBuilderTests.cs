@@ -25,8 +25,8 @@ public sealed class SearchUrlBuilderTests
         // Arrange
         SearchRequestViewModel searchRequest = new()
         {
-            SearchKeywords = "test school",
-            Address = "testLocation",
+            What = "test school",
+            Where = "testLocation",
             Sort = "NameAscending",
             RecordsPerPage = 20
         };
@@ -115,8 +115,8 @@ public sealed class SearchUrlBuilderTests
         // Arrange
         SearchRequestViewModel searchRequest = new()
         {
-            SearchKeywords = string.Empty,
-            Address = " ",
+            What = string.Empty,
+            Where = " ",
             Sort = null,
             RecordsPerPage = 20
         };
@@ -146,8 +146,8 @@ public sealed class SearchUrlBuilderTests
         // Arrange
         SearchRequestViewModel searchRequest = new()
         {
-            SearchKeywords = "test school & college",
-            Address = "testLocation",
+            What = "test school & college",
+            Where = "testLocation",
             RecordsPerPage = 20
         };
 

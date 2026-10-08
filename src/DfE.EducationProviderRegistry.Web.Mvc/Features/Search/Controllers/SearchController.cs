@@ -8,6 +8,7 @@ using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Respo
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Services;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Controllers;
@@ -19,32 +20,37 @@ public sealed class SearchController : Controller
     private readonly IMapper<SearchResultsMappingContext, SearchResultsViewModel> _searchResponseToViewModelMapper;
     private readonly IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>> _selectedFacetsToFilterRequestsMapper;
     private readonly ISearchFilterSelectionHandler _searchFilterSelectionHandler;
+    private readonly IBreadcrumbJourneyService _breadcrumbJourney;
 
     public SearchController(
         IUseCase<SearchRequest, UseCaseResponse<SearchResponse>> searchUseCase,
         IMapper<SearchResultsMappingContext, SearchResultsViewModel> searchResponseToViewModelMapper,
         IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>> selectedFacetsToFilterRequestsMapper,
-        ISearchFilterSelectionHandler searchFilterSelectionHandler)
+        ISearchFilterSelectionHandler searchFilterSelectionHandler,
+        IBreadcrumbJourneyService breadcrumbJourney)
     {
         ArgumentNullException.ThrowIfNull(searchUseCase);
         ArgumentNullException.ThrowIfNull(searchResponseToViewModelMapper);
         ArgumentNullException.ThrowIfNull(selectedFacetsToFilterRequestsMapper);
         ArgumentNullException.ThrowIfNull(searchFilterSelectionHandler);
+        ArgumentNullException.ThrowIfNull(breadcrumbJourney);
 
         _searchUseCase = searchUseCase;
         _searchResponseToViewModelMapper = searchResponseToViewModelMapper;
         _selectedFacetsToFilterRequestsMapper = selectedFacetsToFilterRequestsMapper;
         _searchFilterSelectionHandler = searchFilterSelectionHandler;
+        _breadcrumbJourney = breadcrumbJourney;
     }
 
     [HttpGet("")]
     public IActionResult Index()
     {
+        _breadcrumbJourney.Clear();
+
         return View("Index", new SearchRequestViewModel());
     }
 
     [HttpGet("results")]
-    [HttpPost("results")]
     public async Task<IActionResult> Search(
         SearchRequestViewModel model)
     {
@@ -75,8 +81,8 @@ public sealed class SearchController : Controller
 
         SearchRequest searchRequest = new(
             searchTerms: [
-                new SearchTerm("what", model.SearchKeywords!),
-                new SearchTerm("where", model.Address!),
+                new SearchTerm("what", model.What!),
+                new SearchTerm("where", model.Where!),
             ],
             searchFilterRequests,
             sortOrder,
@@ -94,6 +100,9 @@ public sealed class SearchController : Controller
                     searchResponse));
 
         ModelState.Clear();
+
+        _breadcrumbJourney.StartSearchJourney(
+            $"{Request.Path}{Request.QueryString}");
 
         return View("Results", updatedModel);
     }

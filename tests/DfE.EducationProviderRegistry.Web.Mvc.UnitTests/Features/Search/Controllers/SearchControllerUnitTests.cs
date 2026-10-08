@@ -149,7 +149,7 @@ public sealed class SearchControllerUnitTests
 
         searchResultsMapper.Verify(mapper =>
             mapper.Map(It.Is<SearchResultsMappingContext>(context =>
-                context.SearchRequest.SearchKeywords == "academy")),
+                context.SearchRequest.What == "academy")),
             Times.Once);
 
         searchFilterSelectionHandler.Verify(handler =>

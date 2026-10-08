@@ -2,6 +2,8 @@ using DfE.EducationProviderRegistry.Web.Mvc.Extensions;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Services;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Stores;
 using DfE.EducationProviderRegistry.Web.Mvc.Middleware;
 using DfE.EducationProviderRegistry.Web.Mvc.Settings;
 using Microsoft.AspNetCore.CookiePolicy;
@@ -46,6 +48,11 @@ builder.Services.Configure<GoogleAnalyticsSettings>(
     builder.Configuration.GetSection(nameof(GoogleAnalyticsSettings))
 );
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddSession();
+builder.Services.AddScoped<IBreadcrumbJourneyStore, SessionBreadcrumbJourneyStore>();
+builder.Services.AddScoped<IBreadcrumbJourneyService, BreadcrumbJourneyService>();
+
 WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -60,6 +67,7 @@ else
     app.UseDeveloperExceptionPage();
 }
 
+app.UseSession();
 app.UseStatusCodePagesWithReExecute("/not-found");
 
 app.UseSecurityHeaders();

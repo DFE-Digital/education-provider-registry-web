@@ -1,12 +1,16 @@
 ﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels
 @model SearchResultsViewModel
 
+@{
+    ViewData["Title"] = "Search results";
+}
+
 <h1 class="govuk-heading-xl">
     @if (!string.IsNullOrWhiteSpace(Model.PrimarySearchTerms)
          || !string.IsNullOrWhiteSpace(Model.SecondarySearchTerms))
     {
         <span>
-            Search results for 
+            Search results for
 
             @if (!string.IsNullOrWhiteSpace(Model.PrimarySearchTerms))
             {

@@ -4,8 +4,7 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Download.Datasets.Views
 
 public sealed class DownloadDatasetsViewLocationExpander : IViewLocationExpander
 {
-    public void PopulateValues(ViewLocationExpanderContext context)
-    {
+    public void PopulateValues(ViewLocationExpanderContext context){
     }
 
     public IEnumerable<string> ExpandViewLocations(

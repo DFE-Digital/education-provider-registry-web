@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Breadcrumbs.Services;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Services;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 

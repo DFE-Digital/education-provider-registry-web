@@ -1,4 +1,4 @@
-﻿namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Breadcrumbs.Models;
+﻿namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Models;
 
 public sealed class BreadcrumbJourney
 {

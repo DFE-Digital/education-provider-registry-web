@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Breadcrumbs.Models;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Models;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Breadcrumbs.Stores;
+namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Stores;
 
 public sealed class SessionBreadcrumbJourneyStore : IBreadcrumbJourneyStore
 {

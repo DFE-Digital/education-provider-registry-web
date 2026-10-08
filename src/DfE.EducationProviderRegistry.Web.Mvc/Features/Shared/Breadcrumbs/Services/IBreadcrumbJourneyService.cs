@@ -1,6 +1,6 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Breadcrumbs.Models;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Models;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Breadcrumbs.Services;
+namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Services;
 
 public interface IBreadcrumbJourneyService
 {

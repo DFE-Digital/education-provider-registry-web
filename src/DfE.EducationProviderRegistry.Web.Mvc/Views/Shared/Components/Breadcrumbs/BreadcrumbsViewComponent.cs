@@ -1,5 +1,5 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Breadcrumbs.Models;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Breadcrumbs.Services;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Models;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Views.Shared.Components.Breadcrumbs;

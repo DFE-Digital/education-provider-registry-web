@@ -2,7 +2,7 @@
 using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupById;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Breadcrumbs.Models;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Breadcrumbs.Services;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;

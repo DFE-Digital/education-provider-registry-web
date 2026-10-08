@@ -1,9 +1,9 @@
 using DfE.EducationProviderRegistry.Web.Mvc.Extensions;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Breadcrumbs.Services;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Breadcrumbs.Stores;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Services;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Stores;
 using DfE.EducationProviderRegistry.Web.Mvc.Middleware;
 using DfE.EducationProviderRegistry.Web.Mvc.Settings;
 using Microsoft.AspNetCore.CookiePolicy;

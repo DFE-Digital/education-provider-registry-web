@@ -1,3 +1,0 @@
-﻿namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Breadcrumbs.Models;
-
-public sealed record BreadcrumbItem(string Title, string Url);

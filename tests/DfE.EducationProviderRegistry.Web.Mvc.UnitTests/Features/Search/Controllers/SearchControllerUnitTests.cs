@@ -26,7 +26,8 @@ public sealed class SearchControllerUnitTests
                 searchUseCase: null!,
                 searchResponseToViewModelMapper: SearchResultsMapperTestDouble.Mock().Object,
                 selectedFacetsToFilterRequestsMapper: SearchFacetsResultsMapperTestDouble.Mock().Object,
-                searchFilterSelectionHandler: SearchFilterSelectionHandlerStub.Mock().Object);
+                searchFilterSelectionHandler: SearchFilterSelectionHandlerStub.Mock().Object,
+                breadcrumbJourney: null!);
 
         // act & assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -41,7 +42,8 @@ public sealed class SearchControllerUnitTests
                 searchUseCase: SearchUseCaseTestDouble.Mock().Object,
                 searchResponseToViewModelMapper: null!,
                 selectedFacetsToFilterRequestsMapper: SearchFacetsResultsMapperTestDouble.Mock().Object,
-                searchFilterSelectionHandler: SearchFilterSelectionHandlerStub.Mock().Object);
+                searchFilterSelectionHandler: SearchFilterSelectionHandlerStub.Mock().Object,
+                breadcrumbJourney: null!);
 
         // act & assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -56,7 +58,8 @@ public sealed class SearchControllerUnitTests
                 searchUseCase: SearchUseCaseTestDouble.Mock().Object,
                 searchResponseToViewModelMapper: SearchResultsMapperTestDouble.Mock().Object,
                 null!,
-                searchFilterSelectionHandler: SearchFilterSelectionHandlerStub.Mock().Object);
+                searchFilterSelectionHandler: SearchFilterSelectionHandlerStub.Mock().Object,
+                breadcrumbJourney: null!);
 
         // act & assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -71,7 +74,8 @@ public sealed class SearchControllerUnitTests
                 searchUseCase: SearchUseCaseTestDouble.Mock().Object,
                 searchResponseToViewModelMapper: SearchResultsMapperTestDouble.Mock().Object,
                 selectedFacetsToFilterRequestsMapper: SearchFacetsResultsMapperTestDouble.Mock().Object,
-                searchFilterSelectionHandler: null!);
+                searchFilterSelectionHandler: null!,
+                breadcrumbJourney: null!);
 
         // act & assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -90,7 +94,8 @@ public sealed class SearchControllerUnitTests
                 searchUseCase: useCase.Object,
                 searchResponseToViewModelMapper: searchResultsMapper.Object,
                 selectedFacetsToFilterRequestsMapper: searchFacetsResultsMapper.Object,
-                searchFilterSelectionHandler: SearchFilterSelectionHandlerStub.Mock().Object);
+                searchFilterSelectionHandler: SearchFilterSelectionHandlerStub.Mock().Object,
+                breadcrumbJourney: null!);
 
         // act
         IActionResult result = sut.Index();
@@ -131,7 +136,8 @@ public sealed class SearchControllerUnitTests
                 searchUseCase: searchUseCase.Object,
                 searchResponseToViewModelMapper: searchResultsMapper.Object,
                 selectedFacetsToFilterRequestsMapper: searchFacetsResultsMapper.Object,
-                searchFilterSelectionHandler: searchFilterSelectionHandler.Object);
+                searchFilterSelectionHandler: searchFilterSelectionHandler.Object,
+                breadcrumbJourney: null!);
 
         // act
         IActionResult result = await sut.Search(model);
@@ -193,7 +199,8 @@ public sealed class SearchControllerUnitTests
                 searchUseCase: searchUseCase.Object,
                 searchResponseToViewModelMapper: searchResultsMapper.Object,
                 selectedFacetsToFilterRequestsMapper: searchFacetsResultsMapper.Object,
-                searchFilterSelectionHandler: searchFilterSelectionHandler.Object);
+                searchFilterSelectionHandler: searchFilterSelectionHandler.Object,
+                breadcrumbJourney: null!);
 
         // act
         IActionResult result = await sut.Search(model);

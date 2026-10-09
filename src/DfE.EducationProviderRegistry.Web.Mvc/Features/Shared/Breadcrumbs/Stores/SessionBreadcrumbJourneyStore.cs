@@ -5,7 +5,7 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Stor
 
 public sealed class SessionBreadcrumbJourneyStore : IBreadcrumbJourneyStore
 {
-    private const string SessionKey = "NavigationContext";
+    private const string SessionKey = "BreadcrumbJourney";
 
     private readonly IHttpContextAccessor _httpContextAccessor;
 

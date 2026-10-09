@@ -2,7 +2,7 @@
 using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.Model;
 using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.UseCases.GetEstablishmentById;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Breadcrumbs.Models;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Models;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments.ViewModels;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Services;
 using Microsoft.AspNetCore.Mvc;

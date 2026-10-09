@@ -5,6 +5,7 @@ using DfE.Core.Libraries.Testing.Logger;
 using DfE.Core.Libraries.Testing.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupById;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Services;
 using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.TestDoubles;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -22,7 +23,8 @@ public sealed class GroupsControllerTests
             () => new(
                 logger: null!,
                 useCase: IUseCaseTestDoubles.Default<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModelResponse>>(),
-                mapper: IMapperTestDouble.Default<GroupReadModel, GroupDetailsPageViewModel>());
+                mapper: IMapperTestDouble.Default<GroupReadModel, GroupDetailsPageViewModel>(),
+                breadcrumbJourney: null!);
 
         // Act & Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -36,7 +38,8 @@ public sealed class GroupsControllerTests
             () => new(
                 logger: ILoggerTestDouble.Default<GroupsController>(),
                 useCase: null!,
-                mapper: IMapperTestDouble.Default<GroupReadModel, GroupDetailsPageViewModel>());
+                mapper: IMapperTestDouble.Default<GroupReadModel, GroupDetailsPageViewModel>(),
+                breadcrumbJourney: null!);
 
         // Act & Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -50,7 +53,8 @@ public sealed class GroupsControllerTests
             () => new(
                 logger: ILoggerTestDouble.Default<GroupsController>(),
                 useCase: IUseCaseTestDoubles.Default<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModelResponse>>(),
-                mapper: null!);
+                mapper: null!,
+                breadcrumbJourney: null!);
 
         // Act & Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -158,7 +162,8 @@ public sealed class GroupsControllerTests
         return new GroupsController(
             logger ?? ILoggerTestDouble.Default<GroupsController>(),
             useCase ?? IUseCaseTestDoubles.Default<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModelResponse>>(),
-            mapper ?? IMapperTestDouble.Default<GroupReadModel, GroupDetailsPageViewModel>());
+            mapper ?? IMapperTestDouble.Default<GroupReadModel, GroupDetailsPageViewModel>(),
+            breadcrumbJourney: null!);
     }
 }
 

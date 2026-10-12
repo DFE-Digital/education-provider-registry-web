@@ -20,7 +20,7 @@ public sealed class DatasetsController : Controller
         Dataset,
         DownloadedDatasetViewModel> _useCaseReponseToViewModelMapper;
 
-    private ISession _sessionContext;
+    private readonly ISession _sessionContext;
 
     private const string DownloadedViewModelKey = "DownloadedViewModel";
 

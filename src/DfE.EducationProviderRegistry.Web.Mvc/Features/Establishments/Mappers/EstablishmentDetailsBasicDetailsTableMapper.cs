@@ -93,7 +93,7 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapper : IMapper<Establ
         if (dto.Group is not null)
         {
             builder.AddRow(
-            new TableCell { Text = "Part of", IsBold = true },
+            new TableCell { Text = "Part of group", IsBold = true },
             new TableCell
             {
                 Text = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(dto.Group.name.ToLowerInvariant()),

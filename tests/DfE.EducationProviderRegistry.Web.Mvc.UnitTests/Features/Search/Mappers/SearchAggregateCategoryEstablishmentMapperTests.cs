@@ -142,7 +142,7 @@ public sealed class SearchAggregateCategoryEstablishmentMapperTests
         GovUkTable table = _mapper.Map(MakeResult());
 
         TableRow row =
-            table.Rows.Single(x => x.Cells[0].Text == "Part of a group");
+            table.Rows.Single(x => x.Cells[0].Text == "Part of group");
 
         Assert.Equal("Group Name", row.Cells[1].Text);
         Assert.Equal("/groups/222222", row.Cells[1].Href);
@@ -180,19 +180,18 @@ public sealed class SearchAggregateCategoryEstablishmentMapperTests
                 new Name("Test"),
                 new SearchAddress("Address"),
                 new SearchType("Academy", 1),
-                null,
+                group: null,
                 null,
                 new SearchCategory("Establishment"),
-                null,
+                SearchProviderStatus.Open,
                 0);
 
         GovUkTable table = _mapper.Map(input);
 
-        TableRow row =
-            table.Rows.Single(x => x.Cells[0].Text == "Part of a group");
+        TableRow? row =
+            table.Rows.SingleOrDefault(x => x.Cells[0].Text == "Part of group");
 
-        Assert.Null(row.Cells[1].Text);
-        Assert.Null(row.Cells[1].Href);
+        Assert.Null(row);
     }
 
     [Fact]

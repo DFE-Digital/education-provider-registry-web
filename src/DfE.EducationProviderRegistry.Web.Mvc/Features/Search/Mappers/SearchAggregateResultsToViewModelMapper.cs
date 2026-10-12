@@ -83,7 +83,7 @@ public sealed class SearchAggregateCategoryEstablishmentMapper : ISearchAggregat
         if (input.Group is not null)
         {
             builder.AddRow(
-                new TableCell { Text = "Part of a group" },
+                new TableCell { Text = "Part of group" },
                 new TableCell
                 {
                     Text = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(input.Group.PartOfName.ToLowerInvariant()),

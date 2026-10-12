@@ -47,5 +47,5 @@ public sealed class SearchResultsComponent
     }
 }
 
-public sealed record class SearchResult(TextContent Name, IEnumerable<(TextContent, TextContent)> Values);
+public sealed record class SearchResult(TextContent Name, IEnumerable<(TextContent key, TextContent value)> Values);
 

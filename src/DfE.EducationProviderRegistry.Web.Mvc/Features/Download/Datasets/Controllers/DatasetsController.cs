@@ -20,6 +20,8 @@ public sealed class DatasetsController : Controller
         Dataset,
         DownloadedDatasetViewModel> _useCaseReponseToViewModelMapper;
 
+    private ISession _sessionContext;
+
     private const string DownloadedViewModelKey = "DownloadedViewModel";
 
     public DatasetsController(
@@ -28,29 +30,34 @@ public sealed class DatasetsController : Controller
             UseCaseResponse<DownloadDatasetsResponse>> downloadDatasetUsecase,
         IMapper<
             Dataset,
-            DownloadedDatasetViewModel> useCaseReponseToViewModelMapper)
+            DownloadedDatasetViewModel> useCaseReponseToViewModelMapper,
+        ISession sessionContext)
     {
         _downloadDatasetUsecase = downloadDatasetUsecase;
         _useCaseReponseToViewModelMapper = useCaseReponseToViewModelMapper;
+        _sessionContext = sessionContext;
     }
 
     [HttpGet("")]
     public IActionResult Index() => View(nameof(Index));
 
     [HttpPost("downloading")]
-    public IActionResult StartDownloading(DownloadDatasetRequestViewModel viewModel)
+    public IActionResult StartDownloading(
+        DownloadDatasetRequestViewModel viewModel)
     {
         if (!ModelState.IsValid)
         {
             return View(nameof(Index), viewModel);
         }
 
-        TempData.Remove(DownloadedViewModelKey);
+        _sessionContext.Remove(DownloadedViewModelKey);
+
         return RedirectToAction(nameof(Downloading), viewModel);
     }
 
     [HttpGet("downloading")]
-    public IActionResult Downloading(DownloadDatasetRequestViewModel viewModel)
+    public IActionResult Downloading(
+        DownloadDatasetRequestViewModel viewModel)
     {
         if (!ModelState.IsValid)
         {
@@ -66,20 +73,26 @@ public sealed class DatasetsController : Controller
         DownloadDatasetsRequest request = new(filename);
 
         UseCaseResponse<DownloadDatasetsResponse> response =
-            await _downloadDatasetUsecase.HandleRequestAsync(request) ??
-                throw new InvalidOperationException("Use case returned a null response.");
+            await _downloadDatasetUsecase.HandleRequestAsync(request)
+            ?? throw new InvalidOperationException(
+                "Use case returned a null response.");
 
-        DownloadDatasetsResponse model = response.Model
-            ?? throw new InvalidOperationException("Use case response.Model was null.");
+        DownloadDatasetsResponse model =
+            response.Model
+                ?? throw new InvalidOperationException(
+                    "Use case response.Model was null.");
 
-        Dataset dataset = model.DownloadedDataset
-            ?? throw new InvalidOperationException("DownloadedDataset was null.");
+        Dataset dataset =
+            model.DownloadedDataset
+                ?? throw new InvalidOperationException(
+                    "DownloadedDataset was null.");
 
         DownloadedDatasetViewModel viewModel =
             _useCaseReponseToViewModelMapper.Map(dataset);
 
-        TempData[DownloadedViewModelKey] =
-            JsonSerializer.Serialize(viewModel);
+        _sessionContext.SetString(
+            DownloadedViewModelKey,
+            JsonSerializer.Serialize(viewModel));
 
         return File(
             dataset.FileStream,
@@ -91,22 +104,29 @@ public sealed class DatasetsController : Controller
     [HttpGet("status")]
     public IActionResult Status()
     {
-        bool ready = TempData.ContainsKey(DownloadedViewModelKey);
+        bool ready =
+            !string.IsNullOrWhiteSpace(
+                _sessionContext.GetString(DownloadedViewModelKey));
+
         return Json(new { ready });
     }
 
     [HttpGet("complete")]
     public IActionResult Complete()
     {
-        if (!TempData.TryGetValue(DownloadedViewModelKey, out object? jsonObj) || jsonObj is null)
+        string? jsonViewModel =
+            _sessionContext.GetString(DownloadedViewModelKey);
+
+        if (string.IsNullOrWhiteSpace(jsonViewModel))
         {
             return RedirectToAction(nameof(Index));
         }
 
-        string jsonViewModel = jsonObj.ToString()!;
-
         DownloadedDatasetViewModel viewModel =
-            JsonSerializer.Deserialize<DownloadedDatasetViewModel>(jsonViewModel)!;
+            JsonSerializer.Deserialize<DownloadedDatasetViewModel>(
+                jsonViewModel)!;
+
+        _sessionContext.Remove(DownloadedViewModelKey);
 
         return View(nameof(Complete), viewModel);
     }

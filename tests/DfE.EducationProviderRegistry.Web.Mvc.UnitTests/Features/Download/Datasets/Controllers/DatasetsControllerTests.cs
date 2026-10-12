@@ -9,7 +9,6 @@ using DfE.EducationProviderRegistry.Web.Mvc.Features.Download.Datasets.ViewModel
 using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Download.Datasets.Controllers.TestDoubles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Download.Datasets.Controllers;
@@ -18,16 +17,21 @@ public sealed class DatasetsControllerTests
 {
     private static DatasetsController CreateController(
         Mock<IUseCase<DownloadDatasetsRequest, UseCaseResponse<DownloadDatasetsResponse>>> useCaseMock,
-        Mock<IMapper<Dataset, DownloadedDatasetViewModel>> mapperMock)
+        Mock<IMapper<Dataset, DownloadedDatasetViewModel>> mapperMock,
+        ISession session)
     {
-        DatasetsController controller = new(
-            useCaseMock.Object,
-            mapperMock.Object)
-        {
-            TempData = new TempDataDictionary(
-                new DefaultHttpContext(),
-                Mock.Of<ITempDataProvider>())
-        };
+        DatasetsController controller =
+            new(
+                useCaseMock.Object,
+                mapperMock.Object,
+                session
+            )
+            {
+                ControllerContext = new ControllerContext
+                {
+                    HttpContext = new DefaultHttpContext()
+                }
+            };
 
         return controller;
     }
@@ -42,7 +46,11 @@ public sealed class DatasetsControllerTests
         Mock<IMapper<Dataset, DownloadedDatasetViewModel>> mapperMock =
             UseCaseReponseToViewModelMapperTestDouble.Mock();
 
-        DatasetsController controller = CreateController(useCaseMock, mapperMock);
+        ISession session =
+            SessionTestDouble.Create();
+
+        DatasetsController controller =
+            CreateController(useCaseMock, mapperMock, session);
 
         // act
         IActionResult result = controller.Index();
@@ -62,7 +70,11 @@ public sealed class DatasetsControllerTests
         Mock<IMapper<Dataset, DownloadedDatasetViewModel>> mapperMock =
             UseCaseReponseToViewModelMapperTestDouble.Mock();
 
-        DatasetsController controller = CreateController(useCaseMock, mapperMock);
+        ISession session =
+            SessionTestDouble.Create();
+
+        DatasetsController controller =
+            CreateController(useCaseMock, mapperMock, session);
 
         // act
         DownloadDatasetRequestViewModel viewModel =
@@ -88,7 +100,11 @@ public sealed class DatasetsControllerTests
         Mock<IMapper<Dataset, DownloadedDatasetViewModel>> mapperMock =
             UseCaseReponseToViewModelMapperTestDouble.Mock();
 
-        DatasetsController controller = CreateController(useCaseMock, mapperMock);
+        ISession session =
+            SessionTestDouble.Create();
+
+        DatasetsController controller =
+            CreateController(useCaseMock, mapperMock, session);
 
         // act
         DownloadDatasetRequestViewModel viewModel =
@@ -139,7 +155,11 @@ public sealed class DatasetsControllerTests
         Mock<IMapper<Dataset, DownloadedDatasetViewModel>> mapperMock =
             UseCaseReponseToViewModelMapperTestDouble.MockFor(viewModel, dataset);
 
-        DatasetsController controller = CreateController(useCaseMock, mapperMock);
+        ISession session =
+            SessionTestDouble.Create();
+
+        DatasetsController controller =
+            CreateController(useCaseMock, mapperMock, session);
 
         // act
         const string DatasetFileName = "test-dataset";
@@ -158,7 +178,7 @@ public sealed class DatasetsControllerTests
             Assert.Equal(byteArray, fileBytes);
         }
 
-        Assert.True(controller.TempData.ContainsKey("DownloadedViewModel"));
+        Assert.NotNull(session.Get("DownloadedViewModel"));
     }
 
     [Fact]
@@ -171,7 +191,11 @@ public sealed class DatasetsControllerTests
         Mock<IMapper<Dataset, DownloadedDatasetViewModel>> mapperMock =
             UseCaseReponseToViewModelMapperTestDouble.Mock();
 
-        DatasetsController controller = CreateController(useCaseMock, mapperMock);
+        ISession session =
+            SessionTestDouble.Create();
+
+        DatasetsController controller =
+            CreateController(useCaseMock, mapperMock, session);
 
         // act
         IActionResult result = controller.Status();
@@ -191,9 +215,13 @@ public sealed class DatasetsControllerTests
         Mock<IMapper<Dataset, DownloadedDatasetViewModel>> mapperMock =
             UseCaseReponseToViewModelMapperTestDouble.Mock();
 
-        DatasetsController controller = CreateController(useCaseMock, mapperMock);
+        ISession session =
+            SessionTestDouble.Create();
 
-        controller.TempData["DownloadedViewModel"] = "{}";
+        DatasetsController controller =
+            CreateController(useCaseMock, mapperMock, session);
+
+        session.SetString("DownloadedViewModel", "{}");
 
         // act
         IActionResult result = controller.Status();
@@ -213,7 +241,11 @@ public sealed class DatasetsControllerTests
         Mock<IMapper<Dataset, DownloadedDatasetViewModel>> mapperMock =
             UseCaseReponseToViewModelMapperTestDouble.Mock();
 
-        DatasetsController controller = CreateController(useCaseMock, mapperMock);
+        ISession session =
+            SessionTestDouble.Create();
+
+        DatasetsController controller =
+            CreateController(useCaseMock, mapperMock, session);
 
         DownloadedDatasetViewModel viewModel =
             new()
@@ -224,8 +256,7 @@ public sealed class DatasetsControllerTests
                 FileSize = 123
             };
 
-        controller.TempData["DownloadedViewModel"] =
-            JsonSerializer.Serialize(viewModel);
+        session.SetString("DownloadedViewModel", JsonSerializer.Serialize(viewModel));
 
         // act
         IActionResult result = controller.Complete();
@@ -253,7 +284,12 @@ public sealed class DatasetsControllerTests
         Mock<IMapper<Dataset, DownloadedDatasetViewModel>> mapperMock =
             UseCaseReponseToViewModelMapperTestDouble.Mock();
 
-        DatasetsController controller = CreateController(useCaseMock, mapperMock);
+        ISession session =
+            SessionTestDouble.Create();
+
+        DatasetsController controller =
+            CreateController(useCaseMock, mapperMock, session);
+
         controller.ModelState.AddModelError("Filename", "The Filename field is required.");
 
         DownloadDatasetRequestViewModel viewModel = new();
@@ -279,7 +315,12 @@ public sealed class DatasetsControllerTests
         Mock<IMapper<Dataset, DownloadedDatasetViewModel>> mapperMock =
             UseCaseReponseToViewModelMapperTestDouble.Mock();
 
-        DatasetsController controller = CreateController(useCaseMock, mapperMock);
+        ISession session =
+            SessionTestDouble.Create();
+
+        DatasetsController controller =
+            CreateController(useCaseMock, mapperMock, session);
+
         controller.ModelState.AddModelError("Filename", "The Filename field is required.");
 
         DownloadDatasetRequestViewModel viewModel = new();
@@ -305,7 +346,11 @@ public sealed class DatasetsControllerTests
         Mock<IMapper<Dataset, DownloadedDatasetViewModel>> mapperMock =
             UseCaseReponseToViewModelMapperTestDouble.Mock();
 
-        DatasetsController controller = CreateController(useCaseMock, mapperMock);
+        ISession session =
+            SessionTestDouble.Create();
+
+        DatasetsController controller =
+            CreateController(useCaseMock, mapperMock, session);
 
         // act
         IActionResult result = controller.Complete();

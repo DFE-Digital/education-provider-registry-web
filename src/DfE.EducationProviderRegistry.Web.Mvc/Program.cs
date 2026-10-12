@@ -54,6 +54,19 @@ builder.Services.Configure<RazorViewEngineOptions>(options =>
     options.ViewLocationExpanders.Add(new DownloadDatasetsViewLocationExpander());
 });
 
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
+builder.Services.AddScoped<ISession>(provider =>
+    provider.GetRequiredService<IHttpContextAccessor>().HttpContext!.Session);
+
 WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -67,7 +80,7 @@ else
 {
     app.UseDeveloperExceptionPage();
 }
-
+app.UseSession();
 app.UseStatusCodePagesWithReExecute("/not-found");
 app.UseSecurityHeaders();
 app.UseHttpsRedirection();

@@ -65,13 +65,9 @@ public class GroupsController : Controller
 
         GroupDetailsPageViewModel model = _groupDetailsPageMapper.Map(response.Model.Group);
 
-        _breadcrumbJourney.NavigateTo(
-            new BreadcrumbItem(
-                model.Heading ?? string.Empty,
-                Url.Action(
-                    nameof(Details),
-                    "Groups",
-                    new { groupId })!));
+        _breadcrumbJourney.Visit(
+            new BreadcrumbItem(model.Heading ?? string.Empty,
+            $"/groups/{groupId}"));
 
         return View(model);
     }

@@ -3,7 +3,6 @@ using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Services;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Stores;
 using DfE.EducationProviderRegistry.Web.Mvc.Middleware;
 using DfE.EducationProviderRegistry.Web.Mvc.Settings;
 using Microsoft.AspNetCore.CookiePolicy;
@@ -49,9 +48,16 @@ builder.Services.Configure<GoogleAnalyticsSettings>(
 );
 
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ISession>(provider =>
+{
+    IHttpContextAccessor accessor =
+        provider.GetRequiredService<IHttpContextAccessor>();
+
+    return accessor.HttpContext!.Session;
+});
+
 builder.Services.AddSession();
-builder.Services.AddScoped<IBreadcrumbJourneyStore, SessionBreadcrumbJourneyStore>();
-builder.Services.AddScoped<IBreadcrumbJourneyService, BreadcrumbJourneyService>();
+builder.Services.AddScoped<IBreadcrumbJourneyService, SessionBreadcrumbJourneyService>();
 
 WebApplication app = builder.Build();
 

@@ -24,7 +24,7 @@ public sealed class GroupsControllerTests
                 logger: null!,
                 useCase: IUseCaseTestDoubles.Default<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModelResponse>>(),
                 mapper: IMapperTestDouble.Default<GroupReadModel, GroupDetailsPageViewModel>(),
-                breadcrumbJourney: null!);
+                breadcrumbJourney: new Mock<IBreadcrumbJourneyService>().Object);
 
         // Act & Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -39,7 +39,7 @@ public sealed class GroupsControllerTests
                 logger: ILoggerTestDouble.Default<GroupsController>(),
                 useCase: null!,
                 mapper: IMapperTestDouble.Default<GroupReadModel, GroupDetailsPageViewModel>(),
-                breadcrumbJourney: null!);
+                breadcrumbJourney: new Mock<IBreadcrumbJourneyService>().Object);
 
         // Act & Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -54,7 +54,7 @@ public sealed class GroupsControllerTests
                 logger: ILoggerTestDouble.Default<GroupsController>(),
                 useCase: IUseCaseTestDoubles.Default<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModelResponse>>(),
                 mapper: null!,
-                breadcrumbJourney: null!);
+                breadcrumbJourney: new Mock<IBreadcrumbJourneyService>().Object);
 
         // Act & Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -141,7 +141,8 @@ public sealed class GroupsControllerTests
         GroupsController controller =
             CreateSut(
                 useCase: IUseCaseTestDoubles.WithResponse<GetGroupByGroupUniqueIdentifierRequest, GroupReadModelResponse>(useCaseResponse),
-                mapper: mapperMock.Object);
+                mapper: mapperMock.Object,
+                breadcrumbJourneyService: new Mock<IBreadcrumbJourneyService>().Object);
 
         string groupId = "group-1";
 
@@ -157,13 +158,14 @@ public sealed class GroupsControllerTests
     private static GroupsController CreateSut(
         ILogger<GroupsController>? logger = null,
         IUseCase<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModelResponse>>? useCase = null,
-        IMapper<GroupReadModel, GroupDetailsPageViewModel>? mapper = null)
+        IMapper<GroupReadModel, GroupDetailsPageViewModel>? mapper = null,
+        IBreadcrumbJourneyService? breadcrumbJourneyService = null)
     {
         return new GroupsController(
             logger ?? ILoggerTestDouble.Default<GroupsController>(),
             useCase ?? IUseCaseTestDoubles.Default<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModelResponse>>(),
             mapper ?? IMapperTestDouble.Default<GroupReadModel, GroupDetailsPageViewModel>(),
-            breadcrumbJourney: null!);
+            breadcrumbJourneyService ?? new Mock<IBreadcrumbJourneyService>().Object);
     }
 }
 

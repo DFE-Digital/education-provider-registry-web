@@ -43,8 +43,8 @@ public sealed class SearchUrlBuilderTests
             QueryHelpers.ParseQuery(uri.Query);
 
         Assert.Equal("/Search", uri.AbsolutePath);
-        Assert.Equal("test school", query["SearchKeywords"]);
-        Assert.Equal("testLocation", query["Address"]);
+        Assert.Equal("test school", query["What"]);
+        Assert.Equal("testLocation", query["Where"]);
         Assert.Equal("NameAscending", query["Sort"]);
         Assert.Equal("2", query["PageNumber"]);
         Assert.Equal("20", query["RecordsPerPage"]);
@@ -164,11 +164,11 @@ public sealed class SearchUrlBuilderTests
 
         Assert.Equal(
             "test school & college",
-            query["SearchKeywords"]);
+            query["What"]);
 
         Assert.Equal(
             "testLocation",
-            query["Address"]);
+            query["Where"]);
     }
 
     [Fact]

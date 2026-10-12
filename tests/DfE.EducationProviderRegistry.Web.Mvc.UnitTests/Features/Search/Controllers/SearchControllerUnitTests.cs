@@ -9,7 +9,9 @@ using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Controllers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Services;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Services;
 using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Controllers.TestDoubles;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -82,12 +84,27 @@ public sealed class SearchControllerUnitTests
     }
 
     [Fact]
+    public void Constructor_Throws_When_BreadcrumbJourneyServiceIsNull()
+    {
+        Func<SearchController> construct = () =>
+            new(
+                searchUseCase: SearchUseCaseTestDouble.Mock().Object,
+                searchResponseToViewModelMapper: SearchResultsMapperTestDouble.Mock().Object,
+                selectedFacetsToFilterRequestsMapper: SearchFacetsResultsMapperTestDouble.Mock().Object,
+                searchFilterSelectionHandler: SearchFilterSelectionHandlerStub.Mock().Object,
+                breadcrumbJourney: null!);
+
+        Assert.Throws<ArgumentNullException>(construct);
+    }
+
+    [Fact]
     public void Index_ReturnsCorrectViewAndModel()
     {
         // arrange
         Mock<IUseCase<SearchRequest, UseCaseResponse<SearchResponse>>> useCase = SearchUseCaseTestDouble.Mock();
         Mock<IMapper<SearchResultsMappingContext, SearchResultsViewModel>> searchResultsMapper = SearchResultsMapperTestDouble.Mock();
         Mock<IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>> searchFacetsResultsMapper = SearchFacetsResultsMapperTestDouble.Mock();
+        Mock<IBreadcrumbJourneyService> breadcrumbJourney = new();
 
         SearchController sut =
             new(
@@ -95,7 +112,7 @@ public sealed class SearchControllerUnitTests
                 searchResponseToViewModelMapper: searchResultsMapper.Object,
                 selectedFacetsToFilterRequestsMapper: searchFacetsResultsMapper.Object,
                 searchFilterSelectionHandler: SearchFilterSelectionHandlerStub.Mock().Object,
-                breadcrumbJourney: null!);
+                breadcrumbJourney: breadcrumbJourney.Object);
 
         // act
         IActionResult result = sut.Index();
@@ -137,7 +154,12 @@ public sealed class SearchControllerUnitTests
                 searchResponseToViewModelMapper: searchResultsMapper.Object,
                 selectedFacetsToFilterRequestsMapper: searchFacetsResultsMapper.Object,
                 searchFilterSelectionHandler: searchFilterSelectionHandler.Object,
-                breadcrumbJourney: null!);
+                breadcrumbJourney: new Mock<IBreadcrumbJourneyService>().Object);
+
+        sut.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext()
+        };
 
         // act
         IActionResult result = await sut.Search(model);
@@ -191,7 +213,6 @@ public sealed class SearchControllerUnitTests
         Mock<IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>> searchFacetsResultsMapper =
             SearchFacetsResultsMapperTestDouble.MockFor(mappedFilters);
 
-
         Mock<ISearchFilterSelectionHandler> searchFilterSelectionHandler = SearchFilterSelectionHandlerStub.MockFor();
 
         SearchController sut =
@@ -200,7 +221,12 @@ public sealed class SearchControllerUnitTests
                 searchResponseToViewModelMapper: searchResultsMapper.Object,
                 selectedFacetsToFilterRequestsMapper: searchFacetsResultsMapper.Object,
                 searchFilterSelectionHandler: searchFilterSelectionHandler.Object,
-                breadcrumbJourney: null!);
+                breadcrumbJourney: new Mock<IBreadcrumbJourneyService>().Object);
+
+        sut.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext()
+        };
 
         // act
         IActionResult result = await sut.Search(model);

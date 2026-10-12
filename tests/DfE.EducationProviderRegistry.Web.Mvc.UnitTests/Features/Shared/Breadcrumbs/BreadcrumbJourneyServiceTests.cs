@@ -1,46 +1,59 @@
 ﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Models;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Services;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Stores;
-using Moq;
-using Xunit;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Shared.Breadcrumbs;
 
-public sealed class BreadcrumbJourneyServiceTests
+public sealed class SessionBreadcrumbJourneyServiceTests
 {
-    private readonly Mock<IBreadcrumbJourneyStore> _store = new();
-    private readonly BreadcrumbJourneyService _sut;
+    private readonly SessionBreadcrumbJourneyService _sut;
 
-    public BreadcrumbJourneyServiceTests()
+    public SessionBreadcrumbJourneyServiceTests()
     {
-        _sut = new BreadcrumbJourneyService(_store.Object);
+        _sut = new SessionBreadcrumbJourneyService(
+            new SessionTestDouble());
     }
 
     [Fact]
-    public void Get_Returns_Journey()
+    public void Constructor_WhenSessionIsNull_Throws()
     {
-        BreadcrumbJourney expected = new();
+        Assert.Throws<ArgumentNullException>(
+            () => new SessionBreadcrumbJourneyService(null!));
+    }
 
-        _store
-            .Setup(x => x.Get())
-            .Returns(expected);
+    [Fact]
+    public void Get_WhenNoJourneyExists_ReturnsEmptyJourney()
+    {
+        BreadcrumbJourney result = _sut.Get();
+
+        Assert.NotNull(result);
+        Assert.Empty(result.Items);
+    }
+
+    [Fact]
+    public void Clear_WhenJourneyExists_RemovesJourney()
+    {
+        _sut.StartSearchJourney(
+            "/search/results?what=test");
+
+        _sut.Clear();
 
         BreadcrumbJourney result = _sut.Get();
 
-        Assert.Equal(expected, result);
-        _store.Verify(
-            x => x.Get(),
-            Times.Once);
+        Assert.Empty(result.Items);
     }
 
     [Fact]
-    public void Clear_Calls_StoreClear()
+    public void StartSearchJourney_WhenUrlIsNull_Throws()
     {
-        _sut.Clear();
+        Assert.Throws<ArgumentNullException>(
+            () => _sut.StartSearchJourney(null!));
+    }
 
-        _store.Verify(
-            x => x.Clear(),
-            Times.Once);
+    [Fact]
+    public void StartSearchJourney_WhenUrlIsEmpty_Throws()
+    {
+        Assert.Throws<ArgumentException>(
+            () => _sut.StartSearchJourney(string.Empty));
     }
 
     [Fact]
@@ -49,153 +62,163 @@ public sealed class BreadcrumbJourneyServiceTests
         _sut.StartSearchJourney(
             "/search/results?what=test");
 
-        _store.Verify(
-            x => x.Save(
-                It.Is<BreadcrumbJourney>(j =>
-                    j.Items.Count == 3 &&
-                    j.Items[0].Title == "Home" &&
-                    j.Items[1].Title == "Search" &&
-                    j.Items[2].Title == "Search Results" &&
-                    j.Items[2].Url ==
-                    "/search/results?what=test")),
-            Times.Once);
+        BreadcrumbJourney result = _sut.Get();
+
+        Assert.Collection(
+            result.Items,
+
+            item =>
+            {
+                Assert.Equal("Home", item.Title);
+                Assert.Equal("/", item.Url);
+            },
+
+            item =>
+            {
+                Assert.Equal("Search", item.Title);
+                Assert.Equal("/search", item.Url);
+            },
+
+            item =>
+            {
+                Assert.Equal("Search Results", item.Title);
+                Assert.Equal(
+                    "/search/results?what=test",
+                    item.Url);
+            });
     }
 
     [Fact]
-    public void StartSearchJourney_WhenUrlIsNull_ThrowsArgumentException()
+    public void Visit_WhenPageIsNull_Throws()
     {
-        Assert.Throws<ArgumentNullException>(() => _sut.StartSearchJourney(null!));
+        Assert.Throws<ArgumentNullException>(
+            () => _sut.Visit(null!));
     }
 
     [Fact]
-    public void StartSearchJourney_WhenUrlIsEmpty_ThrowsArgumentException()
+    public void Visit_WhenJourneyIsEmpty_StartsJourney()
     {
-        Assert.Throws<ArgumentException>(() => _sut.StartSearchJourney(""));
-    }
-
-    [Fact]
-    public void NavigateTo_WhenJourneyEmpty_AddsDestination()
-    {
-        BreadcrumbJourney journey = new();
-
-        _store
-            .Setup(x => x.Get())
-            .Returns(journey);
-
-        _sut.NavigateTo(
+        _sut.Visit(
             new BreadcrumbItem(
-                "Academy",
+                "Academy A",
                 "/establishments/123"));
 
-        Assert.Single(journey.Items);
+        BreadcrumbJourney result = _sut.Get();
 
-        Assert.Equal(
-            "Academy",
-            journey.Items[0].Title);
+        Assert.Collection(
+            result.Items,
+            item =>
+            {
+                Assert.Equal(
+                    "Academy A",
+                    item.Title);
 
-        _store.Verify(
-            x => x.Save(journey),
-            Times.Once);
+                Assert.Equal(
+                    "/establishments/123",
+                    item.Url);
+            });
     }
 
     [Fact]
-    public void NavigateTo_WhenRefreshing_DoesNothing()
+    public void Visit_WhenPageDoesNotExist_AppendsPage()
     {
-        BreadcrumbJourney journey =
-            new()
-            {
-                Items =
-                [
-                    new(
-                        "Academy",
-                        "/establishments/123")
-                ]
-            };
-
-        _store
-            .Setup(x => x.Get())
-            .Returns(journey);
-
-        _sut.NavigateTo(
+        _sut.Visit(
             new BreadcrumbItem(
-                "Academy",
-                "/establishments/123"));
+                "Academy A",
+                "/establishments/1"));
 
-        Assert.Single(journey.Items);
-
-        _store.Verify(
-            x => x.Save(It.IsAny<BreadcrumbJourney>()),
-            Times.Never);
-    }
-
-    [Fact]
-    public void NavigateTo_WhenItemAlreadyExists_TruncatesJourney()
-    {
-        BreadcrumbJourney journey =
-            new()
-            {
-                Items =
-                [
-                    new("Home", "/"),
-                    new("Search", "/search"),
-                    new("Group A", "/groups/1"),
-                    new("Academy A", "/establishments/1")
-                ]
-            };
-
-        _store
-            .Setup(x => x.Get())
-            .Returns(journey);
-
-        _sut.NavigateTo(
+        _sut.Visit(
             new BreadcrumbItem(
                 "Group A",
                 "/groups/1"));
 
-        Assert.Equal(
-            3,
-            journey.Items.Count);
+        BreadcrumbJourney result = _sut.Get();
 
-        Assert.Equal(
-            "/groups/1",
-            journey.Items.Last().Url);
+        Assert.Collection(
+            result.Items,
+            item =>
+                Assert.Equal(
+                    "/establishments/1",
+                    item.Url),
 
-        _store.Verify(
-            x => x.Save(journey),
-            Times.Once);
+            item =>
+                Assert.Equal(
+                    "/groups/1",
+                    item.Url));
     }
 
     [Fact]
-    public void NavigateTo_WhenItemNotInJourney_AppendsItem()
+    public void Visit_WhenRefreshingCurrentPage_DoesNothing()
     {
-        BreadcrumbJourney journey =
-            new()
-            {
-                Items =
-                [
-                    new("Home", "/")
-                ]
-            };
-
-        _store
-            .Setup(x => x.Get())
-            .Returns(journey);
-
-        _sut.NavigateTo(
+        _sut.Visit(
             new BreadcrumbItem(
-                "Academy",
+                "Academy A",
                 "/establishments/1"));
 
-        Assert.Equal(
-            2,
-            journey.Items.Count);
+        _sut.Visit(
+            new BreadcrumbItem(
+                "Academy A",
+                "/establishments/1"));
 
-        Assert.Equal(
-            "/establishments/1",
-            journey.Items.Last().Url);
+        BreadcrumbJourney result = _sut.Get();
 
-        _store.Verify(
-            x => x.Save(journey),
-            Times.Once);
+        Assert.Single(result.Items);
+    }
+
+    [Fact]
+    public void Visit_WhenRefreshingCurrentPageWithDifferentCase_DoesNothing()
+    {
+        _sut.Visit(
+            new BreadcrumbItem(
+                "Academy A",
+                "/ESTABLISHMENTS/1"));
+
+        _sut.Visit(
+            new BreadcrumbItem(
+                "Academy A",
+                "/establishments/1"));
+
+        BreadcrumbJourney result = _sut.Get();
+
+        Assert.Single(result.Items);
+    }
+
+    [Fact]
+    public void Visit_WhenPageAlreadyExists_TruncatesJourney()
+    {
+        _sut.Visit(
+            new BreadcrumbItem(
+                "Academy A",
+                "/establishments/1"));
+
+        _sut.Visit(
+            new BreadcrumbItem(
+                "Group A",
+                "/groups/1"));
+
+        _sut.Visit(
+            new BreadcrumbItem(
+                "Academy B",
+                "/establishments/2"));
+
+        _sut.Visit(
+            new BreadcrumbItem(
+                "Group A",
+                "/groups/1"));
+
+        BreadcrumbJourney result = _sut.Get();
+
+        Assert.Collection(
+            result.Items,
+
+            item =>
+                Assert.Equal(
+                    "/establishments/1",
+                    item.Url),
+
+            item =>
+                Assert.Equal(
+                    "/groups/1",
+                    item.Url));
     }
 }

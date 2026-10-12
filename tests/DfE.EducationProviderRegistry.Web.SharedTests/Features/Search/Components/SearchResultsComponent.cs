@@ -37,14 +37,15 @@ public sealed class SearchResultsComponent
                 new SearchResult(
                     Name: _textComponent.GetContent(element.QuerySelector(".govuk-table__caption")!),
                     Values:
-                        element.QuerySelectorAll("tbody tr").ToDictionary(
-                            (row) => _textComponent.GetContent(row.QuerySelector("th")!),
-                            (row) => _textComponent.GetContent(row.QuerySelector("td")!))
+                        element.QuerySelectorAll("tbody tr").Select((row) => (
+                            _textComponent.GetContent(row.QuerySelector("th")!),
+                            _textComponent.GetContent(row.QuerySelector("td")!)
+                        ))
                 )
             )
         ];
     }
 }
 
-public sealed record class SearchResult(TextContent Name, IReadOnlyDictionary<TextContent, TextContent> Values);
+public sealed record class SearchResult(TextContent Name, IEnumerable<(TextContent, TextContent)> Values);
 

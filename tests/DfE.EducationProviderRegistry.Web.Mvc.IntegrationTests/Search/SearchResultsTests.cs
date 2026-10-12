@@ -109,7 +109,7 @@ public sealed class SearchResultsTests
 
         string resultsHeading = results.GetHeading();
         Assert.StartsWith($"Search results for ", resultsHeading);
-        Assert.EndsWith($"\"sch\"\n \"LN1\"", resultsHeading);
+        Assert.EndsWith($"\"sch\" \"LN1\"", resultsHeading);
         Assert.Equal($"{searchResponse.SearchProviderResults!.Count} results", results.GetTotalResultsLabel());
         AssertSearchResultsDisplayed(results, searchResponse);
     }

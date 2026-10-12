@@ -67,6 +67,22 @@ public sealed class SearchRequestViewModelUnitTests
         Assert.Equal(1, page);
     }
 
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void PageNumber_Normalises_ToOne_WhenSetToLessThanOne(int pageNumber)
+    {
+        // arrange
+        SearchRequestViewModel vm = new()
+        {
+            // act
+            PageNumber = pageNumber
+        };
+
+        // assert
+        Assert.Equal(1, vm.PageNumber);
+    }
+
     [Fact]
     public void Offset_IsZero_WhenPageNumberIsOne()
     {

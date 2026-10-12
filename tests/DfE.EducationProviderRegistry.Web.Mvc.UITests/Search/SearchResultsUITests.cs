@@ -12,7 +12,6 @@ public sealed class SearchResultsUITests : UIBaseTest
     {
     }
 
-    // TODO BiDI await network traffic that sort submitted
     [Fact]
     public async Task Sort_Results_By_Name_Descending()
     {

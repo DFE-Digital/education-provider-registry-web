@@ -55,6 +55,7 @@ public sealed class SearchRequestViewModel
     /// Used together with <see cref="RecordsPerPage"/> to calculate the
     /// <see cref="Offset"/> for pagination.
     /// </remarks>
+    [Required]
     public int PageNumber
     {
         get => _pageNumber;

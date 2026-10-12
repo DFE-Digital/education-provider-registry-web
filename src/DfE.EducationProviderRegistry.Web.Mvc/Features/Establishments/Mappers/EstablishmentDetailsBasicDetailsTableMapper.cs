@@ -7,13 +7,10 @@ using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments.Mappers;
 
-public class EstablishmentDetailsBasicDetailsTableMapper :
-    IMapper<EstablishmentDetailsModel, GovUkTable>
+public sealed class EstablishmentDetailsBasicDetailsTableMapper : IMapper<EstablishmentDetailsModel, GovUkTable>
 {
     public GovUkTable Map(EstablishmentDetailsModel dto)
     {
-        const string DataUnavailable = "Yet to be provisioned";
-
         GovUkTableBuilder builder = GovUkTableBuilder
             .Create()
             .WithColumns(
@@ -22,35 +19,57 @@ public class EstablishmentDetailsBasicDetailsTableMapper :
 
         builder.AddRow(
             new TableCell { Text = "Status", IsBold = true },
-            new TableCell { Text = dto.Status?.Value ?? string.Empty });
+            new TableCell { Text = MapStatus(dto.Status) });
 
-        builder.AddRow(
-            new TableCell { Text = "ID numbers", IsBold = true },
-            new TableCell
-            {
-                Rows =
-                [
-                    new TableCellRow
-                    {
-                        Label = new TableCell { Text = "LAESTAB" },
-                        Value = new TableCell { Text = dto.Number?.Value ?? string.Empty }
-                    },
-                    new TableCellRow
-                    {
-                        Label = new TableCell { Text = "UKPRN" },
-                        Value = new TableCell { Text = dto.Number?.Value ?? string.Empty }
-                    },
-                    new TableCellRow
-                    {
-                        Label = new TableCell { Text = "URN" },
-                        Value = new TableCell { Text = dto.Urn.Value }
-                    }
-                ]
-            });
 
-        builder.AddRow(
-            new TableCell { Text = "Headteacher", IsBold = true },
-            new TableCell { Text = dto.Headteacher ?? string.Empty });
+        List<TableCellRow> identifierValueRows = [];
+
+        if (!string.IsNullOrWhiteSpace(dto.Identifiers.LaEstab))
+        {
+            identifierValueRows.Add(
+                new TableCellRow
+                {
+                    Label = new TableCell { Text = "LAESTAB" },
+                    Value = new TableCell { Text = dto.Identifiers.LaEstab }
+                });
+        }
+
+        if (!string.IsNullOrWhiteSpace(dto.Identifiers.Ukprn))
+        {
+            identifierValueRows.Add(
+                new TableCellRow
+                {
+                    Label = new TableCell { Text = "UKPRN" },
+                    Value = new TableCell { Text = dto.Identifiers.Ukprn }
+                });
+        }
+
+        if (!string.IsNullOrWhiteSpace(dto.Identifiers.Urn))
+        {
+            identifierValueRows.Add(
+                new TableCellRow
+                {
+                    Label = new TableCell { Text = "URN" },
+                    Value = new TableCell { Text = dto.Identifiers.Urn }
+                });
+        }
+
+        if (identifierValueRows.Count > 0)
+        {
+            builder.AddRow(
+                new TableCell { Text = "ID numbers", IsBold = true },
+                new TableCell
+                {
+                    Rows = identifierValueRows
+                });
+        }
+
+        if (!string.IsNullOrWhiteSpace(dto.Headteacher))
+        {
+            builder.AddRow(
+                new TableCell { Text = "Headteacher", IsBold = true },
+                new TableCell { Text = dto.Headteacher });
+        }
 
         builder.AddRow(
             new TableCell { Text = "Type", IsBold = true },
@@ -58,23 +77,29 @@ public class EstablishmentDetailsBasicDetailsTableMapper :
 
         builder.AddRow(
             new TableCell { Text = "Phase of education", IsBold = true },
-            new TableCell { Text = dto.Phase?.Value ?? string.Empty });
+            new TableCell { Text = dto.Phase?.Value });
 
         builder.AddRow(
             new TableCell { Text = "Address", IsBold = true },
             new TableCell { Text = MappingHelpers.CombineAddress(dto.Address, dto.Name?.Value) });
 
-        builder.AddRow(
+        if (dto.LocalAuthority is not null)
+        {
+            builder.AddRow(
             new TableCell { Text = "Local authority", IsBold = true },
-            new TableCell { Text = dto.LocalAuthority?.Name ?? string.Empty });
+            new TableCell { Text = dto.LocalAuthority.Name });
+        }
 
-        builder.AddRow(
+        if (dto.Group is not null)
+        {
+            builder.AddRow(
             new TableCell { Text = "Part of", IsBold = true },
             new TableCell
             {
-                Text = dto.Group?.GroupName is null ? string.Empty : CultureInfo.CurrentCulture.TextInfo.ToTitleCase(dto.Group?.GroupName.ToLower()!) ?? string.Empty,
-                Href = MappingHelpers.CreateLinkUrl("/groups/", dto.Group?.Code)
+                Text = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(dto.Group.name.ToLowerInvariant()),
+                Href = MappingHelpers.CreateLinkUrl("/groups/", dto.Group.code)
             });
+        }
 
         builder.AddRow(
             new TableCell { Text = "Age range", IsBold = true },
@@ -82,11 +107,11 @@ public class EstablishmentDetailsBasicDetailsTableMapper :
 
         builder.AddRow(
             new TableCell { Text = "Gender", IsBold = true },
-            new TableCell { Text = DataUnavailable });
+            new TableCell { Text = dto.Gender ?? string.Empty });
 
         builder.AddRow(
             new TableCell { Text = "Number of pupils", IsBold = true },
-            new TableCell { Text = DataUnavailable });
+            new TableCell { Text = dto.Pupils?.Total.ToString() ?? string.Empty });
 
         builder.AddRow(
             new TableCell { Text = "Pupils capacity", IsBold = true },
@@ -100,18 +125,20 @@ public class EstablishmentDetailsBasicDetailsTableMapper :
             new TableCell { Text = "Type of SEN provision", IsBold = true },
             new TableCell { Text = dto.SenProvision ?? "Not recorded" });
 
-        if (dto.ContactDetails?.Website is not null)
+        if (dto.ContactDetails is not null &&
+            !string.IsNullOrWhiteSpace(dto.ContactDetails.Website))
         {
             builder.AddRow(
                 new TableCell { Text = "Website", IsBold = true },
                 new TableCell { Text = dto.ContactDetails.Website, Href = MappingHelpers.CreateWebsiteUrl(dto.ContactDetails.Website), OpenInNewTab = true });
         }
 
-        if (dto.ContactDetails?.TelephoneNumber is not null)
+        if (dto.ContactDetails is not null &&
+            !string.IsNullOrWhiteSpace(dto.ContactDetails.TelephoneNumber))
         {
             builder.AddRow(
                 new TableCell { Text = "Telephone number", IsBold = true },
-                new TableCell { Text = dto.ContactDetails?.TelephoneNumber ?? string.Empty });
+                new TableCell { Text = dto.ContactDetails.TelephoneNumber ?? string.Empty });
         }
 
         builder.AddRow(
@@ -121,14 +148,27 @@ public class EstablishmentDetailsBasicDetailsTableMapper :
                 Text = dto.Ofsted?.InspectionDate is DateOnly inspectionDate
                     ? $"Latest report {inspectionDate:d MMMM yyyy} (opens in new tab)"
                     : string.Empty,
-                Href = dto.Ofsted?.InspectionOutcome ?? string.Empty,
+                Href = dto.Ofsted?.ReportUrl ?? string.Empty,
                 OpenInNewTab = true
             });
 
-        builder.AddRow(
-            new TableCell { Text = "School profiles service", IsBold = true },
-            new TableCell { Text = DataUnavailable });
-
         return builder.Build();
+    }
+
+    private static string MapStatus(EstablishmentStatusModel? status)
+    {
+        if (status is null)
+        {
+            return string.Empty;
+        }
+
+        return status.Status switch
+        {
+            EstablishmentStatus.Open => "Open",
+            EstablishmentStatus.Closed => "Closed",
+            EstablishmentStatus.OpenButProposedToClose => "Open but proposed to close",
+            EstablishmentStatus.ProposedToOpen => "Proposed to open",
+            _ => string.Empty
+        };
     }
 }

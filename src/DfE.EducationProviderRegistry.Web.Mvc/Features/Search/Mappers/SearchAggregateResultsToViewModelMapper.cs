@@ -1,4 +1,5 @@
-﻿using DfE.Core.Libraries.CrossCutting.Mapper;
+﻿using System.Globalization;
+using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
@@ -79,15 +80,17 @@ public sealed class SearchAggregateCategoryEstablishmentMapper : ISearchAggregat
             new TableCell { Text = "Local authority" },
             new TableCell { Text = input.LocalAuthority?.Name });
 
-        builder.AddRow(
-            new TableCell { Text = "Part of a group" },
-            new TableCell
-            {
-                Text = input.Group?.PartOfName,
-                Href = MappingHelpers.CreateLinkUrl(
-                    "/groups/",
-                    input.Group?.PartOfCode)
-            });
+        if (input.Group is not null)
+        {
+            builder.AddRow(
+                new TableCell { Text = "Part of a group" },
+                new TableCell
+                {
+                    Text = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(input.Group.PartOfName.ToLowerInvariant()),
+                    Href = $"/groups/{input.Group.PartOfCode}"
+                });
+        }
+        ;
 
         return builder.Build();
     }

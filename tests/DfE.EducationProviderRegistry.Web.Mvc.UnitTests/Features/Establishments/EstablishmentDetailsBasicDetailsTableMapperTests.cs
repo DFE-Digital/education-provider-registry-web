@@ -1,6 +1,5 @@
 ﻿using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.Model;
 using DfE.EducationProviderRegistry.Core.Query.Shared;
-using DfE.EducationProviderRegistry.Data.DatabaseModels.Models;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments.Mappers;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 
@@ -160,7 +159,6 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
         // Arrange
         EstablishmentDetailsModel dto = CreateModel() with
         {
-            Number = new EstablishmentNumberModel(null),
             Headteacher = null,
             Phase = new PhaseOfEducationModel(null),
             Address = null,
@@ -170,7 +168,8 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
             ReligiousCharacter = null,
             SenProvision = null,
             ContactDetails = null,
-            Ofsted = null
+            Ofsted = null,
+            Pupils = null
         };
 
         // Act
@@ -225,16 +224,17 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
     {
         return new EstablishmentDetailsModel
         {
-            Urn = EstablishmentUrnModel.Create("123456"),
-            Number = new EstablishmentNumberModel(
-                "testEstablishmentNumber"),
+            Name = new EstablishmentNameModel("testEstablishmentName"),
+            Identifiers = new EstablishmentIdentifiersModel(
+                urn: EstablishmentUrnModel.Create("123456"),
+                ukprn: new("testEstablishmentNumber"),
+                dfeNumber: new("123/1234")),
             Status = new EstablishmentStatusModel(
-                "testStatus"),
+                EstablishmentStatus.Open, effectiveDate: null),
             Type = new EstablishmentTypeModel(
                 "testType"),
             Phase = new PhaseOfEducationModel(
                 "testPhase"),
-            Uid = "testUid",
             Headteacher = "testHeadteacher",
             Address = new SiteAddressModel(
                 Name: "testSiteName",
@@ -245,10 +245,10 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
                 Postcode: "testPostcode"),
             LocalAuthority = new LocalAuthority(
                 localAuthorityName: "testLocalAuthority",
-                localAuthorityCode: "testLocalAuthorityCode"),
+                code: new(123)),
             Group = new EstablishmentGroupModel(
-                GroupName: "testGroupName",
-                Code: "testGroupCode"),
+                name: "testGroupName",
+                code: "testGroupCode"),
             AgeRange = "testAgeRange",
             Gender = "testGender",
             ReligiousCharacter = "testReligiousCharacter",
@@ -256,11 +256,7 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
             ContactDetails = new EstablishmentContactDetails(
                 Website: "testWebsite",
                 TelephoneNumber: "testTelephoneNumber"),
-            Ofsted = new EstablishmentInspection
-            {
-                InspectionDate = new DateOnly(2024, 5, 31),
-                InspectionOutcome = "testInspectionOutcome"
-            }
+            Ofsted = new EstablishmentInspection(new DateOnly(2024, 5, 31), "https://ofsted.example.com")
         };
     }
 

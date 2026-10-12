@@ -20,6 +20,7 @@ public sealed class SearchAggregateCategoryEstablishmentMapperTests
             null,
             null,
             new SearchCategory("Establishment"),
+            SearchProviderStatus.Open,
             0);
     }
 
@@ -33,6 +34,7 @@ public sealed class SearchAggregateCategoryEstablishmentMapperTests
             null,
             null,
             new SearchCategory("Group"),
+            SearchProviderStatus.Open,
             5);
     }
 
@@ -46,6 +48,7 @@ public sealed class SearchAggregateCategoryEstablishmentMapperTests
             new GroupDetail("Group Name", "222222"),
             new SearchLocalAuthority("LA Name"),
             new SearchCategory("Establishment"),
+            SearchProviderStatus.Open,
             0);
     }
 
@@ -157,6 +160,7 @@ public sealed class SearchAggregateCategoryEstablishmentMapperTests
                 null,
                 null,
                 new SearchCategory("Establishment"),
+                null,
                 0);
 
         GovUkTable table = _mapper.Map(input);
@@ -179,6 +183,7 @@ public sealed class SearchAggregateCategoryEstablishmentMapperTests
                 null,
                 null,
                 new SearchCategory("Establishment"),
+                null,
                 0);
 
         GovUkTable table = _mapper.Map(input);
@@ -202,6 +207,7 @@ public sealed class SearchAggregateCategoryEstablishmentMapperTests
                 null,
                 null,
                 new SearchCategory("Establishment"),
+                null,
                 0);
 
         GovUkTable table = _mapper.Map(input);

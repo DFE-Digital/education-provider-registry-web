@@ -5,6 +5,7 @@ using DfE.Core.Libraries.Testing.Logger;
 using DfE.Core.Libraries.Testing.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupById;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Models;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Services;
 using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.TestDoubles;
 using Microsoft.AspNetCore.Mvc;
@@ -152,6 +153,85 @@ public sealed class GroupsControllerTests
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Same(viewModel, viewResult.Model);
+    }
+
+    [Fact]
+    public async Task Details_RegistersBreadcrumbJourney_WhenSuccessful()
+    {
+        // Arrange
+        GroupDetailsPageViewModel viewModel = new()
+        {
+            Academies = new(),
+            Details = new(),
+            Governance = new(),
+            Heading = "Test Group"
+        };
+
+        Mock<IMapper<GroupReadModel, GroupDetailsPageViewModel>> mapperMock =
+            IMapperTestDouble.Map<GroupReadModel, GroupDetailsPageViewModel>(
+                viewModel);
+
+        GroupReadModelResponse response =
+            GroupReadModelResponseTestDoubles.Stub();
+
+        UseCaseResponse<GroupReadModelResponse> useCaseResponse =
+            UseCaseResponse<GroupReadModelResponse>.Success(
+                response);
+
+        Mock<IBreadcrumbJourneyService> breadcrumbJourney =
+            new();
+
+        GroupsController controller =
+            CreateSut(
+                useCase: IUseCaseTestDoubles.WithResponse<
+                    GetGroupByGroupUniqueIdentifierRequest,
+                    GroupReadModelResponse>(
+                    useCaseResponse),
+                mapper: mapperMock.Object,
+                breadcrumbJourneyService: breadcrumbJourney.Object);
+
+        string groupId = "group-1";
+
+        // Act
+        await controller.Details(groupId);
+
+        // Assert
+        breadcrumbJourney.Verify(
+            service => service.Visit(
+                It.Is<BreadcrumbItem>(breadcrumb =>
+                    breadcrumb.Title == "Test Group" &&
+                    breadcrumb.Url == "/groups/group-1")),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task Details_DoesNotRegisterBreadcrumb_WhenGroupNotFound()
+    {
+        // Arrange
+        Mock<IBreadcrumbJourneyService> breadcrumbJourney =
+            new();
+
+        GroupsController controller =
+            CreateSut(
+                useCase: IUseCaseTestDoubles.WithResponse<
+                    GetGroupByGroupUniqueIdentifierRequest,
+                    GroupReadModelResponse>(
+                    response: UseCaseResponse<GroupReadModelResponse>.Success(
+                        GroupReadModelResponseTestDoubles.Failure())),
+                breadcrumbJourneyService: breadcrumbJourney.Object);
+
+        string groupId = "group-1";
+
+        // Act
+        IActionResult result = await controller.Details(groupId);
+
+        // Assert
+        Assert.IsType<NotFoundResult>(result);
+
+        breadcrumbJourney.Verify(
+            service => service.Visit(
+                It.IsAny<BreadcrumbItem>()),
+            Times.Never);
     }
 
 

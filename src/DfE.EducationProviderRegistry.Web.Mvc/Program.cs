@@ -83,6 +83,7 @@ else
     app.UseDeveloperExceptionPage();
 }
 
+app.UseSession();
 app.UseStatusCodePagesWithReExecute("/not-found");
 app.UseSecurityHeaders();
 app.UseHttpsRedirection();

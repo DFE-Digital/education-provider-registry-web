@@ -21,7 +21,7 @@ public sealed class BreadcrumbsViewComponent : ViewComponent
         if (context.Items.Count <= 1)
             return Content(string.Empty);
 
-        IReadOnlyCollection<BreadcrumbItem> breadcrumbs =
+        IList<BreadcrumbItem> breadcrumbs =
             context.Items
                 .Take(context.Items.Count - 1)
                 .ToList();

@@ -15,19 +15,19 @@ public class EstablishmentsController : Controller
 {
     private readonly IMapper<EstablishmentDetailsModel, EstablishmentDetailsPageViewModel> _establishmentDetailsPageMapper;
     private readonly IUseCase<GetEstablishmentByIdRequest, UseCaseResponse<EstablishmentDetailsReadModel>> _getEstablishmentByIdUseCase;
-    private readonly IBreadcrumbJourneyService _breadcrumbJourney;
+    //private readonly IBreadcrumbJourneyService _breadcrumbJourney;
 
     public EstablishmentsController(
         IMapper<EstablishmentDetailsModel, EstablishmentDetailsPageViewModel> basicMapper,
-        IUseCase<GetEstablishmentByIdRequest, UseCaseResponse<EstablishmentDetailsReadModel>> getEstablishmentByIdUseCase,
-        IBreadcrumbJourneyService breadcrumbJourney)
+        IUseCase<GetEstablishmentByIdRequest, UseCaseResponse<EstablishmentDetailsReadModel>> getEstablishmentByIdUseCase)//,
+        //IBreadcrumbJourneyService breadcrumbJourney)
     {
         ArgumentNullException.ThrowIfNull(basicMapper);
         ArgumentNullException.ThrowIfNull(getEstablishmentByIdUseCase);
-        ArgumentNullException.ThrowIfNull(breadcrumbJourney);
+        //ArgumentNullException.ThrowIfNull(breadcrumbJourney);
         _establishmentDetailsPageMapper = basicMapper;
         _getEstablishmentByIdUseCase = getEstablishmentByIdUseCase;
-        _breadcrumbJourney = breadcrumbJourney;
+        //_breadcrumbJourney = breadcrumbJourney;
     }
 
     [HttpGet("{urn}")]
@@ -45,10 +45,10 @@ public class EstablishmentsController : Controller
 
         EstablishmentDetailsPageViewModel model = _establishmentDetailsPageMapper.Map(response.Model.Establishment);
 
-        _breadcrumbJourney.Visit(
-            new BreadcrumbItem(
-                model.Heading ?? string.Empty,
-                $"/establishments/{urn}"));
+        //_breadcrumbJourney.Visit(
+        //    new BreadcrumbItem(
+        //        model.Heading ?? string.Empty,
+        //        $"/establishments/{urn}"));
 
         return View(model);
     }

@@ -20,32 +20,32 @@ public sealed class SearchController : Controller
     private readonly IMapper<SearchResultsMappingContext, SearchResultsViewModel> _searchResponseToViewModelMapper;
     private readonly IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>> _selectedFacetsToFilterRequestsMapper;
     private readonly ISearchFilterSelectionHandler _searchFilterSelectionHandler;
-    private readonly IBreadcrumbJourneyService _breadcrumbJourney;
+    //private readonly IBreadcrumbJourneyService _breadcrumbJourney;
 
     public SearchController(
         IUseCase<SearchRequest, UseCaseResponse<SearchResponse>> searchUseCase,
         IMapper<SearchResultsMappingContext, SearchResultsViewModel> searchResponseToViewModelMapper,
         IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>> selectedFacetsToFilterRequestsMapper,
-        ISearchFilterSelectionHandler searchFilterSelectionHandler,
-        IBreadcrumbJourneyService breadcrumbJourney)
+        ISearchFilterSelectionHandler searchFilterSelectionHandler)//,
+        //IBreadcrumbJourneyService breadcrumbJourney)
     {
         ArgumentNullException.ThrowIfNull(searchUseCase);
         ArgumentNullException.ThrowIfNull(searchResponseToViewModelMapper);
         ArgumentNullException.ThrowIfNull(selectedFacetsToFilterRequestsMapper);
         ArgumentNullException.ThrowIfNull(searchFilterSelectionHandler);
-        ArgumentNullException.ThrowIfNull(breadcrumbJourney);
+        //ArgumentNullException.ThrowIfNull(breadcrumbJourney);
 
         _searchUseCase = searchUseCase;
         _searchResponseToViewModelMapper = searchResponseToViewModelMapper;
         _selectedFacetsToFilterRequestsMapper = selectedFacetsToFilterRequestsMapper;
         _searchFilterSelectionHandler = searchFilterSelectionHandler;
-        _breadcrumbJourney = breadcrumbJourney;
+        //_breadcrumbJourney = breadcrumbJourney;
     }
 
     [HttpGet("")]
     public IActionResult Index()
     {
-        _breadcrumbJourney.Clear();
+        //_breadcrumbJourney.Clear();
 
         return View("Index", new SearchRequestViewModel());
     }
@@ -101,8 +101,8 @@ public sealed class SearchController : Controller
 
         ModelState.Clear();
 
-        _breadcrumbJourney.StartSearchJourney(
-            $"{Request.Path}{Request.QueryString}");
+        //_breadcrumbJourney.StartSearchJourney(
+        //    $"{Request.Path}{Request.QueryString}");
 
         return View("Results", updatedModel);
     }

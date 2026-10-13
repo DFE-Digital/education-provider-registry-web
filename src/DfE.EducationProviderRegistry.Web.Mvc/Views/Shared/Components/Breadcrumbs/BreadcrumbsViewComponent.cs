@@ -1,25 +1,20 @@
 ﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Models;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Views.Shared.Components.Breadcrumbs;
 
 public sealed class BreadcrumbsViewComponent : ViewComponent
 {
-    private readonly IBreadcrumbJourneyService _navigation;
-
-    public BreadcrumbsViewComponent(IBreadcrumbJourneyService navigation)
-    {
-        ArgumentNullException.ThrowIfNull(navigation);
-        _navigation = navigation;
-    }
+    private const string HttpContextItemKey = "CurrentBreadcrumbJourney";
 
     public IViewComponentResult Invoke()
     {
-        BreadcrumbJourney context = _navigation.Get();
-
-        if (context.Items.Count <= 1)
+        if (!HttpContext.Items.TryGetValue(HttpContextItemKey, out object? obj) ||
+            obj is not BreadcrumbJourney context ||
+            context.Items.Count <= 1)
+        {
             return Content(string.Empty);
+        }
 
         IReadOnlyCollection<BreadcrumbItem> breadcrumbs =
             context.Items

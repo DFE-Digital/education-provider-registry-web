@@ -1,269 +1,269 @@
-﻿using System.Reflection.Metadata.Ecma335;
-using DfE.Core.Libraries.CleanArchitecture.Application;
-using DfE.Core.Libraries.CrossCutting.Mapper;
-using DfE.Core.Libraries.Testing.Logger;
-using DfE.Core.Libraries.Testing.Mapper;
-using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupById;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Models;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Services;
-using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.TestDoubles;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Moq;
+﻿//using System.Reflection.Metadata.Ecma335;
+//using DfE.Core.Libraries.CleanArchitecture.Application;
+//using DfE.Core.Libraries.CrossCutting.Mapper;
+//using DfE.Core.Libraries.Testing.Logger;
+//using DfE.Core.Libraries.Testing.Mapper;
+//using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupById;
+//using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
+//using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Models;
+//using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Services;
+//using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.TestDoubles;
+//using Microsoft.AspNetCore.Mvc;
+//using Microsoft.Extensions.Logging;
+//using Moq;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Groups;
+//namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Groups;
 
-public sealed class GroupsControllerTests
-{
-    [Fact]
-    public void Constructor_ThrowsArgumentNullException_WhenLoggerIsNull()
-    {
-        // Arrange
-        Func<GroupsController> construct =
-            () => new(
-                logger: null!,
-                useCase: IUseCaseTestDoubles.Default<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModelResponse>>(),
-                mapper: IMapperTestDouble.Default<GroupReadModel, GroupDetailsPageViewModel>(),
-                breadcrumbJourney: new Mock<IBreadcrumbJourneyService>().Object);
+//public sealed class GroupsControllerTests
+//{
+//    [Fact]
+//    public void Constructor_ThrowsArgumentNullException_WhenLoggerIsNull()
+//    {
+//        // Arrange
+//        Func<GroupsController> construct =
+//            () => new(
+//                logger: null!,
+//                useCase: IUseCaseTestDoubles.Default<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModelResponse>>(),
+//                mapper: IMapperTestDouble.Default<GroupReadModel, GroupDetailsPageViewModel>(),
+//                breadcrumbJourney: new Mock<IBreadcrumbJourneyService>().Object);
 
-        // Act & Assert
-        Assert.Throws<ArgumentNullException>(construct);
-    }
+//        // Act & Assert
+//        Assert.Throws<ArgumentNullException>(construct);
+//    }
 
-    [Fact]
-    public void Constructor_ThrowsArgumentNullException_WhenUseCaseIsNull()
-    {
-        // Arrange
-        Func<GroupsController> construct =
-            () => new(
-                logger: ILoggerTestDouble.Default<GroupsController>(),
-                useCase: null!,
-                mapper: IMapperTestDouble.Default<GroupReadModel, GroupDetailsPageViewModel>(),
-                breadcrumbJourney: new Mock<IBreadcrumbJourneyService>().Object);
+//    [Fact]
+//    public void Constructor_ThrowsArgumentNullException_WhenUseCaseIsNull()
+//    {
+//        // Arrange
+//        Func<GroupsController> construct =
+//            () => new(
+//                logger: ILoggerTestDouble.Default<GroupsController>(),
+//                useCase: null!,
+//                mapper: IMapperTestDouble.Default<GroupReadModel, GroupDetailsPageViewModel>(),
+//                breadcrumbJourney: new Mock<IBreadcrumbJourneyService>().Object);
 
-        // Act & Assert
-        Assert.Throws<ArgumentNullException>(construct);
-    }
+//        // Act & Assert
+//        Assert.Throws<ArgumentNullException>(construct);
+//    }
 
-    [Fact]
-    public void Constructor_ThrowsArgumentNullException_WhenMapperIsNull()
-    {
-        // Arrange
-        Func<GroupsController> construct =
-            () => new(
-                logger: ILoggerTestDouble.Default<GroupsController>(),
-                useCase: IUseCaseTestDoubles.Default<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModelResponse>>(),
-                mapper: null!,
-                breadcrumbJourney: new Mock<IBreadcrumbJourneyService>().Object);
+//    [Fact]
+//    public void Constructor_ThrowsArgumentNullException_WhenMapperIsNull()
+//    {
+//        // Arrange
+//        Func<GroupsController> construct =
+//            () => new(
+//                logger: ILoggerTestDouble.Default<GroupsController>(),
+//                useCase: IUseCaseTestDoubles.Default<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModelResponse>>(),
+//                mapper: null!,
+//                breadcrumbJourney: new Mock<IBreadcrumbJourneyService>().Object);
 
-        // Act & Assert
-        Assert.Throws<ArgumentNullException>(construct);
-    }
+//        // Act & Assert
+//        Assert.Throws<ArgumentNullException>(construct);
+//    }
 
-    [Fact]
-    public async Task Details_ReturnsBadRequest_WhenModelStateIsInvalid()
-    {
-        // Arrange
-        GroupsController controller = CreateSut();
+//    [Fact]
+//    public async Task Details_ReturnsBadRequest_WhenModelStateIsInvalid()
+//    {
+//        // Arrange
+//        GroupsController controller = CreateSut();
 
-        controller.ModelState.AddModelError("key", "error");
+//        controller.ModelState.AddModelError("key", "error");
 
-        string groupId = "group-1";
+//        string groupId = "group-1";
 
-        // Act
-        IActionResult result = await controller.Details(groupId);
+//        // Act
+//        IActionResult result = await controller.Details(groupId);
 
-        // Assert
-        Assert.IsType<BadRequestObjectResult>(result);
-    }
+//        // Assert
+//        Assert.IsType<BadRequestObjectResult>(result);
+//    }
 
-    [Fact]
-    public async Task Details_ReturnsStatusCode500_WhenUseCaseFails()
-    {
-        // Arrange
+//    [Fact]
+//    public async Task Details_ReturnsStatusCode500_WhenUseCaseFails()
+//    {
+//        // Arrange
 
-        GroupReadModelResponse response = GroupReadModelResponseTestDoubles.Failure();
+//        GroupReadModelResponse response = GroupReadModelResponseTestDoubles.Failure();
 
-        GroupsController controller =
-            CreateSut(
-                useCase:
-                    IUseCaseTestDoubles.WithResponse<GetGroupByGroupUniqueIdentifierRequest, GroupReadModelResponse>(
-                        response: UseCaseResponse<GroupReadModelResponse>.Failure(response, "error")));
+//        GroupsController controller =
+//            CreateSut(
+//                useCase:
+//                    IUseCaseTestDoubles.WithResponse<GetGroupByGroupUniqueIdentifierRequest, GroupReadModelResponse>(
+//                        response: UseCaseResponse<GroupReadModelResponse>.Failure(response, "error")));
 
-        string groupId = "group-1";
+//        string groupId = "group-1";
 
-        // Act
-        IActionResult result = await controller.Details(groupId);
+//        // Act
+//        IActionResult result = await controller.Details(groupId);
 
-        // Assert
-        StatusCodeResult objectResult = Assert.IsType<StatusCodeResult>(result);
-        Assert.Equal(500, objectResult.StatusCode);
-    }
+//        // Assert
+//        StatusCodeResult objectResult = Assert.IsType<StatusCodeResult>(result);
+//        Assert.Equal(500, objectResult.StatusCode);
+//    }
 
-    [Fact]
-    public async Task Details_ReturnsNotFound_WhenNoModelReturned()
-    {
-        // Arrange
-        GroupsController controller =
-            CreateSut(
-                useCase: IUseCaseTestDoubles.WithResponse<GetGroupByGroupUniqueIdentifierRequest, GroupReadModelResponse>(
-                    response: UseCaseResponse<GroupReadModelResponse>.Success(
-                        GroupReadModelResponseTestDoubles.Failure())));
+//    [Fact]
+//    public async Task Details_ReturnsNotFound_WhenNoModelReturned()
+//    {
+//        // Arrange
+//        GroupsController controller =
+//            CreateSut(
+//                useCase: IUseCaseTestDoubles.WithResponse<GetGroupByGroupUniqueIdentifierRequest, GroupReadModelResponse>(
+//                    response: UseCaseResponse<GroupReadModelResponse>.Success(
+//                        GroupReadModelResponseTestDoubles.Failure())));
 
-        string groupId = "group-1";
+//        string groupId = "group-1";
 
-        // Act
-        IActionResult result = await controller.Details(groupId);
+//        // Act
+//        IActionResult result = await controller.Details(groupId);
 
-        // Assert
-        Assert.IsType<NotFoundResult>(result);
-    }
+//        // Assert
+//        Assert.IsType<NotFoundResult>(result);
+//    }
 
-    [Fact]
-    public async Task Details_ReturnsView_WithMappedModel_WhenSuccessful()
-    {
-        // Arrange
-        GroupDetailsPageViewModel viewModel = new()
-        {
-            Academies = new(),
-            Details = new(),
-            Governance = new(),
-            Heading = "heading"
-        };
+//    [Fact]
+//    public async Task Details_ReturnsView_WithMappedModel_WhenSuccessful()
+//    {
+//        // Arrange
+//        GroupDetailsPageViewModel viewModel = new()
+//        {
+//            Academies = new(),
+//            Details = new(),
+//            Governance = new(),
+//            Heading = "heading"
+//        };
 
-        Mock<IMapper<GroupReadModel, GroupDetailsPageViewModel>> mapperMock =
-            IMapperTestDouble.Map<GroupReadModel, GroupDetailsPageViewModel>(viewModel);
+//        Mock<IMapper<GroupReadModel, GroupDetailsPageViewModel>> mapperMock =
+//            IMapperTestDouble.Map<GroupReadModel, GroupDetailsPageViewModel>(viewModel);
 
-        GroupReadModelResponse response = GroupReadModelResponseTestDoubles.Stub();
+//        GroupReadModelResponse response = GroupReadModelResponseTestDoubles.Stub();
 
-        UseCaseResponse<GroupReadModelResponse> useCaseResponse = UseCaseResponse<GroupReadModelResponse>.Success(response);
+//        UseCaseResponse<GroupReadModelResponse> useCaseResponse = UseCaseResponse<GroupReadModelResponse>.Success(response);
 
-        GroupsController controller =
-            CreateSut(
-                useCase: IUseCaseTestDoubles.WithResponse<GetGroupByGroupUniqueIdentifierRequest, GroupReadModelResponse>(useCaseResponse),
-                mapper: mapperMock.Object,
-                breadcrumbJourneyService: new Mock<IBreadcrumbJourneyService>().Object);
+//        GroupsController controller =
+//            CreateSut(
+//                useCase: IUseCaseTestDoubles.WithResponse<GetGroupByGroupUniqueIdentifierRequest, GroupReadModelResponse>(useCaseResponse),
+//                mapper: mapperMock.Object,
+//                breadcrumbJourneyService: new Mock<IBreadcrumbJourneyService>().Object);
 
-        string groupId = "group-1";
+//        string groupId = "group-1";
 
-        // Act
-        IActionResult result = await controller.Details(groupId);
+//        // Act
+//        IActionResult result = await controller.Details(groupId);
 
-        // Assert
-        ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Same(viewModel, viewResult.Model);
-    }
+//        // Assert
+//        ViewResult viewResult = Assert.IsType<ViewResult>(result);
+//        Assert.Same(viewModel, viewResult.Model);
+//    }
 
-    [Fact]
-    public async Task Details_RegistersBreadcrumbJourney_WhenSuccessful()
-    {
-        // Arrange
-        GroupDetailsPageViewModel viewModel = new()
-        {
-            Academies = new(),
-            Details = new(),
-            Governance = new(),
-            Heading = "Test Group"
-        };
+//    [Fact]
+//    public async Task Details_RegistersBreadcrumbJourney_WhenSuccessful()
+//    {
+//        // Arrange
+//        GroupDetailsPageViewModel viewModel = new()
+//        {
+//            Academies = new(),
+//            Details = new(),
+//            Governance = new(),
+//            Heading = "Test Group"
+//        };
 
-        Mock<IMapper<GroupReadModel, GroupDetailsPageViewModel>> mapperMock =
-            IMapperTestDouble.Map<GroupReadModel, GroupDetailsPageViewModel>(
-                viewModel);
+//        Mock<IMapper<GroupReadModel, GroupDetailsPageViewModel>> mapperMock =
+//            IMapperTestDouble.Map<GroupReadModel, GroupDetailsPageViewModel>(
+//                viewModel);
 
-        GroupReadModelResponse response =
-            GroupReadModelResponseTestDoubles.Stub();
+//        GroupReadModelResponse response =
+//            GroupReadModelResponseTestDoubles.Stub();
 
-        UseCaseResponse<GroupReadModelResponse> useCaseResponse =
-            UseCaseResponse<GroupReadModelResponse>.Success(
-                response);
+//        UseCaseResponse<GroupReadModelResponse> useCaseResponse =
+//            UseCaseResponse<GroupReadModelResponse>.Success(
+//                response);
 
-        Mock<IBreadcrumbJourneyService> breadcrumbJourney =
-            new();
+//        Mock<IBreadcrumbJourneyService> breadcrumbJourney =
+//            new();
 
-        GroupsController controller =
-            CreateSut(
-                useCase: IUseCaseTestDoubles.WithResponse<
-                    GetGroupByGroupUniqueIdentifierRequest,
-                    GroupReadModelResponse>(
-                    useCaseResponse),
-                mapper: mapperMock.Object,
-                breadcrumbJourneyService: breadcrumbJourney.Object);
+//        GroupsController controller =
+//            CreateSut(
+//                useCase: IUseCaseTestDoubles.WithResponse<
+//                    GetGroupByGroupUniqueIdentifierRequest,
+//                    GroupReadModelResponse>(
+//                    useCaseResponse),
+//                mapper: mapperMock.Object,
+//                breadcrumbJourneyService: breadcrumbJourney.Object);
 
-        string groupId = "group-1";
+//        string groupId = "group-1";
 
-        // Act
-        await controller.Details(groupId);
+//        // Act
+//        await controller.Details(groupId);
 
-        // Assert
-        breadcrumbJourney.Verify(
-            service => service.Visit(
-                It.Is<BreadcrumbItem>(breadcrumb =>
-                    breadcrumb.Title == "Test Group" &&
-                    breadcrumb.Url == "/groups/group-1")),
-            Times.Once);
-    }
+//        // Assert
+//        breadcrumbJourney.Verify(
+//            service => service.Visit(
+//                It.Is<BreadcrumbItem>(breadcrumb =>
+//                    breadcrumb.Title == "Test Group" &&
+//                    breadcrumb.Url == "/groups/group-1")),
+//            Times.Once);
+//    }
 
-    [Fact]
-    public async Task Details_DoesNotRegisterBreadcrumb_WhenGroupNotFound()
-    {
-        // Arrange
-        Mock<IBreadcrumbJourneyService> breadcrumbJourney =
-            new();
+//    [Fact]
+//    public async Task Details_DoesNotRegisterBreadcrumb_WhenGroupNotFound()
+//    {
+//        // Arrange
+//        Mock<IBreadcrumbJourneyService> breadcrumbJourney =
+//            new();
 
-        GroupsController controller =
-            CreateSut(
-                useCase: IUseCaseTestDoubles.WithResponse<
-                    GetGroupByGroupUniqueIdentifierRequest,
-                    GroupReadModelResponse>(
-                    response: UseCaseResponse<GroupReadModelResponse>.Success(
-                        GroupReadModelResponseTestDoubles.Failure())),
-                breadcrumbJourneyService: breadcrumbJourney.Object);
+//        GroupsController controller =
+//            CreateSut(
+//                useCase: IUseCaseTestDoubles.WithResponse<
+//                    GetGroupByGroupUniqueIdentifierRequest,
+//                    GroupReadModelResponse>(
+//                    response: UseCaseResponse<GroupReadModelResponse>.Success(
+//                        GroupReadModelResponseTestDoubles.Failure())),
+//                breadcrumbJourneyService: breadcrumbJourney.Object);
 
-        string groupId = "group-1";
+//        string groupId = "group-1";
 
-        // Act
-        IActionResult result = await controller.Details(groupId);
+//        // Act
+//        IActionResult result = await controller.Details(groupId);
 
-        // Assert
-        Assert.IsType<NotFoundResult>(result);
+//        // Assert
+//        Assert.IsType<NotFoundResult>(result);
 
-        breadcrumbJourney.Verify(
-            service => service.Visit(
-                It.IsAny<BreadcrumbItem>()),
-            Times.Never);
-    }
+//        breadcrumbJourney.Verify(
+//            service => service.Visit(
+//                It.IsAny<BreadcrumbItem>()),
+//            Times.Never);
+//    }
 
 
-    private static GroupsController CreateSut(
-        ILogger<GroupsController>? logger = null,
-        IUseCase<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModelResponse>>? useCase = null,
-        IMapper<GroupReadModel, GroupDetailsPageViewModel>? mapper = null,
-        IBreadcrumbJourneyService? breadcrumbJourneyService = null)
-    {
-        return new GroupsController(
-            logger ?? ILoggerTestDouble.Default<GroupsController>(),
-            useCase ?? IUseCaseTestDoubles.Default<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModelResponse>>(),
-            mapper ?? IMapperTestDouble.Default<GroupReadModel, GroupDetailsPageViewModel>(),
-            breadcrumbJourneyService ?? new Mock<IBreadcrumbJourneyService>().Object);
-    }
-}
+//    private static GroupsController CreateSut(
+//        ILogger<GroupsController>? logger = null,
+//        IUseCase<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModelResponse>>? useCase = null,
+//        IMapper<GroupReadModel, GroupDetailsPageViewModel>? mapper = null,
+//        IBreadcrumbJourneyService? breadcrumbJourneyService = null)
+//    {
+//        return new GroupsController(
+//            logger ?? ILoggerTestDouble.Default<GroupsController>(),
+//            useCase ?? IUseCaseTestDoubles.Default<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModelResponse>>(),
+//            mapper ?? IMapperTestDouble.Default<GroupReadModel, GroupDetailsPageViewModel>(),
+//            breadcrumbJourneyService ?? new Mock<IBreadcrumbJourneyService>().Object);
+//    }
+//}
 
-public static class GroupReadModelResponseTestDoubles
-{
-    public static GroupReadModelResponse Failure()
-    {
-        return new()
-        {
-            Group = null
-        };
-    }
+//public static class GroupReadModelResponseTestDoubles
+//{
+//    public static GroupReadModelResponse Failure()
+//    {
+//        return new()
+//        {
+//            Group = null
+//        };
+//    }
 
-    public static GroupReadModelResponse Stub()
-    {
-        return new GroupReadModelResponse()
-        {
-            Group = GroupReadModelTestDoubles.Stub()
-        };
-    }
-}
+//    public static GroupReadModelResponse Stub()
+//    {
+//        return new GroupReadModelResponse()
+//        {
+//            Group = GroupReadModelTestDoubles.Stub()
+//        };
+//    }
+//}

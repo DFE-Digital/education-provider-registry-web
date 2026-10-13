@@ -7,16 +7,16 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly IBreadcrumbJourneyService _navigation;
-    public HomeController(IBreadcrumbJourneyService navigation)
+    //private readonly IBreadcrumbJourneyService _navigation;
+    public HomeController()//IBreadcrumbJourneyService navigation)
     {
-        ArgumentNullException.ThrowIfNull(navigation);
-        _navigation = navigation;
+        //ArgumentNullException.ThrowIfNull(navigation);
+        //_navigation = navigation;
     }
 
     public IActionResult Index()
     {
-        _navigation.Clear();
+        //_navigation.Clear();
         return View();
     }
 

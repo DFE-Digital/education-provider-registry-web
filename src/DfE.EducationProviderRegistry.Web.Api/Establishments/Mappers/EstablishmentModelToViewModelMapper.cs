@@ -30,7 +30,7 @@ public sealed class EstablishmentModelToViewModelMapper
 
         return new EstablishmentViewModel()
         {
-            URN = input.Urn.ToString(),
+            URN = input.Identifiers.Urn,
         };
     }
 }

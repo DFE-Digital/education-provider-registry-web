@@ -25,6 +25,7 @@ public sealed class SearchResultsToViewModelMapperTests
             new GroupDetail("Group Name", "1234"),
             new SearchLocalAuthority("LA Name"),
             new SearchCategory("Establishment"),
+            SearchProviderStatus.Open,
             0);
     }
 

@@ -23,33 +23,57 @@ internal sealed class GroupDetailsPageViewModelMapper :
 
     private static GroupDetailsTabViewModel CreateBasicDetails(GroupReadModel model)
     {
-        GovUkSummaryList details = new(
-        [
-            new(
+        List<SummaryListRow> values = [];
+
+        values.AddRange(
+            new SummaryListRow(
                 "UID",
-                new SummaryListValue(model.GroupUID.ToString())),
-
-            new(
+                new SummaryListValue(text: model.GroupUID.ToString())),
+            new SummaryListRow(
                 "Group ID",
-                new SummaryListValue(model.GroupId)),
+                new SummaryListValue(text: model.GroupId)));
 
-            new(
-                "UKPRN",
-                new SummaryListValue(model.UKPRN)),
-            new(
-                "Company number",
-                new SummaryListValue(text: $"{model.CompaniesHouseId} (opens in new tab)", href: $"https://find-and-update.company-information.service.gov.uk/company/{model.CompaniesHouseId}")),
-            new(
-                "Status",
-                new SummaryListValue(text: model.Status)),
-            new(
-                "Address",
-                new SummaryListValue(text:  model.Address)),
-            new(
-                "Type",
-                new SummaryListValue(model.Type))
+        if (!string.IsNullOrWhiteSpace(model.UKPRN))
+        {
+            values.Add(
+                new SummaryListRow(
+                    "UKPRN",
+                    new SummaryListValue(text: model.UKPRN)));
+        }
 
-        ]);
+        if (!string.IsNullOrWhiteSpace(model.CompaniesHouseId))
+        {
+            values.Add(
+                new SummaryListRow(
+                    "Company number",
+                    new SummaryListValue(text: $"{model.CompaniesHouseId} (opens in new tab)", href: $"https://find-and-update.company-information.service.gov.uk/company/{model.CompaniesHouseId}")));
+        }
+
+        if (!string.IsNullOrWhiteSpace(model.Status))
+        {
+            values.Add(
+                new SummaryListRow(
+                    "Status",
+                    new SummaryListValue(text: model.Status)));
+        }
+
+        if (!string.IsNullOrWhiteSpace(model.Address))
+        {
+            values.Add(
+                new SummaryListRow(
+                    "Address",
+                    new SummaryListValue(text: model.Address)));
+        }
+
+        if (!string.IsNullOrWhiteSpace(model.Type))
+        {
+            values.Add(
+                new SummaryListRow(
+                    "Type",
+                    new SummaryListValue(model.Type)));
+        }
+
+        GovUkSummaryList details = new(rows: values);
 
         return new()
         {
@@ -65,7 +89,7 @@ internal sealed class GroupDetailsPageViewModelMapper :
             new() { Text = "URN" }
         ];
 
-        List<TableRow> rows = new();
+        List<TableRow> rows = [];
 
         foreach (Academy academy in model.Academies)
         {

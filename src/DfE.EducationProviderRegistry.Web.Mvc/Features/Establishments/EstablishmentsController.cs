@@ -5,7 +5,7 @@ using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.UseCas
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.Controllers;
+namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments;
 
 [Route("establishments")]
 public class EstablishmentsController : Controller

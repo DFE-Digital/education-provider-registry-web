@@ -1,5 +1,6 @@
 ﻿using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.Model;
+using DfE.EducationProviderRegistry.Core.Query.Shared;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments.ViewModels;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
@@ -63,7 +64,10 @@ public sealed class EstablishmentDetailsPageViewModelMapperTests
 
         EstablishmentDetailsModel model = new()
         {
-            Urn = EstablishmentUrnModel.Create("123456"),
+            Identifiers = new EstablishmentIdentifiersModel(
+                dfeNumber: new DfeNumber("123/4567"),
+                ukprn: new Ukprn("12345678"),
+                urn: EstablishmentUrnModel.Create("123456")),
             Name = new EstablishmentNameModel("testEstablishmentName"),
             Governors = governors
         };

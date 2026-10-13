@@ -19,6 +19,7 @@ public sealed class SearchAggregateCategoryGroupMapperTests
             null,
             null,
             new SearchCategory("Group"),
+            SearchProviderStatus.Open,
             12);
     }
 
@@ -40,6 +41,7 @@ public sealed class SearchAggregateCategoryGroupMapperTests
                 null,
                 null,
                 new SearchCategory("Establishment"),
+                SearchProviderStatus.Open,
                 0);
 
         Assert.False(_mapper.CanMap(input));
@@ -110,6 +112,7 @@ public sealed class SearchAggregateCategoryGroupMapperTests
                 null,
                 null,
                 new SearchCategory("Group"),
+                SearchProviderStatus.Open,
                 5);
 
         GovUkTable table = _mapper.Map(input);
@@ -132,6 +135,7 @@ public sealed class SearchAggregateCategoryGroupMapperTests
                 null,
                 null,
                 new SearchCategory("Group"),
+                SearchProviderStatus.Open,
                 5);
 
         GovUkTable table = _mapper.Map(input);

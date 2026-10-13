@@ -44,9 +44,9 @@ public sealed class SessionBreadcrumbJourneyService : IBreadcrumbJourneyService
         Save(journey);
     }
 
-    public void Visit(BreadcrumbItem page)
+    public void Visit(BreadcrumbItem destination)
     {
-        ArgumentNullException.ThrowIfNull(page);
+        ArgumentNullException.ThrowIfNull(destination);
         BreadcrumbJourney journey = Get();
 
         //
@@ -54,7 +54,7 @@ public sealed class SessionBreadcrumbJourneyService : IBreadcrumbJourneyService
         //
         if (journey.Items.Count is 0)
         {
-            journey.Items.Add(page);
+            journey.Items.Add(destination);
             Save(journey);
 
             return;
@@ -65,7 +65,7 @@ public sealed class SessionBreadcrumbJourneyService : IBreadcrumbJourneyService
         //
         BreadcrumbItem current = journey.Items.Last();
 
-        if (current.Url.Equals(page.Url, StringComparison.OrdinalIgnoreCase))
+        if (current.Url.Equals(destination.Url, StringComparison.OrdinalIgnoreCase))
             return;
 
         //
@@ -74,7 +74,7 @@ public sealed class SessionBreadcrumbJourneyService : IBreadcrumbJourneyService
         int existingIndex =
             journey.Items.FindIndex(
                 x => x.Url.Equals(
-                    page.Url,
+                    destination.Url,
                     StringComparison.OrdinalIgnoreCase));
 
         if (existingIndex >= 0)
@@ -92,7 +92,7 @@ public sealed class SessionBreadcrumbJourneyService : IBreadcrumbJourneyService
         //
         // New page.
         //
-        journey.Items.Add(page);
+        journey.Items.Add(destination);
 
         Save(journey);
     }

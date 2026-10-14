@@ -83,11 +83,16 @@ variable "probe_path" {
   description = "Path for the liveness and startup probe. The probe can be disabled by setting this to null."
 }
 
+variable "extra_databases" {
+  type        = list(string)
+  default     = []
+  description = "Optional: Specify additional databases to deploy alongside primary"
+}
+
 locals {
   postgres_ssl_mode = var.enable_postgres_ssl ? "require" : "disable"
 
 }
-
 
 variable "redis_cache_capacity" { default = 1 }
 variable "redis_cache_family" { default = "C" }
@@ -95,3 +100,4 @@ variable "redis_cache_sku_name" { default = "Standard" }
 variable "redis_queue_capacity" { default = 1 }
 variable "redis_queue_family" { default = "C" }
 variable "redis_queue_sku_name" { default = "Standard" }
+variable "postgres_server_version" { default = "17" }

@@ -1,10 +1,9 @@
-﻿using DfE.EducationProviderRegistry.Core.Query.Search.Infrastructure.QueryProcessing.Configuration;
-using DfE.EducationProviderRegistry.Web.Mvc.Settings;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.Settings;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.WebApplicationFactory.Extensions;
+namespace DfE.EducationProviderRegistry.Web.SharedTests.Features;
 
-public static class WebApplicationFactoryFeatureExtensions
+public static class ServiceCollectionFeatureOptionsExtensions
 {
     public static IServiceCollection WithClarity(this IServiceCollection services)
     {

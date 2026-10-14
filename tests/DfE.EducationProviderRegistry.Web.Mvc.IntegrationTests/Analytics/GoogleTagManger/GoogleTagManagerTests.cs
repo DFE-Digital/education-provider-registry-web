@@ -2,8 +2,8 @@
 using AngleSharp.Html.Dom;
 using DfE.EducationProviderRegistry.Web.Mvc.Settings;
 using DfE.EducationProviderRegistry.Web.SharedTests.AngleSharp.Extensions;
+using DfE.EducationProviderRegistry.Web.SharedTests.Features;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Cookies;
-using DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.WebApplicationFactory.Extensions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.Mvc.Testing.Handlers;
 using Microsoft.Extensions.DependencyInjection;

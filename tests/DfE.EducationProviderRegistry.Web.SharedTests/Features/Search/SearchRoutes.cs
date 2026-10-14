@@ -1,8 +1,8 @@
-﻿namespace DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents.WebDriver.Search;
+﻿namespace DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
 
 public static class SearchRoutes
 {
-    public static Uri Search() => new("search", UriKind.Relative);
+    public static Uri Search => new("search", UriKind.Relative);
 
     public static Uri SearchResults(
         string? identityTerm = null,

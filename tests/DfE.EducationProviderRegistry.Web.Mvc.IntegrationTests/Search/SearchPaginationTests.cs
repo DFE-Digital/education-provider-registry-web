@@ -5,6 +5,7 @@ using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Request;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
 using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Search.TestDoubles;
+using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestDoubles;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search.Components;
 

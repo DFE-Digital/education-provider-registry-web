@@ -3,9 +3,6 @@
 public interface IWebDriverSessionBuilder
 {
     IWebDriverSessionBuilder WithBrowser(string type);
-    IWebDriverSessionBuilder WithChrome();
-    IWebDriverSessionBuilder WithEdge();
-    IWebDriverSessionBuilder WithFirefox();
     IWebDriverSessionBuilder WithStartMaximised(bool maximised);
     IWebDriverSessionBuilder WithBrowserVersion(string version);
     IWebDriverSessionBuilder WithHeadless(bool headless);

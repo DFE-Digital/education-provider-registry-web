@@ -43,12 +43,6 @@ internal sealed class WebDriverSessionBuilder : IWebDriverSessionBuilder
         return new WebDriverSession(_providerRegistry, req);
     }
 
-    public IWebDriverSessionBuilder WithChrome() => WithBrowser(type: "chrome");
-
-    public IWebDriverSessionBuilder WithEdge() => WithBrowser(type: "edge");
-
-    public IWebDriverSessionBuilder WithFirefox() => WithBrowser(type: "firefox");
-
     public IWebDriverSessionBuilder WithBrowser(string type)
     {
         _browserType = type;

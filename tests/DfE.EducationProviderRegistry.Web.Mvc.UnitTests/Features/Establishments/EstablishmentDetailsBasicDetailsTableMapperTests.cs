@@ -1,6 +1,5 @@
 ﻿using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.Model;
 using DfE.EducationProviderRegistry.Core.Query.Shared;
-using DfE.EducationProviderRegistry.Data.DatabaseModels.Models;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments.Mappers;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 
@@ -25,7 +24,7 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
             column => Assert.True(column.IsRowHeader),
             column => Assert.False(column.IsRowHeader));
 
-        string?[] expectedLabels =
+        string[] expectedLabels =
         [
             "Status",
             "ID numbers",
@@ -34,7 +33,7 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
             "Phase of education",
             "Address",
             "Local authority",
-            "Part of",
+            "Part of group",
             "Age range",
             "Gender",
             "Number of pupils",
@@ -43,8 +42,7 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
             "Type of SEN provision",
             "Website",
             "Telephone number",
-            "Ofsted",
-            "School profiles service"
+            "Ofsted"
         ];
 
         Assert.Equal(
@@ -72,31 +70,21 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
         GovUkTable table = Mapper.Map(dto);
 
         // Assert
-        AssertValue(table, "Status", "testStatus");
+        AssertValue(table, "Status", "Open");
         AssertValue(table, "Headteacher", "testHeadteacher");
         AssertValue(table, "Type", "testType");
         AssertValue(table, "Phase of education", "testPhase");
         AssertValue(table, "Address", "testAddressLine1, testAddressLine2, testTown, testCounty, testPostcode");
         AssertValue(table, "Local authority", "testLocalAuthority");
-        AssertValue(table, "Part of", "Testgroupname");
+        AssertValue(table, "Part of group", "Testgroupname");
         AssertValue(table, "Age range", "testAgeRange");
-        AssertValue(table, "Gender", "Yet to be provisioned");
-        AssertValue(table, "Number of pupils", "Yet to be provisioned");
+        AssertValue(table, "Gender", "testGender");
+        AssertValue(table, "Number of pupils", "17");
         AssertValue(table, "Pupils capacity", "testAgeRange");
-        AssertValue(
-            table,
-            "Religious character",
-            "testReligiousCharacter");
-        AssertValue(
-            table,
-            "Type of SEN provision",
-            "testSenProvision");
+        AssertValue(table, "Religious character", "testReligiousCharacter");
+        AssertValue(table, "Type of SEN provision", "testSenProvision");
         AssertValue(table, "Website", "testWebsite");
         AssertValue(table, "Telephone number", "testTelephoneNumber");
-        AssertValue(
-            table,
-            "School profiles service",
-            "Yet to be provisioned");
     }
 
     [Fact]
@@ -118,11 +106,11 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
             row => AssertSubRow(
                 row,
                 expectedLabel: "LAESTAB",
-                expectedValue: "testEstablishmentNumber"),
+                expectedValue: "1231234"),
             row => AssertSubRow(
                 row,
                 expectedLabel: "UKPRN",
-                expectedValue: "testEstablishmentNumber"),
+                expectedValue: "testUkprn"),
             row => AssertSubRow(
                 row,
                 expectedLabel: "URN",
@@ -148,7 +136,7 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
             ofstedCell.Text);
 
         Assert.Equal(
-            "testInspectionOutcome",
+            "https://ofsted.example.com",
             ofstedCell.Href);
 
         Assert.True(ofstedCell.OpenInNewTab);
@@ -160,7 +148,10 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
         // Arrange
         EstablishmentDetailsModel dto = CreateModel() with
         {
-            Number = new EstablishmentNumberModel(null),
+            Identifiers = new EstablishmentIdentifiersModel(
+                urn: new EstablishmentUrnModel(new UniqueReferenceNumber("123456")),
+                ukprn: null,
+                dfeNumber: null),
             Headteacher = null,
             Phase = new PhaseOfEducationModel(null),
             Address = null,
@@ -170,48 +161,47 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
             ReligiousCharacter = null,
             SenProvision = null,
             ContactDetails = null,
-            Ofsted = null
+            Ofsted = null,
+            Pupils = null
         };
 
         // Act
         GovUkTable table = Mapper.Map(dto);
 
         // Assert
-        AssertValue(table, "Headteacher", string.Empty);
-        AssertValue(table, "Phase of education", string.Empty);
+        AssertValue(table, "Phase of education", null);
         AssertValue(table, "Address", string.Empty);
-        AssertValue(table, "Local authority", string.Empty);
-        AssertValue(table, "Part of", string.Empty);
         AssertValue(table, "Age range", string.Empty);
         AssertValue(table, "Pupils capacity", string.Empty);
         AssertValue(table, "Religious character", string.Empty);
         AssertValue(table, "Type of SEN provision", "Not recorded");
 
-        // The "Website" and "Telephone number" rows should not be present in the table when the contact details are missing.
+        // The values are not displayed when the data is null
         Assert.Null(table.Rows.SingleOrDefault(
             candidate => candidate.Cells[0].Text == "Website"));
+
         Assert.Null(table.Rows.SingleOrDefault(
             candidate => candidate.Cells[0].Text == "Telephone number"));
+
+        Assert.Null(table.Rows.SingleOrDefault(
+            candidate => candidate.Cells[0].Text == "Headteacher"));
+
+        Assert.Null(table.Rows.SingleOrDefault(
+            candidate => candidate.Cells[0].Text == "Local authority"));
+
+        Assert.Null(table.Rows.SingleOrDefault(
+            candidate => candidate.Cells[0].Text == "Part of group"));
 
         TableCell idNumbersCell = GetValueCell(
             table,
             "ID numbers");
 
-        Assert.Collection(
-            idNumbersCell.Rows,
-            row => AssertSubRow(
-                row,
-                "LAESTAB",
-                string.Empty),
-            row => AssertSubRow(
-                row,
-                "UKPRN",
-                string.Empty),
-            row => AssertSubRow(
-                row,
-                "URN",
-                "123456"));
+        TableCellRow row = Assert.Single(idNumbersCell.Rows);
 
+        AssertSubRow(
+                        row,
+                        "URN",
+                        "123456");
         TableCell ofstedCell = GetValueCell(
             table,
             "Ofsted");
@@ -225,16 +215,17 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
     {
         return new EstablishmentDetailsModel
         {
-            Urn = EstablishmentUrnModel.Create("123456"),
-            Number = new EstablishmentNumberModel(
-                "testEstablishmentNumber"),
+            Name = new EstablishmentNameModel("testEstablishmentName"),
+            Identifiers = new EstablishmentIdentifiersModel(
+                urn: EstablishmentUrnModel.Create("123456"),
+                ukprn: new("testUkprn"),
+                dfeNumber: new("123/1234")),
             Status = new EstablishmentStatusModel(
-                "testStatus"),
+                EstablishmentStatus.Open, effectiveDate: null),
             Type = new EstablishmentTypeModel(
                 "testType"),
             Phase = new PhaseOfEducationModel(
                 "testPhase"),
-            Uid = "testUid",
             Headteacher = "testHeadteacher",
             Address = new SiteAddressModel(
                 Name: "testSiteName",
@@ -245,10 +236,10 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
                 Postcode: "testPostcode"),
             LocalAuthority = new LocalAuthority(
                 localAuthorityName: "testLocalAuthority",
-                localAuthorityCode: "testLocalAuthorityCode"),
+                code: new(123)),
             Group = new EstablishmentGroupModel(
-                GroupName: "testGroupName",
-                Code: "testGroupCode"),
+                name: "testGroupName",
+                code: "testGroupCode"),
             AgeRange = "testAgeRange",
             Gender = "testGender",
             ReligiousCharacter = "testReligiousCharacter",
@@ -256,11 +247,8 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
             ContactDetails = new EstablishmentContactDetails(
                 Website: "testWebsite",
                 TelephoneNumber: "testTelephoneNumber"),
-            Ofsted = new EstablishmentInspection
-            {
-                InspectionDate = new DateOnly(2024, 5, 31),
-                InspectionOutcome = "testInspectionOutcome"
-            }
+            Pupils = new EstablishmentPupils(17),
+            Ofsted = new EstablishmentInspection(InspectionDate: new DateOnly(2024, 5, 31), ReportUrl: "https://ofsted.example.com")
         };
     }
 

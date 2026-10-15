@@ -1,6 +1,6 @@
 ﻿using DfE.Core.Libraries.CleanArchitecture.Application;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests;
+namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestDoubles;
 
 internal sealed class UseCaseStub<TRequest, TResponseModel> : IUseCase<TRequest, UseCaseResponse<TResponseModel>>
     where TRequest : IUseCaseRequest<UseCaseResponse<TResponseModel>>

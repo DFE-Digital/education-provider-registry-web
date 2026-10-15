@@ -123,7 +123,7 @@ public sealed class SearchResultsTests
 
         foreach (SearchAggregateResult currentResult in response.SearchProviderResults.SearchResultCollection)
         {
-            (TextContent name, IReadOnlyDictionary<TextContent, TextContent> values) =
+            (TextContent name, IEnumerable<(TextContent, TextContent)> values) =
                 IsEstablishmentSearchResult(currentResult) ?
                     MapToEstablishmentResultsTable(currentResult) :
                         MapToGroupResultTable(currentResult);
@@ -140,7 +140,7 @@ public sealed class SearchResultsTests
     private static bool IsEstablishmentSearchResult(SearchAggregateResult useCaseResponse)
         => useCaseResponse.ProviderCategory.Category.Equals("establishment", StringComparison.OrdinalIgnoreCase);
 
-    private static (TextContent, IReadOnlyDictionary<TextContent, TextContent>) MapToEstablishmentResultsTable(SearchAggregateResult response)
+    private static (TextContent, IEnumerable<(TextContent, TextContent)>) MapToEstablishmentResultsTable(SearchAggregateResult response)
     {
         TextContent name = new()
         {
@@ -148,38 +148,18 @@ public sealed class SearchResultsTests
             Link = new(url: $"/establishments/{response.UniqueIdentifier.Value}")
         };
 
-        Dictionary<TextContent, TextContent> results = new()
-        {
-            {
-                new TextContent(){ Text = "URN" },
-                new TextContent(){ Text = response.UniqueIdentifier.Value }
-            },
-            {
-                new TextContent(){ Text = "Type" },
-                new TextContent(){ Text = response.Type!.Name }
-            },
-            {
-                new TextContent(){ Text = "Address" },
-                new TextContent(){ Text = response.Address!.FullAddress }
-            },
-            {
-                new TextContent(){ Text = "Local authority" },
-                new TextContent(){ Text = response.LocalAuthority!.Name }
-            },
-            {
-                new TextContent(){ Text = "Part of a group" },
-                new TextContent()
-                {
-                    Text = response.Group!.PartOfName,
-                    Link = new(url: $"/groups/{response.Group?.PartOfCode}")
-                }
-            },
-        };
+        List<(TextContent, TextContent)> results = [
+            (new TextContent(){ Text = "URN" }, new TextContent(){ Text = response.UniqueIdentifier.Value }),
+            (new TextContent(){ Text = "Type" }, new TextContent(){ Text = response.Type!.Name }),
+            (new TextContent(){ Text = "Address" }, new TextContent(){ Text = response.Address!.FullAddress }),
+            (new TextContent(){ Text = "Local authority" }, new TextContent(){ Text = response.LocalAuthority!.Name }),
+            (new TextContent() { Text = "Part of group" }, new TextContent() { Text = response.Group!.PartOfName, Link = new(url: $"/groups/{response.Group?.PartOfCode}") })
+        ];
 
         return (name, results);
     }
 
-    private static (TextContent, IReadOnlyDictionary<TextContent, TextContent>) MapToGroupResultTable(SearchAggregateResult response)
+    private static (TextContent, IEnumerable<(TextContent, TextContent)>) MapToGroupResultTable(SearchAggregateResult response)
     {
         TextContent name = new()
         {
@@ -187,25 +167,12 @@ public sealed class SearchResultsTests
             Link = new(url: $"/establishments/{response.UniqueIdentifier.Value}")
         };
 
-        Dictionary<TextContent, TextContent> results = new()
-        {
-            {
-                new TextContent(){ Text = "Group ID" },
-                new TextContent(){ Text = response.UniqueIdentifier.Value }
-            },
-            {
-                new TextContent(){ Text = "Type" },
-                new TextContent(){ Text = response.Type!.Name }
-            },
-            {
-                new TextContent(){ Text = "Address" },
-                new TextContent(){ Text = response.Address!.FullAddress }
-            },
-            {
-                new TextContent(){ Text = "Academies" },
-                new TextContent(){ Text = response.AcademyCount.ToString() }
-            }
-        };
+        List<(TextContent, TextContent)> results = [
+            (new TextContent(){ Text = "Group ID" }, new TextContent(){ Text = response.UniqueIdentifier.Value }),
+            (new TextContent(){ Text = "Type" }, new TextContent(){ Text = response.Type!.Name! }),
+            (new TextContent(){ Text = "Address" }, new TextContent(){ Text = response.Address!.FullAddress }),
+            (new TextContent(){ Text = "Academies" }, new TextContent(){ Text = response.AcademyCount.ToString() })
+        ];
 
         return (name, results);
     }

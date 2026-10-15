@@ -3,6 +3,7 @@ using DfE.Core.Libraries.IntegrationTests.Abstractions;
 using DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles.EstablishmentDetails;
 using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.Model;
 using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.UseCases.GetEstablishmentById;
+using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestDoubles;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.EstablishmentDetails;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents;
 

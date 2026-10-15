@@ -259,6 +259,8 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
                 .WithUrn(100_000)
                 .WithAddress("1 test street, testville, TE1 5ST")
                 .WithLocalAuthorityName("Stub local authority")
+                .WithGroupName("TEST GROUP name")
+                .WithGroupUid("1234")
                 .Build();
 
         await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableAggregates>([match], ct);
@@ -280,25 +282,27 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
         SearchResultsComponent resultsComponent = new(document);
 
         SearchResult displayedResult = Assert.Single(resultsComponent.GetSearchResults());
-        List<KeyValuePair<TextContent, TextContent>> displayedResultContent = [.. displayedResult.Values];
+        List<(TextContent key, TextContent value)> displayedResultContent = [.. displayedResult.Values];
         Assert.Equal("school 1", displayedResult.Name.Text);
 
-        Assert.Equal("URN", displayedResultContent[0].Key.Text);
-        Assert.Equal("100000", displayedResultContent[0].Value.Text);
+        Assert.Equal("URN", displayedResultContent[0].key.Text);
+        Assert.Equal("100000", displayedResultContent[0].value.Text);
 
-        Assert.Equal("Type", displayedResultContent[1].Key.Text);
-        Assert.Equal("Multi Academy Trust", displayedResultContent[1].Value.Text);
+        Assert.Equal("Type", displayedResultContent[1].key.Text);
+        Assert.Equal("Multi Academy Trust", displayedResultContent[1].value.Text);
 
-        Assert.Equal("Address", displayedResultContent[2].Key.Text);
-        Assert.Equal("1 test street, testville, TE1 5ST", displayedResultContent[2].Value.Text);
+        Assert.Equal("Address", displayedResultContent[2].key.Text);
+        Assert.Equal("1 test street, testville, TE1 5ST", displayedResultContent[2].value.Text);
 
-        Assert.Equal("Local authority", displayedResultContent[3].Key.Text);
-        Assert.Equal("Stub local authority", displayedResultContent[3].Value.Text);
+        Assert.Equal("Local authority", displayedResultContent[3].key.Text);
+        Assert.Equal("Stub local authority", displayedResultContent[3].value.Text);
 
-        Assert.Equal("Part of a group", displayedResultContent[4].Key.Text);
-        // TODO GroupId is not mapped?
-        // TODO GroupName is mapped incorrectly - identical to Name
+        Assert.Equal("Part of group", displayedResultContent[4].key.Text);
+        Assert.Equal("Test Group Name", displayedResultContent[4].value.Text);
 
+        Assert.Equal("/groups/1234", displayedResultContent[4].value.Link!.Url);
+        Assert.False(displayedResultContent[4].value.Link!.OpensInNewWindow);
+        Assert.Empty(displayedResultContent[4].value.Link!.SecurityAttributes);
     }
 
     [Fact]
@@ -336,21 +340,21 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
         SearchResultsComponent resultsComponent = new(document);
 
         SearchResult displayedResult = Assert.Single(resultsComponent.GetSearchResults());
-        List<KeyValuePair<TextContent, TextContent>> displayedResultContent = [.. displayedResult.Values];
+        List<(TextContent key, TextContent values)> displayedResultContent = [.. displayedResult.Values];
         Assert.Equal("group 1", displayedResult.Name.Text);
 
-        Assert.Equal(4, displayedResult.Values.Count);
+        Assert.Equal(4, displayedResult.Values.Count());
 
-        Assert.Equal("Group ID", displayedResultContent[0].Key.Text);
-        Assert.Equal("1234", displayedResultContent[0].Value.Text);
+        Assert.Equal("Group ID", displayedResultContent[0].key.Text);
+        Assert.Equal("1234", displayedResultContent[0].values.Text);
 
-        Assert.Equal("Type", displayedResultContent[1].Key.Text);
-        Assert.Equal("STUB-provider-type", displayedResultContent[1].Value.Text);
+        Assert.Equal("Type", displayedResultContent[1].key.Text);
+        Assert.Equal("STUB-provider-type", displayedResultContent[1].values.Text);
 
-        Assert.Equal("Address", displayedResultContent[2].Key.Text);
-        Assert.Equal("1 test street, testville, TE1 5ST", displayedResultContent[2].Value.Text);
+        Assert.Equal("Address", displayedResultContent[2].key.Text);
+        Assert.Equal("1 test street, testville, TE1 5ST", displayedResultContent[2].values.Text);
 
-        Assert.Equal("Academies", displayedResultContent[3].Key.Text);
-        Assert.Equal("97", displayedResultContent[3].Value.Text);
+        Assert.Equal("Academies", displayedResultContent[3].key.Text);
+        Assert.Equal("97", displayedResultContent[3].values.Text);
     }
 }

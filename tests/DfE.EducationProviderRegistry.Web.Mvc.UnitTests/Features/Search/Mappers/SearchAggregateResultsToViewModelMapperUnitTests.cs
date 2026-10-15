@@ -20,6 +20,7 @@ public sealed class SearchAggregateResultsToViewModelMapperTests
             new GroupDetail("Group Name", "1234"),
             new SearchLocalAuthority("LA Name"),
             new SearchCategory("Establishment"),
+            SearchProviderStatus.Open,
             0);
     }
 
@@ -35,6 +36,7 @@ public sealed class SearchAggregateResultsToViewModelMapperTests
             null,
             null,
             new SearchCategory("Group"),
+            SearchProviderStatus.Open,
             25);
     }
 
@@ -183,6 +185,7 @@ public sealed class SearchAggregateResultsToViewModelMapperTests
                 null,
                 null,
                 new SearchCategory("Unknown"),
+                null,
                 0);
 
         SearchAggregateResultsToViewModelMapper mapper =

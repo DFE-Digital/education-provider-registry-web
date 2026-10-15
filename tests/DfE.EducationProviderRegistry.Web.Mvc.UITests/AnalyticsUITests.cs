@@ -1,5 +1,5 @@
 ﻿using DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents.WebDriver;
-using DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents.WebDriver.Search;
+using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
 using DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.ApplicationContainer;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
@@ -93,7 +93,7 @@ public sealed class AnalyticsUITests : UIBaseTest
 
     private static Task TriggerAnalyticsWithBrowserActionAsync(IWebDriver webDriver, ApplicationHostedEnvironment application)
     {
-        Uri uriTriggeringAnalytics = new(application.GetApplicationUrl(), SearchRoutes.Search());
+        Uri uriTriggeringAnalytics = new(application.GetApplicationUrl(), SearchRoutes.Search);
         return webDriver.Navigate().GoToUrlAsync(uriTriggeringAnalytics);
     }
 }

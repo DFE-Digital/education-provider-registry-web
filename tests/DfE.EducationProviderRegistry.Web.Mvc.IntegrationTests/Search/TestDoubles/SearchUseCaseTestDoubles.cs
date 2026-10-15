@@ -3,6 +3,7 @@ using DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles.Search;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Request;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
+using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestDoubles;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Search.TestDoubles;
 

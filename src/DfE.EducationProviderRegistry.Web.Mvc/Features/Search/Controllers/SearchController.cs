@@ -74,8 +74,8 @@ public sealed class SearchController : Controller
 
         SearchRequest searchRequest = new(
             searchTerms: [
-                new SearchTerm("what", model.What!),
-                new SearchTerm("where", model.Where!),
+                new SearchTermRequest("what", model.What!),
+                new SearchTermRequest("where", model.Where!),
             ],
             searchFilterRequests,
             sortOrder,

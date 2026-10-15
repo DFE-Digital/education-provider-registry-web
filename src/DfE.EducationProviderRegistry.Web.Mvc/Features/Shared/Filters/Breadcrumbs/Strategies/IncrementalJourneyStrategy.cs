@@ -1,55 +1,58 @@
 ﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Models;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Options;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Strategies.JourneyRules;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Strategies;
 
 public sealed class IncrementalJourneyStrategy : IBreadcrumbStrategy
 {
+    private readonly IEnumerable<IJourneyRule> _rules;
+
+    public IncrementalJourneyStrategy(IEnumerable<IJourneyRule> rules)
+    {
+        _rules = rules ??
+            throw new ArgumentNullException(nameof(rules));
+    }
+
     public void Apply(BreadcrumbJourney journey, BreadcrumbRouteRule rule, string currentUrl)
     {
-        BreadcrumbItem page = new(rule.Title, currentUrl);
+        ArgumentNullException.ThrowIfNull(journey);
+        ArgumentNullException.ThrowIfNull(rule);
 
-        if (journey.Items.Count is 0)
-        {
-            journey.Items.Add(page);
-            return;
-        }
-
-        if (journey.Items.Last().Url.Equals(page.Url, StringComparison.OrdinalIgnoreCase))
-        {
-            return;
-        }
+        BreadcrumbItem page = new(rule.Title!, currentUrl);
 
         string currentPath = GetAbsolutePath(currentUrl);
-        string lastPath = GetAbsolutePath(journey.Items.Last().Url);
+        string lastPath =
+            journey.Items.Count > 0 ?
+                GetAbsolutePath(journey.Items.Last().Url) : string.Empty;
 
-        if (lastPath.Equals(currentPath, StringComparison.OrdinalIgnoreCase))
+        int existingIndex = journey.Items.FindIndex(
+            breadcrumbItem =>
+                GetAbsolutePath(breadcrumbItem.Url)
+                    .Equals(currentPath, StringComparison.OrdinalIgnoreCase));
+
+        JourneyContext context =
+            new(journey, page, currentPath, lastPath, existingIndex);
+
+        foreach (IJourneyRule journeyRule in _rules)
         {
-            journey.Items[journey.Items.Count - 1] = page;
-            return;
+            if (journeyRule.IsSatisfiedBy(context))
+            {
+                journeyRule.Apply(context);
+                break;
+            }
         }
-
-        int existingIndex =
-            journey.Items.FindIndex(
-                breadcrumbItem =>
-                    GetAbsolutePath(breadcrumbItem.Url)
-                        .Equals(currentPath, StringComparison.OrdinalIgnoreCase));
-
-        if (existingIndex >= 0)
-        {
-            journey.Items = [.. journey.Items.Take(existingIndex + 1)];
-            journey.Items[existingIndex] = page;
-            return;
-        }
-
-        journey.Items.Add(page);
     }
 
     private static string GetAbsolutePath(string url)
     {
-        Uri uri = new(new Uri("http://localhost"), url);
+        if (string.IsNullOrWhiteSpace(url))
+        {
+            return string.Empty;
+        }
 
-        return string.IsNullOrWhiteSpace(url) ?
-            string.Empty : uri.AbsolutePath;
+        // http://localhost is acting purely as a throwaway dummy base to satisfy the Uri constructor.
+        Uri uri = new(new Uri("http://localhost"), url); 
+        return uri.AbsolutePath;
     }
 }

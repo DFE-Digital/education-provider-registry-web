@@ -1,30 +1,22 @@
-﻿using System.Text.Json;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Models;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Models;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Store;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Views.Shared.Components.Breadcrumbs;
 
 public sealed class BreadcrumbsViewComponent : ViewComponent
 {
-    private const string SessionKey = "BreadcrumbJourney";
-    private readonly ISession _session;
+    private readonly IBreadcrumbJourneyStore _store;
 
-    public BreadcrumbsViewComponent(ISession session)
+    public BreadcrumbsViewComponent(IBreadcrumbJourneyStore store)
     {
-        ArgumentNullException.ThrowIfNull(session);
-        _session = session;
+        ArgumentNullException.ThrowIfNull(store);
+        _store = store;
     }
-
 
     public IViewComponentResult Invoke()
     {
-        string? json = _session.GetString(SessionKey);
-
-        BreadcrumbJourney journey =
-            string.IsNullOrWhiteSpace(json)
-                ? new BreadcrumbJourney()
-                : JsonSerializer.Deserialize<BreadcrumbJourney>(json)
-                  ?? new BreadcrumbJourney();
+        BreadcrumbJourney journey = _store.Load();
 
         IReadOnlyCollection<BreadcrumbItem> breadcrumbs =
             journey.Items

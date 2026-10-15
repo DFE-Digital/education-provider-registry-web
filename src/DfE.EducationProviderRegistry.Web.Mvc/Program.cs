@@ -76,14 +76,7 @@ builder.Services.AddSession(options =>
 builder.Services.AddScoped<ISession>(provider =>
     provider.GetRequiredService<IHttpContextAccessor>().HttpContext!.Session);
 
-builder.Services.AddKeyedScoped<IBreadcrumbStrategy, BaseJourneyStrategy>("BaseJourney");
-builder.Services.AddKeyedScoped<IBreadcrumbStrategy, IncrementalJourneyStrategy>("IncrementalJourney");
-builder.Services.AddScoped<IBreadcrumbStrategyFactory, BreadcrumbStrategyFactory>();
-builder.Services.Configure<BreadcrumbOptions>(builder.Configuration.GetSection("Breadcrumbs"));
-
-builder.Services.AddSingleton<IBreadcrumbRouteResolver, BreadcrumbRouteResolver>();
-builder.Services.AddSingleton<IBreadcrumbTitleResolver, BreadcrumbTitleResolver>();
-builder.Services.AddScoped<BreadcrumbResultFilter>();
+builder.Services.AddBreadcrumbDependencies(builder.Configuration);
 
 WebApplication app = builder.Build();
 

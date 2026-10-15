@@ -7,15 +7,18 @@ public sealed class BaseJourneyStrategy : IBreadcrumbStrategy
 {
     public void Apply(BreadcrumbJourney journey, BreadcrumbRouteRule rule, string currentUrl)
     {
-        journey.Items =
-            [
-                .. rule.BaseJourney.Select(
-                    breadcrumbPrefixItem =>
-                        new BreadcrumbItem(
-                            breadcrumbPrefixItem.Title,
-                            breadcrumbPrefixItem.Url))
-            ];
+        ArgumentNullException.ThrowIfNull(journey);
+        ArgumentNullException.ThrowIfNull(rule);
 
-        journey.Items.Add(new BreadcrumbItem(rule.Title, currentUrl));
+        journey.Items =
+        [
+            .. (rule.BaseJourney ?? []).Select(
+                breadcrumbPrefixItem =>
+                    new BreadcrumbItem(
+                        breadcrumbPrefixItem.Title,
+                        breadcrumbPrefixItem.Url))
+        ];
+
+        journey.Items.Add(new BreadcrumbItem(rule.Title!, currentUrl));
     }
 }

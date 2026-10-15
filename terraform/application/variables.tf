@@ -100,4 +100,4 @@ variable "redis_cache_sku_name" { default = "Standard" }
 variable "redis_queue_capacity" { default = 1 }
 variable "redis_queue_family" { default = "C" }
 variable "redis_queue_sku_name" { default = "Standard" }
-variable "postgres_server_version" { default = "17" }
+variable "postgres_server_version" { default = "18" }

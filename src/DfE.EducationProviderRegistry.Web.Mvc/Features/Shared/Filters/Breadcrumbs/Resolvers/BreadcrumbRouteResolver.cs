@@ -1,7 +1,7 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.Middleware.Breadcrumbs.Options;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Options;
 using Microsoft.Extensions.Options;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.Middleware.Breadcrumbs.Routing;
+namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Resolvers;
 
 public sealed class BreadcrumbRouteResolver : IBreadcrumbRouteResolver
 {

@@ -4,22 +4,25 @@ using DfE.EducationProviderRegistry.Web.Mvc.Features.Download.Datasets.Views;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Services;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Options;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Resolvers;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Strategies;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Strategies.Factories;
 using DfE.EducationProviderRegistry.Web.Mvc.Middleware;
-using DfE.EducationProviderRegistry.Web.Mvc.Middleware.Breadcrumbs;
-using DfE.EducationProviderRegistry.Web.Mvc.Middleware.Breadcrumbs.Options;
-using DfE.EducationProviderRegistry.Web.Mvc.Middleware.Breadcrumbs.Routing;
-using DfE.EducationProviderRegistry.Web.Mvc.Middleware.Breadcrumbs.Strategies;
-using DfE.EducationProviderRegistry.Web.Mvc.Middleware.Breadcrumbs.Strategies.Factories;
 using DfE.EducationProviderRegistry.Web.Mvc.Settings;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.Extensions.Options;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services
-    .AddControllersWithViews()
+    .AddControllersWithViews(options =>
+    {
+        options.Filters.AddService<BreadcrumbResultFilter>();
+    })
     .AddRazorOptions((options) =>
     {
         options.ViewLocationExpanders.Add(new FeatureViewLocationExpander());
@@ -76,8 +79,11 @@ builder.Services.AddScoped<ISession>(provider =>
 builder.Services.AddKeyedScoped<IBreadcrumbStrategy, BaseJourneyStrategy>("BaseJourney");
 builder.Services.AddKeyedScoped<IBreadcrumbStrategy, IncrementalJourneyStrategy>("IncrementalJourney");
 builder.Services.AddScoped<IBreadcrumbStrategyFactory, BreadcrumbStrategyFactory>();
-builder.Services.AddScoped<IBreadcrumbRouteResolver, BreadcrumbRouteResolver>();
 builder.Services.Configure<BreadcrumbOptions>(builder.Configuration.GetSection("Breadcrumbs"));
+
+builder.Services.AddSingleton<IBreadcrumbRouteResolver, BreadcrumbRouteResolver>();
+builder.Services.AddSingleton<IBreadcrumbTitleResolver, BreadcrumbTitleResolver>();
+builder.Services.AddScoped<BreadcrumbResultFilter>();
 
 WebApplication app = builder.Build();
 
@@ -94,7 +100,6 @@ else
 }
 
 app.UseSession();
-app.UseMiddleware<BreadcrumbTrackingMiddleware>();
 app.UseStatusCodePagesWithReExecute("/not-found");
 app.UseSecurityHeaders();
 app.UseHttpsRedirection();

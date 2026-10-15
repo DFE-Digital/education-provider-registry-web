@@ -1,28 +1,35 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Models;
+﻿using System.Text.Json;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Views.Shared.Components.Breadcrumbs;
 
 public sealed class BreadcrumbsViewComponent : ViewComponent
 {
-    private const string HttpContextItemKey = "CurrentBreadcrumbJourney";
+    private const string SessionKey = "BreadcrumbJourney";
+    private readonly ISession _session;
+
+    public BreadcrumbsViewComponent(ISession session)
+    {
+        ArgumentNullException.ThrowIfNull(session);
+        _session = session;
+    }
+
 
     public IViewComponentResult Invoke()
     {
-        if (!HttpContext.Items.TryGetValue(HttpContextItemKey, out object? obj) ||
-            obj is not BreadcrumbJourney context ||
-            context.Items.Count <= 1)
-        {
-            return Content(string.Empty);
-        }
+        string? json = _session.GetString(SessionKey);
 
-        IList<BreadcrumbItem> breadcrumbs =
-            context.Items
-                .Take(context.Items.Count - 1)
+        BreadcrumbJourney journey =
+            string.IsNullOrWhiteSpace(json)
+                ? new BreadcrumbJourney()
+                : JsonSerializer.Deserialize<BreadcrumbJourney>(json)
+                  ?? new BreadcrumbJourney();
+
+        IReadOnlyCollection<BreadcrumbItem> breadcrumbs =
+            journey.Items
+                .SkipLast(1)
                 .ToList();
-
-        if (breadcrumbs.Count is 0)
-            return Content(string.Empty);
 
         return View(breadcrumbs);
     }

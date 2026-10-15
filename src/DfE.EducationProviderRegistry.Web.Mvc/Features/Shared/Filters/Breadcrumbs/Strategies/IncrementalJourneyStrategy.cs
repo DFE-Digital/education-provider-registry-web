@@ -1,7 +1,7 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Models;
-using DfE.EducationProviderRegistry.Web.Mvc.Middleware.Breadcrumbs.Options;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Models;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Options;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.Middleware.Breadcrumbs.Strategies;
+namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Strategies;
 
 public sealed class IncrementalJourneyStrategy : IBreadcrumbStrategy
 {

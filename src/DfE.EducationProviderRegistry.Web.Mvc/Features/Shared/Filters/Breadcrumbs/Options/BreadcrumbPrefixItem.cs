@@ -1,4 +1,4 @@
-﻿namespace DfE.EducationProviderRegistry.Web.Mvc.Middleware.Breadcrumbs.Options;
+﻿namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Options;
 
 public sealed class BreadcrumbPrefixItem
 {

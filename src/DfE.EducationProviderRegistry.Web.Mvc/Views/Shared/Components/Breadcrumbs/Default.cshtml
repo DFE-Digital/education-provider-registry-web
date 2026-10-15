@@ -1,4 +1,4 @@
-﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Breadcrumbs.Models
+﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Models
 @model IReadOnlyCollection<BreadcrumbItem>
 
 @if (Model.Any())
@@ -9,18 +9,9 @@
             @foreach (BreadcrumbItem breadcrumb in Model)
             {
                 <li class="govuk-breadcrumbs__list-item">
-
-                    @if (!string.IsNullOrWhiteSpace(breadcrumb.Url))
-                    {
-                        <a href="@breadcrumb.Url">
-                            @breadcrumb.Title
-                        </a>
-                    }
-                    else
-                    {
+                    <a href="@breadcrumb.Url">
                         @breadcrumb.Title
-                    }
-
+                    </a>
                 </li>
             }
 

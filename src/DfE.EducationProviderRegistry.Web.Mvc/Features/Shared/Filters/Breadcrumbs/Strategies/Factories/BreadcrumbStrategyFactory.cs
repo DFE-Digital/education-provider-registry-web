@@ -1,6 +1,7 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.Middleware.Breadcrumbs.Options;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Options;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Strategies;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.Middleware.Breadcrumbs.Strategies.Factories;
+namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Strategies.Factories;
 
 public sealed class BreadcrumbStrategyFactory : IBreadcrumbStrategyFactory
 {

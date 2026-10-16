@@ -8,11 +8,10 @@ public sealed class SessionBreadcrumbJourneyStore : IBreadcrumbJourneyStore
     private const string SessionKey = "BreadcrumbJourney";
     private readonly ISession _session;
 
-    public SessionBreadcrumbJourneyStore(
-        ISession session)
+    public SessionBreadcrumbJourneyStore(ISession session)
     {
-        _session = session ??
-            throw new ArgumentNullException(nameof(session));
+        ArgumentNullException.ThrowIfNull(session);
+        _session = session;
     }
 
     public BreadcrumbJourney Load()

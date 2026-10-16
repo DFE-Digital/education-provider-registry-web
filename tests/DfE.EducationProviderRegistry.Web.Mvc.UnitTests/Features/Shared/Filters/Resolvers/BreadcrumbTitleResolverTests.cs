@@ -147,7 +147,6 @@ public sealed class BreadcrumbTitleResolverTests
             result);
     }
 
-
     [Fact]
     public void Resolve_WhenModelIsNull_ShouldReturnEmptyString()
     {

@@ -2,51 +2,29 @@
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.TestDoubles;
 
-public sealed class SessionTestDouble : ISession
+public class SessionTestDouble : ISession
 {
-    private readonly Dictionary<string, byte[]> _values = [];
-
-    public string Id { get; } = Guid.NewGuid().ToString();
+    private readonly Dictionary<string, byte[]> _sessionStorage = new(StringComparer.OrdinalIgnoreCase);
 
     public bool IsAvailable => true;
 
-    public IEnumerable<string> Keys => _values.Keys;
+    public string Id => Guid.NewGuid().ToString();
 
-    public void Clear()
-    {
-        _values.Clear();
-    }
+    IEnumerable<string> Keys => _sessionStorage.Keys;
 
-    public Task CommitAsync(
-        CancellationToken cancellationToken = default)
-    {
-        return Task.CompletedTask;
-    }
+    IEnumerable<string> ISession.Keys => Keys;
 
-    public Task LoadAsync(
-        CancellationToken cancellationToken = default)
-    {
-        return Task.CompletedTask;
-    }
+    public void Clear() => _sessionStorage.Clear();
 
-    public void Remove(string key)
-    {
-        _values.Remove(key);
-    }
+    public Task CommitAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
 
-    public void Set(
-        string key,
-        byte[] value)
-    {
-        _values[key] = value;
-    }
+    public Task LoadAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
 
-    public bool TryGetValue(
-        string key,
-        out byte[] value)
-    {
-        return _values.TryGetValue(
-            key,
-            out value!);
-    }
+    public void Remove(string key) => _sessionStorage.Remove(key);
+
+    public void Set(string key, byte[] value) => _sessionStorage[key] = value;
+
+    public bool TryGetValue(string key, out byte[] value) => _sessionStorage.TryGetValue(key, out value!);
+
+    public static SessionTestDouble Create() => new();
 }

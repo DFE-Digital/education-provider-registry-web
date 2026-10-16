@@ -20,7 +20,6 @@ public class GroupsController : Controller
         ArgumentNullException.ThrowIfNull(logger);
         ArgumentNullException.ThrowIfNull(useCase);
         ArgumentNullException.ThrowIfNull(mapper);
-
         _logger = logger;
         _useCase = useCase;
         _groupDetailsPageMapper = mapper;

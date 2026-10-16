@@ -9,7 +9,7 @@ internal static class SearchRequestViewModelStub
     public static SearchRequestViewModel AcademyWithFacet() =>
         new()
         {
-            SearchKeywords = "academy",
+            What = "academy",
             SelectedFacets = new Dictionary<string, List<string>>
             {
                 { "establishment_type_id", new List<string> { "01", "02" } }
@@ -19,7 +19,7 @@ internal static class SearchRequestViewModelStub
     public static SearchRequestViewModel AcademyWithoutFacet() =>
         new()
         {
-            SearchKeywords = "academy",
+            What = "academy",
             SelectedFacets = []
         };
 }

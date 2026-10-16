@@ -44,7 +44,6 @@ public sealed class SearchController : Controller
     }
 
     [HttpGet("results")]
-    [HttpPost("results")]
     public async Task<IActionResult> Search(
         SearchRequestViewModel model)
     {
@@ -75,8 +74,8 @@ public sealed class SearchController : Controller
 
         SearchRequest searchRequest = new(
             searchTerms: [
-                new SearchTermRequest("what", model.SearchKeywords!),
-                new SearchTermRequest("where", model.Address!),
+                new SearchTermRequest("what", model.What!),
+                new SearchTermRequest("where", model.Where!),
             ],
             searchFilterRequests,
             sortOrder,

@@ -7,6 +7,7 @@ using DfE.EducationProviderRegistry.Core.Query.Download.Datasets.Application.Use
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Download.Datasets.Controllers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Download.Datasets.ViewModels;
 using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Download.Datasets.Controllers.TestDoubles;
+using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.TestDoubles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;

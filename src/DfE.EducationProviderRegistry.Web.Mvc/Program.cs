@@ -4,16 +4,25 @@ using DfE.EducationProviderRegistry.Web.Mvc.Features.Download.Datasets.Views;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Options;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Resolvers;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Strategies;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Strategies.Factories;
 using DfE.EducationProviderRegistry.Web.Mvc.Middleware;
 using DfE.EducationProviderRegistry.Web.Mvc.Settings;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.Extensions.Options;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services
-    .AddControllersWithViews()
+    .AddControllersWithViews(options =>
+    {
+        options.Filters.AddService<BreadcrumbResultFilter>();
+    })
     .AddRazorOptions((options) =>
     {
         options.ViewLocationExpanders.Add(new FeatureViewLocationExpander());
@@ -67,6 +76,8 @@ builder.Services.AddSession(options =>
 builder.Services.AddScoped<ISession>(provider =>
     provider.GetRequiredService<IHttpContextAccessor>().HttpContext!.Session);
 
+builder.Services.AddBreadcrumbDependencies(builder.Configuration);
+
 WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -80,6 +91,7 @@ else
 {
     app.UseDeveloperExceptionPage();
 }
+
 app.UseSession();
 app.UseStatusCodePagesWithReExecute("/not-found");
 app.UseSecurityHeaders();

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Download.Datasets.Controllers.TestDoubles;
+namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.TestDoubles;
 
 public class SessionTestDouble : ISession
 {

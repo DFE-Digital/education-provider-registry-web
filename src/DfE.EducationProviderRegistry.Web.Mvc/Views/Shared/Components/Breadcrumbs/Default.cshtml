@@ -1,0 +1,20 @@
+﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Models
+@model IReadOnlyCollection<BreadcrumbItem>
+
+@if (Model.Any())
+{
+    <nav class="govuk-breadcrumbs" aria-label="Breadcrumb">
+        <ol class="govuk-breadcrumbs__list">
+
+            @foreach (BreadcrumbItem breadcrumb in Model)
+            {
+                <li class="govuk-breadcrumbs__list-item">
+                    <a href="@breadcrumb.Url">
+                        @breadcrumb.Title
+                    </a>
+                </li>
+            }
+
+        </ol>
+    </nav>
+}

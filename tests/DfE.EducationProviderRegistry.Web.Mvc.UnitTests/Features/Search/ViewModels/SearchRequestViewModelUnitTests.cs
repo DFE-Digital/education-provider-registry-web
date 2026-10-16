@@ -33,11 +33,11 @@ public sealed class SearchRequestViewModelUnitTests
         SearchRequestViewModel vm = new()
         {
             // act
-            SearchKeywords = "academy"
+            What = "academy"
         };
 
         // assert
-        Assert.Equal("academy", vm.SearchKeywords);
+        Assert.Equal("academy", vm.What);
     }
 
     [Fact]

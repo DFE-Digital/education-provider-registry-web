@@ -11,24 +11,22 @@ public sealed class BreadcrumbTracker : IBreadcrumbTracker
 
     public BreadcrumbTracker(IBreadcrumbStrategyFactory breadcrumbStrategyFactory)
     {
-        _breadcrumbStrategyFactory = breadcrumbStrategyFactory ??
-            throw new ArgumentNullException(nameof(breadcrumbStrategyFactory));
+        ArgumentNullException.ThrowIfNull(breadcrumbStrategyFactory);
+        _breadcrumbStrategyFactory = breadcrumbStrategyFactory;
     }
 
     public void Track(
         BreadcrumbJourney journey,
         BreadcrumbRouteRule rule,
-        string title,
-        string currentUrl)
+        BreadcrumbItem currentBreadcrumbItem)
     {
         ArgumentNullException.ThrowIfNull(journey);
         ArgumentNullException.ThrowIfNull(rule);
+        ArgumentNullException.ThrowIfNull(currentBreadcrumbItem);
 
-        rule.Title = title;
+        IBreadcrumbStrategy strategy = _breadcrumbStrategyFactory
+            .GetStrategy(rule);
 
-        IBreadcrumbStrategy strategy =
-            _breadcrumbStrategyFactory.GetStrategy(rule);
-
-        strategy.Apply(journey, rule, currentUrl);
+        strategy.Apply(journey, rule, currentBreadcrumbItem);
     }
 }

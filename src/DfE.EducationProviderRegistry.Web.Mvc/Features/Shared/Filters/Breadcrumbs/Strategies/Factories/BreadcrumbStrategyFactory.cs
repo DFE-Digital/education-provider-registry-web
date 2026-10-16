@@ -8,8 +8,8 @@ public sealed class BreadcrumbStrategyFactory : IBreadcrumbStrategyFactory
 
     public BreadcrumbStrategyFactory(IServiceProvider serviceProvider)
     {
-        _serviceProvider = serviceProvider ??
-            throw new ArgumentNullException(nameof(serviceProvider));
+        ArgumentNullException.ThrowIfNull(serviceProvider);
+        _serviceProvider = serviceProvider;
     }
 
     public IBreadcrumbStrategy GetStrategy(BreadcrumbRouteRule rule)
@@ -26,8 +26,7 @@ public sealed class BreadcrumbStrategyFactory : IBreadcrumbStrategyFactory
             _serviceProvider.GetKeyedService<IBreadcrumbStrategy>(strategyKey);
 
         return strategy is null
-            ? throw new InvalidOperationException(
-                $"No breadcrumb strategy registered for key '{strategyKey}'.")
+            ? throw new InvalidOperationException($"No breadcrumb strategy registered for key '{strategyKey}'.")
             : strategy;
     }
 }

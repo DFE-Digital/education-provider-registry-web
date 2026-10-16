@@ -5,10 +5,14 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcru
 
 public sealed class BaseJourneyStrategy : IBreadcrumbStrategy
 {
-    public void Apply(BreadcrumbJourney journey, BreadcrumbRouteRule rule, string currentUrl)
+    public void Apply(
+        BreadcrumbJourney journey,
+        BreadcrumbRouteRule rule,
+        BreadcrumbItem currentBreadcrumbItem)
     {
         ArgumentNullException.ThrowIfNull(journey);
         ArgumentNullException.ThrowIfNull(rule);
+        ArgumentNullException.ThrowIfNull(currentBreadcrumbItem);
 
         journey.Items =
         [
@@ -19,6 +23,6 @@ public sealed class BaseJourneyStrategy : IBreadcrumbStrategy
                         breadcrumbPrefixItem.Url))
         ];
 
-        journey.Items.Add(new BreadcrumbItem(rule.Title!, currentUrl));
+        journey.Items.Add(currentBreadcrumbItem);
     }
 }

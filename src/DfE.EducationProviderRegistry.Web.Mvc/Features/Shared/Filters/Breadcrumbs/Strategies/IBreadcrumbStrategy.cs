@@ -5,5 +5,8 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcru
 
 public interface IBreadcrumbStrategy
 {
-    void Apply(BreadcrumbJourney journey, BreadcrumbRouteRule rule, string currentUrl);
+    void Apply(
+        BreadcrumbJourney journey,
+        BreadcrumbRouteRule rule,
+        BreadcrumbItem currentBreadcrumbItem);
 }

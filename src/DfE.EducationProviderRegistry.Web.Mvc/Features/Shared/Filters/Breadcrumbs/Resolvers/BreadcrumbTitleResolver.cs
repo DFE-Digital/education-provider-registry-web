@@ -13,11 +13,11 @@ public sealed class BreadcrumbTitleResolver : IBreadcrumbTitleResolver
 
         if (!string.IsNullOrWhiteSpace(rule.TitleModelProperty))
         {
-            object? model =
-                viewResult.Model;
+            object? model = viewResult.Model;
 
-            PropertyInfo? property =
-                model?.GetType().GetProperty(rule.TitleModelProperty);
+            PropertyInfo? property = model?
+                .GetType()
+                .GetProperty(rule.TitleModelProperty);
 
             return property?.GetValue(model)?.ToString()
                    ?? string.Empty;

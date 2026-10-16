@@ -8,6 +8,5 @@ public interface IBreadcrumbTracker
     void Track(
         BreadcrumbJourney journey,
         BreadcrumbRouteRule rule,
-        string title,
-        string currentUrl);
+        BreadcrumbItem currentBreadcrumbItem);
 }

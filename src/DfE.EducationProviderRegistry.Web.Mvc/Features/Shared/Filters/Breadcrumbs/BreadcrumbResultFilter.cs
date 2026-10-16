@@ -24,6 +24,11 @@ public sealed class BreadcrumbResultFilter : IAsyncResultFilter
         IBreadcrumbTracker tracker,
         INavigationEvaluator navigationEvaluator)
     {
+        ArgumentNullException.ThrowIfNull(routeResolver);
+        ArgumentNullException.ThrowIfNull(titleResolver);
+        ArgumentNullException.ThrowIfNull(journeyStore);
+        ArgumentNullException.ThrowIfNull(tracker);
+        ArgumentNullException.ThrowIfNull(navigationEvaluator);
         _routeResolver = routeResolver;
         _titleResolver = titleResolver;
         _journeyStore = journeyStore;
@@ -57,7 +62,9 @@ public sealed class BreadcrumbResultFilter : IAsyncResultFilter
         string currentUrl =
             $"{context.HttpContext.Request.Path}{context.HttpContext.Request.QueryString}";
 
-        _tracker.Track(journey, rule, title, currentUrl);
+        BreadcrumbItem currentBreadcrumbItem = new(title, currentUrl);
+
+        _tracker.Track(journey, rule, currentBreadcrumbItem);
 
         _journeyStore.Save(journey);
 

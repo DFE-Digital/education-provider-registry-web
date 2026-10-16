@@ -14,14 +14,16 @@ public sealed class IncrementalJourneyStrategy : IBreadcrumbStrategy
             throw new ArgumentNullException(nameof(rules));
     }
 
-    public void Apply(BreadcrumbJourney journey, BreadcrumbRouteRule rule, string currentUrl)
+    public void Apply(
+        BreadcrumbJourney journey,
+        BreadcrumbRouteRule rule,
+        BreadcrumbItem currentBreadcrumbItem)
     {
         ArgumentNullException.ThrowIfNull(journey);
         ArgumentNullException.ThrowIfNull(rule);
+        ArgumentNullException.ThrowIfNull(currentBreadcrumbItem);
 
-        BreadcrumbItem page = new(rule.Title!, currentUrl);
-
-        string currentPath = GetAbsolutePath(currentUrl);
+        string currentPath = GetAbsolutePath(currentBreadcrumbItem.Url);
         string lastPath =
             journey.Items.Count > 0 ?
                 GetAbsolutePath(journey.Items.Last().Url) : string.Empty;
@@ -32,7 +34,7 @@ public sealed class IncrementalJourneyStrategy : IBreadcrumbStrategy
                     .Equals(currentPath, StringComparison.OrdinalIgnoreCase));
 
         JourneyContext context =
-            new(journey, page, currentPath, lastPath, existingIndex);
+            new(journey, currentBreadcrumbItem, currentPath, lastPath, existingIndex);
 
         foreach (IJourneyRule journeyRule in _rules)
         {
@@ -52,7 +54,7 @@ public sealed class IncrementalJourneyStrategy : IBreadcrumbStrategy
         }
 
         // http://localhost is acting purely as a throwaway dummy base to satisfy the Uri constructor.
-        Uri uri = new(new Uri("http://localhost"), url); 
+        Uri uri = new(new Uri("http://localhost"), url);
         return uri.AbsolutePath;
     }
 }

@@ -71,8 +71,8 @@ public sealed class BreadcrumbsViewComponentTests
                 sut.Invoke());
 
         IReadOnlyCollection<BreadcrumbItem> model =
-            Assert.IsAssignableFrom<IReadOnlyCollection<BreadcrumbItem>>(
-                result.ViewData!.Model);
+            Assert.IsType<IReadOnlyCollection<BreadcrumbItem>>(
+                result.ViewData!.Model, exactMatch: false);
 
         // assert
         Assert.Empty(model);

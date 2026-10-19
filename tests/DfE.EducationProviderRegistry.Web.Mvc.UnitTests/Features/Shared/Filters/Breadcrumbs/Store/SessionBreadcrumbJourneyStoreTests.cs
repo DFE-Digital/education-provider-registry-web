@@ -1,4 +1,5 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Models;
+﻿using System.Text.Json;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Models;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Store;
 using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.TestDoubles;
 using Microsoft.AspNetCore.Http;
@@ -52,6 +53,44 @@ public sealed class SessionBreadcrumbJourneyStoreTests
 
         // Assert
         Assert.Empty(result.Items);
+    }
+
+    [Fact]
+    public void Load_WhenStoredJsonIsJsonNull_ShouldReturnEmptyJourney()
+    {
+        // Arrange
+        SessionTestDouble session = SessionTestDouble.Create();
+
+        session.SetString(
+            "BreadcrumbJourney",
+            "null");
+
+        SessionBreadcrumbJourneyStore sut =
+            new(session);
+
+        // Act
+        BreadcrumbJourney result = sut.Load();
+
+        // Assert
+        Assert.Empty(result.Items);
+    }
+
+    [Fact]
+    public void Load_WhenStoredJsonIsInvalid_ShouldThrowJsonException()
+    {
+        // Arrange
+        SessionTestDouble session = SessionTestDouble.Create();
+
+        session.SetString(
+            "BreadcrumbJourney",
+            "{not valid json");
+
+        SessionBreadcrumbJourneyStore sut =
+            new(session);
+
+        // Act & Assert
+        Assert.Throws<JsonException>(
+            () => sut.Load());
     }
 
     [Fact]

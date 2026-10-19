@@ -7,7 +7,7 @@ using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestDoubles;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.EstablishmentDetails;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Establishments;
+namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Establishments.Details;
 
 public sealed class EstablishmentDetailsWebsiteDisplayTests : IntegrationTestsBase
 {
@@ -22,7 +22,10 @@ public sealed class EstablishmentDetailsWebsiteDisplayTests : IntegrationTestsBa
                 .WithWebsite(seededWebsite)
                 .Build();
 
-        EstablishmentDetailsReadModel readModel = new() { Establishment = establishment };
+        EstablishmentDetailsReadModel readModel = new()
+        {
+            Establishment = establishment
+        };
 
         UseCaseResponse<EstablishmentDetailsReadModel> stubResponse =
             UseCaseResponse<EstablishmentDetailsReadModel>.Success(readModel);
@@ -55,5 +58,47 @@ public sealed class EstablishmentDetailsWebsiteDisplayTests : IntegrationTestsBa
         string[] externalLinkSecurityAttributes = ["noreferrer", "noopener"];
 
         Assert.Equivalent(externalLinkSecurityAttributes, websiteValue.Link.SecurityAttributes);
+    }
+
+    [Fact]
+    public async Task Website_Row_Is_Not_Displayed_When_Website_Is_Not_Present()
+    {
+        // Arrange
+        EstablishmentDetailsModel establishment =
+            EstablishmentDetailsBuilder.Create()
+                .WithUrn(100000)
+                .WithWebsite(null)
+                .Build();
+
+        EstablishmentDetailsReadModel readModel = new()
+        {
+            Establishment = establishment
+        };
+
+        UseCaseResponse<EstablishmentDetailsReadModel> stubResponse =
+            UseCaseResponse<EstablishmentDetailsReadModel>.Success(readModel);
+
+        UseCaseStub<GetEstablishmentByIdRequest, EstablishmentDetailsReadModel> stubUseCase = new(stubResponse);
+
+        using WebApplicationFactory<Program> factory =
+            WebApplicationFactoryProvider.CreateFactory(stubUseCase);
+
+        using HttpClient client = factory.CreateClient();
+
+        // Act
+        using HttpResponseMessage response =
+            await client.GetAsync(
+                EstablishmentDetailsRoute.ForUrn("100000"),
+                TestContext.Current.CancellationToken);
+
+        // Assert
+        using IHtmlDocument document =
+            await response.AssertSuccessfulHtmlResponseAsync();
+
+        EstablishmentDetailsPage page = new(document);
+        GovUkTable table = page.GetEstablishmentDetailsTable();
+
+        Assert.NotEmpty(table.Rows);
+        Assert.False(table.Rows.ContainsKey("Website"));
     }
 }

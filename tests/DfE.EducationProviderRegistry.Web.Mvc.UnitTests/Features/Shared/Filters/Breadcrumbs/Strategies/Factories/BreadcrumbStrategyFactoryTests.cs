@@ -18,17 +18,16 @@ public sealed class BreadcrumbStrategyFactoryTests
     public void GetStrategy_WhenBaseJourneyExists_ShouldReturnBaseJourneyStrategy()
     {
         // Arrange
-        BreadcrumbStrategyTestDouble expectedStrategy = new();
+        BaseJourneyStrategy expectedStrategy = new();
 
         ServiceProviderTestDouble serviceProvider =
-            ServiceProviderTestDouble.Create();
+        ServiceProviderTestDouble.Create();
 
         serviceProvider.AddKeyedService<IBreadcrumbStrategy>(
             "BaseJourney",
             expectedStrategy);
 
-        BreadcrumbStrategyFactory sut =
-            new(serviceProvider);
+        BreadcrumbStrategyFactory sut = new(serviceProvider);
 
         BreadcrumbRouteRule rule = new()
         {
@@ -44,7 +43,7 @@ public sealed class BreadcrumbStrategyFactoryTests
 
         // Act
         IBreadcrumbStrategy actual =
-            sut.GetStrategy(rule);
+        sut.GetStrategy(rule);
 
         // Assert
         Assert.Same(expectedStrategy, actual);
@@ -54,7 +53,7 @@ public sealed class BreadcrumbStrategyFactoryTests
     public void GetStrategy_WhenBaseJourneyIsEmpty_ShouldReturnIncrementalJourneyStrategy()
     {
         // Arrange
-        BreadcrumbStrategyTestDouble expectedStrategy = new();
+        IncrementalJourneyStrategy expectedStrategy = new([]);
 
         ServiceProviderTestDouble serviceProvider =
             ServiceProviderTestDouble.Create();
@@ -66,11 +65,9 @@ public sealed class BreadcrumbStrategyFactoryTests
         BreadcrumbStrategyFactory sut =
             new(serviceProvider);
 
-        BreadcrumbRouteRule rule = new();
-
         // Act
         IBreadcrumbStrategy actual =
-            sut.GetStrategy(rule);
+            sut.GetStrategy(new BreadcrumbRouteRule());
 
         // Assert
         Assert.Same(expectedStrategy, actual);

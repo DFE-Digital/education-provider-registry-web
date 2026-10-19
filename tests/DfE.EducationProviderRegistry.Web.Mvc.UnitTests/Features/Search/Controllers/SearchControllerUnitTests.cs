@@ -149,7 +149,7 @@ public sealed class SearchControllerUnitTests
 
         searchResultsMapper.Verify(mapper =>
             mapper.Map(It.Is<SearchResultsMappingContext>(context =>
-                context.SearchRequest.SearchKeywords == "academy")),
+                context.SearchRequest.What == "academy")),
             Times.Once);
 
         searchFilterSelectionHandler.Verify(handler =>
@@ -184,7 +184,6 @@ public sealed class SearchControllerUnitTests
 
         Mock<IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>> searchFacetsResultsMapper =
             SearchFacetsResultsMapperTestDouble.MockFor(mappedFilters);
-
 
         Mock<ISearchFilterSelectionHandler> searchFilterSelectionHandler = SearchFilterSelectionHandlerStub.MockFor();
 

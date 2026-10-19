@@ -2,20 +2,10 @@
 @model DownloadDatasetRequestViewModel
 
 @{
-    List<BreadcrumbViewModel> breadcrumbs = new()
-    {
-        new("Home", "Home", "Index"),
-    };
-
     string downloadUrl = Url.Action(
         "FileDownload",
         "Datasets",
         new { filename = Model.Filename })!;
-}
-
-@section Breadcrumbs
-{
-    <partial name="_Breadcrumbs" model="breadcrumbs" />
 }
 
 <div class="govuk-width-container">

@@ -7,7 +7,7 @@ namespace DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
 public sealed class SearchHttpRequestBuilder
 {
     private Uri? _uri;
-    private HttpMethod _method = HttpMethod.Post;
+    private HttpMethod _method = HttpMethod.Get;
     private string? _sortDirection;
     private readonly List<KeyValuePair<string, string[]>> _filters;
     private string? _identityTerm;
@@ -67,12 +67,12 @@ public sealed class SearchHttpRequestBuilder
 
         if (_identityTerm is not null)
         {
-            values.Add(nameof(SearchRequestViewModel.SearchKeywords), _identityTerm);
+            values.Add(nameof(SearchRequestViewModel.What), _identityTerm);
         }
 
         if (_locationTerm is not null)
         {
-            values.Add(nameof(SearchRequestViewModel.Address), _locationTerm);
+            values.Add(nameof(SearchRequestViewModel.Where), _locationTerm);
         }
 
         if (_uri is null)

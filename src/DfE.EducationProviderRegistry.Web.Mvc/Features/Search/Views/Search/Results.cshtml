@@ -1,25 +1,26 @@
 ﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels
 @model SearchResultsViewModel
 
-<h1 class="govuk-heading-xl">
-    @if (!string.IsNullOrWhiteSpace(Model.PrimarySearchTerms)
-         || !string.IsNullOrWhiteSpace(Model.SecondarySearchTerms))
-    {
-        <span>
-            Search results for 
+@{
+    ViewData["Title"] = "Search results";
 
-            @if (!string.IsNullOrWhiteSpace(Model.PrimarySearchTerms))
-            {
-                <text> "@Model.PrimarySearchTerms"</text>
-            }
+    List<string> searchTerms = [];
 
-            @if (!string.IsNullOrWhiteSpace(Model.SecondarySearchTerms))
-            {
-                <text> "@Model.SecondarySearchTerms"</text>
-            }
-        </span>
-    }
-</h1>
+    if (!string.IsNullOrWhiteSpace(Model.PrimarySearchTerms))
+        searchTerms.Add($"\"{Model.PrimarySearchTerms}\"");
+
+    if (!string.IsNullOrWhiteSpace(Model.SecondarySearchTerms))
+        searchTerms.Add($"\"{Model.SecondarySearchTerms}\"");
+
+    string searchDisplayText = string.Join(" ", searchTerms);
+}
+
+@if (!string.IsNullOrWhiteSpace(searchDisplayText))
+{
+    <h1 class="govuk-heading-xl">
+        Search results for @searchDisplayText
+    </h1>
+}
 
 <form asp-action="Search"
       asp-controller="Search"

@@ -1,17 +1,6 @@
 ﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Download.Datasets.ViewModels
 @model DownloadedDatasetViewModel
 
-@{
-    var breadcrumbs = new List<BreadcrumbViewModel>
-    {
-        new("Home", "Home", "Index"),
-    };
-}
-
-@section Breadcrumbs
-{
-    <partial name="_Breadcrumbs" model="breadcrumbs" />
-}
 <iframe src="@Url.Action("FileDownload", "Download")" title="file-download" style="display:none;"></iframe>
 
 <main class="govuk-main-wrapper" id="main-content">

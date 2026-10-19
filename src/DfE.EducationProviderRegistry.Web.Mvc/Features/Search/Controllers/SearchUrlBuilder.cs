@@ -16,18 +16,18 @@ public static class SearchUrlBuilder
 
         QueryBuilder query = new();
 
-        if (!string.IsNullOrWhiteSpace(searchRequest.SearchKeywords))
+        if (!string.IsNullOrWhiteSpace(searchRequest.What))
         {
             query.Add(
-                nameof(searchRequest.SearchKeywords),
-                searchRequest.SearchKeywords);
+                nameof(searchRequest.What),
+                searchRequest.What);
         }
 
-        if (!string.IsNullOrWhiteSpace(searchRequest.Address))
+        if (!string.IsNullOrWhiteSpace(searchRequest.Where))
         {
             query.Add(
-                nameof(searchRequest.Address),
-                searchRequest.Address);
+                nameof(searchRequest.Where),
+                searchRequest.Where);
         }
 
         if (!string.IsNullOrWhiteSpace(searchRequest.Sort))

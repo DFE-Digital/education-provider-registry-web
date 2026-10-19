@@ -99,10 +99,6 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapper : IMapper<Establ
         }
 
         builder.AddRow(
-            new TableCell { Text = "Age range", IsBold = true },
-            new TableCell { Text = dto.AgeRange ?? string.Empty });
-
-        builder.AddRow(
             new TableCell { Text = "Gender", IsBold = true },
             new TableCell { Text = dto.Gender ?? string.Empty });
 

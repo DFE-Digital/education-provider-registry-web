@@ -1,13 +1,13 @@
 ﻿using DfE.Core.Libraries.CleanArchitecture.Application;
 using DfE.Core.Libraries.IntegrationTests.Abstractions;
-using DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles.EstablishmentDetails;
 using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.Model;
 using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.UseCases.GetEstablishmentById;
+using DfE.EducationProviderRegistry.Core.Query.Test.Database.Data.Establishments;
 using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestDoubles;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.EstablishmentDetails;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.EstablishmentDetails;
+namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Establishments;
 
 public sealed class EstablishmentDetailsWebsiteDisplayTests : IntegrationTestsBase
 {

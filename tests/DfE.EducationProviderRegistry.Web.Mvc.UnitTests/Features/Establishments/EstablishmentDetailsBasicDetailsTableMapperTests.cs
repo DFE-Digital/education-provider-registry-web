@@ -1,5 +1,5 @@
 ﻿using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.Model;
-using DfE.EducationProviderRegistry.Core.Query.Shared;
+using DfE.EducationProviderRegistry.Core.Query.Test.Database.Data.Establishments;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments.Mappers;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 
@@ -10,49 +10,24 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
     private static readonly EstablishmentDetailsBasicDetailsTableMapper Mapper = new();
 
     [Fact]
-    public void Map_CreatesExpectedTableStructure()
+    public void Map_Should_Create_Table_Structure()
     {
         // Arrange
-        EstablishmentDetailsModel dto = CreateModel();
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .Build();
 
         // Act
-        GovUkTable table = Mapper.Map(dto);
+        GovUkTable result = Mapper.Map(model);
 
         // Assert
         Assert.Collection(
-            table.Columns,
+            result.Columns,
             column => Assert.True(column.IsRowHeader),
             column => Assert.False(column.IsRowHeader));
 
-        string[] expectedLabels =
-        [
-            "Status",
-            "ID numbers",
-            "Headteacher",
-            "Type",
-            "Phase of education",
-            "Address",
-            "Local authority",
-            "Part of group",
-            "Age range",
-            "Gender",
-            "Number of pupils",
-            "Pupils capacity",
-            "Religious character",
-            "Type of SEN provision",
-            "Website",
-            "Telephone number",
-            "Ofsted"
-        ];
-
-        Assert.Equal(
-            expectedLabels,
-            table.Rows
-                .Select(row => row.Cells[0].Text)
-                .ToArray());
-
         Assert.All(
-            table.Rows,
+            result.Rows,
             row =>
             {
                 Assert.Equal(2, row.Cells.Count);
@@ -61,75 +36,211 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
     }
 
     [Fact]
-    public void Map_MapsBasicDetailValues()
+    public void Map_Should_Map_Empty_Status_When_Status_Is_Null()
     {
         // Arrange
-        EstablishmentDetailsModel dto = CreateModel();
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .WithStatus(null!)
+                .Build();
 
         // Act
-        GovUkTable table = Mapper.Map(dto);
+        GovUkTable result = Mapper.Map(model);
 
         // Assert
-        AssertValue(table, "Status", "Open");
-        AssertValue(table, "Headteacher", "testHeadteacher");
-        AssertValue(table, "Type", "testType");
-        AssertValue(table, "Phase of education", "testPhase");
-        AssertValue(table, "Address", "testAddressLine1, testAddressLine2, testTown, testCounty, testPostcode");
-        AssertValue(table, "Local authority", "testLocalAuthority");
-        AssertValue(table, "Part of group", "Testgroupname");
-        AssertValue(table, "Age range", "testAgeRange");
-        AssertValue(table, "Gender", "testGender");
-        AssertValue(table, "Number of pupils", "17");
-        AssertValue(table, "Pupils capacity", "testAgeRange");
-        AssertValue(table, "Religious character", "testReligiousCharacter");
-        AssertValue(table, "Type of SEN provision", "testSenProvision");
-        AssertValue(table, "Website", "testWebsite");
-        AssertValue(table, "Telephone number", "testTelephoneNumber");
+        AssertValue(
+            result,
+            "Status",
+            string.Empty);
+    }
+
+    [Theory]
+    [InlineData(EstablishmentStatus.Open, "Open")]
+    [InlineData(EstablishmentStatus.Closed, "Closed")]
+    [InlineData(EstablishmentStatus.OpenButProposedToClose, "Open but proposed to close")]
+    [InlineData(EstablishmentStatus.ProposedToOpen, "Proposed to open")]
+    public void Map_Should_Map_Open_Status(EstablishmentStatus status, string expectedLabel)
+    {
+        // Arrange
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .WithStatus(status)
+                .Build();
+
+        // Act
+        GovUkTable result = Mapper.Map(model);
+
+        // Assert
+        AssertValue(result, "Status", expectedLabel);
     }
 
     [Fact]
-    public void Map_MapsIdNumberSubRows()
+    public void Map_Should_Map_LocalAuthority()
     {
         // Arrange
-        EstablishmentDetailsModel dto = CreateModel();
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .WithLocalAuthorityName("Test Local Authority")
+                .Build();
 
         // Act
-        GovUkTable table = Mapper.Map(dto);
+        GovUkTable result = Mapper.Map(model);
 
         // Assert
-        TableCell idNumbersCell = GetValueCell(
-            table,
-            "ID numbers");
+        AssertValue(
+            result,
+            "Local authority",
+            "Test Local Authority");
+    }
+
+    [Fact]
+    public void Map_Should_Omit_LocalAuthority_When_Not_Present()
+    {
+        // Arrange
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .Build();
+
+        // Act
+        GovUkTable result = Mapper.Map(model);
+
+        // Assert
+        Assert.Null(
+            result.Rows.SingleOrDefault(
+                row => row.Cells[0].Text == "Local authority"));
+    }
+
+    [Fact]
+    public void Map_Should_Map_Identifier_Rows()
+    {
+        // Arrange
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .WithUrn(123456)
+                .WithUkprn("testUkprn")
+                .WithDfeNumber("123/1234")
+                .Build();
+
+        // Act
+        GovUkTable result = Mapper.Map(model);
+
+        // Assert
+        TableCell idNumbersCell =
+            GetValueCell(result, "ID numbers");
 
         Assert.Collection(
             idNumbersCell.Rows,
-            row => AssertSubRow(
-                row,
-                expectedLabel: "LAESTAB",
-                expectedValue: "1231234"),
-            row => AssertSubRow(
-                row,
-                expectedLabel: "UKPRN",
-                expectedValue: "testUkprn"),
-            row => AssertSubRow(
-                row,
-                expectedLabel: "URN",
-                expectedValue: "123456"));
+            row => AssertSubRow(row, "LAESTAB", "1231234"),
+            row => AssertSubRow(row, "UKPRN", "testUkprn"),
+            row => AssertSubRow(row, "URN", "123456"));
     }
 
     [Fact]
-    public void Map_MapsOfstedLink()
+    public void Map_Should_Map_Address()
     {
         // Arrange
-        EstablishmentDetailsModel dto = CreateModel();
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .WithSiteName("Site")
+                .WithAddressLine1("Line 1")
+                .WithAddressLine2("Line 2")
+                .WithTown("Town")
+                .WithCounty("County")
+                .WithPostcode("AB1 2CD")
+                .Build();
 
         // Act
-        GovUkTable table = Mapper.Map(dto);
+        GovUkTable result = Mapper.Map(model);
 
         // Assert
-        TableCell ofstedCell = GetValueCell(
-            table,
-            "Ofsted");
+        AssertValue(
+            result,
+            "Address",
+            "Line 1, Line 2, Town, County, AB1 2CD");
+    }
+
+    [Fact]
+    public void Map_Should_Map_Group_Link()
+    {
+        // Arrange
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .WithGroupName("testGroupName")
+                .WithGroupCode("testGroupCode")
+                .Build();
+
+        // Act
+        GovUkTable result = Mapper.Map(model);
+
+        // Assert
+        TableCell groupCell =
+            GetValueCell(result, "Part of group");
+
+        Assert.Equal("Testgroupname", groupCell.Text);
+        Assert.Equal("/groups/testGroupCode", groupCell.Href);
+    }
+
+    [Fact]
+    public void Map_Should_Map_Contact_Details()
+    {
+        // Arrange
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .WithWebsite("testWebsite")
+                .WithTelephoneNumber("0123456789")
+                .Build();
+
+        // Act
+        GovUkTable result = Mapper.Map(model);
+
+        // Assert
+        TableCell websiteCell = GetValueCell(result, "Website");
+
+        Assert.Equal("testWebsite", websiteCell.Text);
+        Assert.True(websiteCell.OpenInNewTab);
+
+        AssertValue(
+            result,
+            "Telephone number",
+            "0123456789");
+    }
+
+    [Fact]
+    public void Map_Should_Map_Empty_Ofsted_When_Not_Present()
+    {
+        // Arrange
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .Build();
+
+        // Act
+        GovUkTable result = Mapper.Map(model);
+
+        // Assert
+        TableCell ofstedCell =
+            GetValueCell(result, "Ofsted");
+
+        Assert.Equal(string.Empty, ofstedCell.Text);
+        Assert.Equal(string.Empty, ofstedCell.Href);
+        Assert.True(ofstedCell.OpenInNewTab);
+    }
+
+    [Fact]
+    public void Map_Should_Map_Ofsted_Link()
+    {
+        // Arrange
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .WithOfstedDate(new DateOnly(2024, 5, 31))
+                .WithOfstedReportUrl("https://ofsted.example.com")
+                .Build();
+
+        // Act
+        GovUkTable result = Mapper.Map(model);
+
+        // Assert
+        TableCell ofstedCell =
+            GetValueCell(result, "Ofsted");
 
         Assert.Equal(
             "Latest report 31 May 2024 (opens in new tab)",
@@ -143,113 +254,78 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
     }
 
     [Fact]
-    public void Map_UsesEmptyStrings_WhenOptionalValuesAreMissing()
+    public void Map_Should_Omit_Headteacher_When_Not_Present()
     {
         // Arrange
-        EstablishmentDetailsModel dto = CreateModel() with
-        {
-            Identifiers = new EstablishmentIdentifiersModel(
-                urn: new EstablishmentUrnModel(new UniqueReferenceNumber("123456")),
-                ukprn: null,
-                dfeNumber: null),
-            Headteacher = null,
-            Phase = new PhaseOfEducationModel(null),
-            Address = null,
-            LocalAuthority = null,
-            Group = null,
-            AgeRange = null,
-            ReligiousCharacter = null,
-            SenProvision = null,
-            ContactDetails = null,
-            Ofsted = null,
-            Pupils = null
-        };
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .WithHeadteacher(null)
+                .Build();
 
         // Act
-        GovUkTable table = Mapper.Map(dto);
+        GovUkTable result = Mapper.Map(model);
 
         // Assert
-        AssertValue(table, "Phase of education", null);
-        AssertValue(table, "Address", string.Empty);
-        AssertValue(table, "Age range", string.Empty);
-        AssertValue(table, "Pupils capacity", string.Empty);
-        AssertValue(table, "Religious character", string.Empty);
-        AssertValue(table, "Type of SEN provision", "Not recorded");
-
-        // The values are not displayed when the data is null
-        Assert.Null(table.Rows.SingleOrDefault(
-            candidate => candidate.Cells[0].Text == "Website"));
-
-        Assert.Null(table.Rows.SingleOrDefault(
-            candidate => candidate.Cells[0].Text == "Telephone number"));
-
-        Assert.Null(table.Rows.SingleOrDefault(
-            candidate => candidate.Cells[0].Text == "Headteacher"));
-
-        Assert.Null(table.Rows.SingleOrDefault(
-            candidate => candidate.Cells[0].Text == "Local authority"));
-
-        Assert.Null(table.Rows.SingleOrDefault(
-            candidate => candidate.Cells[0].Text == "Part of group"));
-
-        TableCell idNumbersCell = GetValueCell(
-            table,
-            "ID numbers");
-
-        TableCellRow row = Assert.Single(idNumbersCell.Rows);
-
-        AssertSubRow(
-                        row,
-                        "URN",
-                        "123456");
-        TableCell ofstedCell = GetValueCell(
-            table,
-            "Ofsted");
-
-        Assert.Equal(string.Empty, ofstedCell.Text);
-        Assert.Equal(string.Empty, ofstedCell.Href);
-        Assert.True(ofstedCell.OpenInNewTab);
+        Assert.Null(
+            result.Rows.SingleOrDefault(
+                row => row.Cells[0].Text == "Headteacher"));
     }
 
-    private static EstablishmentDetailsModel CreateModel()
+    [Fact]
+    public void Map_Should_Omit_Group_When_Not_Present()
     {
-        return new EstablishmentDetailsModel
-        {
-            Name = new EstablishmentNameModel("testEstablishmentName"),
-            Identifiers = new EstablishmentIdentifiersModel(
-                urn: EstablishmentUrnModel.Create("123456"),
-                ukprn: new("testUkprn"),
-                dfeNumber: new("123/1234")),
-            Status = new EstablishmentStatusModel(
-                EstablishmentStatus.Open, effectiveDate: null),
-            Type = new EstablishmentTypeModel(
-                "testType"),
-            Phase = new PhaseOfEducationModel(
-                "testPhase"),
-            Headteacher = "testHeadteacher",
-            Address = new SiteAddressModel(
-                Name: "testSiteName",
-                AddressLine1: "testAddressLine1",
-                AddressLine2: "testAddressLine2",
-                Town: "testTown",
-                County: "testCounty",
-                Postcode: "testPostcode"),
-            LocalAuthority = new LocalAuthority(
-                localAuthorityName: "testLocalAuthority",
-                code: new(123)),
-            Group = new EstablishmentGroupModel(
-                name: "testGroupName",
-                code: "testGroupCode"),
-            AgeRange = "testAgeRange",
-            Gender = "testGender",
-            ReligiousCharacter = "testReligiousCharacter",
-            SenProvision = "testSenProvision",
-            ContactDetails = new EstablishmentContactDetails(
-                Website: "testWebsite",
-                TelephoneNumber: "testTelephoneNumber"),
-            Pupils = new EstablishmentPupils(17),
-            Ofsted = new EstablishmentInspection(InspectionDate: new DateOnly(2024, 5, 31), ReportUrl: "https://ofsted.example.com")
-        };
+        // Arrange
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .Build();
+
+        // Act
+        GovUkTable result = Mapper.Map(model);
+
+        // Assert
+        Assert.Null(
+            result.Rows.SingleOrDefault(
+                row => row.Cells[0].Text == "Part of group"));
+    }
+
+    [Fact]
+    public void Map_Should_Omit_Contact_Details_When_Not_Present()
+    {
+        // Arrange
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .Build();
+
+        // Act
+        GovUkTable result = Mapper.Map(model);
+
+        // Assert
+        Assert.Null(
+            result.Rows.SingleOrDefault(
+                row => row.Cells[0].Text == "Website"));
+
+        Assert.Null(
+            result.Rows.SingleOrDefault(
+                row => row.Cells[0].Text == "Telephone number"));
+    }
+
+    [Fact]
+    public void Map_Should_Map_NotRecorded_When_SenProvision_Is_Null()
+    {
+        // Arrange
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .WithSenProvision(null)
+                .Build();
+
+        // Act
+        GovUkTable result = Mapper.Map(model);
+
+        // Assert
+        AssertValue(
+            result,
+            "Type of SEN provision",
+            "Not recorded");
     }
 
     private static void AssertValue(

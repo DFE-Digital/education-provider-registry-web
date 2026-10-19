@@ -44,25 +44,21 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapper : IMapper<Establ
                 });
         }
 
-        if (!string.IsNullOrWhiteSpace(dto.Identifiers.Urn))
-        {
-            identifierValueRows.Add(
-                new TableCellRow
-                {
-                    Label = new TableCell { Text = "URN" },
-                    Value = new TableCell { Text = dto.Identifiers.Urn }
-                });
-        }
+        identifierValueRows.Add(
+            new TableCellRow
+            {
+                Label = new TableCell { Text = "URN" },
+                Value = new TableCell { Text = dto.Identifiers.Urn }
+            });
 
-        if (identifierValueRows.Count > 0)
-        {
-            builder.AddRow(
-                new TableCell { Text = "ID numbers", IsBold = true },
-                new TableCell
-                {
-                    Rows = identifierValueRows
-                });
-        }
+
+        builder.AddRow(
+            new TableCell { Text = "ID numbers", IsBold = true },
+            new TableCell
+            {
+                Rows = identifierValueRows
+            });
+
 
         if (!string.IsNullOrWhiteSpace(dto.Headteacher))
         {

@@ -14,6 +14,7 @@ module "postgres" {
   server_version              = var.postgres_server_version
   azure_extensions            = ["pg_trgm"]
   extra_databases             = var.extra_databases # Optional: Specify additional databases to deploy alongside primary  
+  azure_maintenance_window    = var.azure_maintenance_window
 }
 
 module "redis_managed" {

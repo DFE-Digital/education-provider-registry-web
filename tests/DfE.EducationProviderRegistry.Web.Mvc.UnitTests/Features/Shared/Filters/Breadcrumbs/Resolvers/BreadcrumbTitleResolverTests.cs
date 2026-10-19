@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Shared.Filters.Resolvers;
+namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Shared.Filters.Breadcrumbs.Resolvers;
 
 public sealed class BreadcrumbTitleResolverTests
 {

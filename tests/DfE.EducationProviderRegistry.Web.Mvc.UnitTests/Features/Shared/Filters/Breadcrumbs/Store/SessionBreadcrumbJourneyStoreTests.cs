@@ -1,11 +1,19 @@
 ﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Models;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Store;
 using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.TestDoubles;
+using Microsoft.AspNetCore.Http;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Shared.Filters.Store;
+namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Shared.Filters.Breadcrumbs.Store;
 
 public sealed class SessionBreadcrumbJourneyStoreTests
 {
+    [Fact]
+    public void Constructor_WhenSessionIsNull_ShouldThrowArgumentNullException()
+    {
+        Assert.Throws<ArgumentNullException>(
+            () => new SessionBreadcrumbJourneyStore(null!));
+    }
+
     [Fact]
     public void Load_WhenSessionIsEmpty_ShouldReturnEmptyJourney()
     {
@@ -19,6 +27,28 @@ public sealed class SessionBreadcrumbJourneyStoreTests
         // Act
         BreadcrumbJourney result =
             sut.Load();
+
+        // Assert
+        Assert.Empty(result.Items);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("   ")]
+    public void Load_WhenStoredJsonIsWhitespace_ShouldReturnEmptyJourney(
+    string json)
+    {
+        // Arrange
+        SessionTestDouble session = SessionTestDouble.Create();
+
+        session.SetString("BreadcrumbJourney", json);
+
+        SessionBreadcrumbJourneyStore sut =
+            new(session);
+
+        // Act
+        BreadcrumbJourney result = sut.Load();
 
         // Assert
         Assert.Empty(result.Items);

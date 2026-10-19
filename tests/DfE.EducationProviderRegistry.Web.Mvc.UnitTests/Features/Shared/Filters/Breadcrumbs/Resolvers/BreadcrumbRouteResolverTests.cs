@@ -3,10 +3,17 @@ using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Shared.Filters.Resolvers;
+namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Shared.Filters.Breadcrumbs.Resolvers;
 
 public sealed class BreadcrumbRouteResolverTests
 {
+    [Fact]
+    public void Constructor_WhenOptionsIsNull_ShouldThrowArgumentNullException()
+    {
+        Assert.Throws<ArgumentNullException>(
+            () => new BreadcrumbRouteResolver(null!));
+    }
+
     [Fact]
     public void TryResolveRule_WhenExactMatchExists_ShouldReturnTrue()
     {
@@ -126,6 +133,50 @@ public sealed class BreadcrumbRouteResolverTests
         // Assert
         Assert.True(result);
         Assert.Same(expectedRule, actualRule);
+    }
+
+    [Fact]
+    public void TryResolveRule_WhenPathValueIsNull_ShouldReturnFalse()
+    {
+        // Arrange
+        BreadcrumbRouteResolver sut =
+            CreateSut(
+                new BreadcrumbRouteRule
+                {
+                    PathPattern = "/search"
+                });
+
+        // Act
+        bool result =
+            sut.TryResolveRule(
+                default,
+                out BreadcrumbRouteRule? actualRule);
+
+        // Assert
+        Assert.False(result);
+        Assert.Null(actualRule);
+    }
+
+    [Fact]
+    public void TryResolveRule_WhenPathOnlyPartiallyMatches_ShouldReturnFalse()
+    {
+        // Arrange
+        BreadcrumbRouteResolver sut =
+            CreateSut(
+                new BreadcrumbRouteRule
+                {
+                    PathPattern = "/search"
+                });
+
+        // Act
+        bool result =
+            sut.TryResolveRule(
+                new PathString("/searchresults"),
+                out BreadcrumbRouteRule? actualRule);
+
+        // Assert
+        Assert.False(result);
+        Assert.Null(actualRule);
     }
 
     private static BreadcrumbRouteResolver CreateSut(

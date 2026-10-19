@@ -1,7 +1,7 @@
 ﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.NavigationEvaluators;
 using Microsoft.AspNetCore.Http;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Shared.Filters.Resolvers;
+namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Shared.Filters.Breadcrumbs.Resolvers;
 
 public sealed class NavigationEvaluatorTests
 {

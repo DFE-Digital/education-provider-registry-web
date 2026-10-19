@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Net.Cache;
 using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.Model;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Mappers;
@@ -110,7 +111,7 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapper : IMapper<Establ
             new TableCell { Text = dto.Pupils?.Total.ToString() ?? string.Empty });
 
         builder.AddRow(
-            new TableCell { Text = "Pupils capacity", IsBold = true },
+            new TableCell { Text = "Age range", IsBold = true },
             new TableCell { Text = dto.AgeRange ?? string.Empty });
 
         builder.AddRow(

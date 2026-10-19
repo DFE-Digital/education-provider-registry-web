@@ -328,6 +328,159 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
             "Not recorded");
     }
 
+    [Fact]
+    public void Map_Should_Map_Type()
+    {
+        // Arrange
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .WithType("Academy")
+                .Build();
+
+        // Act
+        GovUkTable result = Mapper.Map(model);
+
+        // Assert
+        AssertValue(
+            result,
+            "Type",
+            "Academy");
+    }
+
+    [Fact]
+    public void Map_Should_Map_Phase_Of_Education()
+    {
+        // Arrange
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .WithPhase("Primary")
+                .Build();
+
+        // Act
+        GovUkTable result = Mapper.Map(model);
+
+        // Assert
+        AssertValue(
+            result,
+            "Phase of education",
+            "Primary");
+    }
+
+    [Fact]
+    public void Map_Should_Map_Headteacher()
+    {
+        // Arrange
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .WithHeadteacher("Jane Smith")
+                .Build();
+
+        // Act
+        GovUkTable result = Mapper.Map(model);
+
+        // Assert
+        AssertValue(
+            result,
+            "Headteacher",
+            "Jane Smith");
+    }
+
+    [Fact]
+    public void Map_Should_Map_Age_Range()
+    {
+        // Arrange
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .WithAgeRange(4, 11)
+                .Build();
+
+        // Act
+        GovUkTable result = Mapper.Map(model);
+
+        // Assert
+        AssertValue(
+            result,
+            "Age range",
+            "4 to 11");
+    }
+
+    [Fact]
+    public void Map_Should_Map_Gender()
+    {
+        // Arrange
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .WithGender("Mixed")
+                .Build();
+
+        // Act
+        GovUkTable result = Mapper.Map(model);
+
+        // Assert
+        AssertValue(
+            result,
+            "Gender",
+            "Mixed");
+    }
+
+    [Fact]
+    public void Map_Should_Map_Number_Of_Pupils()
+    {
+        // Arrange
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .WithPupilCount(123)
+                .Build();
+
+        // Act
+        GovUkTable result = Mapper.Map(model);
+
+        // Assert
+        AssertValue(
+            result,
+            "Number of pupils",
+            "123");
+    }
+
+    [Fact]
+    public void Map_Should_Map_Religious_Character()
+    {
+        // Arrange
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .WithReligiousCharacter("Church of England")
+                .Build();
+
+        // Act
+        GovUkTable result = Mapper.Map(model);
+
+        // Assert
+        AssertValue(
+            result,
+            "Religious character",
+            "Church of England");
+    }
+
+    [Fact]
+    public void Map_Should_Map_Sen_Provision()
+    {
+        // Arrange
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .WithSenProvision("SEN Unit")
+                .Build();
+
+        // Act
+        GovUkTable result = Mapper.Map(model);
+
+        // Assert
+        AssertValue(
+            result,
+            "Type of SEN provision",
+            "SEN Unit");
+    }
+
+
     private static void AssertValue(
         GovUkTable table,
         string label,

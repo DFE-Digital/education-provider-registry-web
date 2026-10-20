@@ -1,4 +1,5 @@
-﻿using DfE.EducationProviderRegistry.Core.Query.Groups.Application.Model;
+﻿using DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles.GroupDetails;
+using DfE.EducationProviderRegistry.Core.Query.Groups.Application.Model;
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupById;
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupById.Mappers;
 using DfE.EducationProviderRegistry.Core.Query.Shared;
@@ -10,16 +11,26 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Groups;
 
 public sealed class GroupDetailsPageViewModelMapperTests
 {
-    private static readonly GroupDetailsPageViewModelMapper Mapper = new();
+    private readonly GroupDetailsPageViewModelMapper _mapper;
+
+    public GroupDetailsPageViewModelMapperTests()
+    {
+        _mapper = new();
+    }
 
     [Fact]
-    public void Map_MapsHeadingAndBasicDetails()
+    public void Map_Maps_Heading_And_GroupIdentifiers()
     {
         // Arrange
-        GroupReadModel readModel = GroupReadModelTestDoubles.Stub();
+        GroupReadModel model =
+            GroupReadModelBuilder.Create()
+              .WithName("Test Group")
+              .WithGroupId("group-1")
+              .WithGroupUid(123L)
+              .Build();
 
         // Act
-        GroupDetailsPageViewModel result = Mapper.Map(readModel);
+        GroupDetailsPageViewModel result = _mapper.Map(model);
 
         // Assert
         Assert.Equal("Test Group", result.Heading);
@@ -28,19 +39,233 @@ public sealed class GroupDetailsPageViewModelMapperTests
         GovUkSummaryList summary =
             Assert.IsType<GovUkSummaryList>(result.Details.Summary);
 
-        Assert.Collection(
-            summary.Rows,
-            row => AssertSummaryRow(row, "UID", "123"),
-            row => AssertSummaryRow(row, "Group ID", "group-1"),
-            row => AssertSummaryRow(row, "UKPRN", "10000001"),
-            row => AssertSummaryRow(
-                row,
-                "Company number",
-                "CH123456 (opens in new tab)",
-                "https://find-and-update.company-information.service.gov.uk/company/CH123456"),
-            row => AssertSummaryRow(row, "Status", "Open"),
-            row => AssertSummaryRow(row, "Address", "1 Test Street"),
-            row => AssertSummaryRow(row, "Type", "Multi-academy trust"));
+        AssertSummaryRow(summary.Rows[0], "UID", "123");
+        AssertSummaryRow(summary.Rows[1], "Group ID", "group-1");
+    }
+
+    [Theory]
+    [InlineData(" \r\n  \n ")]
+    [InlineData(" ")]
+    [InlineData("")]
+    [InlineData(null)]
+    public void Map_DoesNotMap_NullOrWhitespace_UKPRN(string? ukprn)
+    {
+        // Arrange
+        GroupReadModel model =
+            GroupReadModelBuilder.Create()
+              .WithUkprn(ukprn)
+              .Build();
+
+        // Act
+        GroupDetailsPageViewModel result = _mapper.Map(model);
+
+        // Assert
+        GovUkSummaryList summary =
+            Assert.IsType<GovUkSummaryList>(result.Details.Summary);
+
+        Assert.Null(summary.Rows.SingleOrDefault((row) => row.Key == "UKPRN"));
+    }
+
+    [Fact]
+    public void Map_Maps_Ukprn()
+    {
+        // Arrange
+        GroupReadModel model =
+            GroupReadModelBuilder.Create()
+                .WithUkprn("testUkprn")
+                .Build();
+
+        // Act
+        GroupDetailsPageViewModel result = _mapper.Map(model);
+
+        // Assert
+        GovUkSummaryList summary =
+            Assert.IsType<GovUkSummaryList>(result.Details.Summary);
+
+        SummaryListRow row = Assert.Single(summary.Rows, (row) => row.Key == "UKPRN");
+        Assert.Equal("testUkprn", row.Value.Text);
+        Assert.Null(row.Value.Href);
+        Assert.Empty(row.Actions);
+    }
+
+    [Theory]
+    [InlineData(" \r\n  \n ")]
+    [InlineData(" ")]
+    [InlineData("")]
+    [InlineData(null)]
+    public void Map_DoesNotMap_NullOrWhitespace_CompaniesHouseId(string? companiesHouseId)
+    {
+        // Arrange
+        GroupReadModel model =
+            GroupReadModelBuilder.Create()
+              .WithCompaniesHouseId(companiesHouseId)
+              .Build();
+
+        // Act
+        GroupDetailsPageViewModel result = _mapper.Map(model);
+
+        // Assert
+        GovUkSummaryList summary =
+            Assert.IsType<GovUkSummaryList>(result.Details.Summary);
+
+        Assert.Null(summary.Rows.SingleOrDefault((row) => row.Key == "Company number"));
+    }
+
+    [Fact]
+    public void Map_Maps_CompaniesHouseId()
+    {
+        // Arrange
+        GroupReadModel model =
+            GroupReadModelBuilder.Create()
+                .WithCompaniesHouseId("testCompaniesHouseId")
+                .Build();
+
+        // Act
+        GroupDetailsPageViewModel result = _mapper.Map(model);
+
+        // Assert
+        GovUkSummaryList summary =
+            Assert.IsType<GovUkSummaryList>(result.Details.Summary);
+
+        SummaryListRow row = Assert.Single(summary.Rows, (row) => row.Key == "Company number");
+        Assert.Equal("testCompaniesHouseId (opens in new tab)", row.Value.Text);
+        Assert.Equal("https://find-and-update.company-information.service.gov.uk/company/testCompaniesHouseId", row.Value.Href);
+        Assert.Empty(row.Actions);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData(" \r\n  \n ")]
+    [InlineData(" ")]
+    [InlineData("")]
+    public void Map_DoesNotMap_NullOrWhitespace_Status(string? status)
+    {
+        // Arrange
+        GroupReadModel model =
+            GroupReadModelBuilder.Create()
+              .WithStatus(status)
+              .Build();
+
+        // Act
+        GroupDetailsPageViewModel result = _mapper.Map(model);
+
+        // Assert
+        GovUkSummaryList summary =
+            Assert.IsType<GovUkSummaryList>(result.Details.Summary);
+
+        Assert.Null(summary.Rows.SingleOrDefault((row) => row.Key == "Status"));
+    }
+
+    [Fact]
+    public void Map_Maps_Status()
+    {
+        // Arrange
+        GroupReadModel model =
+            GroupReadModelBuilder.Create()
+                .WithStatus("testStatus")
+                .Build();
+
+        // Act
+        GroupDetailsPageViewModel result = _mapper.Map(model);
+
+        // Assert
+        GovUkSummaryList summary =
+            Assert.IsType<GovUkSummaryList>(result.Details.Summary);
+
+        SummaryListRow row = Assert.Single(summary.Rows, (row) => row.Key == "Status");
+        Assert.Equal("testStatus", row.Value.Text);
+        Assert.Null(row.Value.Href);
+        Assert.Empty(row.Actions);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData(" \r\n  \n ")]
+    [InlineData(" ")]
+    [InlineData("")]
+    public void Map_DoesNotMap_NullOrWhitespace_Address(string? address)
+    {
+        // Arrange
+        GroupReadModel model =
+            GroupReadModelBuilder.Create()
+              .WithAddress(address)
+              .Build();
+
+        // Act
+        GroupDetailsPageViewModel result = _mapper.Map(model);
+
+        // Assert
+        GovUkSummaryList summary =
+            Assert.IsType<GovUkSummaryList>(result.Details.Summary);
+
+        Assert.Null(summary.Rows.SingleOrDefault((row) => row.Key == "Address"));
+    }
+
+    [Fact]
+    public void Map_Maps_Address()
+    {
+        // Arrange
+        GroupReadModel model =
+            GroupReadModelBuilder.Create()
+                .WithAddress("testAddress, testVille, TE5 1ST")
+                .Build();
+
+        // Act
+        GroupDetailsPageViewModel result = _mapper.Map(model);
+
+        // Assert
+        GovUkSummaryList summary =
+            Assert.IsType<GovUkSummaryList>(result.Details.Summary);
+
+        SummaryListRow row = Assert.Single(summary.Rows, (row) => row.Key == "Address");
+        Assert.Equal("testAddress, testVille, TE5 1ST", row.Value.Text);
+        Assert.Null(row.Value.Href);
+        Assert.Empty(row.Actions);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData(" \r\n  \n ")]
+    [InlineData(" ")]
+    [InlineData("")]
+    public void Map_DoesNotMap_NullOrWhitespace_GroupType(string? type)
+    {
+        // Arrange
+        GroupReadModel model =
+            GroupReadModelBuilder.Create()
+              .WithGroupType(type)
+              .Build();
+
+        // Act
+        GroupDetailsPageViewModel result = _mapper.Map(model);
+
+        // Assert
+        GovUkSummaryList summary =
+            Assert.IsType<GovUkSummaryList>(result.Details.Summary);
+
+        Assert.Null(summary.Rows.SingleOrDefault((row) => row.Key == "Type"));
+    }
+
+    [Fact]
+    public void Map_Maps_GroupType()
+    {
+        // Arrange
+        GroupReadModel model =
+            GroupReadModelBuilder.Create()
+                .WithGroupType("Single-Academy trust")
+                .Build();
+
+        // Act
+        GroupDetailsPageViewModel result = _mapper.Map(model);
+
+        // Assert
+        GovUkSummaryList summary =
+            Assert.IsType<GovUkSummaryList>(result.Details.Summary);
+
+        SummaryListRow row = Assert.Single(summary.Rows, (row) => row.Key == "Type");
+        Assert.Equal("Single-Academy trust", row.Value.Text);
+        Assert.Null(row.Value.Href);
+        Assert.Empty(row.Actions);
     }
 
     [Fact]
@@ -58,7 +283,7 @@ public sealed class GroupDetailsPageViewModelMapperTests
         };
 
         // Act
-        GroupDetailsPageViewModel result = Mapper.Map(readModel);
+        GroupDetailsPageViewModel result = _mapper.Map(readModel);
 
         // Assert
         Assert.Equal("Academies (1)", result.Academies.Tab);
@@ -124,7 +349,7 @@ public sealed class GroupDetailsPageViewModelMapperTests
         };
 
         // Act
-        GroupDetailsPageViewModel result = Mapper.Map(readModel);
+        GroupDetailsPageViewModel result = _mapper.Map(readModel);
 
         // Assert
         Assert.Equal("Governance", result.Governance.Tab);
@@ -140,7 +365,7 @@ public sealed class GroupDetailsPageViewModelMapperTests
         GroupReadModel readModel = GroupReadModelTestDoubles.Stub();
 
         // Act
-        GroupDetailsPageViewModel result = Mapper.Map(readModel);
+        GroupDetailsPageViewModel result = _mapper.Map(readModel);
 
         // Assert
         Assert.Equal("Academies (0)", result.Academies.Tab);

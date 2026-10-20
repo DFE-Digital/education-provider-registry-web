@@ -7,8 +7,7 @@ using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 
-internal sealed class GroupDetailsPageViewModelMapper :
-    IMapper<GroupReadModel, GroupDetailsPageViewModel>
+internal sealed class GroupDetailsPageViewModelMapper : IMapper<GroupReadModel, GroupDetailsPageViewModel>
 {
     public GroupDetailsPageViewModel Map(GroupReadModel readModel)
     {

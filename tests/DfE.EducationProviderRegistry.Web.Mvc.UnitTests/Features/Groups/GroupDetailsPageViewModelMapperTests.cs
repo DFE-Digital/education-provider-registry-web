@@ -364,7 +364,9 @@ public sealed class GroupDetailsPageViewModelMapperTests
     public void Map_CreatesEmptyTables_WhenCollectionsAreEmpty()
     {
         // Arrange
-        GroupReadModel readModel = GroupReadModelTestDoubles.Stub();
+        GroupReadModel readModel = 
+            GroupReadModelBuilder.Create()
+              .Build();
 
         // Act
         GroupDetailsPageViewModel result = _mapper.Map(readModel);

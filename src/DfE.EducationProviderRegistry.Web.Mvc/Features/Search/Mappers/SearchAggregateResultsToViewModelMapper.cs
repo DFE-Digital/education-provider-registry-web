@@ -19,9 +19,7 @@ public sealed class SearchAggregateResultsToViewModelMapper
     public List<GovUkTable> Map(
         IReadOnlyCollection<SearchAggregateResult> input)
     {
-        return input
-            .Select(MapItem)
-            .ToList();
+        return [.. input.Select(MapItem)];
     }
 
     private GovUkTable MapItem(SearchAggregateResult input)
@@ -86,8 +84,8 @@ public sealed class SearchAggregateCategoryEstablishmentMapper : ISearchAggregat
                 new TableCell { Text = "Part of group" },
                 new TableCell
                 {
-                    Text = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(input.Group.PartOfName.ToLowerInvariant()),
-                    Href = $"/groups/{input.Group.PartOfCode}"
+                    Text = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(input.Group.Name.ToLowerInvariant()),
+                    Href = $"/groups/{input.Group.Uid}"
                 });
         }
         ;

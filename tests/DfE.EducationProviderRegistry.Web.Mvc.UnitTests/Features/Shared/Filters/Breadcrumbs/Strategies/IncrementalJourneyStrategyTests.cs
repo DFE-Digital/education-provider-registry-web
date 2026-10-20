@@ -1,6 +1,9 @@
 ﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Models;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Options;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Strategies;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Strategies.JourneyRules;
+using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Shared.Filters.Breadcrumbs.TestDoubles;
+using Moq;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Shared.Filters.Breadcrumbs.Strategies;
 
@@ -59,11 +62,14 @@ public sealed class IncrementalJourneyStrategyTests
     public void Apply_WhenFirstRuleMatches_ShouldNotApplyFurtherRules()
     {
         // Arrange
-        JourneyRuleTestDouble firstRule = new(true);
-        JourneyRuleTestDouble secondRule = new(true);
+        Mock<IJourneyRule> firstRule =
+            JourneyRuleTestDouble.MockFor(true);
+
+        Mock<IJourneyRule> secondRule =
+            JourneyRuleTestDouble.MockFor(true);
 
         IncrementalJourneyStrategy strategy =
-            new([firstRule, secondRule]);
+            new([firstRule.Object, secondRule.Object]);
 
         // Act
         strategy.Apply(
@@ -72,19 +78,29 @@ public sealed class IncrementalJourneyStrategyTests
             new BreadcrumbItem("Details", "/details"));
 
         // Assert
-        Assert.True(firstRule.ApplyCalled);
-        Assert.False(secondRule.ApplyCalled);
+        firstRule.Verify(
+            rule => rule.Apply(
+                It.IsAny<JourneyContext>()),
+            Times.Once);
+
+        secondRule.Verify(
+            rule => rule.Apply(
+                It.IsAny<JourneyContext>()),
+            Times.Never);
     }
 
     [Fact]
     public void Apply_WhenNoRulesMatch_ShouldEvaluateAllRulesAndApplyNone()
     {
         // Arrange
-        JourneyRuleTestDouble firstRule = new(false);
-        JourneyRuleTestDouble secondRule = new(false);
+        Mock<IJourneyRule> firstRule =
+            JourneyRuleTestDouble.MockFor(false);
+
+        Mock<IJourneyRule> secondRule =
+            JourneyRuleTestDouble.MockFor(false);
 
         IncrementalJourneyStrategy strategy =
-            new([firstRule, secondRule]);
+            new([firstRule.Object, secondRule.Object]);
 
         // Act
         strategy.Apply(
@@ -93,11 +109,25 @@ public sealed class IncrementalJourneyStrategyTests
             new BreadcrumbItem("Details", "/details"));
 
         // Assert
-        Assert.True(firstRule.IsSatisfiedByCalled);
-        Assert.True(secondRule.IsSatisfiedByCalled);
+        firstRule.Verify(
+            rule => rule.IsSatisfiedBy(
+                It.IsAny<JourneyContext>()),
+            Times.Once);
 
-        Assert.False(firstRule.ApplyCalled);
-        Assert.False(secondRule.ApplyCalled);
+        secondRule.Verify(
+            rule => rule.IsSatisfiedBy(
+                It.IsAny<JourneyContext>()),
+            Times.Once);
+
+        firstRule.Verify(
+            rule => rule.Apply(
+                It.IsAny<JourneyContext>()),
+            Times.Never);
+
+        secondRule.Verify(
+            rule => rule.Apply(
+                It.IsAny<JourneyContext>()),
+            Times.Never);
     }
 
     [Fact]
@@ -109,18 +139,30 @@ public sealed class IncrementalJourneyStrategyTests
             Items =
             [
                 new BreadcrumbItem(
-                    "Search Results",
-                    "/search/results?query=test")
+                "Search Results",
+                "/search/results?query=test")
             ]
         };
 
-        JourneyRuleTestDouble rule = new(true);
+        JourneyContext? receivedContext = null;
+
+        Mock<IJourneyRule> rule =
+            JourneyRuleTestDouble.MockFor(true);
+
+        rule.Setup(r =>
+                r.IsSatisfiedBy(
+                    It.IsAny<JourneyContext>()))
+            .Callback<JourneyContext>(
+                context => receivedContext = context)
+            .Returns(true);
 
         IncrementalJourneyStrategy strategy =
-            new([rule]);
+            new([rule.Object]);
 
         BreadcrumbItem currentItem =
-            new("Establishment", "/establishments/123?source=search");
+            new(
+                "Establishment",
+                "/establishments/123?source=search");
 
         // Act
         strategy.Apply(
@@ -129,58 +171,63 @@ public sealed class IncrementalJourneyStrategyTests
             currentItem);
 
         // Assert
-        Assert.NotNull(rule.ReceivedContext);
+        Assert.NotNull(receivedContext);
 
-        Assert.Same(journey, rule.ReceivedContext.Journey);
-        Assert.Same(currentItem, rule.ReceivedContext.Page);
+        Assert.Same(journey, receivedContext!.Journey);
+        Assert.Same(currentItem, receivedContext.Page);
 
         Assert.Equal(
             "/establishments/123",
-            rule.ReceivedContext.CurrentPath);
+            receivedContext.CurrentPath);
 
         Assert.Equal(
             "/search/results",
-            rule.ReceivedContext.LastPath);
+            receivedContext.LastPath);
 
         Assert.Equal(
             -1,
-            rule.ReceivedContext.ExistingIndex);
+            receivedContext.ExistingIndex);
     }
 
     [Fact]
     public void Apply_WhenJourneyIsEmpty_ShouldBuildExpectedContext()
     {
         // Arrange
-        BreadcrumbJourney journey = new();
+        JourneyContext? receivedContext = null;
 
-        JourneyRuleTestDouble rule = new(true);
+        Mock<IJourneyRule> rule =
+            JourneyRuleTestDouble.MockFor(true);
+
+        rule.Setup(r =>
+                r.IsSatisfiedBy(
+                    It.IsAny<JourneyContext>()))
+            .Callback<JourneyContext>(
+                context => receivedContext = context)
+            .Returns(true);
 
         IncrementalJourneyStrategy strategy =
-            new([rule]);
-
-        BreadcrumbItem currentItem =
-            new("Details", "/details");
+            new([rule.Object]);
 
         // Act
         strategy.Apply(
-            journey,
+            new BreadcrumbJourney(),
             new BreadcrumbRouteRule(),
-            currentItem);
+            new BreadcrumbItem("Details", "/details"));
 
         // Assert
-        Assert.NotNull(rule.ReceivedContext);
+        Assert.NotNull(receivedContext);
 
         Assert.Equal(
             "/details",
-            rule.ReceivedContext.CurrentPath);
+            receivedContext!.CurrentPath);
 
         Assert.Equal(
             string.Empty,
-            rule.ReceivedContext.LastPath);
+            receivedContext.LastPath);
 
         Assert.Equal(
             -1,
-            rule.ReceivedContext.ExistingIndex);
+            receivedContext.ExistingIndex);
     }
 
     [Fact]
@@ -192,59 +239,75 @@ public sealed class IncrementalJourneyStrategyTests
             Items =
             [
                 new BreadcrumbItem("Home", "/"),
-                new BreadcrumbItem("Search", "/search"),
-                new BreadcrumbItem("Details", "/establishments/123")
+            new BreadcrumbItem("Search", "/search"),
+            new BreadcrumbItem("Details", "/establishments/123")
             ]
         };
 
-        JourneyRuleTestDouble rule = new(true);
+        JourneyContext? receivedContext = null;
+
+        Mock<IJourneyRule> rule =
+            JourneyRuleTestDouble.MockFor(true);
+
+        rule.Setup(r =>
+                r.IsSatisfiedBy(
+                    It.IsAny<JourneyContext>()))
+            .Callback<JourneyContext>(
+                context => receivedContext = context)
+            .Returns(true);
 
         IncrementalJourneyStrategy strategy =
-            new([rule]);
-
-        BreadcrumbItem currentItem =
-            new("Details", "/establishments/123?id=1");
+            new([rule.Object]);
 
         // Act
         strategy.Apply(
             journey,
             new BreadcrumbRouteRule(),
-            currentItem);
+            new BreadcrumbItem(
+                "Details",
+                "/establishments/123?id=1"));
 
         // Assert
-        Assert.NotNull(rule.ReceivedContext);
+        Assert.NotNull(receivedContext);
 
         Assert.Equal(
             2,
-            rule.ReceivedContext.ExistingIndex);
+            receivedContext!.ExistingIndex);
     }
 
     [Fact]
     public void Apply_ShouldUseAbsolutePath_WhenCurrentUrlIsAbsolute()
     {
         // Arrange
-        JourneyRuleTestDouble rule = new(true);
+        JourneyContext? receivedContext = null;
+
+        Mock<IJourneyRule> rule =
+            JourneyRuleTestDouble.MockFor(true);
+
+        rule.Setup(r =>
+                r.IsSatisfiedBy(
+                    It.IsAny<JourneyContext>()))
+            .Callback<JourneyContext>(
+                context => receivedContext = context)
+            .Returns(true);
 
         IncrementalJourneyStrategy strategy =
-            new([rule]);
-
-        BreadcrumbItem currentItem =
-            new(
-                "Details",
-                "https://test.com/establishments/123?foo=bar");
+            new([rule.Object]);
 
         // Act
         strategy.Apply(
             new BreadcrumbJourney(),
             new BreadcrumbRouteRule(),
-            currentItem);
+            new BreadcrumbItem(
+                "Details",
+                "https://test.com/establishments/123?foo=bar"));
 
         // Assert
-        Assert.NotNull(rule.ReceivedContext);
+        Assert.NotNull(receivedContext);
 
         Assert.Equal(
             "/establishments/123",
-            rule.ReceivedContext.CurrentPath);
+            receivedContext!.CurrentPath);
     }
 
     [Theory]
@@ -252,28 +315,38 @@ public sealed class IncrementalJourneyStrategyTests
     [InlineData(" ")]
     [InlineData("   ")]
     [InlineData(null)]
-    public void Apply_ShouldUseEmptyCurrentPath_WhenUrlIsNullOrWhitespace(string? url)
+    public void Apply_ShouldUseEmptyCurrentPath_WhenUrlIsNullOrWhitespace(
+    string? url)
     {
         // Arrange
-        JourneyRuleTestDouble rule = new(true);
+        JourneyContext? receivedContext = null;
+
+        Mock<IJourneyRule> rule =
+            JourneyRuleTestDouble.MockFor(true);
+
+        rule.Setup(r =>
+                r.IsSatisfiedBy(
+                    It.IsAny<JourneyContext>()))
+            .Callback<JourneyContext>(
+                context => receivedContext = context)
+            .Returns(true);
 
         IncrementalJourneyStrategy strategy =
-            new([rule]);
-
-        BreadcrumbItem currentItem =
-            new("Details", url!);
+            new([rule.Object]);
 
         // Act
         strategy.Apply(
             new BreadcrumbJourney(),
             new BreadcrumbRouteRule(),
-            currentItem);
+            new BreadcrumbItem(
+                "Details",
+                url!));
 
         // Assert
-        Assert.NotNull(rule.ReceivedContext);
+        Assert.NotNull(receivedContext);
 
         Assert.Equal(
             string.Empty,
-            rule.ReceivedContext.CurrentPath);
+            receivedContext!.CurrentPath);
     }
 }

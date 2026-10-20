@@ -364,7 +364,7 @@ public sealed class GroupDetailsPageViewModelMapperTests
     public void Map_CreatesEmptyTables_WhenCollectionsAreEmpty()
     {
         // Arrange
-        GroupReadModel readModel = 
+        GroupReadModel readModel =
             GroupReadModelBuilder.Create()
               .Build();
 

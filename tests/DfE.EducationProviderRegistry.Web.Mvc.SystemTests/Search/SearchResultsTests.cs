@@ -1,8 +1,8 @@
 ﻿using AngleSharp.Html.Dom;
 using DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles.Search.Configuration.Extensions;
+using DfE.EducationProviderRegistry.Core.Query.Test.Database.Data.Search;
 using DfE.EducationProviderRegistry.Data.DatabaseModels.Models;
 using DfE.EducationProviderRegistry.Web.SharedTests.AngleSharp.Extensions;
-using DfE.EducationProviderRegistry.Core.Query.Test.Database.Data.Search;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search.Components;

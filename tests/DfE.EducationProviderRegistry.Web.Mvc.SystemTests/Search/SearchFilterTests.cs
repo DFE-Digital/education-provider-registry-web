@@ -19,7 +19,7 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
 
-        await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableAggregates>(
+        await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableSearchAggregates>(
             SearchAggregateTestDouble.CreateResults(10), ct);
 
         using HttpClient client = Factory.CreateClient();
@@ -61,7 +61,7 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
 
-        await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableAggregates>(
+        await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableSearchAggregates>(
             SearchAggregateTestDouble.CreateResults(10), ct);
 
         using HttpClient client = Factory.CreateClient();
@@ -113,7 +113,7 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
 
-        await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableAggregates>(
+        await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableSearchAggregates>(
             SearchAggregateTestDouble.CreateResults(10), ct);
 
         using HttpClient client = Factory.CreateClient();
@@ -162,7 +162,7 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
         // TODO stub UseCaseResponse with results
         using HttpClient client = Factory.CreateClient();
 
-        await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableAggregates>(
+        await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableSearchAggregates>(
             SearchAggregateTestDouble.CreateResults(10), ct);
 
         string[] filtersToApply = ["1", "2"];

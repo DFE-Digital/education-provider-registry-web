@@ -1,6 +1,6 @@
 ﻿using DfE.Core.Libraries.CleanArchitecture.Application;
 using DfE.Core.Libraries.CrossCutting.Mapper;
-using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupById;
+using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupByUid;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
@@ -9,12 +9,12 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 public class GroupsController : Controller
 {
     private readonly ILogger<GroupsController> _logger;
-    private readonly IUseCase<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModelResponse>> _useCase;
+    private readonly IUseCase<GetGroupByGroupUidRequest, UseCaseResponse<GroupReadModelResponse>> _useCase;
     private readonly IMapper<GroupReadModel, GroupDetailsPageViewModel> _groupDetailsPageMapper;
 
     public GroupsController(
         ILogger<GroupsController> logger,
-        IUseCase<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModelResponse>> useCase,
+        IUseCase<GetGroupByGroupUidRequest, UseCaseResponse<GroupReadModelResponse>> useCase,
         IMapper<GroupReadModel, GroupDetailsPageViewModel> mapper)
     {
         ArgumentNullException.ThrowIfNull(logger);
@@ -25,26 +25,26 @@ public class GroupsController : Controller
         _groupDetailsPageMapper = mapper;
     }
 
-    [HttpGet("{groupId}", Name = "GetGroupByGroupId")]
-    public async Task<IActionResult> Details(string groupId)
+    [HttpGet("{groupUid}", Name = "GetGroupByGroupUid")]
+    public async Task<IActionResult> Details(string groupUid)
     {
         if (!ModelState.IsValid)
         {
-            _logger.LogError("Invalid model state for groupId {GroupId}", groupId);
+            _logger.LogError("Invalid model state for groupUid {GroupUId}", groupUid);
             return BadRequest(ModelState);
         }
 
-        _logger.LogInformation("Fetching group details for {GroupId}", groupId);
+        _logger.LogInformation("Fetching group details for {GroupUId}", groupUid);
 
         UseCaseResponse<GroupReadModelResponse> response =
             await _useCase.HandleRequestAsync(
-                new GetGroupByGroupUniqueIdentifierRequest(groupId));
+                new GetGroupByGroupUidRequest(groupUid));
 
         if (!response.SuccessfulRequest)
         {
             _logger.LogError(
-                "Use case failed for groupId {GroupId}",
-                groupId);
+                "Use case failed for groupUid {GroupId}",
+                groupUid);
 
             return StatusCode(500);
         }
@@ -52,8 +52,8 @@ public class GroupsController : Controller
         if (response.Model.Group is null)
         {
             _logger.LogError(
-                "Group not found for groupId {GroupId}",
-                groupId);
+                "Group not found for groupUid {GroupId}",
+                groupUid);
 
             return NotFound();
         }

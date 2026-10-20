@@ -166,7 +166,7 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
         EstablishmentDetailsModel model =
             EstablishmentDetailsBuilder.Create()
                 .WithGroupName("testGroupName")
-                .WithGroupCode("testGroupCode")
+                .WithGroupUid("testGroupCode")
                 .Build();
 
         // Act

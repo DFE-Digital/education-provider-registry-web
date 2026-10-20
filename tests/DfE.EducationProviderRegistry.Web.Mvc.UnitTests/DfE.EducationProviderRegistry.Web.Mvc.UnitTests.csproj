@@ -12,20 +12,20 @@
 	</ItemGroup>
 
   <ItemGroup>
-	<PackageReference Include="AngleSharp" />
-	<PackageReference Include="coverlet.msbuild">
-	  <PrivateAssets>all</PrivateAssets>
-	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-	</PackageReference>
-	<PackageReference Include="DfE.Core.Libraries.Testing" />
-	<PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
-	<PackageReference Include="Moq" />
-	<PackageReference Include="xunit.v3.mtp-v2" />
+	  <PackageReference Include="AngleSharp" />
+	  <PackageReference Include="coverlet.msbuild">
+	    <PrivateAssets>all</PrivateAssets>
+	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+	  <PackageReference Include="DfE.Core.Libraries.Testing" />
+	  <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
+	  <PackageReference Include="Moq" />
+	  <PackageReference Include="xunit.v3.mtp-v2" />
   </ItemGroup>
 
   <ItemGroup>
-	<ProjectReference Include="..\..\src\DfE.EducationProviderRegistry.Web.Mvc\DfE.EducationProviderRegistry.Web.Mvc.csproj" />
-	<ProjectReference Include="..\DfE.EducationProviderRegistry.Web.SharedTests\DfE.EducationProviderRegistry.Web.SharedTests.csproj" />
+	  <ProjectReference Include="..\..\src\DfE.EducationProviderRegistry.Web.Mvc\DfE.EducationProviderRegistry.Web.Mvc.csproj" />
+	  <ProjectReference Include="..\DfE.EducationProviderRegistry.Web.SharedTests\DfE.EducationProviderRegistry.Web.SharedTests.csproj" />
   </ItemGroup>
 
 </Project>

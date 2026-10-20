@@ -1,6 +1,6 @@
 ﻿using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Groups;
-using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupById;
+using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupByUid;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 

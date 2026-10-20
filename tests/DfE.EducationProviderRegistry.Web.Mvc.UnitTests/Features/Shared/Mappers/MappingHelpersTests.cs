@@ -3,38 +3,9 @@ using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Mappers;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Shared.Mappers;
 
-public class MappingHelpersTests
+public sealed class MappingHelpersTests
 {
-    public class CreateLinkUrl
-    {
-        [Theory]
-        [InlineData("https://example.com/", "123", "https://example.com/123")]
-        [InlineData("mailto:", "test@example.com", "mailto:test@example.com")]
-        [InlineData("tel:", "01234567890", "tel:01234567890")]
-        public void GivenValue_ReturnsPrefixAndValue(
-            string prefix,
-            string value,
-            string expected)
-        {
-            string? result = MappingHelpers.CreateLinkUrl(prefix, value);
-
-            Assert.Equal(expected, result);
-        }
-
-        [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        [InlineData(" ")]
-        [InlineData("   ")]
-        public void GivenNullOrWhiteSpaceValue_ReturnsNull(string? value)
-        {
-            string? result = MappingHelpers.CreateLinkUrl("https://example.com/", value);
-
-            Assert.Null(result);
-        }
-    }
-
-    public class CreateWebsiteUrl
+    public sealed class CreateWebsiteUrl
     {
         [Theory]
         [InlineData(null)]
@@ -116,7 +87,7 @@ public class MappingHelpersTests
         }
     }
 
-    public class CombineAddress
+    public sealed class CombineAddress
     {
         [Fact]
         public void GivenNullSiteAddress_ReturnsEmptyString()
@@ -161,7 +132,7 @@ public class MappingHelpersTests
         public void CombineAddress_WhenAddressPartsAreEmpty_ExcludesThem()
         {
             // Arrange
-            SiteAddressModel address = new SiteAddressModel(
+            SiteAddressModel address = new(
                 "Test School",
                 "1 Test Street",
                 string.Empty,
@@ -182,7 +153,7 @@ public class MappingHelpersTests
         public void CombineAddress_WhenAddressContainsEstablishmentName_ExcludesEstablishmentName()
         {
             // Arrange
-            SiteAddressModel address = new SiteAddressModel(
+            SiteAddressModel address = new(
                 "Test School",
                 "Test School",
                 "1 Test Street",
@@ -203,7 +174,7 @@ public class MappingHelpersTests
         public void CombineAddress_WhenEstablishmentNameHasDifferentCasing_ExcludesEstablishmentName()
         {
             // Arrange
-            SiteAddressModel address = new SiteAddressModel(
+            SiteAddressModel address = new(
                 "Test School",
                 "TEST SCHOOL",
                 "1 Test Street",
@@ -224,7 +195,7 @@ public class MappingHelpersTests
         public void CombineAddress_WhenNoValidAddressPartsExist_ReturnsEmptyString()
         {
             // Arrange
-            SiteAddressModel address = new SiteAddressModel(
+            SiteAddressModel address = new(
                 "Test School",
                 string.Empty,
                 string.Empty,

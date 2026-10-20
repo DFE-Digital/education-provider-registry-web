@@ -153,7 +153,7 @@ public sealed class SearchResultsTests
             (new TextContent(){ Text = "Type" }, new TextContent(){ Text = response.Type!.Name }),
             (new TextContent(){ Text = "Address" }, new TextContent(){ Text = response.Address!.FullAddress }),
             (new TextContent(){ Text = "Local authority" }, new TextContent(){ Text = response.LocalAuthority!.Name }),
-            (new TextContent() { Text = "Part of group" }, new TextContent() { Text = response.Group!.PartOfName, Link = new(url: $"/groups/{response.Group?.PartOfCode}") })
+            (new TextContent() { Text = "Part of group" }, new TextContent() { Text = response.Group!.Name, Link = new(url: $"/groups/{response.Group.Uid}") })
         ];
 
         return (name, results);

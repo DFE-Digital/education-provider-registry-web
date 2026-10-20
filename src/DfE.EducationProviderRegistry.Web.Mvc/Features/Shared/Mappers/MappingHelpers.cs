@@ -4,13 +4,6 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Mappers;
 
 public static class MappingHelpers
 {
-    internal static string? CreateLinkUrl(string prefix, string? value)
-    {
-        return string.IsNullOrWhiteSpace(value)
-            ? null
-            : prefix + value;
-    }
-
     internal static string? CreateWebsiteUrl(string? website)
     {
         if (string.IsNullOrWhiteSpace(website))

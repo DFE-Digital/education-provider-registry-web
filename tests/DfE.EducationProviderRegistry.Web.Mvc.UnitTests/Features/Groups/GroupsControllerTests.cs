@@ -2,7 +2,7 @@
 using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.Core.Libraries.Testing.Logger;
 using DfE.Core.Libraries.Testing.Mapper;
-using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupById;
+using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupByUid;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Groups.TestDoubles;
 using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.TestDoubles;
@@ -21,7 +21,7 @@ public sealed class GroupsControllerTests
         Func<GroupsController> construct =
             () => new(
                 logger: null!,
-                useCase: IUseCaseTestDoubles.Default<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModelResponse>>(),
+                useCase: IUseCaseTestDoubles.Default<GetGroupByGroupUidRequest, UseCaseResponse<GroupReadModelResponse>>(),
                 mapper: IMapperTestDouble.Default<GroupReadModel, GroupDetailsPageViewModel>());
 
         // Act & Assert
@@ -49,7 +49,7 @@ public sealed class GroupsControllerTests
         Func<GroupsController> construct =
             () => new(
                 logger: ILoggerTestDouble.Default<GroupsController>(),
-                useCase: IUseCaseTestDoubles.Default<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModelResponse>>(),
+                useCase: IUseCaseTestDoubles.Default<GetGroupByGroupUidRequest, UseCaseResponse<GroupReadModelResponse>>(),
                 mapper: null!);
 
         // Act & Assert
@@ -82,7 +82,7 @@ public sealed class GroupsControllerTests
         GroupsController controller =
             CreateSut(
                 useCase:
-                    IUseCaseTestDoubles.WithResponse<GetGroupByGroupUniqueIdentifierRequest, GroupReadModelResponse>(
+                    IUseCaseTestDoubles.WithResponse<GetGroupByGroupUidRequest, GroupReadModelResponse>(
                         response: UseCaseResponse<GroupReadModelResponse>.Failure(response, "error")));
 
         string groupId = "group-1";
@@ -101,7 +101,7 @@ public sealed class GroupsControllerTests
         // Arrange
         GroupsController controller =
             CreateSut(
-                useCase: IUseCaseTestDoubles.WithResponse<GetGroupByGroupUniqueIdentifierRequest, GroupReadModelResponse>(
+                useCase: IUseCaseTestDoubles.WithResponse<GetGroupByGroupUidRequest, GroupReadModelResponse>(
                     response: UseCaseResponse<GroupReadModelResponse>.Success(
                         GroupReadModelResponseTestDoubles.Failure())));
 
@@ -135,7 +135,7 @@ public sealed class GroupsControllerTests
 
         GroupsController controller =
             CreateSut(
-                useCase: IUseCaseTestDoubles.WithResponse<GetGroupByGroupUniqueIdentifierRequest, GroupReadModelResponse>(useCaseResponse),
+                useCase: IUseCaseTestDoubles.WithResponse<GetGroupByGroupUidRequest, GroupReadModelResponse>(useCaseResponse),
                 mapper: mapperMock.Object);
 
         string groupId = "group-1";
@@ -151,12 +151,12 @@ public sealed class GroupsControllerTests
 
     private static GroupsController CreateSut(
         ILogger<GroupsController>? logger = null,
-        IUseCase<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModelResponse>>? useCase = null,
+        IUseCase<GetGroupByGroupUidRequest, UseCaseResponse<GroupReadModelResponse>>? useCase = null,
         IMapper<GroupReadModel, GroupDetailsPageViewModel>? mapper = null)
     {
         return new GroupsController(
             logger ?? ILoggerTestDouble.Default<GroupsController>(),
-            useCase ?? IUseCaseTestDoubles.Default<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModelResponse>>(),
+            useCase ?? IUseCaseTestDoubles.Default<GetGroupByGroupUidRequest, UseCaseResponse<GroupReadModelResponse>>(),
             mapper ?? IMapperTestDouble.Default<GroupReadModel, GroupDetailsPageViewModel>());
     }
 }

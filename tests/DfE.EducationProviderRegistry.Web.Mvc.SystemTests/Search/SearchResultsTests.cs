@@ -52,7 +52,7 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
 
         SearchAggregate[] seed = [match, doesNotMatch];
 
-        await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableAggregates>(seed, ct);
+        await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableSearchAggregates>(seed, ct);
 
         using HttpClient client = Factory.CreateClient();
 
@@ -96,7 +96,7 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
 
         SearchAggregate[] seed = [match1, match2, doesNotMatch];
 
-        await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableAggregates>(seed, ct);
+        await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableSearchAggregates>(seed, ct);
 
         using HttpClient client = Factory.CreateClient();
 
@@ -147,7 +147,7 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
 
         SearchAggregate[] seed = [match1, match2, doesNotMatch];
 
-        await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableAggregates>(seed, ct);
+        await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableSearchAggregates>(seed, ct);
 
         using HttpClient client = Factory.CreateClient();
 
@@ -182,7 +182,7 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
 
         IReadOnlyCollection<SearchAggregate> seed = SearchAggregateTestDouble.CreateResults(count: 14, namePrefix: "school");
 
-        await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableAggregates>(seed, ct);
+        await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableSearchAggregates>(seed, ct);
 
         using HttpClient client = Factory.CreateClient();
 
@@ -216,7 +216,7 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
 
         IReadOnlyCollection<SearchAggregate> seed = SearchAggregateTestDouble.CreateResults(count: 101, namePrefix: "school");
 
-        await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableAggregates>(seed, ct);
+        await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableSearchAggregates>(seed, ct);
 
         using HttpClient client = Factory.CreateClient();
 
@@ -263,7 +263,7 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
                 .WithGroupUid("1234")
                 .Build();
 
-        await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableAggregates>([match], ct);
+        await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableSearchAggregates>([match], ct);
 
         using HttpClient client = Factory.CreateClient();
 
@@ -321,7 +321,7 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
                 .WithAcademyCount(97)
                 .Build();
 
-        await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableAggregates>([match], ct);
+        await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableSearchAggregates>([match], ct);
 
         using HttpClient client = Factory.CreateClient();
 

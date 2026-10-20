@@ -2,7 +2,6 @@
 using DfE.EducationProviderRegistry.Data.DatabaseModels.Models;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents.WebDriver.Search;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
-using OpenQA.Selenium;
 
 namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Search;
 
@@ -20,7 +19,7 @@ public sealed class SearchResultsUITests : UIBaseTest
 
         IReadOnlyCollection<SearchAggregate> seed = SearchAggregateTestDouble.CreateResults(10);
 
-        await HostedEnvironment.DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableAggregates>(seed, ct);
+        await HostedEnvironment.DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableSearchAggregates>(seed, ct);
 
         using IWebDriver driver = await WebDriverBuilder.Build().StartDriverAsync(ct);
 
@@ -53,7 +52,7 @@ public sealed class SearchResultsUITests : UIBaseTest
 
         IReadOnlyCollection<SearchAggregate> seed = SearchAggregateTestDouble.CreateResults(10);
 
-        await HostedEnvironment.DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableAggregates>(seed, ct);
+        await HostedEnvironment.DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableSearchAggregates>(seed, ct);
 
         using IWebDriver driver = await WebDriverBuilder.Build().StartDriverAsync(ct);
 

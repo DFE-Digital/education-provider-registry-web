@@ -1,7 +1,7 @@
 ﻿using DfE.Core.Libraries.CleanArchitecture.Application;
 using DfE.Core.Libraries.IntegrationTests.Abstractions;
 using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.Model;
-using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.UseCases.GetEstablishmentById;
+using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.UseCases.GetEstablishmentByUrn;
 using DfE.EducationProviderRegistry.Core.Query.Test.Database.Data.Establishments;
 using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestDoubles;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.EstablishmentDetails;
@@ -30,7 +30,7 @@ public sealed class EstablishmentDetailsWebsiteDisplayTests : IntegrationTestsBa
         UseCaseResponse<EstablishmentDetailsReadModel> stubResponse =
             UseCaseResponse<EstablishmentDetailsReadModel>.Success(readModel);
 
-        UseCaseStub<GetEstablishmentByIdRequest, EstablishmentDetailsReadModel> stubUseCase = new(stubResponse);
+        UseCaseStub<GetEstablishmentByUrnRequest, EstablishmentDetailsReadModel> stubUseCase = new(stubResponse);
 
         using WebApplicationFactory<Program> factory = WebApplicationFactoryProvider.CreateFactory(stubUseCase);
 
@@ -78,7 +78,7 @@ public sealed class EstablishmentDetailsWebsiteDisplayTests : IntegrationTestsBa
         UseCaseResponse<EstablishmentDetailsReadModel> stubResponse =
             UseCaseResponse<EstablishmentDetailsReadModel>.Success(readModel);
 
-        UseCaseStub<GetEstablishmentByIdRequest, EstablishmentDetailsReadModel> stubUseCase = new(stubResponse);
+        UseCaseStub<GetEstablishmentByUrnRequest, EstablishmentDetailsReadModel> stubUseCase = new(stubResponse);
 
         using WebApplicationFactory<Program> factory =
             WebApplicationFactoryProvider.CreateFactory(stubUseCase);

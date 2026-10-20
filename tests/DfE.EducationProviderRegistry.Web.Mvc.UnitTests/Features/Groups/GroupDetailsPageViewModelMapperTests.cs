@@ -1,12 +1,13 @@
 ﻿using DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles.GroupDetails;
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.Model;
-using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupById;
-using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupById.Mappers;
+using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupByUid;
+using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupByUid.Mappers;
 using DfE.EducationProviderRegistry.Core.Query.Shared;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Groups.TestDoubles;
 using DfE.EducationProviderRegistry.Web.ViewComponents.SummaryList;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
+using GroupReadModelTestDoubles = DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles.GroupDetails.GroupReadModelTestDoubles;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Groups;
 
@@ -363,7 +364,9 @@ public sealed class GroupDetailsPageViewModelMapperTests
     public void Map_CreatesEmptyTables_WhenCollectionsAreEmpty()
     {
         // Arrange
-        GroupReadModel readModel = GroupReadModelTestDoubles.Stub();
+        GroupReadModel readModel =
+            GroupReadModelBuilder.Create()
+              .Build();
 
         // Act
         GroupDetailsPageViewModel result = _mapper.Map(readModel);

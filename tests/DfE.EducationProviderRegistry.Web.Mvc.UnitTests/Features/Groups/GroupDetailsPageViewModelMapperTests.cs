@@ -4,6 +4,7 @@ using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGr
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupById.Mappers;
 using DfE.EducationProviderRegistry.Core.Query.Shared;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
+using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Groups.TestDoubles;
 using DfE.EducationProviderRegistry.Web.ViewComponents.SummaryList;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 

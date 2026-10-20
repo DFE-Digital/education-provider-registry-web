@@ -4,6 +4,7 @@ using DfE.Core.Libraries.Testing.Logger;
 using DfE.Core.Libraries.Testing.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupById;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
+using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Groups.TestDoubles;
 using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.TestDoubles;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -76,7 +77,6 @@ public sealed class GroupsControllerTests
     public async Task Details_ReturnsStatusCode500_WhenUseCaseFails()
     {
         // Arrange
-
         GroupReadModelResponse response = GroupReadModelResponseTestDoubles.Failure();
 
         GroupsController controller =
@@ -158,24 +158,5 @@ public sealed class GroupsControllerTests
             logger ?? ILoggerTestDouble.Default<GroupsController>(),
             useCase ?? IUseCaseTestDoubles.Default<GetGroupByGroupUniqueIdentifierRequest, UseCaseResponse<GroupReadModelResponse>>(),
             mapper ?? IMapperTestDouble.Default<GroupReadModel, GroupDetailsPageViewModel>());
-    }
-}
-
-public static class GroupReadModelResponseTestDoubles
-{
-    public static GroupReadModelResponse Failure()
-    {
-        return new()
-        {
-            Group = null
-        };
-    }
-
-    public static GroupReadModelResponse Stub()
-    {
-        return new GroupReadModelResponse()
-        {
-            Group = GroupReadModelTestDoubles.Stub()
-        };
     }
 }

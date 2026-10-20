@@ -2,7 +2,7 @@
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupById;
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupById.Mappers;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Groups;
+namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Groups.TestDoubles;
 
 internal static class GroupReadModelTestDoubles
 {

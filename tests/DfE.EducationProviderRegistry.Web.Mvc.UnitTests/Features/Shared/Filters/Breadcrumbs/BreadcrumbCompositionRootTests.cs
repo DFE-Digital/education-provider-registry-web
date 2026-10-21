@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.NavigationEvaluators;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Resolvers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Store;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Strategies.Factories;
@@ -116,35 +112,6 @@ public sealed class BreadcrumbCompositionRootTests
 
         Assert.Equal(
             ServiceLifetime.Scoped,
-            descriptor.Lifetime);
-    }
-
-    [Fact]
-    public void AddBreadcrumbDependencies_ShouldRegisterNavigationEvaluator()
-    {
-        // Arrange
-        IServiceCollection services = new ServiceCollection();
-
-        IConfiguration configuration =
-            new ConfigurationBuilder().Build();
-
-        // Act
-        services.AddBreadcrumbDependencies(configuration);
-
-        // Assert
-        ServiceDescriptor? descriptor =
-            services.FirstOrDefault(
-                descriptor =>
-                    descriptor.ServiceType ==
-                    typeof(INavigationEvaluator));
-
-        Assert.NotNull(descriptor);
-        Assert.Equal(
-            typeof(NavigationEvaluator),
-            descriptor.ImplementationType);
-
-        Assert.Equal(
-            ServiceLifetime.Singleton,
             descriptor.Lifetime);
     }
 

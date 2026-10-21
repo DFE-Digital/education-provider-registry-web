@@ -3,11 +3,11 @@ using OpenQA.Selenium;
 
 namespace DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.Document.WebDriver;
 
-internal class WebElementNode : IElement
+internal class WebDriverElement : IElement
 {
     private readonly IWebElement _element;
 
-    public WebElementNode(IWebElement element)
+    public WebDriverElement(IWebElement element)
     {
         ArgumentNullException.ThrowIfNull(element);
         _element = element;
@@ -31,7 +31,7 @@ internal class WebElementNode : IElement
 
         return element is null
             ? null
-            : new WebElementNode(element);
+            : new WebDriverElement(element);
     }
 
     public IReadOnlyCollection<IElement> FindAll(string selector)
@@ -41,7 +41,7 @@ internal class WebElementNode : IElement
         return _element
             .FindElements(
                 By.CssSelector(selector))
-            .Select(static (element) => (IElement)new WebElementNode(element))
+            .Select(static (element) => (IElement)new WebDriverElement(element))
             .ToList();
     }
 }

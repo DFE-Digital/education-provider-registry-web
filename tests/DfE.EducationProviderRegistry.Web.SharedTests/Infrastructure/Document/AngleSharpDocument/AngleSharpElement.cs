@@ -1,13 +1,12 @@
 ﻿using AngleSharp.Dom;
-using DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.Document.Abstractions;
 
-namespace DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.Document.AngleSharp;
+namespace DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.Document.AngleSharpDocument;
 
-internal class AngleSharpElementNode : Abstractions.IElement
+internal class AngleSharpElement : Abstractions.IElement
 {
-    private readonly global::AngleSharp.Dom.IElement _element;
+    private readonly IElement _element;
 
-    public AngleSharpElementNode(global::AngleSharp.Dom.IElement element)
+    public AngleSharpElement(IElement element)
     {
         ArgumentNullException.ThrowIfNull(element);
 
@@ -27,11 +26,11 @@ internal class AngleSharpElementNode : Abstractions.IElement
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(selector);
 
-        global::AngleSharp.Dom.IElement? element = _element.QuerySelector(selector);
+        IElement? element = _element.QuerySelector(selector);
 
         return element is null
             ? null
-            : new AngleSharpElementNode(element);
+            : new AngleSharpElement(element);
     }
 
     public IReadOnlyCollection<Abstractions.IElement> FindAll(string selector)
@@ -40,7 +39,7 @@ internal class AngleSharpElementNode : Abstractions.IElement
 
         return _element
             .QuerySelectorAll(selector)
-            .Select(element => (IElement)new AngleSharpElementNode(element))
+            .Select(element => (Abstractions.IElement)new AngleSharpElement(element))
             .ToList();
     }
 }

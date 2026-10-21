@@ -10,8 +10,8 @@ public sealed class IncrementalJourneyStrategy : IBreadcrumbStrategy
 
     public IncrementalJourneyStrategy(IEnumerable<IJourneyRule> rules)
     {
-        _rules = rules ??
-            throw new ArgumentNullException(nameof(rules));
+        ArgumentNullException.ThrowIfNull(rules);
+        _rules = rules;
     }
 
     public void Apply(
@@ -26,7 +26,7 @@ public sealed class IncrementalJourneyStrategy : IBreadcrumbStrategy
         string currentPath = GetAbsolutePath(currentBreadcrumbItem.Url);
         string lastPath =
             journey.Items.Count > 0 ?
-                GetAbsolutePath(journey.Items.Last().Url) : string.Empty;
+                GetAbsolutePath(journey.Items[journey.Items.Count - 1].Url) : string.Empty;
 
         int existingIndex = journey.Items.FindIndex(
             breadcrumbItem =>
@@ -36,14 +36,8 @@ public sealed class IncrementalJourneyStrategy : IBreadcrumbStrategy
         JourneyContext context =
             new(journey, currentBreadcrumbItem, currentPath, lastPath, existingIndex);
 
-        foreach (IJourneyRule journeyRule in _rules)
-        {
-            if (journeyRule.IsSatisfiedBy(context))
-            {
-                journeyRule.Apply(context);
-                break;
-            }
-        }
+        IJourneyRule? firstSatisfiedRule = _rules.FirstOrDefault((rule) => rule.IsSatisfiedBy(context));
+        firstSatisfiedRule?.Apply(context);
     }
 
     private static string GetAbsolutePath(string url)

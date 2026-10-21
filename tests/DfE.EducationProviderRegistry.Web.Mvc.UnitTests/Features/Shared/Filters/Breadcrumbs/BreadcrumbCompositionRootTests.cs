@@ -3,7 +3,6 @@ using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Store;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Strategies.Factories;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Strategies.JourneyRules;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Tracking;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -186,35 +185,6 @@ public sealed class BreadcrumbCompositionRootTests
 
         Assert.Equal(
             ServiceLifetime.Scoped,
-            descriptor.Lifetime);
-    }
-
-    [Fact]
-    public void AddBreadcrumbDependencies_ShouldRegisterBreadcrumbTracker()
-    {
-        // Arrange
-        IServiceCollection services = new ServiceCollection();
-
-        IConfiguration configuration =
-            new ConfigurationBuilder().Build();
-
-        // Act
-        services.AddBreadcrumbDependencies(configuration);
-
-        // Assert
-        ServiceDescriptor? descriptor =
-            services.FirstOrDefault(
-                descriptor =>
-                    descriptor.ServiceType ==
-                    typeof(IBreadcrumbTracker));
-
-        Assert.NotNull(descriptor);
-        Assert.Equal(
-            typeof(BreadcrumbTracker),
-            descriptor.ImplementationType);
-
-        Assert.Equal(
-            ServiceLifetime.Transient,
             descriptor.Lifetime);
     }
 

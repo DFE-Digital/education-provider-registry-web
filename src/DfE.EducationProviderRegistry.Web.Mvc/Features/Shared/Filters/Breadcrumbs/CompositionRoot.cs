@@ -4,7 +4,6 @@ using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Strategies;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Strategies.Factories;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Strategies.JourneyRules;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Tracking;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs;
 
@@ -39,8 +38,7 @@ public static class CompositionRoot
         services.AddKeyedScoped<IBreadcrumbStrategy, IncrementalJourneyStrategy>("IncrementalJourney");
         services.AddScoped<IBreadcrumbStrategyFactory, BreadcrumbStrategyFactory>();
 
-        // Tracking & MVC Filter Pipeline.
-        services.AddTransient<IBreadcrumbTracker, BreadcrumbTracker>();
+        // MVC Filter Pipeline.
         services.AddScoped<BreadcrumbResultFilter>();
 
         return services;

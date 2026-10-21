@@ -2,7 +2,7 @@
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Options;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Resolvers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Store;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Tracking;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Strategies.Factories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -13,23 +13,23 @@ public sealed class BreadcrumbResultFilter : IAsyncResultFilter
     private readonly IBreadcrumbRouteResolver _routeResolver;
     private readonly IBreadcrumbTitleResolver _titleResolver;
     private readonly IBreadcrumbJourneyStore _journeyStore;
-    private readonly IBreadcrumbTracker _tracker;
+    private readonly IBreadcrumbStrategyFactory _strategyFactory;
 
     public BreadcrumbResultFilter(
         IBreadcrumbRouteResolver routeResolver,
         IBreadcrumbTitleResolver titleResolver,
         IBreadcrumbJourneyStore journeyStore,
-        IBreadcrumbTracker tracker)
+        IBreadcrumbStrategyFactory strategyFactory)
     {
         ArgumentNullException.ThrowIfNull(routeResolver);
         ArgumentNullException.ThrowIfNull(titleResolver);
         ArgumentNullException.ThrowIfNull(journeyStore);
-        ArgumentNullException.ThrowIfNull(tracker);
+        ArgumentNullException.ThrowIfNull(strategyFactory);
 
         _routeResolver = routeResolver;
         _titleResolver = titleResolver;
         _journeyStore = journeyStore;
-        _tracker = tracker;
+        _strategyFactory = strategyFactory;
     }
 
     public async Task OnResultExecutionAsync(
@@ -60,7 +60,9 @@ public sealed class BreadcrumbResultFilter : IAsyncResultFilter
 
         BreadcrumbItem currentBreadcrumbItem = new(title, currentUrl);
 
-        _tracker.Track(journey, rule, currentBreadcrumbItem);
+        _strategyFactory
+            .GetStrategy(rule)
+            .Apply(journey, rule, currentBreadcrumbItem);
 
         _journeyStore.Save(journey);
 

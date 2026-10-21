@@ -3,7 +3,8 @@ using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Options;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Resolvers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Store;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Tracking;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Strategies;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Strategies.Factories;
 using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Shared.Filters.Breadcrumbs.TestDoubles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +25,7 @@ public sealed class BreadcrumbResultFilterTests
                 routeResolver: null!,
                 titleResolver: BreadcrumbTitleResolverTestDouble.Mock().Object,
                 journeyStore: BreadcrumbJourneyStoreTestDouble.Mock().Object,
-                tracker: BreadcrumbTrackerTestDouble.Mock().Object);
+                strategyFactory: BreadcrumbStrategyFactoryTestDouble.Mock().Object);
 
         Assert.Throws<ArgumentNullException>(construct);
     }
@@ -37,7 +38,7 @@ public sealed class BreadcrumbResultFilterTests
                 routeResolver: BreadcrumbRouteResolverTestDouble.Mock().Object,
                 titleResolver: null!,
                 journeyStore: BreadcrumbJourneyStoreTestDouble.Mock().Object,
-                tracker: BreadcrumbTrackerTestDouble.Mock().Object);
+                strategyFactory: BreadcrumbStrategyFactoryTestDouble.Mock().Object);
 
         Assert.Throws<ArgumentNullException>(construct);
     }
@@ -50,20 +51,20 @@ public sealed class BreadcrumbResultFilterTests
                 routeResolver: BreadcrumbRouteResolverTestDouble.Mock().Object,
                 titleResolver: BreadcrumbTitleResolverTestDouble.Mock().Object,
                 journeyStore: null!,
-                tracker: BreadcrumbTrackerTestDouble.Mock().Object);
+                strategyFactory: BreadcrumbStrategyFactoryTestDouble.Mock().Object);
 
         Assert.Throws<ArgumentNullException>(construct);
     }
 
     [Fact]
-    public void Constructor_Throws_When_TrackerIsNull()
+    public void Constructor_Throws_When_StrategyFactoryIsNull()
     {
         Func<BreadcrumbResultFilter> construct = () =>
             new(
                 routeResolver: BreadcrumbRouteResolverTestDouble.Mock().Object,
                 titleResolver: BreadcrumbTitleResolverTestDouble.Mock().Object,
                 journeyStore: BreadcrumbJourneyStoreTestDouble.Mock().Object,
-                tracker: null!);
+                strategyFactory: null!);
 
         Assert.Throws<ArgumentNullException>(construct);
     }
@@ -75,15 +76,14 @@ public sealed class BreadcrumbResultFilterTests
         Mock<IBreadcrumbJourneyStore> journeyStore =
             BreadcrumbJourneyStoreTestDouble.Mock();
 
-        Mock<IBreadcrumbTracker> tracker =
-            BreadcrumbTrackerTestDouble.Mock();
+        Mock<IBreadcrumbStrategyFactory> strategyFactory = BreadcrumbStrategyFactoryTestDouble.Mock();
 
         BreadcrumbResultFilter sut =
             new(
                 routeResolver: BreadcrumbRouteResolverTestDouble.Mock().Object,
                 titleResolver: BreadcrumbTitleResolverTestDouble.Mock().Object,
                 journeyStore: journeyStore.Object,
-                tracker: tracker.Object);
+                strategyFactory: strategyFactory.Object);
 
         bool nextCalled = false;
 
@@ -103,11 +103,9 @@ public sealed class BreadcrumbResultFilterTests
             store.Load(),
             Times.Never);
 
-        tracker.Verify(tracker =>
-            tracker.Track(
-                It.IsAny<BreadcrumbJourney>(),
-                It.IsAny<BreadcrumbRouteRule>(),
-                It.IsAny<BreadcrumbItem>()),
+        strategyFactory.Verify(
+            factory => factory.GetStrategy(
+                It.IsAny<BreadcrumbRouteRule>()),
             Times.Never);
     }
 
@@ -121,15 +119,15 @@ public sealed class BreadcrumbResultFilterTests
         Mock<IBreadcrumbJourneyStore> journeyStore =
             BreadcrumbJourneyStoreTestDouble.Mock();
 
-        Mock<IBreadcrumbTracker> tracker =
-            BreadcrumbTrackerTestDouble.Mock();
+        Mock<IBreadcrumbStrategyFactory> strategyFactory =
+            BreadcrumbStrategyFactoryTestDouble.Mock();
 
         BreadcrumbResultFilter sut =
             new(
                 routeResolver.Object,
                 BreadcrumbTitleResolverTestDouble.Mock().Object,
                 journeyStore.Object,
-                tracker.Object);
+                strategyFactory.Object);
 
         bool nextCalled = false;
 
@@ -145,15 +143,13 @@ public sealed class BreadcrumbResultFilterTests
         // assert
         Assert.True(nextCalled);
 
-        journeyStore.Verify(store =>
-            store.Load(),
+        journeyStore.Verify(
+            store => store.Load(),
             Times.Never);
 
-        tracker.Verify(tracker =>
-            tracker.Track(
-                It.IsAny<BreadcrumbJourney>(),
-                It.IsAny<BreadcrumbRouteRule>(),
-                It.IsAny<BreadcrumbItem>()),
+        strategyFactory.Verify(
+            factory => factory.GetStrategy(
+                It.IsAny<BreadcrumbRouteRule>()),
             Times.Never);
     }
 
@@ -175,12 +171,16 @@ public sealed class BreadcrumbResultFilterTests
         Mock<IBreadcrumbTitleResolver> titleResolver =
             BreadcrumbTitleResolverTestDouble.MockFor("Title");
 
+        Mock<IBreadcrumbStrategyFactory> strategyFactory =
+            BreadcrumbStrategyFactoryTestDouble.MockFor(
+                BreadcrumbStrategyTestDouble.Mock().Object);
+
         BreadcrumbResultFilter sut =
             new(
                 routeResolver.Object,
                 titleResolver.Object,
                 journeyStore.Object,
-                BreadcrumbTrackerTestDouble.Mock().Object);
+                strategyFactory.Object);
 
         // act
         await sut.OnResultExecutionAsync(
@@ -205,12 +205,16 @@ public sealed class BreadcrumbResultFilterTests
         Mock<IBreadcrumbJourneyStore> journeyStore =
             BreadcrumbJourneyStoreTestDouble.MockFor(new BreadcrumbJourney());
 
+        Mock<IBreadcrumbStrategyFactory> strategyFactory =
+            BreadcrumbStrategyFactoryTestDouble.MockFor(
+                BreadcrumbStrategyTestDouble.Mock().Object);
+
         BreadcrumbResultFilter sut =
             new(
                 BreadcrumbRouteResolverTestDouble.MockFor(rule).Object,
                 BreadcrumbTitleResolverTestDouble.MockFor("Title").Object,
                 journeyStore.Object,
-                BreadcrumbTrackerTestDouble.Mock().Object);
+                strategyFactory.Object);
 
         // act
         await sut.OnResultExecutionAsync(
@@ -235,12 +239,16 @@ public sealed class BreadcrumbResultFilterTests
         Mock<IBreadcrumbJourneyStore> journeyStore =
             BreadcrumbJourneyStoreTestDouble.MockFor(new BreadcrumbJourney());
 
+        Mock<IBreadcrumbStrategyFactory> strategyFactory =
+            BreadcrumbStrategyFactoryTestDouble.MockFor(
+                BreadcrumbStrategyTestDouble.Mock().Object);
+
         BreadcrumbResultFilter sut =
             new(
                 BreadcrumbRouteResolverTestDouble.MockFor(rule).Object,
                 BreadcrumbTitleResolverTestDouble.MockFor("Title").Object,
                 journeyStore.Object,
-                BreadcrumbTrackerTestDouble.Mock().Object);
+                strategyFactory.Object);
 
         ResultExecutingContext context =
             CreateContext(new ViewResult());
@@ -263,9 +271,9 @@ public sealed class BreadcrumbResultFilterTests
     }
 
     [Fact]
-    public async Task OnResultExecutionAsync_LoadsJourney_TracksBreadcrumb_SavesJourney()
+    public async Task OnResultExecutionAsync_LoadsJourney_AppliesStrategy_SavesJourney()
     {
-        // arrange
+        // Arrange
         BreadcrumbJourney journey = new();
 
         BreadcrumbRouteRule rule = new();
@@ -273,8 +281,11 @@ public sealed class BreadcrumbResultFilterTests
         Mock<IBreadcrumbJourneyStore> journeyStore =
             BreadcrumbJourneyStoreTestDouble.MockFor(journey);
 
-        Mock<IBreadcrumbTracker> tracker =
-            BreadcrumbTrackerTestDouble.Mock();
+        Mock<IBreadcrumbStrategy> strategy =
+            BreadcrumbStrategyTestDouble.Mock();
+
+        Mock<IBreadcrumbStrategyFactory> strategyFactory =
+            BreadcrumbStrategyFactoryTestDouble.MockFor(strategy.Object);
 
         Mock<IBreadcrumbTitleResolver> titleResolver =
             BreadcrumbTitleResolverTestDouble.MockFor("Test Title");
@@ -284,18 +295,17 @@ public sealed class BreadcrumbResultFilterTests
                 BreadcrumbRouteResolverTestDouble.MockFor(rule).Object,
                 titleResolver.Object,
                 journeyStore.Object,
-                tracker.Object);
+                strategyFactory.Object);
 
         ResultExecutingContext context =
             CreateContext(new ViewResult());
 
         context.HttpContext.Request.Path = "/search";
-        context.HttpContext.Request.QueryString =
-            new QueryString("?page=1");
+        context.HttpContext.Request.QueryString = new QueryString("?page=1");
 
         bool nextCalled = false;
 
-        // act
+        // Act
         await sut.OnResultExecutionAsync(
             context,
             () =>
@@ -304,24 +314,26 @@ public sealed class BreadcrumbResultFilterTests
                 return CreateNextDelegate()();
             });
 
-        // assert
+        // Assert
         Assert.True(nextCalled);
 
         titleResolver.Verify(
-            resolver =>
-                resolver.Resolve(
-                    rule,
-                    It.IsAny<ViewResult>()),
+            resolver => resolver.Resolve(
+                rule,
+                It.IsAny<ViewResult>()),
             Times.Once);
 
-        tracker.Verify(
-            track =>
-                track.Track(
-                    journey,
-                    rule,
-                    It.Is<BreadcrumbItem>(item =>
-                        item.Title == "Test Title" &&
-                        item.Url == "/search?page=1")),
+        strategyFactory.Verify(
+            factory => factory.GetStrategy(rule),
+            Times.Once);
+
+        strategy.Verify(
+            strategy => strategy.Apply(
+                journey,
+                rule,
+                It.Is<BreadcrumbItem>(item =>
+                    item.Title == "Test Title" &&
+                    item.Url == "/search?page=1")),
             Times.Once);
 
         journeyStore.Verify(

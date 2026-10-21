@@ -24,8 +24,7 @@ public sealed class BreadcrumbResultFilterTests
                 routeResolver: null!,
                 titleResolver: BreadcrumbTitleResolverTestDouble.Mock().Object,
                 journeyStore: BreadcrumbJourneyStoreTestDouble.Mock().Object,
-                tracker: BreadcrumbTrackerTestDouble.Mock().Object,
-                navigationEvaluator: NavigationEvaluatorTestDouble.Mock().Object);
+                tracker: BreadcrumbTrackerTestDouble.Mock().Object);
 
         Assert.Throws<ArgumentNullException>(construct);
     }
@@ -38,8 +37,7 @@ public sealed class BreadcrumbResultFilterTests
                 routeResolver: BreadcrumbRouteResolverTestDouble.Mock().Object,
                 titleResolver: null!,
                 journeyStore: BreadcrumbJourneyStoreTestDouble.Mock().Object,
-                tracker: BreadcrumbTrackerTestDouble.Mock().Object,
-                navigationEvaluator: NavigationEvaluatorTestDouble.Mock().Object);
+                tracker: BreadcrumbTrackerTestDouble.Mock().Object);
 
         Assert.Throws<ArgumentNullException>(construct);
     }
@@ -52,8 +50,7 @@ public sealed class BreadcrumbResultFilterTests
                 routeResolver: BreadcrumbRouteResolverTestDouble.Mock().Object,
                 titleResolver: BreadcrumbTitleResolverTestDouble.Mock().Object,
                 journeyStore: null!,
-                tracker: BreadcrumbTrackerTestDouble.Mock().Object,
-                navigationEvaluator: NavigationEvaluatorTestDouble.Mock().Object);
+                tracker: BreadcrumbTrackerTestDouble.Mock().Object);
 
         Assert.Throws<ArgumentNullException>(construct);
     }
@@ -66,22 +63,7 @@ public sealed class BreadcrumbResultFilterTests
                 routeResolver: BreadcrumbRouteResolverTestDouble.Mock().Object,
                 titleResolver: BreadcrumbTitleResolverTestDouble.Mock().Object,
                 journeyStore: BreadcrumbJourneyStoreTestDouble.Mock().Object,
-                tracker: null!,
-                navigationEvaluator: NavigationEvaluatorTestDouble.Mock().Object);
-
-        Assert.Throws<ArgumentNullException>(construct);
-    }
-
-    [Fact]
-    public void Constructor_Throws_When_NavigationEvaluatorIsNull()
-    {
-        Func<BreadcrumbResultFilter> construct = () =>
-            new(
-                routeResolver: BreadcrumbRouteResolverTestDouble.Mock().Object,
-                titleResolver: BreadcrumbTitleResolverTestDouble.Mock().Object,
-                journeyStore: BreadcrumbJourneyStoreTestDouble.Mock().Object,
-                tracker: BreadcrumbTrackerTestDouble.Mock().Object,
-                navigationEvaluator: null!);
+                tracker: null!);
 
         Assert.Throws<ArgumentNullException>(construct);
     }
@@ -101,8 +83,7 @@ public sealed class BreadcrumbResultFilterTests
                 routeResolver: BreadcrumbRouteResolverTestDouble.Mock().Object,
                 titleResolver: BreadcrumbTitleResolverTestDouble.Mock().Object,
                 journeyStore: journeyStore.Object,
-                tracker: tracker.Object,
-                navigationEvaluator: NavigationEvaluatorTestDouble.Mock().Object);
+                tracker: tracker.Object);
 
         bool nextCalled = false;
 
@@ -148,8 +129,7 @@ public sealed class BreadcrumbResultFilterTests
                 routeResolver.Object,
                 BreadcrumbTitleResolverTestDouble.Mock().Object,
                 journeyStore.Object,
-                tracker.Object,
-                NavigationEvaluatorTestDouble.Mock().Object);
+                tracker.Object);
 
         bool nextCalled = false;
 
@@ -200,8 +180,7 @@ public sealed class BreadcrumbResultFilterTests
                 routeResolver.Object,
                 titleResolver.Object,
                 journeyStore.Object,
-                BreadcrumbTrackerTestDouble.Mock().Object,
-                NavigationEvaluatorTestDouble.Mock().Object);
+                BreadcrumbTrackerTestDouble.Mock().Object);
 
         // act
         await sut.OnResultExecutionAsync(
@@ -231,8 +210,7 @@ public sealed class BreadcrumbResultFilterTests
                 BreadcrumbRouteResolverTestDouble.MockFor(rule).Object,
                 BreadcrumbTitleResolverTestDouble.MockFor("Title").Object,
                 journeyStore.Object,
-                BreadcrumbTrackerTestDouble.Mock().Object,
-                NavigationEvaluatorTestDouble.MockFor(true).Object);
+                BreadcrumbTrackerTestDouble.Mock().Object);
 
         // act
         await sut.OnResultExecutionAsync(
@@ -248,7 +226,7 @@ public sealed class BreadcrumbResultFilterTests
     [Fact]
     public async Task OnResultExecutionAsync_When_DirectNavigationOnlyAndNotDirect_DoesNotClearJourney()
     {
-        // arrange
+        // Arrange
         BreadcrumbRouteRule rule = new()
         {
             JourneyResetMode = BreadcrumbJourneyResetMode.DirectNavigationOnly
@@ -262,15 +240,23 @@ public sealed class BreadcrumbResultFilterTests
                 BreadcrumbRouteResolverTestDouble.MockFor(rule).Object,
                 BreadcrumbTitleResolverTestDouble.MockFor("Title").Object,
                 journeyStore.Object,
-                BreadcrumbTrackerTestDouble.Mock().Object,
-                NavigationEvaluatorTestDouble.MockFor(false).Object);
+                BreadcrumbTrackerTestDouble.Mock().Object);
 
-        // act
+        ResultExecutingContext context =
+            CreateContext(new ViewResult());
+
+        context.HttpContext.Request.Host =
+            new HostString("education-provider.service.gov.uk");
+
+        context.HttpContext.Request.Headers.Referer =
+            "https://education-provider.service.gov.uk/search";
+
+        // Act
         await sut.OnResultExecutionAsync(
-            CreateContext(new ViewResult()),
+            context,
             CreateNextDelegate());
 
-        // assert
+        // Assert
         journeyStore.Verify(
             store => store.Clear(),
             Times.Never);
@@ -298,8 +284,7 @@ public sealed class BreadcrumbResultFilterTests
                 BreadcrumbRouteResolverTestDouble.MockFor(rule).Object,
                 titleResolver.Object,
                 journeyStore.Object,
-                tracker.Object,
-                NavigationEvaluatorTestDouble.Mock().Object);
+                tracker.Object);
 
         ResultExecutingContext context =
             CreateContext(new ViewResult());

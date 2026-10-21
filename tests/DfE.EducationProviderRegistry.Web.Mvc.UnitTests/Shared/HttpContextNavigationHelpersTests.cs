@@ -1,12 +1,10 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.NavigationEvaluators;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared;
 using Microsoft.AspNetCore.Http;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Shared.Filters.Breadcrumbs.Resolvers;
+namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Shared;
 
-public sealed class NavigationEvaluatorTests
+public sealed class HttpContextNavigationHelpersTests
 {
-    private readonly NavigationEvaluator _sut = new();
-
     [Fact]
     public void IsDirectNavigation_WhenRefererIsMissing_ShouldReturnTrue()
     {
@@ -18,7 +16,7 @@ public sealed class NavigationEvaluatorTests
 
         // Act
         bool result =
-            _sut.IsDirectNavigation(context);
+            HttpContextNavigationHelpers.IsDirectNavigation(context);
 
         // Assert
         Assert.True(result);
@@ -38,7 +36,7 @@ public sealed class NavigationEvaluatorTests
 
         // Act
         bool result =
-            _sut.IsDirectNavigation(context);
+            HttpContextNavigationHelpers.IsDirectNavigation(context);
 
         // Assert
         Assert.True(result);
@@ -58,7 +56,7 @@ public sealed class NavigationEvaluatorTests
 
         // Act
         bool result =
-            _sut.IsDirectNavigation(context);
+            HttpContextNavigationHelpers.IsDirectNavigation(context);
 
         // Assert
         Assert.True(result);
@@ -78,7 +76,7 @@ public sealed class NavigationEvaluatorTests
 
         // Act
         bool result =
-            _sut.IsDirectNavigation(context);
+            HttpContextNavigationHelpers.IsDirectNavigation(context);
 
         // Assert
         Assert.False(result);
@@ -98,7 +96,7 @@ public sealed class NavigationEvaluatorTests
 
         // Act
         bool result =
-            _sut.IsDirectNavigation(context);
+            HttpContextNavigationHelpers.IsDirectNavigation(context);
 
         // Assert
         Assert.False(result);

@@ -1,5 +1,4 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.NavigationEvaluators;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Options;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Options;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Resolvers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Store;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Strategies;
@@ -27,7 +26,6 @@ public static class CompositionRoot
 
         // State Store & Evaluation Infrastructure.
         services.AddScoped<IBreadcrumbJourneyStore, SessionBreadcrumbJourneyStore>();
-        services.AddSingleton<INavigationEvaluator, NavigationEvaluator>();
 
         // Incremental Journey Rules (Evaluated in order).
         services.AddTransient<IJourneyRule, EmptyJourneyRule>();

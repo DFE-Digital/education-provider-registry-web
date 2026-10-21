@@ -1,5 +1,4 @@
 ﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Models;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.NavigationEvaluators;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Options;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Resolvers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Store;
@@ -15,25 +14,22 @@ public sealed class BreadcrumbResultFilter : IAsyncResultFilter
     private readonly IBreadcrumbTitleResolver _titleResolver;
     private readonly IBreadcrumbJourneyStore _journeyStore;
     private readonly IBreadcrumbTracker _tracker;
-    private readonly INavigationEvaluator _navigationEvaluator;
 
     public BreadcrumbResultFilter(
         IBreadcrumbRouteResolver routeResolver,
         IBreadcrumbTitleResolver titleResolver,
         IBreadcrumbJourneyStore journeyStore,
-        IBreadcrumbTracker tracker,
-        INavigationEvaluator navigationEvaluator)
+        IBreadcrumbTracker tracker)
     {
         ArgumentNullException.ThrowIfNull(routeResolver);
         ArgumentNullException.ThrowIfNull(titleResolver);
         ArgumentNullException.ThrowIfNull(journeyStore);
         ArgumentNullException.ThrowIfNull(tracker);
-        ArgumentNullException.ThrowIfNull(navigationEvaluator);
+
         _routeResolver = routeResolver;
         _titleResolver = titleResolver;
         _journeyStore = journeyStore;
         _tracker = tracker;
-        _navigationEvaluator = navigationEvaluator;
     }
 
     public async Task OnResultExecutionAsync(
@@ -75,7 +71,7 @@ public sealed class BreadcrumbResultFilter : IAsyncResultFilter
     {
         if (rule.JourneyResetMode == BreadcrumbJourneyResetMode.Always ||
             (rule.JourneyResetMode == BreadcrumbJourneyResetMode.DirectNavigationOnly &&
-             _navigationEvaluator.IsDirectNavigation(context)))
+             HttpContextNavigationHelpers.IsDirectNavigation(context)))
         {
             _journeyStore.Clear();
         }

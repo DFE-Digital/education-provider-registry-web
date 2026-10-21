@@ -1,0 +1,47 @@
+﻿using DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.Document.Abstractions;
+using OpenQA.Selenium;
+
+namespace DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.Document.WebDriver;
+
+internal class WebDriverElement : IElement
+{
+    private readonly IWebElement _element;
+
+    public WebDriverElement(IWebElement element)
+    {
+        ArgumentNullException.ThrowIfNull(element);
+        _element = element;
+    }
+
+    public string Text => _element.Text;
+
+    public string? Attribute(string name)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
+        return _element.GetAttribute(name);
+    }
+
+    public IElement? Find(string selector)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(selector);
+
+        IWebElement? element = _element
+            .FindElements(By.CssSelector(selector))
+            .FirstOrDefault();
+
+        return element is null
+            ? null
+            : new WebDriverElement(element);
+    }
+
+    public IReadOnlyCollection<IElement> FindAll(string selector)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(selector);
+
+        return _element
+            .FindElements(
+                By.CssSelector(selector))
+            .Select(static (element) => (IElement)new WebDriverElement(element))
+            .ToList();
+    }
+}

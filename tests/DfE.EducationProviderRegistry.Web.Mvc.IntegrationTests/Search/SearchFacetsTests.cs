@@ -23,7 +23,7 @@ public sealed class SearchFacetsTests
                 searchResults: SearchAggregateResults.CreateEmpty(),
                 responseFacets);
 
-        using WebApplicationFactory<Program> factory = WebApplicationFactoryProvider.CreateFactory(useCase);
+        using WebApplicationFactory<Program> factory = WebApplicationFactoryProvider.StubUseCase(useCase);
 
         using HttpClient client = factory.CreateClient();
 
@@ -55,7 +55,7 @@ public sealed class SearchFacetsTests
                 searchResults: SearchAggregateResults.CreateEmpty(),
                 responseFacets);
 
-        using WebApplicationFactory<Program> factory = WebApplicationFactoryProvider.CreateFactory(useCase);
+        using WebApplicationFactory<Program> factory = WebApplicationFactoryProvider.StubUseCase(useCase);
 
         using HttpClient client = factory.CreateClient();
 

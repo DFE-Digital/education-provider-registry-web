@@ -1,13 +1,19 @@
 ﻿using DfE.Core.Libraries.CleanArchitecture.Application;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests;
+namespace DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.WebApplicationFactory.Extensions;
 
-internal static class WebApplicationFactoryProvider
+public static class WebApplicationFactoryProvider
 {
-    public static WebApplicationFactory<Program> CreateFactory<TRequest, TResponse>(IUseCase<TRequest, UseCaseResponse<TResponse>> stubUseCase)
+    public static WebApplicationFactory<Program> Default =>
+        new WebApplicationFactory<Program>()
+            .UseProduction()
+            .UseClientOptions();
+
+    public static WebApplicationFactory<Program> StubUseCase<TRequest, TResponse>(IUseCase<TRequest, UseCaseResponse<TResponse>> stubUseCase)
         where TRequest : IUseCaseRequest<UseCaseResponse<TResponse>>
         where TResponse : class
     {

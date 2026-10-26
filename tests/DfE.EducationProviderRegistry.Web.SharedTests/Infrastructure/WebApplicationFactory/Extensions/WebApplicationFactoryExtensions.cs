@@ -14,4 +14,16 @@ public static class WebApplicationFactoryExtensions
 
         return updatedFactory;
     }
+
+    public static WebApplicationFactory<TProgram> UseClientOptions<TProgram>(
+        this WebApplicationFactory<TProgram> factory,
+        Action<WebApplicationFactoryClientOptions>? configure = null) where TProgram : class
+    {
+        factory.ClientOptions.BaseAddress = new("https://localhost");
+        factory.ClientOptions.AllowAutoRedirect = false;
+
+        configure?.Invoke(factory.ClientOptions);
+
+        return factory;
+    }
 }

@@ -99,16 +99,16 @@ public sealed class BreadcrumbBehaviourTests
         HttpClient client = factory.CreateClient();
 
         // Act
-
         HttpResponseMessage response =
             await client.GetAsync(
                 matchesRoute,
                 TestContext.Current.CancellationToken);
 
+        // Assert
+        // Session endpoint exists solely to retrieve ISession details
         HttpResponseMessage sessionResponse =
             await client.GetAsync("/breadcrumb-tests/session", TestContext.Current.CancellationToken);
 
-        // Assert
         response.EnsureSuccessStatusCode();
         sessionResponse.EnsureSuccessStatusCode();
 

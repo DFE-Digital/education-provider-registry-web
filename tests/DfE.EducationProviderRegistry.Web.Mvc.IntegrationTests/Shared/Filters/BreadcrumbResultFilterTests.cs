@@ -10,7 +10,7 @@ using Moq;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Shared.Filters;
 
-public sealed class BreadcrumbBehaviourTests
+public sealed class BreadcrumbResultFilterTests
 {
     [Fact]
     public async Task Get_WhenResultIsNotViewResult_DoesNotAccessBreadcrumbJourney()

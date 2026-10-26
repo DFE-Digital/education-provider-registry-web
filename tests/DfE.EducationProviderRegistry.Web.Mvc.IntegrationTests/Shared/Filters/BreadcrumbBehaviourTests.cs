@@ -86,8 +86,7 @@ public sealed class BreadcrumbBehaviourTests
                 .Build();
 
         WebApplicationFactory<Program> factory =
-            WebApplicationFactoryProvider
-                .Default
+            WebApplicationFactoryProvider.Default
                 .WithWebHostBuilder((builder) =>
                 {
                     builder

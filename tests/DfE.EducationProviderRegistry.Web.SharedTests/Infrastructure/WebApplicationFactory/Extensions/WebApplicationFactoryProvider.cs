@@ -21,7 +21,6 @@ public static class WebApplicationFactoryProvider
         {
             builder.ConfigureAppConfiguration((services, configurationBuilder) =>
             {
-                configurationBuilder.Sources.Clear();
                 configurationBuilder.AddInMemoryCollection(configuration);
             });
         });

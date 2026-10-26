@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Shared.Filters;
 
+[Route("breadcrumb-tests")]
 public sealed class BreadcrumbTestController : Controller
 {
-    [HttpGet("/breadcrumb-tests/view")]
+    [HttpGet("view")]
     public IActionResult ViewResultAction(string heading = "Test establishment")
     {
         BreadcrumbTestViewModel model = new()
@@ -16,16 +18,20 @@ public sealed class BreadcrumbTestController : Controller
         return View("BreadcrumbTest", model);
     }
 
-    [HttpGet("/breadcrumb-tests/content")]
-    public IActionResult ContentResultAction()
-    {
-        return Content("Content result");
-    }
-
-    [HttpGet("/breadcrumb-tests/redirect")]
+    [HttpGet("redirect")]
     public IActionResult RedirectResultAction()
     {
         return Redirect("/breadcrumb-tests/view");
+    }
+
+    [HttpGet("session")]
+    public IActionResult Session()
+    {
+        byte[]? journey = HttpContext.Session.Get("BreadcrumbJourney");
+
+        return journey is null
+            ? NotFound()
+            : Ok(journey);
     }
 }
 

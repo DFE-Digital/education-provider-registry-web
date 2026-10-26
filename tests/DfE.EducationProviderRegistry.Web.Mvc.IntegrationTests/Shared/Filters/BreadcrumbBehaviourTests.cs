@@ -39,7 +39,6 @@ public sealed class BreadcrumbBehaviourTests
 
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-
         Assert.Empty(store.Invocations);
     }
 
@@ -75,8 +74,8 @@ public sealed class BreadcrumbBehaviourTests
             TestContext.Current.CancellationToken);
 
         // Assert
+        Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
         Assert.Empty(store.Invocations);
     }
 }

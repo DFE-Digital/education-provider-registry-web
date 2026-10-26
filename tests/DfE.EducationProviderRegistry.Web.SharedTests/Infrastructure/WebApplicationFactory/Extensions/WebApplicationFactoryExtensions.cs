@@ -6,6 +6,7 @@ namespace DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.WebApplic
 
 public static class WebApplicationFactoryExtensions
 {
+
     public static WebApplicationFactory<TProgram> UseProduction<TProgram>(this WebApplicationFactory<TProgram> factory) where TProgram : class
     {
         WebApplicationFactory<TProgram> updatedFactory =

@@ -34,7 +34,7 @@ public sealed class HttpPipelineRoutingTests
 
         using WebApplicationFactory<Program> factory =
             WebApplicationFactoryProvider
-                .CreateFactory(useCase)
+                .StubUseCase(useCase)
                 .UseProduction();
 
         using HttpClient client = factory.CreateClient();

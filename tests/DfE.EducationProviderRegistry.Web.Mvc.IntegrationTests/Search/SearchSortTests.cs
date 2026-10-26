@@ -24,7 +24,7 @@ public sealed class SearchSortTests
                 SearchAggregateResults.CreateEmpty(),
                 SearchFacetsTestDouble.StubEmpty());
 
-        using WebApplicationFactory<Program> factory = WebApplicationFactoryProvider.CreateFactory(useCase);
+        using WebApplicationFactory<Program> factory = WebApplicationFactoryProvider.StubUseCase(useCase);
 
         using HttpClient client = factory.CreateClient();
 
@@ -57,7 +57,7 @@ public sealed class SearchSortTests
         (IUseCase<SearchRequest, UseCaseResponse<SearchResponse>> useCase,
             SearchResponse _) = SearchUseCaseTestDoubles.StubResponse();
 
-        using WebApplicationFactory<Program> factory = WebApplicationFactoryProvider.CreateFactory(useCase);
+        using WebApplicationFactory<Program> factory = WebApplicationFactoryProvider.StubUseCase(useCase);
 
         using HttpClient client = factory.CreateClient();
 

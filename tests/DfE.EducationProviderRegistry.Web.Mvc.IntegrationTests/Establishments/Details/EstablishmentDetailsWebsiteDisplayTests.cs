@@ -32,7 +32,7 @@ public sealed class EstablishmentDetailsWebsiteDisplayTests : IntegrationTestsBa
 
         UseCaseStub<GetEstablishmentByUrnRequest, EstablishmentDetailsReadModel> stubUseCase = new(stubResponse);
 
-        using WebApplicationFactory<Program> factory = WebApplicationFactoryProvider.CreateFactory(stubUseCase);
+        using WebApplicationFactory<Program> factory = WebApplicationFactoryProvider.StubUseCase(stubUseCase);
 
         using HttpClient client = factory.CreateClient();
 
@@ -81,7 +81,7 @@ public sealed class EstablishmentDetailsWebsiteDisplayTests : IntegrationTestsBa
         UseCaseStub<GetEstablishmentByUrnRequest, EstablishmentDetailsReadModel> stubUseCase = new(stubResponse);
 
         using WebApplicationFactory<Program> factory =
-            WebApplicationFactoryProvider.CreateFactory(stubUseCase);
+            WebApplicationFactoryProvider.StubUseCase(stubUseCase);
 
         using HttpClient client = factory.CreateClient();
 

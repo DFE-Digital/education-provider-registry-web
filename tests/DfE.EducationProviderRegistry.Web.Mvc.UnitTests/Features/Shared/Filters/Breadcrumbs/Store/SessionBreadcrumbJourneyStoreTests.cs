@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Models;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Store;
-using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.TestDoubles;
+using DfE.EducationProviderRegistry.Web.SharedTests.TestDoubles;
 using Microsoft.AspNetCore.Http;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Shared.Filters.Breadcrumbs.Store;
@@ -19,8 +19,8 @@ public sealed class SessionBreadcrumbJourneyStoreTests
     public void Load_WhenSessionIsEmpty_ShouldReturnEmptyJourney()
     {
         // Arrange
-        SessionTestDouble session =
-            SessionTestDouble.Create();
+        ISession session =
+            SessionTestDouble.Fake();
 
         SessionBreadcrumbJourneyStore sut =
             new(session);
@@ -41,7 +41,7 @@ public sealed class SessionBreadcrumbJourneyStoreTests
     string json)
     {
         // Arrange
-        SessionTestDouble session = SessionTestDouble.Create();
+        ISession session = SessionTestDouble.Fake();
 
         session.SetString("BreadcrumbJourney", json);
 
@@ -59,7 +59,7 @@ public sealed class SessionBreadcrumbJourneyStoreTests
     public void Load_WhenStoredJsonIsJsonNull_ShouldReturnEmptyJourney()
     {
         // Arrange
-        SessionTestDouble session = SessionTestDouble.Create();
+        ISession session = SessionTestDouble.Fake();
 
         session.SetString(
             "BreadcrumbJourney",
@@ -79,7 +79,7 @@ public sealed class SessionBreadcrumbJourneyStoreTests
     public void Load_WhenStoredJsonIsInvalid_ShouldThrowJsonException()
     {
         // Arrange
-        SessionTestDouble session = SessionTestDouble.Create();
+        ISession session = SessionTestDouble.Fake();
 
         session.SetString(
             "BreadcrumbJourney",
@@ -97,8 +97,8 @@ public sealed class SessionBreadcrumbJourneyStoreTests
     public void Save_ShouldPersistJourney()
     {
         // Arrange
-        SessionTestDouble session =
-            SessionTestDouble.Create();
+        ISession session =
+            SessionTestDouble.Fake();
 
         SessionBreadcrumbJourneyStore sut =
             new(session);
@@ -133,8 +133,8 @@ public sealed class SessionBreadcrumbJourneyStoreTests
     public void Clear_ShouldRemoveStoredJourney()
     {
         // Arrange
-        SessionTestDouble session =
-            SessionTestDouble.Create();
+        ISession session =
+            SessionTestDouble.Fake();
 
         SessionBreadcrumbJourneyStore sut =
             new(session);
@@ -163,8 +163,8 @@ public sealed class SessionBreadcrumbJourneyStoreTests
     public void Load_AfterSave_ShouldReturnSameJourney()
     {
         // Arrange
-        SessionTestDouble session =
-            SessionTestDouble.Create();
+        ISession session =
+            SessionTestDouble.Fake();
 
         SessionBreadcrumbJourneyStore sut =
             new(session);

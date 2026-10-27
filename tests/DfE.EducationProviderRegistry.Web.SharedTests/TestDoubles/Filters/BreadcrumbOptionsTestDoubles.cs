@@ -1,7 +1,7 @@
 ﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Models;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Options;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Shared.Filters.TestDoubles;
+namespace DfE.EducationProviderRegistry.Web.SharedTests.TestDoubles.Filters;
 
 public static class BreadcrumbOptionsTestDoubles
 {
@@ -13,8 +13,8 @@ public static class BreadcrumbOptionsTestDoubles
                 .Create("/search/results")
                 .WithTitle("Search Results")
                 .WithJourneyResetMode(BreadcrumbJourneyResetMode.DirectNavigationOnly)
-                .WithJourney("Home", "/")
-                .WithJourney("Search", "/search")
+                .WithAddToBaseJourney("Home", "/")
+                .WithAddToBaseJourney("Search", "/search")
                 .Build(),
 
             BreadcrumbRouteRuleBuilder

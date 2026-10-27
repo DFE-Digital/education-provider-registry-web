@@ -1,7 +1,7 @@
 ﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Models;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Options;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Shared.Filters.TestDoubles;
+namespace DfE.EducationProviderRegistry.Web.SharedTests.TestDoubles.Filters;
 
 public sealed class BreadcrumbRouteRuleBuilder
 {
@@ -41,7 +41,7 @@ public sealed class BreadcrumbRouteRuleBuilder
         return this;
     }
 
-    public BreadcrumbRouteRuleBuilder WithJourney(string title, string url)
+    public BreadcrumbRouteRuleBuilder WithAddToBaseJourney(string title, string url)
     {
         _baseJourney.Add(new BreadcrumbPrefixItem
         {

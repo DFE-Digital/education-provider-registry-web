@@ -1,11 +1,8 @@
 ﻿using System.Net;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Options;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Store;
-using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Shared.Filters.Infrastructure.Extensions;
-using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Shared.Filters.TestDoubles;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+using DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.Filters;
+using DfE.EducationProviderRegistry.Web.SharedTests.TestDoubles.Filters;
 using Moq;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Shared.Filters;
@@ -15,18 +12,14 @@ public sealed class BreadcrumbResultFilterTests
     [Fact]
     public async Task Get_WhenResultIsNotViewResult_DoesNotAccessBreadcrumbJourney()
     {
-        Mock<IBreadcrumbJourneyStore> store = IBreadCrumbJourneyStoreTestDoubles.Default();
+        Mock<IBreadcrumbJourneyStore> store = BreadcrumbJourneyStoreTestDouble.Mock();
 
         using WebApplicationFactory<Program> factory =
             WebApplicationFactoryProvider.Default
                 .WithWebHostBuilder((builder) =>
                     builder
                         .UseBreadcrumbStubMvcInfrastructure()
-                        .ConfigureTestServices((services) =>
-                        {
-                            services.RemoveAll<IBreadcrumbJourneyStore>();
-                            services.AddSingleton(_ => store.Object);
-                        }));
+                        .UseBreadcrumbExistingJourney(store.Object));
 
         using HttpClient client = factory.CreateClient();
 
@@ -41,8 +34,7 @@ public sealed class BreadcrumbResultFilterTests
     public async Task Get_WhenIsViewResult_And_RouteDoesNotMatchConfiguration_DoesNotAccessBreadcrumbJourney()
     {
         // Arrange
-        Mock<IBreadcrumbJourneyStore> store =
-            IBreadCrumbJourneyStoreTestDoubles.Default();
+        Mock<IBreadcrumbJourneyStore> store = BreadcrumbJourneyStoreTestDouble.Mock();
 
         BreadcrumbRouteRule rule =
             BreadcrumbRouteRuleBuilder
@@ -58,11 +50,7 @@ public sealed class BreadcrumbResultFilterTests
                     builder
                         .UseBreadcrumbConfiguration(options)
                         .UseBreadcrumbStubMvcInfrastructure()
-                        .ConfigureTestServices((services) =>
-                        {
-                            services.RemoveAll<IBreadcrumbJourneyStore>();
-                            services.AddSingleton(_ => store.Object);
-                        }));
+                        .UseBreadcrumbExistingJourney(store.Object));
 
         using HttpClient client = factory.CreateClient();
 

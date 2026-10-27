@@ -1,6 +1,8 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Options;
-using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Shared.Filters.Infrastructure;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Models;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Options;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Store;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -8,8 +10,9 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
+using Moq;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Shared.Filters.Infrastructure.Extensions;
+namespace DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.Filters;
 
 public static class BreadcrumbTestDependenciesExtensions
 {
@@ -41,6 +44,15 @@ public static class BreadcrumbTestDependenciesExtensions
         });
     }
 
+    public static IWebHostBuilder UseBreadcrumbExistingJourney(this IWebHostBuilder builder, IBreadcrumbJourneyStore store)
+    {
+        return builder.ConfigureTestServices((services) =>
+        {
+            services.RemoveAll<IBreadcrumbJourneyStore>();
+
+            services.AddScoped<IBreadcrumbJourneyStore>(_ => store);
+        });
+    }
 
     private static IWebHostBuilder AddBreadcrumbViewResultNoOp(this IWebHostBuilder builder)
     {

@@ -1,7 +1,7 @@
 ﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Options;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Strategies;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Strategies.Factories;
-using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.TestDoubles;
+using DfE.EducationProviderRegistry.Web.SharedTests.TestDoubles;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Shared.Filters.Breadcrumbs.Strategies.Factories;
 

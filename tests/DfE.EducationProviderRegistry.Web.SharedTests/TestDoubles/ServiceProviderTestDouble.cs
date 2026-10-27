@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.TestDoubles;
+namespace DfE.EducationProviderRegistry.Web.SharedTests.TestDoubles;
 
 public sealed class ServiceProviderTestDouble : IServiceProvider, IKeyedServiceProvider
 {

@@ -7,7 +7,7 @@ using DfE.EducationProviderRegistry.Core.Query.Download.Datasets.Application.Use
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Download.Datasets.Controllers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Download.Datasets.ViewModels;
 using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Download.Datasets.Controllers.TestDoubles;
-using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.TestDoubles;
+using DfE.EducationProviderRegistry.Web.SharedTests.TestDoubles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -48,7 +48,7 @@ public sealed class DatasetsControllerTests
             UseCaseReponseToViewModelMapperTestDouble.Mock();
 
         ISession session =
-            SessionTestDouble.Create();
+            SessionTestDouble.Fake();
 
         DatasetsController controller =
             CreateController(useCaseMock, mapperMock, session);
@@ -72,7 +72,7 @@ public sealed class DatasetsControllerTests
             UseCaseReponseToViewModelMapperTestDouble.Mock();
 
         ISession session =
-            SessionTestDouble.Create();
+            SessionTestDouble.Fake();
 
         DatasetsController controller =
             CreateController(useCaseMock, mapperMock, session);
@@ -102,7 +102,7 @@ public sealed class DatasetsControllerTests
             UseCaseReponseToViewModelMapperTestDouble.Mock();
 
         ISession session =
-            SessionTestDouble.Create();
+            SessionTestDouble.Fake();
 
         DatasetsController controller =
             CreateController(useCaseMock, mapperMock, session);
@@ -157,7 +157,7 @@ public sealed class DatasetsControllerTests
             UseCaseReponseToViewModelMapperTestDouble.MockFor(viewModel, dataset);
 
         ISession session =
-            SessionTestDouble.Create();
+            SessionTestDouble.Fake();
 
         DatasetsController controller =
             CreateController(useCaseMock, mapperMock, session);
@@ -193,7 +193,7 @@ public sealed class DatasetsControllerTests
             UseCaseReponseToViewModelMapperTestDouble.Mock();
 
         ISession session =
-            SessionTestDouble.Create();
+            SessionTestDouble.Fake();
 
         DatasetsController controller =
             CreateController(useCaseMock, mapperMock, session);
@@ -217,7 +217,7 @@ public sealed class DatasetsControllerTests
             UseCaseReponseToViewModelMapperTestDouble.Mock();
 
         ISession session =
-            SessionTestDouble.Create();
+            SessionTestDouble.Fake();
 
         DatasetsController controller =
             CreateController(useCaseMock, mapperMock, session);
@@ -243,7 +243,7 @@ public sealed class DatasetsControllerTests
             UseCaseReponseToViewModelMapperTestDouble.Mock();
 
         ISession session =
-            SessionTestDouble.Create();
+            SessionTestDouble.Fake();
 
         DatasetsController controller =
             CreateController(useCaseMock, mapperMock, session);
@@ -286,7 +286,7 @@ public sealed class DatasetsControllerTests
             UseCaseReponseToViewModelMapperTestDouble.Mock();
 
         ISession session =
-            SessionTestDouble.Create();
+            SessionTestDouble.Fake();
 
         DatasetsController controller =
             CreateController(useCaseMock, mapperMock, session);
@@ -317,7 +317,7 @@ public sealed class DatasetsControllerTests
             UseCaseReponseToViewModelMapperTestDouble.Mock();
 
         ISession session =
-            SessionTestDouble.Create();
+            SessionTestDouble.Fake();
 
         DatasetsController controller =
             CreateController(useCaseMock, mapperMock, session);
@@ -348,7 +348,7 @@ public sealed class DatasetsControllerTests
             UseCaseReponseToViewModelMapperTestDouble.Mock();
 
         ISession session =
-            SessionTestDouble.Create();
+            SessionTestDouble.Fake();
 
         DatasetsController controller =
             CreateController(useCaseMock, mapperMock, session);

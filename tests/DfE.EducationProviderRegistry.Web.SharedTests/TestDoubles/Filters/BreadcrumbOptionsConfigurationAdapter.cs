@@ -1,6 +1,6 @@
 ﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Options;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Shared.Filters.TestDoubles;
+namespace DfE.EducationProviderRegistry.Web.SharedTests.TestDoubles.Filters;
 
 public static class BreadcrumbOptionsConfigurationAdapter
 {
@@ -8,7 +8,7 @@ public static class BreadcrumbOptionsConfigurationAdapter
     {
         ArgumentNullException.ThrowIfNull(options);
 
-        Dictionary<string, string?> configuration = new();
+        Dictionary<string, string?> configuration = [];
 
         for (int ruleIndex = 0; ruleIndex < options.Rules.Count; ruleIndex++)
         {

@@ -6,7 +6,6 @@ using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Respo
 using DfE.EducationProviderRegistry.Core.Query.Shared;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
-using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Controllers.TestDoubles;
 using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Mappers.TestDoubles;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 using Moq;
@@ -21,7 +20,7 @@ public sealed class SearchResultsToViewModelMapperTests
             new ProviderIdentifier(identifier),
             new Name(name),
             new SearchAddress("Street, Street 2, Town, County, AB1 2CD"),
-            new SearchType("Academy", 1),
+            new SearchType("Academy"),
             new GroupDetail("Group Name", "1234"),
             new SearchLocalAuthority("LA Name"),
             new SearchCategory("Establishment"),
@@ -155,7 +154,7 @@ public sealed class SearchResultsToViewModelMapperTests
         SearchResultsToViewModelMapper mapper =
             new(searchAggregateMapper.Object, facetsMapper.Object);
 
-        SearchResponse response = new SearchResponse(null!, null, 1);
+        SearchResponse response = new(null!, null, 1);
         SearchResultsMappingContext input = new(new SearchRequestViewModel(), UseCaseResponse<SearchResponse>.Success(response));
 
         // act

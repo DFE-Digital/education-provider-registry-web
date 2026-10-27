@@ -63,7 +63,7 @@ public sealed class SearchResultsUITests : UIBaseTest
         SearchResultsComponent results = new(driver);
         SearchFiltersComponent filters = new(driver);
 
-        const string targetFacet = "searchprovidertypeid";
+        const string targetFacet = "searchprovidertypename";
         const string targetFacetValueLabel = "Single-Academy Trust";
 
         // Act

@@ -3,38 +3,64 @@ using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Shared.Filters.TestDoubles;
 
-internal sealed class BreadcrumbOptionsBuilder
+public sealed class BreadcrumbRouteRuleBuilder
 {
-    List<BreadcrumbRouteRule> _rules;
-    public BreadcrumbOptionsBuilder()
+    private readonly string _pathPattern;
+    private string? _title;
+    private string? _titleModelProperty;
+    private BreadcrumbJourneyResetMode? _journeyResetMode;
+    private readonly List<BreadcrumbPrefixItem> _baseJourney = [];
+
+    private BreadcrumbRouteRuleBuilder(string path)
     {
-        _rules = [];
+        ArgumentException.ThrowIfNullOrWhiteSpace(path);
+        _pathPattern = path;
     }
 
-    public static BreadcrumbOptionsBuilder Create() => new();
-    public BreadcrumbOptionsBuilder WithRule(string path, string? title = null, BreadcrumbJourneyResetMode? resetMode = null)
+    public static BreadcrumbRouteRuleBuilder Create(string pathPattern)
     {
-        BreadcrumbRouteRule rule = new()
-        {
-            PathPattern = path,
-            Title = title
-        };
+        return new(pathPattern);
+    }
 
-        if (resetMode is not null)
-        {
-            rule.JourneyResetMode = resetMode.Value;
-        }
+    public BreadcrumbRouteRuleBuilder WithTitle(string? title)
+    {
+        _title = title;
+        return this;
+    }
 
-        _rules.Add(rule);
+    public BreadcrumbRouteRuleBuilder WithTitleModelProperty(string? titleModelProperty)
+    {
+        _titleModelProperty = titleModelProperty;
+        return this;
+    }
+
+    public BreadcrumbRouteRuleBuilder WithJourneyResetMode(
+        BreadcrumbJourneyResetMode journeyResetMode)
+    {
+        _journeyResetMode = journeyResetMode;
+        return this;
+    }
+
+    public BreadcrumbRouteRuleBuilder WithPrefix(string title, string url)
+    {
+        _baseJourney.Add(new BreadcrumbPrefixItem
+        {
+            Title = title,
+            Url = url
+        });
 
         return this;
     }
 
-    public BreadcrumbOptions Build()
+    public BreadcrumbRouteRule Build()
     {
-        return new()
+        return new BreadcrumbRouteRule
         {
-            Rules = _rules
+            PathPattern = _pathPattern,
+            Title = _title,
+            TitleModelProperty = _titleModelProperty,
+            JourneyResetMode = _journeyResetMode is null ? default : _journeyResetMode.Value,
+            BaseJourney = [.. _baseJourney]
         };
     }
 }

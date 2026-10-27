@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Options;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Store;
-using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Shared.Filters.Extensions;
+using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Shared.Filters.Infrastructure.Extensions;
 using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Shared.Filters.TestDoubles;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
@@ -44,10 +44,13 @@ public sealed class BreadcrumbResultFilterTests
         Mock<IBreadcrumbJourneyStore> store =
             IBreadCrumbJourneyStoreTestDoubles.Default();
 
-        BreadcrumbOptions options =
-            BreadcrumbOptionsBuilder.Create()
-                .WithRule("/some-other-route")
+        BreadcrumbRouteRule rule =
+            BreadcrumbRouteRuleBuilder
+                .Create("/some-other-route")
                 .Build();
+
+        BreadcrumbOptions options =
+            BreadcrumbOptionsTestDoubles.Create([rule]);
 
         using WebApplicationFactory<Program> factory =
             WebApplicationFactoryProvider.Default
@@ -80,10 +83,14 @@ public sealed class BreadcrumbResultFilterTests
         // Arrange
         const string matchesRoute = "/breadcrumb-tests/view";
 
-        BreadcrumbOptions options =
-            BreadcrumbOptionsBuilder.Create()
-                .WithRule(path: matchesRoute, title: "Breadcrumb test")
+        BreadcrumbRouteRule rule =
+            BreadcrumbRouteRuleBuilder
+                .Create(matchesRoute)
+                .WithTitle("Breadcrumb test")
                 .Build();
+
+        BreadcrumbOptions options =
+            BreadcrumbOptionsTestDoubles.Create([rule]);
 
         WebApplicationFactory<Program> factory =
             WebApplicationFactoryProvider.Default

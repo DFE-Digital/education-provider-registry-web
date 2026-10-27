@@ -16,7 +16,7 @@ public sealed class BaseJourneyStrategy : IBreadcrumbStrategy
 
         journey.Items =
         [
-            ..(rule.BaseJourney ?? []).Select(
+            ..rule.BaseJourney.Select(
                 breadcrumbPrefixItem =>
                     new BreadcrumbItem(
                         breadcrumbPrefixItem.Title,

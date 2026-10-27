@@ -14,20 +14,40 @@ public sealed class BreadcrumbOptionsTests
     public void Configuration_Binds_To_BreadcrumbOptions()
     {
         // Arrange
-        IReadOnlyDictionary<string, string?> configurationValues = BreadcrumbOptionsTestDoubles.Stub();
+        BreadcrumbOptions breadCrumbOptions = BreadcrumbOptionsTestDoubles.Create([
+            BreadcrumbRouteRuleBuilder
+                .Create("/search/results")
+                .WithTitle("Search Results")
+                .WithJourneyResetMode(BreadcrumbJourneyResetMode.DirectNavigationOnly)
+                .WithAddToBaseJourney("Home", "/")
+                .WithAddToBaseJourney("Search", "/search")
+                .Build(),
+
+            BreadcrumbRouteRuleBuilder
+                .Create("/establishments")
+                .WithTitleModelProperty("Heading")
+                .WithJourneyResetMode(BreadcrumbJourneyResetMode.Always)
+                .Build(),
+
+            BreadcrumbRouteRuleBuilder
+                .Create("/groups")
+                .WithTitleModelProperty("Heading")
+                .Build()
+        ]);
 
         IConfiguration configuration =
             new ConfigurationBuilder()
-                .AddInMemoryCollection(configurationValues)
+                .AddInMemoryCollection(BreadcrumbOptionsConfigurationAdapter.ToConfiguration(breadCrumbOptions))
                 .Build();
 
         ServiceCollection services = new();
 
+        // Act
         services.AddBreadcrumbDependencies(configuration);
 
+        // Assert
         using ServiceProvider serviceProvider = services.BuildServiceProvider();
 
-        // Act
         BreadcrumbOptions options =
             serviceProvider
                 .GetRequiredService<IOptions<BreadcrumbOptions>>()

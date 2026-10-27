@@ -63,7 +63,7 @@ public sealed class SearchResultsUITests : UIBaseTest
         SearchResultsComponent results = new(driver);
         SearchFiltersComponent filters = new(driver);
 
-        const string targetFacet = "searchprovidertypeid";
+        const string targetFacet = "searchprovidertypename";
         const string targetFacetValueLabel = "Single-Academy Trust";
 
         // Act
@@ -85,18 +85,8 @@ public sealed class SearchResultsUITests : UIBaseTest
 
         // Assert selected filter value is in correct form
         Assert.Equal(
-            ConvertFacetSelectionToRemovalValue(filters, targetFacet, targetFacetValueLabel),
+            "searchprovidertypename|Single-Academy Trust",
             actualSingleSelectedFilter.Value);
-    }
-
-    private static string ConvertFacetSelectionToRemovalValue(SearchFiltersComponent filters, string targetFacet, string targetFacetValueLabel)
-    {
-        string[] preselectionFilterValueParts =
-            filters.GetFacetValueValue(
-                targetFacet,
-                targetFacetValueLabel)!.Split("-");
-
-        return string.Concat(preselectionFilterValueParts[1], "|", preselectionFilterValueParts[2]);
     }
 }
 

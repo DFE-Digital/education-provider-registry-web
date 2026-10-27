@@ -18,8 +18,7 @@ public static class SearchAggregateTestDouble
             SearchAggregateBuilder builder =
                 SearchAggregateBuilder.Create()
                     .WithProviderName($"{namePrefix} {index}")
-                    .WithProviderTypeId(isMulti ? 1L : 2L)
-                    .WithProviderTypeName(isMulti ? "Mutli-Academy Trust" : "Single-Academy Trust");
+                    .WithProviderTypeName(isMulti ? "Multi-Academy Trust" : "Single-Academy Trust");
 
             SearchAggregate model = builder.Build();
             output.Add(model);

@@ -41,7 +41,7 @@ public sealed class BreadcrumbRouteRuleBuilder
         return this;
     }
 
-    public BreadcrumbRouteRuleBuilder WithPrefix(string title, string url)
+    public BreadcrumbRouteRuleBuilder WithJourney(string title, string url)
     {
         _baseJourney.Add(new BreadcrumbPrefixItem
         {

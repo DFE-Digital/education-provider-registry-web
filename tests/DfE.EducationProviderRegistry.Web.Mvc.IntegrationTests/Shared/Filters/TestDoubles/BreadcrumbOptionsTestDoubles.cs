@@ -13,8 +13,8 @@ public static class BreadcrumbOptionsTestDoubles
                 .Create("/search/results")
                 .WithTitle("Search Results")
                 .WithJourneyResetMode(BreadcrumbJourneyResetMode.DirectNavigationOnly)
-                .WithPrefix("Home", "/")
-                .WithPrefix("Search", "/search")
+                .WithJourney("Home", "/")
+                .WithJourney("Search", "/search")
                 .Build(),
 
             BreadcrumbRouteRuleBuilder

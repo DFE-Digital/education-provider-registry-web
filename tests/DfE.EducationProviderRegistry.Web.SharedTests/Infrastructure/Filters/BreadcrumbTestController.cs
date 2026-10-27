@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Shared.Filters;
+namespace DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.Filters;
 
 [Route("breadcrumb-tests")]
 public sealed class BreadcrumbTestController : Controller

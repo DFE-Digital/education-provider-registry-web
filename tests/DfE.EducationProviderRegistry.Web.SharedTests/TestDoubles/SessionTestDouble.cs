@@ -1,10 +1,19 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.TestDoubles;
+namespace DfE.EducationProviderRegistry.Web.SharedTests.TestDoubles;
 
-public class SessionTestDouble : ISession
+public static class SessionTestDouble
 {
-    private readonly Dictionary<string, byte[]> _sessionStorage = new(StringComparer.OrdinalIgnoreCase);
+    public static ISession Fake() => new FakeSession();
+}
+public sealed class FakeSession : ISession
+{
+    private readonly Dictionary<string, byte[]> _sessionStorage;
+
+    public FakeSession()
+    {
+        _sessionStorage = new(StringComparer.OrdinalIgnoreCase);
+    }
 
     public bool IsAvailable => true;
 
@@ -25,6 +34,4 @@ public class SessionTestDouble : ISession
     public void Set(string key, byte[] value) => _sessionStorage[key] = value;
 
     public bool TryGetValue(string key, out byte[] value) => _sessionStorage.TryGetValue(key, out value!);
-
-    public static SessionTestDouble Create() => new();
 }

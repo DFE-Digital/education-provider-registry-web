@@ -5,7 +5,7 @@ using DfE.Core.Libraries.Testing.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupByUid;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Groups.TestDoubles;
-using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.TestDoubles;
+using DfE.EducationProviderRegistry.Web.SharedTests.TestDoubles;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;

@@ -2,25 +2,25 @@
 using DfE.Core.Libraries.Testing;
 using Moq;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.TestDoubles;
+namespace DfE.EducationProviderRegistry.Web.SharedTests.TestDoubles;
 
-internal static class IUseCaseTestDoubles
+public static class IUseCaseTestDoubles
 {
-    internal static IUseCase<TRequest, TResponse> Default<TRequest, TResponse>()
+    public static IUseCase<TRequest, TResponse> Default<TRequest, TResponse>()
         where TRequest : IUseCaseRequest<TResponse>
         where TResponse : class
     {
         return MockTestDouble.Default<IUseCase<TRequest, TResponse>>().Object;
     }
 
-    internal static Spy<TRequest, TModel> WithSpy<TRequest, TModel>(UseCaseResponse<TModel> response)
+    public static Spy<TRequest, TModel> WithSpy<TRequest, TModel>(UseCaseResponse<TModel> response)
         where TRequest : IUseCaseRequest<UseCaseResponse<TModel>>
         where TModel : class
     {
         return new Spy<TRequest, TModel>(response);
     }
 
-    internal static IUseCase<TRequest, UseCaseResponse<TModel>> WithResponse<TRequest, TModel>(
+    public static IUseCase<TRequest, UseCaseResponse<TModel>> WithResponse<TRequest, TModel>(
         UseCaseResponse<TModel> response)
         where TRequest : IUseCaseRequest<UseCaseResponse<TModel>>
         where TModel : class
@@ -34,7 +34,7 @@ internal static class IUseCaseTestDoubles
         return mock.Object;
     }
 
-    internal sealed class Spy<TRequest, TModel>
+    public sealed class Spy<TRequest, TModel>
         where TRequest : IUseCaseRequest<UseCaseResponse<TModel>>
         where TModel : class
     {

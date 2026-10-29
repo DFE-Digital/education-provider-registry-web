@@ -40,10 +40,7 @@ public sealed class SearchFilterSelectionHandler :
 
         request.RemoveFilter = null;
 
-        if (facetName == "opened_date" && value == "filter")
-        {
-            request.DateRanges[facetName] = new();
-        }
+        request.DateRanges[facetName] = new();
 
         if (!request.SelectedFacets.TryGetValue(
                 facetName,

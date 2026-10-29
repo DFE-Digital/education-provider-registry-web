@@ -71,7 +71,8 @@ public static class SearchFilterViewModelFactory
 
         return
         [
-            CreateDateRange(request, "opened_date", "Open date")
+            CreateDateRange(request, "opened_date", "Open date"),
+            CreateDateRange(request, "closed_date", "Close date")
         ];
     }
 

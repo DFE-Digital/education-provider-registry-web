@@ -1,0 +1,103 @@
+﻿@model DateRangeFilterViewModel
+
+@{
+    string bindingName = $"DateRanges[{Model.BindingName}]";
+    string idPrefix = Model.Name.Replace("_", "-");
+}
+
+
+<div class="govuk-form-group">
+    <fieldset class="govuk-fieldset" role="group">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+            <h1 class="govuk-fieldset__heading">
+                From
+            </h1>
+        </legend>
+        <div class="govuk-date-input">
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label" for="passport-issued-day">
+                        Day
+                    </label>
+                    <input asp-for="From.Day"
+                           class="govuk-input govuk-date-input__input govuk-input--width-2"
+                           name=@($"{bindingName}.From.Day")
+                           type="text"
+                           inputmode="numeric">
+                </div>
+            </div>
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label" for="passport-issued-month">
+                        Month
+                    </label>
+                    <input asp-for="From.Month"
+                           class="govuk-input govuk-date-input__input govuk-input--width-2"
+                           name=@($"{bindingName}.From.Month")
+                           type="text"
+                           inputmode="numeric">
+                </div>
+            </div>
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label" for="passport-issued-year">
+                        Year
+                    </label>
+                    <input asp-for="From.Year"
+                           class="govuk-input govuk-date-input__input govuk-input--width-4"
+                           name=@($"{bindingName}.From.Year")
+                           type="text"
+                           inputmode="numeric">
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</div>
+
+<div class="govuk-form-group">
+    <fieldset class="govuk-fieldset" role="group">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+            <h1 class="govuk-fieldset__heading">
+                To
+            </h1>
+        </legend>
+        <div class="govuk-date-input">
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label" for="passport-issued-day">
+                        Day
+                    </label>
+                    <input asp-for="To.Day"
+                           class="govuk-input govuk-date-input__input govuk-input--width-2"
+                           name=@($"{bindingName}.To.Day")
+                           type="text"
+                           inputmode="numeric">
+                </div>
+            </div>
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label" for="passport-issued-month">
+                        Month
+                    </label>
+                    <input asp-for="To.Month"
+                           class="govuk-input govuk-date-input__input govuk-input--width-2"
+                           name=@($"{bindingName}.To.Month")
+                           type="text"
+                           inputmode="numeric">
+                </div>
+            </div>
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label" for="passport-issued-year">
+                        Year
+                    </label>
+                    <input asp-for="To.Year"
+                           class="govuk-input govuk-date-input__input govuk-input--width-4"
+                           name=@($"{bindingName}.To.Year")
+                           type="text"
+                           inputmode="numeric">
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</div>

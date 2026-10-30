@@ -22,6 +22,7 @@ public sealed class SearchFilterSelectionHandler :
         SearchRequestViewModel request)
     {
         request.SelectedFacets.Clear();
+        request.DateRanges.Clear();
         request.ClearFilters = false;
         request.RemoveFilter = null;
     }
@@ -38,6 +39,8 @@ public sealed class SearchFilterSelectionHandler :
         }
 
         request.RemoveFilter = null;
+
+        request.DateRanges[facetName] = new();
 
         if (!request.SelectedFacets.TryGetValue(
                 facetName,

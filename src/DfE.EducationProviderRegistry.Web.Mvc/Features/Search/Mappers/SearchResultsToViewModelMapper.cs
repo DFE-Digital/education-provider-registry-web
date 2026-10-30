@@ -63,7 +63,8 @@ public sealed class SearchResultsToViewModelMapper : IMapper<SearchResultsMappin
             TotalSearchResults =
                 searchResponse.TotalNumberOfResults,
 
-            Facets = facets
+            Facets = facets,
+            Filters = input.SearchRequest.Filters
         };
     }
 

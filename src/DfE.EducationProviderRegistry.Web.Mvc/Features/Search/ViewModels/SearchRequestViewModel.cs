@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 
 public sealed class SearchRequestViewModel
@@ -19,6 +20,10 @@ public sealed class SearchRequestViewModel
     /// cleared for the request.
     /// </remarks>
     public Dictionary<string, List<string>> SelectedFacets { get; set; } = [];
+
+    public Dictionary<string, DateRangeFilterViewModel> DateRanges { get; set; } = [];
+
+    public List<FilterViewModel> Filters => SearchFilterViewModelFactory.Create(this);
 
     /// <summary>
     /// Gets or sets the search keywords entered by the user.
@@ -95,3 +100,5 @@ public sealed class SearchRequestViewModel
     /// </remarks>
     public int Offset => (PageNumber - 1) * RecordsPerPage;
 }
+
+

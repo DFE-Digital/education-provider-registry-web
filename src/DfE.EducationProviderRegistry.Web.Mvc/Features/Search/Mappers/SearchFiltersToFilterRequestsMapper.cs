@@ -43,7 +43,12 @@ public sealed class SearchFiltersToFilterRequestsMapper
     {
         if (!range.IsEmpty)
         {
-            if (!range.TryGetRange(out DateOnly from, out DateOnly to))
+            bool hasFrom = range.From.TryGetDate(out DateOnly from);
+            bool hasTo = range.To.TryGetDate(out DateOnly to);
+
+            if ((!range.From.IsEmpty && !hasFrom) ||
+                (!range.To.IsEmpty && !hasTo) ||
+                (hasFrom && hasTo && from > to))
             {
                 throw new InvalidOperationException($"Invalid date range for filter '{filterName}'.");
             }
@@ -52,8 +57,8 @@ public sealed class SearchFiltersToFilterRequestsMapper
                 filterName: filterName,
                 filterValues:
                 [
-                    from.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
-                    to.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
+                    hasFrom ? from.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) : null!,
+                    hasTo ? to.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) : null!
                 ]));
         }
     }

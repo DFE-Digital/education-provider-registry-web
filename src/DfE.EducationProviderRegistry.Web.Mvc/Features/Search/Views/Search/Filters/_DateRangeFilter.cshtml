@@ -1,8 +1,8 @@
-﻿@model DateRangeFilterViewModel
+﻿@model (string BindingName, DateRangeFilterViewModel Range)
 
 @{
-    string bindingName = $"DateRanges[{Model.BindingName}]";
-    string idPrefix = Model.Name.Replace("_", "-");
+    string bindingName = $"Filters[{Model.BindingName}].DateRange";
+    string idPrefix = $"filter-{Model.BindingName.Replace("_", "-")}";
 }
 
 
@@ -19,7 +19,7 @@
                     <label class="govuk-label govuk-date-input__label" for="passport-issued-day">
                         Day
                     </label>
-                    <input asp-for="From.Day"
+                    <input for=@($"{idPrefix}-from-day")
                            class="govuk-input govuk-date-input__input govuk-input--width-2"
                            name=@($"{bindingName}.From.Day")
                            type="text"
@@ -31,7 +31,7 @@
                     <label class="govuk-label govuk-date-input__label" for="passport-issued-month">
                         Month
                     </label>
-                    <input asp-for="From.Month"
+                    <input for=@($"{idPrefix}-from-month")
                            class="govuk-input govuk-date-input__input govuk-input--width-2"
                            name=@($"{bindingName}.From.Month")
                            type="text"
@@ -43,7 +43,7 @@
                     <label class="govuk-label govuk-date-input__label" for="passport-issued-year">
                         Year
                     </label>
-                    <input asp-for="From.Year"
+                    <input for=@($"{idPrefix}-from-year")
                            class="govuk-input govuk-date-input__input govuk-input--width-4"
                            name=@($"{bindingName}.From.Year")
                            type="text"
@@ -67,7 +67,7 @@
                     <label class="govuk-label govuk-date-input__label" for="passport-issued-day">
                         Day
                     </label>
-                    <input asp-for="To.Day"
+                    <input for=@($"{idPrefix}-to-day")
                            class="govuk-input govuk-date-input__input govuk-input--width-2"
                            name=@($"{bindingName}.To.Day")
                            type="text"
@@ -79,7 +79,7 @@
                     <label class="govuk-label govuk-date-input__label" for="passport-issued-month">
                         Month
                     </label>
-                    <input asp-for="To.Month"
+                    <input for=@($"{idPrefix}-to-month")
                            class="govuk-input govuk-date-input__input govuk-input--width-2"
                            name=@($"{bindingName}.To.Month")
                            type="text"
@@ -91,7 +91,7 @@
                     <label class="govuk-label govuk-date-input__label" for="passport-issued-year">
                         Year
                     </label>
-                    <input asp-for="To.Year"
+                    <input for=@($"{idPrefix}-to-year")
                            class="govuk-input govuk-date-input__input govuk-input--width-4"
                            name=@($"{bindingName}.To.Year")
                            type="text"

@@ -49,6 +49,8 @@ public static class SearchUrlBuilder
             query,
             searchRequest.SelectedFacets);
 
+        AddFilters(query, searchRequest.Filters);
+
         string path = urlHelper.Action(
             "Search",
             "Search")!;
@@ -73,6 +75,27 @@ public static class SearchUrlBuilder
                     $"SelectedFacets[{facet.Key}]",
                     value);
             }
+        }
+    }
+
+    private static void AddFilters(
+        QueryBuilder query,
+        Dictionary<string, FilterInputViewModel> filters)
+    {
+        foreach ((string? name, FilterInputViewModel? filter) in filters)
+        {
+            if (filter.DateRange is { IsEmpty: false } dateRange)
+            {
+                string prefix = $"Filters[{name}].DateRange";
+                foreach (var (bound, date) in new[] { ("From", dateRange.From), ("To", dateRange.To) })
+                {
+                    query.Add($"{prefix}.{bound}.Day", date.Day ?? string.Empty);
+                    query.Add($"{prefix}.{bound}.Month", date.Month ?? string.Empty);
+                    query.Add($"{prefix}.{bound}.Year", date.Year ?? string.Empty);
+                }
+            }
+
+            // Add other filter types here as needed
         }
     }
 }

@@ -21,9 +21,7 @@ public sealed class SearchRequestViewModel
     /// </remarks>
     public Dictionary<string, List<string>> SelectedFacets { get; set; } = [];
 
-    public Dictionary<string, DateRangeFilterViewModel> DateRanges { get; set; } = [];
-
-    public List<FilterViewModel> Filters => SearchFilterViewModelFactory.Create(this);
+    public Dictionary<string, FilterInputViewModel> Filters { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the search keywords entered by the user.
@@ -100,5 +98,3 @@ public sealed class SearchRequestViewModel
     /// </remarks>
     public int Offset => (PageNumber - 1) * RecordsPerPage;
 }
-
-

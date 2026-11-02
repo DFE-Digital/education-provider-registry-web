@@ -2,7 +2,7 @@
 @model SearchResultsViewModel
 
 @{
-    var selectedFilters = (Model.Facets ?? [])
+    var selectedFacets = (Model.Facets ?? [])
         .SelectMany(facet =>
             facet.Values
                 .Where(value => value.IsSelected)
@@ -14,14 +14,35 @@
                 }))
         .ToList();
 
-    var selectedAdditionalFilters = Model.Filters.Where(filter => filter.IsSelected);
+    var openedDate = Model.SearchRequest.Filters
+        .GetValueOrDefault("opened_date")?.DateRange ?? new();
+    var closedDate = Model.SearchRequest.Filters
+        .GetValueOrDefault("closed_date")?.DateRange ?? new();
+    var selectedAddtionalFilters = new List<(string Name, string Label, string SelectedLabel)>();
+
+    if (openedDate.TryGetRange(out DateOnly openedFrom, out DateOnly openedTo))
+    {
+        selectedAddtionalFilters.Add((
+            "opened_date",
+            "Open date",
+            $"{openedFrom:dd/MM/yyyy} - {openedTo:dd/MM/yyyy}"));
+    }
+
+    if (closedDate.TryGetRange(out DateOnly closedFrom, out DateOnly closedTo))
+    {
+        selectedAddtionalFilters.Add((
+            "closed_date",
+            "Close date",
+            $"{closedFrom:dd/MM/yyyy} - {closedTo:dd/MM/yyyy}"));
+    }
+
 }
 
 <div class="moj-filter">
     <div class="moj-filter__content">
         <div class="moj-filter__options">
 
-            @if (selectedFilters.Any() || selectedAdditionalFilters.Any())
+            @if (selectedFacets.Any() || selectedAddtionalFilters.Any())
             {
                 <div class="moj-filter__selected app-selected-filters">
                     <div class="app-selected-filters__header">
@@ -38,7 +59,7 @@
                     </div>
 
                     <ul class="app-selected-filters__list">
-                        @foreach (var filter in selectedAdditionalFilters)
+                        @foreach (var filter in selectedAddtionalFilters)
                         {
                             <li>
                                 <button type="submit"
@@ -55,7 +76,7 @@
                                 </button>
                             </li>
                         }
-                        @foreach (var filter in selectedFilters)
+                        @foreach (var filter in selectedFacets)
                         {
                             <li>
                                 <button type="submit"
@@ -103,18 +124,25 @@
                 </details>
             }
 
-            @foreach (var filter in Model.Filters)
-            {
-                <details class="govuk-details filter-section">
-                    <summary class="govuk-details__summary">
-                        <span class="govuk-details__summary-text">
-                            @filter.Label
-                        </span>
-                    </summary>
+            <details class="govuk-details filter-section">
+                <summary class="govuk-details__summary">
+                    <span class="govuk-details__summary-text">
+                        Open date
+                    </span>
+                </summary>
 
-                    @await Html.PartialAsync(filter.ViewName, filter)
-                </details>
-            }
+                @await Html.PartialAsync("_DateRangeFilter", ("opened_date", openedDate))
+            </details>
+
+            <details class="govuk-details filter-section">
+                <summary class="govuk-details__summary">
+                    <span class="govuk-details__summary-text">
+                        Close date
+                    </span>
+                </summary>
+
+                @await Html.PartialAsync("_DateRangeFilter", ("closed_date", closedDate))
+            </details>
 
             <button type="submit"
                     class="govuk-button"

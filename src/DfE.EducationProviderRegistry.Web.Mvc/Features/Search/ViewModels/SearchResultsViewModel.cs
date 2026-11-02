@@ -17,8 +17,6 @@ public sealed class SearchResultsViewModel
         set => _facets = value?.OrderBy(facet => facet.Name).ToList();
     }
 
-    public List<FilterViewModel> Filters { get; set; } = [];
-
     public string? PrimarySearchTerms { get; set; }
 
     public string? SecondarySearchTerms { get; set; }

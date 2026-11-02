@@ -23,8 +23,15 @@ public sealed class SearchFiltersToFilterRequestsMapper
         ArgumentNullException.ThrowIfNull(input);
         List<FilterRequest> filters = [.. _facetMapper.Map(input.SelectedFacets)];
 
-        foreach (var (name, range) in input.DateRanges)
-            AddDateRange(filters, name, range);
+        foreach ((string? name, FilterInputViewModel? filter) in input.Filters)
+        {
+            if (filter.DateRange is { } dateRange)
+            {
+                AddDateRange(filters, name, dateRange);
+            }
+            // if number range filter is added in the future, it can be handled here
+        }
+
 
         return filters.AsReadOnly();
     }

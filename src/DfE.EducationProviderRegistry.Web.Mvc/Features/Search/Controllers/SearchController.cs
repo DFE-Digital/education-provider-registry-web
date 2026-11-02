@@ -49,7 +49,14 @@ public sealed class SearchController : Controller
     {
         if (!ModelState.IsValid)
         {
-            return View("Index", model);
+            return View("Results", new SearchResultsViewModel()
+            {
+                SearchRequest = model,
+                PrimarySearchTerms = model.What,
+                SecondarySearchTerms = model.What,
+                SelectedSortDirection = model.Sort,
+                SearchAggregateResults = [] // need to get last results?
+            });
         }
 
         string sortDirection = model.Sort switch

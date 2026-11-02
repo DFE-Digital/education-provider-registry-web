@@ -20,22 +20,27 @@
         .GetValueOrDefault("closed_date")?.DateRange ?? new();
     var selectedAddtionalFilters = new List<(string Name, string Label, string SelectedLabel)>();
 
-    if (openedDate.TryGetRange(out DateOnly openedFrom, out DateOnly openedTo))
+    string? GetDateRangeLabel(DateRangeFilterViewModel range)
     {
-        selectedAddtionalFilters.Add((
-            "opened_date",
-            "Open date",
-            $"{openedFrom:dd/MM/yyyy} - {openedTo:dd/MM/yyyy}"));
+        if (range.TryGetRange(out DateOnly from, out DateOnly to))
+            return $"{from:dd/MM/yyyy} to {to:dd/MM/yyyy}";
+        if (range.To.IsEmpty && range.From.TryGetDate(out from))
+            return $"from {from:dd/MM/yyyy}";
+        if (range.From.IsEmpty && range.To.TryGetDate(out to))
+            return $"to {to:dd/MM/yyyy}";
+
+        return null;
     }
 
-    if (closedDate.TryGetRange(out DateOnly closedFrom, out DateOnly closedTo))
-    {
-        selectedAddtionalFilters.Add((
-            "closed_date",
-            "Close date",
-            $"{closedFrom:dd/MM/yyyy} - {closedTo:dd/MM/yyyy}"));
-    }
 
+    if (GetDateRangeLabel(openedDate) is { } openedDateLabel)
+    {
+        selectedAddtionalFilters.Add(("opened_date", "Open date", openedDateLabel));
+    }
+    if (GetDateRangeLabel(closedDate) is { } closedDateLabel)
+    {
+        selectedAddtionalFilters.Add(("closed_date", "Close date", closedDateLabel));
+    }
 }
 
 <div class="moj-filter">

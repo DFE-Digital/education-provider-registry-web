@@ -2,7 +2,6 @@
 using DfE.EducationProviderRegistry.Core.Query.Test.Database.Data.Search;
 using DfE.EducationProviderRegistry.Data.DatabaseModels.Models;
 using DfE.EducationProviderRegistry.Web.SharedTests.AngleSharp.Extensions;
-using DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents.WebDriver.Search;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search.Components;
 using SearchFiltersComponent = DfE.EducationProviderRegistry.Web.SharedTests.Features.Search.Components.SearchFiltersComponent;
@@ -33,7 +32,7 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
             SearchHttpRequestBuilder.Create()
                 .WithBaseUri(Factory.Server.BaseAddress)
                 .WithIdentitySearchTerm("sch")
-                .WithFilter("searchprovidertypename", filterValueApplied)
+                .WithFilter("providertypename", filterValueApplied)
                 .Build();
 
         // Act
@@ -46,7 +45,7 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
 
         Assert.NotEmpty(results.GetSearchResults());
 
-        Filter selectedFilter = filters.GetFilters().Single(t => t.Name == "searchprovidertypename");
+        Filter selectedFilter = filters.GetFilters().Single(t => t.Name == "Provider type");
 
         // Assert FilterValue
         FilterValue value = Assert.Single(selectedFilter.FilterValues);
@@ -73,7 +72,7 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
             SearchHttpRequestBuilder.Create()
                 .WithBaseUri(Factory.Server.BaseAddress)
                 .WithIdentitySearchTerm("sch")
-                .WithFilter("searchprovidertypename", filtersToApply)
+                .WithFilter("providertypename", filtersToApply)
                 .Build();
         // Act
         HttpResponseMessage response = await client.SendAsync(message, ct);
@@ -86,7 +85,7 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
         Assert.NotEmpty(results.GetSearchResults());
 
         // Assert Filter
-        Filter selectedFilter = filters.GetFilters().Single(t => t.Name == "searchprovidertypename");
+        Filter selectedFilter = filters.GetFilters().Single(t => t.Name == "Provider type");
 
         // Assert FilterValues
         Assert.Equal(2, selectedFilter.FilterValues.Count);
@@ -124,7 +123,7 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
             SearchHttpRequestBuilder.Create()
                 .WithBaseUri(Factory.Server.BaseAddress)
                 .WithIdentitySearchTerm("sch")
-                .WithFilter("searchprovidertypename", filtersToApply)
+                .WithFilter("providertypename", filtersToApply)
                 .Build();
 
         HttpResponseMessage filteredResults = await client.SendAsync(message, ct);
@@ -134,7 +133,7 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
         HttpResponseMessage removalResponse =
             await filtersApplied.RemoveFilterAsync(
                 client,
-                facetLabel: "searchprovidertypename",
+                facetLabel: "Provider Type",
                 facetValue: "Multi-Academy Trust",
                 ct);
 
@@ -146,7 +145,7 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
 
         Assert.NotEmpty(results.GetSearchResults());
 
-        Filter remainingSelectedFilter = removedFilters.GetFilters().Single(t => t.Name == "searchprovidertypename");
+        Filter remainingSelectedFilter = removedFilters.GetFilters().Single(t => t.Name == "Provider type");
 
         FilterValue remainingSelectedFilterValue = remainingSelectedFilter.FilterValues.Single();
         Assert.True(remainingSelectedFilterValue.Selected);
@@ -171,7 +170,7 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
             SearchHttpRequestBuilder.Create()
                 .WithBaseUri(Factory.Server.BaseAddress)
                 .WithIdentitySearchTerm("sch")
-                .WithFilter("searchprovidertypename", filtersToApply)
+                .WithFilter("providertypename", filtersToApply)
                 .Build();
 
         HttpResponseMessage filteredResults = await client.SendAsync(message, ct);
@@ -187,7 +186,7 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
 
         Assert.NotEmpty(results.GetSearchResults());
 
-        Filter filters = clearedFilters.GetFilters().Single(t => t.Name == "searchprovidertypename");
+        Filter filters = clearedFilters.GetFilters().Single(t => t.Name == "Provider type");
 
         // static 2 filter values in data. None selected
         FilterValue value1 = filters.FilterValues.Single(v => v.Value == filtersToApply[0]);

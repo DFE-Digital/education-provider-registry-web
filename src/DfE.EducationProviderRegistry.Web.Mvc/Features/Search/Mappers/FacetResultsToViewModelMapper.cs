@@ -9,8 +9,22 @@ public sealed class FacetResultsToViewModelMapper :
 {
     static readonly Dictionary<string, string> labelMappings = new()
     {
-        ["EstablishmentTypeId"] = "Establishment Type",
+        ["admissionpolicy"] = "Admission policy",
+        ["boarding"] = "Boarding provision",
+        ["diocese"] = "Diocese",
+        ["educationphase"] = "Phase of education",
+        ["furthereducationtype"] = "Further education type",
+        ["gender"] = "Gender",
+        ["grouptype"] = "Group type",
         ["LocalAuthority"] = "Local Authority",
+        ["nursery"] = "Nursery provision",
+        ["religiouscharacter"] = "Religious character",
+        ["religiousethos"] = "Religious ethos",
+        ["providertypename"] = "Provider type",
+        ["sen"] = "Type of SEN provision",
+        ["section41"] = "Section 41 approved (independent SEND school)",
+        ["sixthform"] = "Sixth form provision",
+        ["specialclass"] = "Special classes",
     };
 
     public List<FacetViewModel> Map(IReadOnlyCollection<SearchFacet> input)

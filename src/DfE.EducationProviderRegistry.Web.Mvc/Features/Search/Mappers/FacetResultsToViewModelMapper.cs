@@ -7,7 +7,7 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 public sealed class FacetResultsToViewModelMapper :
     IMapper<IReadOnlyCollection<SearchFacet>, List<FacetViewModel>>
 {
-    static readonly Dictionary<string, string> labelMappings = new()
+    private static readonly Dictionary<string, string> _labelMappings = new()
     {
         ["admissionpolicy"] = "Admission policy",
         ["boarding"] = "Boarding provision",
@@ -52,7 +52,7 @@ public sealed class FacetResultsToViewModelMapper :
 
         return new FacetViewModel(
             Name: searchFacet.Name,
-            Label: labelMappings.GetValueOrDefault(searchFacet.Name, searchFacet.Name),
+            Label: _labelMappings.GetValueOrDefault(searchFacet.Name, searchFacet.Name),
             Values: values
         );
     }

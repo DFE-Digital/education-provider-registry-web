@@ -31,12 +31,14 @@
                     <label class="govuk-label govuk-date-input__label">
                         Day
                     </label>
-                    <input for=@($"{idPrefix}-from-day")
-                           class="govuk-input govuk-date-input__input @(fromError is not null ? "govuk-input--error" : "") govuk-input--width-2"
-                           name=@($"{bindingName}.From.Day")
-                           value="@Model.Range.From.Day"
+                    <input id="@($"{idPrefix}-from-day")"
+                           name="@($"{bindingName}.From.Day")"
                            type="text"
-                           inputmode="numeric">
+                           inputmode="numeric"
+                           pattern="[0-9]*"
+                           maxlength="2"
+                           value="@Model.Range.From.Day"
+                           class="govuk-input govuk-date-input__input govuk-input--width-2" />
                 </div>
             </div>
             <div class="govuk-date-input__item">
@@ -44,12 +46,14 @@
                     <label class="govuk-label govuk-date-input__label">
                         Month
                     </label>
-                    <input for=@($"{idPrefix}-from-month")
-                           class="govuk-input govuk-date-input__input @(fromError is not null ? "govuk-input--error" : "") govuk-input--width-2"
-                           name=@($"{bindingName}.From.Month")
-                           value="@Model.Range.From.Month"
+                    <input id="@($"{idPrefix}-from-month")"
+                           name="@($"{bindingName}.From.Month")"
                            type="text"
-                           inputmode="numeric">
+                           inputmode="numeric"
+                           pattern="[0-9]*"
+                           maxlength="2"
+                           value="@Model.Range.From.Month"
+                           class="govuk-input govuk-date-input__input govuk-input--width-2" />
                 </div>
             </div>
             <div class="govuk-date-input__item">
@@ -57,12 +61,14 @@
                     <label class="govuk-label govuk-date-input__label">
                         Year
                     </label>
-                    <input for=@($"{idPrefix}-from-year")
-                           class="govuk-input govuk-date-input__input @(fromError is not null ? "govuk-input--error" : "") govuk-input--width-4"
-                           name=@($"{bindingName}.From.Year")
-                           value="@Model.Range.From.Year"
+                    <input id="@($"{idPrefix}-from-year")"
+                           name="@($"{bindingName}.From.Year")"
                            type="text"
-                           inputmode="numeric">
+                           inputmode="numeric"
+                           pattern="[0-9]*"
+                           maxlength="4"
+                           value="@Model.Range.From.Year"
+                           class="govuk-input govuk-date-input__input govuk-input--width-4" />
                 </div>
             </div>
         </div>
@@ -91,12 +97,14 @@
                     <label class="govuk-label govuk-date-input__label">
                         Day
                     </label>
-                    <input for=@($"{idPrefix}-to-day")
-                           class="govuk-input govuk-date-input__input @(toError is not null ? "govuk-input--error" : "") govuk-input--width-2"
-                           name=@($"{bindingName}.To.Day")
-                           value="@Model.Range.To.Day"
+                    <input id="@($"{idPrefix}-to-day")"
+                           name="@($"{bindingName}.To.Day")"
                            type="text"
-                           inputmode="numeric">
+                           inputmode="numeric"
+                           pattern="[0-9]*"
+                           maxlength="2"
+                           value="@Model.Range.To.Day"
+                           class="govuk-input govuk-date-input__input govuk-input--width-2" />
                 </div>
             </div>
             <div class="govuk-date-input__item">
@@ -104,12 +112,14 @@
                     <label class="govuk-label govuk-date-input__label">
                         Month
                     </label>
-                    <input for=@($"{idPrefix}-to-month")
-                           class="govuk-input govuk-date-input__input @(toError is not null ? "govuk-input--error" : "") govuk-input--width-2"
-                           name=@($"{bindingName}.To.Month")
-                           value="@Model.Range.To.Month"
+                    <input id="@($"{idPrefix}-to-month")"
+                           name="@($"{bindingName}.To.Month")"
                            type="text"
-                           inputmode="numeric">
+                           inputmode="numeric"
+                           pattern="[0-9]*"
+                           maxlength="2"
+                           value="@Model.Range.To.Month"
+                           class="govuk-input govuk-date-input__input govuk-input--width-2" />
                 </div>
             </div>
             <div class="govuk-date-input__item">
@@ -117,12 +127,14 @@
                     <label class="govuk-label govuk-date-input__label">
                         Year
                     </label>
-                    <input for=@($"{idPrefix}-to-year")
-                           class="govuk-input govuk-date-input__input @(toError is not null ? "govuk-input--error" : "") govuk-input--width-4"
-                           name=@($"{bindingName}.To.Year")
-                           value="@Model.Range.To.Year"
+                    <input id="@($"{idPrefix}-to-year")"
+                           name="@($"{bindingName}.To.Year")"
                            type="text"
-                           inputmode="numeric">
+                           inputmode="numeric"
+                           pattern="[0-9]*"
+                           maxlength="4"
+                           value="@Model.Range.To.Year"
+                           class="govuk-input govuk-date-input__input govuk-input--width-4" />
                 </div>
             </div>
         </div>

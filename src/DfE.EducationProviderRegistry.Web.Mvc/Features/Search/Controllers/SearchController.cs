@@ -46,24 +46,18 @@ public sealed class SearchController : Controller
     }
 
     [HttpGet("results")]
-    public async Task<IActionResult> Search(
-        SearchRequestViewModel model)
+    public async Task<IActionResult> Search(SearchRequestViewModel model)
     {
         if (!ModelState.IsValid)
         {
-            string? json = TempData.Peek("SearchResultSnapshot") as string;
-            List<GovUkTable>? snapshot = json is null
-                ? []
-                : JsonSerializer.Deserialize<List<GovUkTable>>(json);
-
             return View("Results", new SearchResultsViewModel()
             {
                 SearchRequest = model,
                 PrimarySearchTerms = model.What,
                 SecondarySearchTerms = model.What,
                 SelectedSortDirection = model.Sort,
-                TotalSearchResults = snapshot.Count,
-                SearchAggregateResults = snapshot
+                TotalSearchResults = 0,
+                SearchAggregateResults = []
             });
         }
 
@@ -105,9 +99,6 @@ public sealed class SearchController : Controller
                 new SearchResultsMappingContext(
                     model,
                     searchResponse));
-
-        TempData["SearchResultSnapshot"] =
-            JsonSerializer.Serialize(updatedModel.SearchAggregateResults);
 
         ModelState.Clear();
 

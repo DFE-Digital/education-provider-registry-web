@@ -133,7 +133,7 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
         HttpResponseMessage removalResponse =
             await filtersApplied.RemoveFilterAsync(
                 client,
-                facetLabel: "Provider Type",
+                facetLabel: "Provider type",
                 facetValue: "Multi-Academy Trust",
                 ct);
 

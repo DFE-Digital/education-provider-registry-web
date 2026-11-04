@@ -25,6 +25,7 @@ public sealed class FacetResultsToViewModelMapper :
         ["section41"] = "Section 41 approved (independent SEND school)",
         ["sixthform"] = "Sixth form provision",
         ["specialclass"] = "Special classes",
+        ["status"] = "Status"
     };
 
     public List<FacetViewModel> Map(IReadOnlyCollection<SearchFacet> input)

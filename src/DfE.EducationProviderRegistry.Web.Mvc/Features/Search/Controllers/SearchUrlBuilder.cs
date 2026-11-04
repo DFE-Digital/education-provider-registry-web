@@ -87,7 +87,7 @@ public static class SearchUrlBuilder
             if (filter.DateRange is { IsEmpty: false } dateRange)
             {
                 string prefix = $"Filters[{name}].DateRange";
-                foreach (var (bound, date) in new[] { ("From", dateRange.From), ("To", dateRange.To) })
+                foreach ((string? bound, DateInputViewModel? date) in new[] { ("From", dateRange.From), ("To", dateRange.To) })
                 {
                     query.Add($"{prefix}.{bound}.Day", date.Day ?? string.Empty);
                     query.Add($"{prefix}.{bound}.Month", date.Month ?? string.Empty);

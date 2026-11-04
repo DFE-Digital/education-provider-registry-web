@@ -14,40 +14,30 @@
                 }))
         .ToList();
 
-    var openedDate = Model.SearchRequest.Filters
-        .GetValueOrDefault("opened_date")?.DateRange ?? new();
-    var closedDate = Model.SearchRequest.Filters
-        .GetValueOrDefault("closed_date")?.DateRange ?? new();
-    var selectedAddtionalFilters = new List<(string Name, string Label, string SelectedLabel)>();
-
-    string? GetDateRangeLabel(DateRangeFilterViewModel range)
+    var dateFilters = new[]
     {
-        if (range.TryGetRange(out DateOnly from, out DateOnly to))
-            return $"{from:dd/MM/yyyy} to {to:dd/MM/yyyy}";
-        if (range.To.IsEmpty && range.From.TryGetDate(out from))
-            return $"from {from:dd/MM/yyyy}";
-        if (range.From.IsEmpty && range.To.TryGetDate(out to))
-            return $"to {to:dd/MM/yyyy}";
+        (
+            Name: "opened_date",
+            Label: "Opened date",
+            Range: Model.SearchRequest.Filters
+        .GetValueOrDefault("opened_date")?.DateRange ?? new()),
+        (
+            Name: "closed_date",
+            Label: "Closed date",
+            Range: Model.SearchRequest.Filters
+        .GetValueOrDefault("closed_date")?.DateRange ?? new()),
+    };
 
-        return null;
-    }
-
-
-    if (GetDateRangeLabel(openedDate) is { } openedDateLabel)
-    {
-        selectedAddtionalFilters.Add(("opened_date", "Open date", openedDateLabel));
-    }
-    if (GetDateRangeLabel(closedDate) is { } closedDateLabel)
-    {
-        selectedAddtionalFilters.Add(("closed_date", "Close date", closedDateLabel));
-    }
+    var selectedDateFilters = dateFilters
+    .Where(filter => filter.Range.SelectedLabel is not null)
+    .ToList();
 }
 
 <div class="moj-filter">
     <div class="moj-filter__content">
         <div class="moj-filter__options">
 
-            @if (selectedFacets.Any() || selectedAddtionalFilters.Any())
+            @if (selectedFacets.Any() || selectedDateFilters.Any())
             {
                 <div class="moj-filter__selected app-selected-filters">
                     <div class="app-selected-filters__header">
@@ -64,7 +54,7 @@
                     </div>
 
                     <ul class="app-selected-filters__list">
-                        @foreach (var filter in selectedAddtionalFilters)
+                        @foreach (var filter in selectedDateFilters)
                         {
                             <li>
                                 <button type="submit"
@@ -72,7 +62,7 @@
                                         name="RemoveFilter"
                                         value="@($"{filter.Name}|filter")">
 
-                                    @filter.SelectedLabel
+                                    @filter.Range.SelectedLabel
 
                                     <span aria-hidden="true">&times;</span>
                                     <span class="govuk-visually-hidden">
@@ -129,25 +119,18 @@
                 </details>
             }
 
-            <details class="govuk-details filter-section">
-                <summary class="govuk-details__summary">
-                    <span class="govuk-details__summary-text">
-                        Open date
-                    </span>
-                </summary>
+            @foreach (var filter in dateFilters)
+            {
+                <details class="govuk-details filter-section">
+                    <summary class="govuk-details__summary">
+                        <span class="govuk-details__summary-text">
+                            @filter.Label
+                        </span>
+                    </summary>
 
-                @await Html.PartialAsync("_DateRangeFilter", ("opened_date", openedDate))
-            </details>
-
-            <details class="govuk-details filter-section">
-                <summary class="govuk-details__summary">
-                    <span class="govuk-details__summary-text">
-                        Close date
-                    </span>
-                </summary>
-
-                @await Html.PartialAsync("_DateRangeFilter", ("closed_date", closedDate))
-            </details>
+                    @await Html.PartialAsync("_DateRangeFilter", (filter.Name, filter.Range))
+                </details>
+            }
 
             <button type="submit"
                     class="govuk-button"

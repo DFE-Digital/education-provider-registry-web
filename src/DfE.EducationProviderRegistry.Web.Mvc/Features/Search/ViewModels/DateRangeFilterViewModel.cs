@@ -2,64 +2,34 @@
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 
-public sealed class DateRangeFilterViewModel : IValidatableObject
+public sealed class DateRangeFilterViewModel
 {
     public DateInputViewModel From { get; set; } = new();
     public DateInputViewModel To { get; set; } = new();
 
     public bool IsEmpty => From.IsEmpty && To.IsEmpty;
 
-
-    public bool TryGetRange(out DateOnly from, out DateOnly to)
+    public string? SelectedLabel
     {
-        bool validFrom = From.TryGetDate(out from);
-        bool validateTo = To.TryGetDate(out to);
-        return validFrom && validateTo && from <= to;
-    }
-
-    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-    {
-        DateOnly earliestDate = new(1800, 1, 1);
-
-        bool hasFrom = From.TryGetDate(out DateOnly from);
-        bool hasTo = To.TryGetDate(out DateOnly to);
-
-        if (!From.IsEmpty && !hasFrom)
+        get
         {
-            yield return new ValidationResult(
-                "'From' must be a real date.",
-                [nameof(From)]);
-        }
+            bool hasFrom = From.TryGetDate(out DateOnly from);
+            bool hasTo = To.TryGetDate(out DateOnly to);
 
-        else if (hasFrom && from < earliestDate)
-        {
-            yield return new ValidationResult(
-                $"'From' must be after {earliestDate:dd/MM/yyyy}.",
-                [nameof(From)]);
-        }
+            if ((!From.IsEmpty && !hasFrom) ||
+                (!To.IsEmpty && !hasTo) ||
+                (hasFrom && hasTo && from > to))
+            {
+                return null;
+            }
 
-        if (!To.IsEmpty && !hasTo)
-        {
-            yield return new ValidationResult(
-                "'To' must be a real date.",
-                [nameof(To)]);
+            return (hasFrom, hasTo) switch
+            {
+                (true, true) => $"{from:dd/MM/yyyy} to {to:dd/MM/yyyy}",
+                (true, false) => $"From {from:dd/MM/yyyy}",
+                (false, true) => $"To {to:dd/MM/yyyy}",
+                _ => null
+            };
         }
-        else if (hasTo && to < earliestDate)
-        {
-            yield return new ValidationResult(
-                $"'To' must be after {earliestDate:dd/MM/yyyy}.",
-                [nameof(To)]);
-        }
-
-        if (hasFrom && hasTo &&
-            from >= earliestDate &&
-            to >= earliestDate &&
-            to < from)
-        {
-            yield return new ValidationResult(
-                "'To' date must be the same as or after 'From' date.",
-                [nameof(To)]);
-        }
-
     }
 }

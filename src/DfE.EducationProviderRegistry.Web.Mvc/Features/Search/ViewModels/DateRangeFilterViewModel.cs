@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+﻿namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 
 public sealed class DateRangeFilterViewModel
 {

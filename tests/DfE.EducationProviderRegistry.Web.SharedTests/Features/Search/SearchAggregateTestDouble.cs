@@ -13,12 +13,12 @@ public static class SearchAggregateTestDouble
 
         for (int index = 0; index < count; index++)
         {
-            bool isMulti = index % 2 == 0;
+            bool even = index % 2 == 0;
 
             SearchAggregateBuilder builder =
                 SearchAggregateBuilder.Create()
                     .WithProviderName($"{namePrefix} {index}")
-                    .WithProviderTypeName(isMulti ? "Multi-Academy Trust" : "Single-Academy Trust");
+                    .WithProviderTypeName(even ? "Academy converter" : "Community school");
 
             SearchAggregate model = builder.Build();
             output.Add(model);

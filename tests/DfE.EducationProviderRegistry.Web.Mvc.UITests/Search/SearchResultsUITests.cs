@@ -64,7 +64,7 @@ public sealed class SearchResultsUITests : UIBaseTest
         SearchFiltersComponent filters = new(driver);
 
         const string targetFacet = "Provider type";
-        const string targetFacetValueLabel = "Single-Academy Trust";
+        const string targetFacetValueLabel = "Academy converter";
 
         // Act
         filters.FilterBy(
@@ -85,7 +85,7 @@ public sealed class SearchResultsUITests : UIBaseTest
 
         // Assert selected filter value is in correct form
         Assert.Equal(
-            "providertypename|Single-Academy Trust",
+            "providertypename|Academy converter",
             actualSingleSelectedFilter.Value);
     }
 }

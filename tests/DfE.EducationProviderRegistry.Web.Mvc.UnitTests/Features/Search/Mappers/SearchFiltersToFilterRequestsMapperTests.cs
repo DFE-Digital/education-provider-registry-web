@@ -31,7 +31,7 @@ public sealed class SearchFiltersToFilterRequestsMapperTests
     }
 
     [Fact]
-    public void Map_ReturnsFacetFilters_WhenFiltersAreEmpty()
+    public void Map_ReturnsFacetFilters_WhenNoSearchFiltersProvided()
     {
         // arrange
         ReadOnlyCollection<FilterRequest> facetFilters =
@@ -52,13 +52,10 @@ public sealed class SearchFiltersToFilterRequestsMapperTests
         };
 
         // act
-        ReadOnlyCollection<FilterRequest> result =
-            mapper.Map(input);
+        ReadOnlyCollection<FilterRequest> result = mapper.Map(input);
 
         // assert
-        Assert.Single(result);
-
-        FilterRequest filter = result[0];
+        FilterRequest filter = Assert.Single(result);
 
         Assert.Equal("Phase", filter.FilterName);
         Assert.Single(filter.FilterValues);
@@ -85,15 +82,14 @@ public sealed class SearchFiltersToFilterRequestsMapperTests
                     "OpenDate",
                     new FilterInputViewModel
                     {
-                        DateRange = new DateRangeFilterViewModel()
+                        DateRange = new()
                     }
                 }
             }
         };
 
         // act
-        ReadOnlyCollection<FilterRequest> result =
-            mapper.Map(input);
+        ReadOnlyCollection<FilterRequest> result = mapper.Map(input);
 
         // assert
         Assert.Empty(result);
@@ -117,10 +113,10 @@ public sealed class SearchFiltersToFilterRequestsMapperTests
                     "OpenDate",
                     new FilterInputViewModel
                     {
-                        DateRange = new DateRangeFilterViewModel
+                        DateRange = new()
                         {
-                            From = CreateDateInput(2024, 1, 1),
-                            To = CreateDateInput(2024, 12, 31)
+                            From = CreateDateInput(1, 1, 2024),
+                            To = CreateDateInput(31, 12, 2024)
                         }
                     }
                 }
@@ -128,17 +124,12 @@ public sealed class SearchFiltersToFilterRequestsMapperTests
         };
 
         // act
-        ReadOnlyCollection<FilterRequest> result =
-            mapper.Map(input);
+        ReadOnlyCollection<FilterRequest> result = mapper.Map(input);
 
         // assert
-        Assert.Single(result);
-
-        FilterRequest filter = result[0];
+        FilterRequest filter = Assert.Single(result);
 
         Assert.Equal("OpenDate", filter.FilterName);
-
-        Assert.Equal(2, filter.FilterValues.Count);
         Assert.Equal("2024-01-01", filter.FilterValues[0]);
         Assert.Equal("2024-12-31", filter.FilterValues[1]);
     }
@@ -161,9 +152,9 @@ public sealed class SearchFiltersToFilterRequestsMapperTests
                     "OpenDate",
                     new FilterInputViewModel
                     {
-                        DateRange = new DateRangeFilterViewModel
+                        DateRange = new()
                         {
-                            From = CreateDateInput(2024, 1, 1)
+                            From = CreateDateInput(1, 1, 2024)
                         }
                     }
                 }
@@ -171,8 +162,7 @@ public sealed class SearchFiltersToFilterRequestsMapperTests
         };
 
         // act
-        ReadOnlyCollection<FilterRequest> result =
-            mapper.Map(input);
+        ReadOnlyCollection<FilterRequest> result = mapper.Map(input);
 
         // assert
         FilterRequest filter = Assert.Single(result);
@@ -199,9 +189,9 @@ public sealed class SearchFiltersToFilterRequestsMapperTests
                     "OpenDate",
                     new FilterInputViewModel
                     {
-                        DateRange = new DateRangeFilterViewModel
+                        DateRange = new()
                         {
-                            To = CreateDateInput(2024, 12, 31)
+                            To = CreateDateInput(31, 12, 2024)
                         }
                     }
                 }
@@ -209,14 +199,87 @@ public sealed class SearchFiltersToFilterRequestsMapperTests
         };
 
         // act
-        ReadOnlyCollection<FilterRequest> result =
-            mapper.Map(input);
+        ReadOnlyCollection<FilterRequest> result = mapper.Map(input);
 
         // assert
         FilterRequest filter = Assert.Single(result);
 
         Assert.Null(filter.FilterValues[0]);
         Assert.Equal("2024-12-31", filter.FilterValues[1]);
+    }
+
+    [Fact]
+    public void Map_ThrowsInvalidOperationException_WhenFromDateIsInvalid()
+    {
+        // arrange
+        Mock<IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>> facetMapper =
+            SearchFacetsResultsMapperTestDouble.MockFor([]);
+
+        SearchFiltersToFilterRequestsMapper mapper =
+            new(facetMapper.Object);
+
+        SearchRequestViewModel input = new()
+        {
+            Filters = new Dictionary<string, FilterInputViewModel>
+            {
+                {
+                    "OpenDate",
+                    new FilterInputViewModel
+                    {
+                        DateRange = new()
+                        {
+                            From = new DateInputViewModel
+                            {
+                                Day = "32",
+                                Month = "1",
+                                Year = "2024"
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        // act/assert
+        Assert.Throws<InvalidOperationException>(() =>
+            mapper.Map(input));
+    }
+
+    [Fact]
+    public void Map_ThrowsInvalidOperationException_WhenToDateIsInvalid()
+    {
+        // arrange
+        Mock<IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>> facetMapper =
+            SearchFacetsResultsMapperTestDouble.MockFor([]);
+
+        SearchFiltersToFilterRequestsMapper mapper =
+            new(facetMapper.Object);
+
+        SearchRequestViewModel input = new()
+        {
+            Filters = new Dictionary<string, FilterInputViewModel>
+            {
+                {
+                    "OpenDate",
+                    new FilterInputViewModel
+                    {
+                        DateRange = new()
+                        {
+                            To = new DateInputViewModel
+                            {
+                                Day = "31",
+                                Month = "13",
+                                Year = "2024"
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        // act/assert
+        Assert.Throws<InvalidOperationException>(() =>
+            mapper.Map(input));
     }
 
     [Fact]
@@ -237,10 +300,10 @@ public sealed class SearchFiltersToFilterRequestsMapperTests
                     "OpenDate",
                     new FilterInputViewModel
                     {
-                        DateRange = new DateRangeFilterViewModel
+                        DateRange = new()
                         {
-                            From = CreateDateInput(2024, 12, 31),
-                            To = CreateDateInput(2024, 1, 1)
+                            From = CreateDateInput(31, 12, 2024),
+                            To = CreateDateInput(1, 1, 2024)
                         }
                     }
                 }
@@ -281,10 +344,10 @@ public sealed class SearchFiltersToFilterRequestsMapperTests
                     "OpenDate",
                     new FilterInputViewModel
                     {
-                        DateRange = new DateRangeFilterViewModel
+                        DateRange = new()
                         {
-                            From = CreateDateInput(2024, 1, 1),
-                            To = CreateDateInput(2024, 12, 31)
+                            From = CreateDateInput(1, 1, 2024),
+                            To = CreateDateInput(31, 12, 2024)
                         }
                     }
                 }
@@ -292,8 +355,7 @@ public sealed class SearchFiltersToFilterRequestsMapperTests
         };
 
         // act
-        ReadOnlyCollection<FilterRequest> result =
-            mapper.Map(input);
+        ReadOnlyCollection<FilterRequest> result = mapper.Map(input);
 
         // assert
         Assert.Equal(2, result.Count);
@@ -308,15 +370,13 @@ public sealed class SearchFiltersToFilterRequestsMapperTests
     }
 
     private static DateInputViewModel CreateDateInput(
-        int year,
+        int day,
         int month,
-        int day)
-    {
-        return new DateInputViewModel
+        int year) =>
+        new()
         {
             Day = day.ToString(),
             Month = month.ToString(),
             Year = year.ToString()
         };
-    }
 }

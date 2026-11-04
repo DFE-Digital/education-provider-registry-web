@@ -9,7 +9,7 @@ public sealed class FacetResultsToViewModelMapper :
 {
     private static readonly Dictionary<string, string> _labelMappings = new()
     {
-        ["admissionpolicy"] = "Admission policy",
+        ["admissionpolicy"] = "Admissions policy",
         ["boarding"] = "Boarding provision",
         ["diocese"] = "Diocese",
         ["educationphase"] = "Phase of education",

@@ -46,14 +46,14 @@ public sealed class SearchFiltersComponent
     // TODO ensure it's embedded within FORM else submission won't submit it natively
     public Task<HttpResponseMessage> RemoveFilterAsync(
         HttpClient client,
-        string facetLabel,
+        string facet,
         string facetValue,
         CancellationToken ct = default)
     {
-        string removalButtonValue = $"{facetLabel}|{facetValue}";
+        string removalButtonValue = $"{facet}|{facetValue}";
 
         IElement? element = _document.QuerySelectorAll($"[value='{removalButtonValue}']").SingleOrDefault() ??
-            throw new ArgumentException($"Element for facetLabel {facetLabel} and facetValue {facetValue} could not be found");
+            throw new ArgumentException($"Element for facet {facet} and facetValue {facetValue} could not be found");
 
         HttpRequestMessage request =
             CreateUpdatedHttpRequest(

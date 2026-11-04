@@ -4,6 +4,8 @@ using DfE.EducationProviderRegistry.Data.DatabaseModels.Models;
 using DfE.EducationProviderRegistry.Web.SharedTests.AngleSharp.Extensions;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search.Components;
+using SearchFiltersComponent = DfE.EducationProviderRegistry.Web.SharedTests.Features.Search.Components.SearchFiltersComponent;
+using SearchResultsComponent = DfE.EducationProviderRegistry.Web.SharedTests.Features.Search.Components.SearchResultsComponent;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.SystemTests.Search;
 
@@ -24,13 +26,13 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
 
         using HttpClient client = Factory.CreateClient();
 
-        string[] filterValueApplied = ["Multi-Academy Trust"];
+        string[] filtersToApply = ["Academy converter"];
 
         HttpRequestMessage message =
             SearchHttpRequestBuilder.Create()
                 .WithBaseUri(Factory.Server.BaseAddress)
                 .WithIdentitySearchTerm("sch")
-                .WithFilter("searchprovidertypename", filterValueApplied)
+                .WithFilter("providertypename", filtersToApply)
                 .Build();
 
         // Act
@@ -43,16 +45,14 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
 
         Assert.NotEmpty(results.GetSearchResults());
 
-        // Only selected filters are displayed
-        Filter selected = Assert.Single(filters.GetFilters());
-        Assert.Equal("searchprovidertypename", selected.Name);
+        Filter selectedFilter = filters.GetFilters().Single(t => t.Name == "Provider type");
 
         // Assert FilterValue
-        FilterValue value = Assert.Single(selected.FilterValues);
+        FilterValue value = Assert.Single(selectedFilter.FilterValues);
 
         Assert.True(value.Selected);
         Assert.NotEmpty(value.Label);
-        Assert.Equal(filterValueApplied.Single(), value.Value);
+        Assert.Equal(filtersToApply.Single(), value.Value);
     }
 
     [Fact]
@@ -66,13 +66,13 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
 
         using HttpClient client = Factory.CreateClient();
 
-        string[] filtersToApply = ["Multi-Academy Trust", "Single-Academy Trust"];
+        string[] filtersToApply = ["Academy converter", "Community school"];
 
         HttpRequestMessage message =
             SearchHttpRequestBuilder.Create()
                 .WithBaseUri(Factory.Server.BaseAddress)
                 .WithIdentitySearchTerm("sch")
-                .WithFilter("searchprovidertypename", filtersToApply)
+                .WithFilter("providertypename", filtersToApply)
                 .Build();
         // Act
         HttpResponseMessage response = await client.SendAsync(message, ct);
@@ -85,17 +85,16 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
         Assert.NotEmpty(results.GetSearchResults());
 
         // Assert Filter
-        Filter selected = Assert.Single(filters.GetFilters());
-        Assert.Equal("searchprovidertypename", selected.Name);
+        Filter selectedFilter = filters.GetFilters().Single(t => t.Name == "Provider type");
 
         // Assert FilterValues
-        Assert.Equal(2, selected.FilterValues.Count);
+        Assert.Equal(2, selectedFilter.FilterValues.Count);
 
-        FilterValue value1 = selected.FilterValues.Single(v => v.Value == filtersToApply[0]);
+        FilterValue value1 = selectedFilter.FilterValues.Single(v => v.Value == filtersToApply[0]);
         Assert.True(value1.Selected);
         Assert.NotEmpty(value1.Label);
 
-        FilterValue value2 = selected.FilterValues.Single(v => v.Value == filtersToApply[1]);
+        FilterValue value2 = selectedFilter.FilterValues.Single(v => v.Value == filtersToApply[1]);
         Assert.True(value2.Selected);
         Assert.NotEmpty(value2.Label);
     }
@@ -118,13 +117,13 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
 
         using HttpClient client = Factory.CreateClient();
 
-        string[] filtersToApply = ["Multi-Academy Trust", "Single-Academy Trust"];
+        string[] filtersToApply = ["Academy converter", "Community school"];
 
         HttpRequestMessage message =
             SearchHttpRequestBuilder.Create()
                 .WithBaseUri(Factory.Server.BaseAddress)
                 .WithIdentitySearchTerm("sch")
-                .WithFilter("searchprovidertypename", filtersToApply)
+                .WithFilter("providertypename", filtersToApply)
                 .Build();
 
         HttpResponseMessage filteredResults = await client.SendAsync(message, ct);
@@ -134,8 +133,8 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
         HttpResponseMessage removalResponse =
             await filtersApplied.RemoveFilterAsync(
                 client,
-                facetLabel: "searchprovidertypename",
-                facetValue: "Multi-Academy Trust",
+                facet: "providertypename",
+                facetValue: "Community school",
                 ct);
 
         IHtmlDocument document = await removalResponse.AssertSuccessfulHtmlResponseAsync();
@@ -145,12 +144,12 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
         SearchResultsComponent results = new(document);
 
         Assert.NotEmpty(results.GetSearchResults());
-        Filter remainingSelectedFilter = Assert.Single(removedFilters.GetFilters());
-        Assert.Equal("searchprovidertypename", remainingSelectedFilter.Name);
+
+        Filter remainingSelectedFilter = removedFilters.GetFilters().Single(t => t.Name == "Provider type");
 
         FilterValue remainingSelectedFilterValue = remainingSelectedFilter.FilterValues.Single();
         Assert.True(remainingSelectedFilterValue.Selected);
-        Assert.Equal("Single-Academy Trust", remainingSelectedFilterValue.Value);
+        Assert.Equal("Academy converter", remainingSelectedFilterValue.Value);
         Assert.NotEmpty(remainingSelectedFilterValue.Label);
     }
 
@@ -165,13 +164,13 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
         await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableSearchAggregates>(
             SearchAggregateTestDouble.CreateResults(10), ct);
 
-        string[] filtersToApply = ["Multi-Academy Trust", "Single-Academy Trust"];
+        string[] filtersToApply = ["Academy converter", "Community school"];
 
         HttpRequestMessage message =
             SearchHttpRequestBuilder.Create()
                 .WithBaseUri(Factory.Server.BaseAddress)
                 .WithIdentitySearchTerm("sch")
-                .WithFilter("searchprovidertypename", filtersToApply)
+                .WithFilter("providertypename", filtersToApply)
                 .Build();
 
         HttpResponseMessage filteredResults = await client.SendAsync(message, ct);
@@ -187,8 +186,7 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
 
         Assert.NotEmpty(results.GetSearchResults());
 
-        Filter filters = Assert.Single(clearedFilters.GetFilters());
-        Assert.Equal("searchprovidertypename", filters.Name);
+        Filter filters = clearedFilters.GetFilters().Single(t => t.Name == "Provider type");
 
         // static 2 filter values in data. None selected
         FilterValue value1 = filters.FilterValues.Single(v => v.Value == filtersToApply[0]);

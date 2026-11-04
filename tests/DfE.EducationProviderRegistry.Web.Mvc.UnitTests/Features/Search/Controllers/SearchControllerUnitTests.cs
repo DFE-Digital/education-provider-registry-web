@@ -6,6 +6,7 @@ using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Reque
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Controllers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Services;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Controllers.TestDoubles;
 using Microsoft.AspNetCore.Mvc;
@@ -97,5 +98,35 @@ public sealed class SearchControllerUnitTests
         ViewResult view = Assert.IsType<ViewResult>(result);
         Assert.Equal("Index", view.ViewName);
         Assert.IsType<SearchRequestViewModel>(view.Model);
+    }
+
+    [Fact]
+    public async Task Search_DoesNotInvokeDependencies_WhenModelStateIsInvalid()
+    {
+        // arrange
+        Mock<IUseCase<SearchRequest, UseCaseResponse<SearchResponse>>> useCase = SearchUseCaseTestDouble.Mock();
+        Mock<IMapper<SearchResultsMappingContext, SearchResultsViewModel>> mapper = SearchResultsMapperTestDouble.Mock();
+        Mock<IMapper<SearchRequestViewModel, ReadOnlyCollection<FilterRequest>>> filtersMapper = SearchFiltersToFilterRequestMapperTestDouble.Mock();
+        Mock<ISearchFilterSelectionHandler> selectionHandler = SearchFilterSelectionHandlerStub.Mock();
+
+        SearchController sut =
+            new(
+                searchUseCase: useCase.Object,
+                searchResponseToViewModelMapper: mapper.Object,
+                selectedFiltersToFiltersRequestsMapper: filtersMapper.Object,
+                searchFilterSelectionHandler: selectionHandler.Object);
+
+        sut.ModelState.AddModelError(
+            "What",
+            "Validation error");
+
+        // act
+        await sut.Search(new SearchRequestViewModel());
+
+        // assert
+        useCase.VerifyNoOtherCalls();
+        mapper.VerifyNoOtherCalls();
+        filtersMapper.VerifyNoOtherCalls();
+        selectionHandler.VerifyNoOtherCalls();
     }
 }

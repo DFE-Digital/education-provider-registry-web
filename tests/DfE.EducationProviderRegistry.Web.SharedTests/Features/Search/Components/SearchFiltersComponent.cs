@@ -43,6 +43,14 @@ public sealed class SearchFiltersComponent
         return filters;
     }
 
+    public List<Filter> GetFacetFilters()
+    {
+        return GetFilters()
+            .Where(filter =>
+                filter.FilterValues.Any())
+            .ToList();
+    }
+
     // TODO ensure it's embedded within FORM else submission won't submit it natively
     public Task<HttpResponseMessage> RemoveFilterAsync(
         HttpClient client,

@@ -1,4 +1,6 @@
-﻿namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+﻿using System.Globalization;
+
+namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 
 public sealed class DateRangeFilterViewModel
 {
@@ -6,6 +8,9 @@ public sealed class DateRangeFilterViewModel
     public DateInputViewModel To { get; set; } = new();
 
     public bool IsEmpty => From.IsEmpty && To.IsEmpty;
+
+    private const string DateFormat = "dd/MM/yyyy";
+    private static readonly CultureInfo UkCulture = new("en-GB");
 
     public string? SelectedLabel
     {
@@ -23,11 +28,13 @@ public sealed class DateRangeFilterViewModel
 
             return (hasFrom, hasTo) switch
             {
-                (true, true) => $"{from:dd/MM/yyyy} to {to:dd/MM/yyyy}",
-                (true, false) => $"From {from:dd/MM/yyyy}",
-                (false, true) => $"To {to:dd/MM/yyyy}",
+                (true, true) => $"{FormatDate(from)} to {FormatDate(to)}",
+                (true, false) => $"From {FormatDate(from)}",
+                (false, true) => $"To {FormatDate(to)}",
                 _ => null
             };
         }
     }
+
+    private static string FormatDate(DateOnly date) => date.ToString(DateFormat, UkCulture);
 }

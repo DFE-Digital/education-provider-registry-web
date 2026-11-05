@@ -1,6 +1,8 @@
 ﻿using System.Net;
 using AngleSharp.Html.Dom;
+using DfE.Document.Anglesharp;
 using DfE.EducationProviderRegistry.Web.Mvc.Settings;
+using DfE.EducationProviderRegistry.Web.PageComponents;
 using DfE.EducationProviderRegistry.Web.SharedTests.AngleSharp.Extensions;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Cookies;
@@ -37,7 +39,7 @@ public sealed class GoogleTagManagerTests
             factory.Services.GetRequiredService<
                 IOptions<GoogleAnalyticsSettings>>().Value;
 
-        GoogleAnalyticsComponent component = new(doc, settings);
+        GoogleAnalyticsComponent component = CreateComponent(doc, settings);
         Assert.False(component.Exists());
     }
 
@@ -65,7 +67,7 @@ public sealed class GoogleTagManagerTests
             factory.Services.GetRequiredService<
                 IOptions<GoogleAnalyticsSettings>>().Value;
 
-        GoogleAnalyticsComponent component = new(doc, settings);
+        GoogleAnalyticsComponent component = CreateComponent(doc, settings);
         Assert.False(component.Exists());
     }
 
@@ -104,7 +106,7 @@ public sealed class GoogleTagManagerTests
             factory.Services.GetRequiredService<
                 IOptions<GoogleAnalyticsSettings>>().Value;
 
-        GoogleAnalyticsComponent component = new(doc, settings);
+        GoogleAnalyticsComponent component = CreateComponent(doc, settings);
 
         if (analyticsConsent)
         {
@@ -115,6 +117,12 @@ public sealed class GoogleTagManagerTests
         {
             Assert.False(component.Exists());
         }
+    }
+
+
+    private static GoogleAnalyticsComponent CreateComponent(IHtmlDocument doc, GoogleAnalyticsSettings settings)
+    {
+        return new GoogleAnalyticsComponent(context: SearchContext.From(doc), analyticsDomain: new Uri(settings.Domain));
     }
 }
 

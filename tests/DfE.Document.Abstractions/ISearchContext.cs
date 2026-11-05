@@ -1,4 +1,6 @@
-﻿namespace DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.Document.Abstractions;
+﻿using DfE.Document.Abstractions;
+
+namespace DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.Document.Abstractions;
 
 public interface ISearchContext
 {

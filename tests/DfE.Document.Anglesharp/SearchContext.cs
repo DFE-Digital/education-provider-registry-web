@@ -1,5 +1,5 @@
 ﻿using AngleSharp.Dom;
-using DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.Document.Abstractions;
+using DfE.Document.Abstractions;
 
 namespace DfE.Document.Anglesharp;
 

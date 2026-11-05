@@ -1,5 +1,4 @@
 ﻿using DfE.Document.Abstractions;
-using DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.Document.Abstractions;
 
 namespace DfE.EducationProviderRegistry.Web.PageComponents;
 

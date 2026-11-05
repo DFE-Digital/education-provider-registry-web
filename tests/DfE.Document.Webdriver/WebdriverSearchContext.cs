@@ -1,6 +1,6 @@
 ﻿using DfE.Document.Abstractions;
 using OpenQA.Selenium;
-using ISearchContext = DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.Document.Abstractions.ISearchContext;
+using ISearchContext = DfE.Document.Abstractions.ISearchContext;
 
 namespace DfE.Document.Webdriver;
 

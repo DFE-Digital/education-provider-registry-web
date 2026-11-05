@@ -1,4 +1,4 @@
-﻿using DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.Document.Abstractions;
+﻿using DfE.Document.Abstractions;
 using OpenQA.Selenium;
 
 namespace DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.Document.WebDriver;

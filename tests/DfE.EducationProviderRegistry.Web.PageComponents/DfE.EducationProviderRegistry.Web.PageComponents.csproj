@@ -1,0 +1,7 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\DfE.Document.Abstractions\DfE.Document.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>

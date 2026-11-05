@@ -104,6 +104,12 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_USERNAME: DFE-Digital
 
+    - name: Run DfE.Document.Anglesharp UnitTests
+      run: dotnet test tests/DfE.Document.Anglesharp.UnitTests
+
+    - name: Run DfE.Document.WebDriver UnitTests
+      run: dotnet test tests/DfE.Document.Webdriver.UnitTests
+
     - name: Run MVC UnitTests with coverage
       run: |
         dotnet test tests/DfE.EducationProviderRegistry.Web.Mvc.UnitTests \
@@ -196,12 +202,6 @@ jobs:
 
     - name: Validate formatting
       run: dotnet format --verify-no-changes --verbosity diagnostic
-
-    - name: Run Document.Anglesharp UnitTests
-      run: dotnet test tests/DfE.Document.Anglesharp
-
-    - name: Run Document.WebDriver UnitTests
-      run: dotnet test tests/DfE.Document.Webdriver
       
   deploy-review-app:
     name: Deployment To Review

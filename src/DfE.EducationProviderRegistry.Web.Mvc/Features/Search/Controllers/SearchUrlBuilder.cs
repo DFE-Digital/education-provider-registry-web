@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search;
+namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Controllers;
 
 public static class SearchUrlBuilder
 {
@@ -49,6 +49,8 @@ public static class SearchUrlBuilder
             query,
             searchRequest.SelectedFacets);
 
+        AddFilters(query, searchRequest.Filters);
+
         string path = urlHelper.Action(
             "Search",
             "Search")!;
@@ -74,5 +76,32 @@ public static class SearchUrlBuilder
                     value);
             }
         }
+    }
+
+    private static void AddFilters(
+        QueryBuilder query,
+        Dictionary<string, FilterInputViewModel> filters)
+    {
+        foreach ((string? name, FilterInputViewModel? filter) in filters)
+        {
+            if (filter.DateRange is { IsEmpty: false } dateRange)
+            {
+                string prefix = $"Filters[{name}].DateRange";
+                AddDateRangeInput(query, $"{prefix}.From", dateRange.From);
+                AddDateRangeInput(query, $"{prefix}.To", dateRange.To);
+            }
+
+            // Add other filter types here as needed
+        }
+    }
+
+    private static void AddDateRangeInput(QueryBuilder query, string prefix, DateInputViewModel? date)
+    {
+        if (date is null)
+            return;
+
+        query.Add($"{prefix}.Day", date.Day ?? string.Empty);
+        query.Add($"{prefix}.Month", date.Month ?? string.Empty);
+        query.Add($"{prefix}.Year", date.Year ?? string.Empty);
     }
 }

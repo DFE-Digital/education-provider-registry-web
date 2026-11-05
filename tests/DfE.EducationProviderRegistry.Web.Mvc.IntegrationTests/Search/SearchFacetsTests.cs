@@ -88,7 +88,7 @@ public sealed class SearchFacetsTests
 
         Dictionary<string, List<string>> facetSelections = selections ?? [];
 
-        List<Filter> filters = filterComponent.GetFilters();
+        List<Filter> filters = filterComponent.GetFacetFilters();
 
         Assert.Equal(facets.Facets.Count, filters.Count);
 

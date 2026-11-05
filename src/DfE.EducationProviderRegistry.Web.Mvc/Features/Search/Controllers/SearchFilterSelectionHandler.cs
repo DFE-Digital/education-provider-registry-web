@@ -2,8 +2,7 @@
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Services;
 
-public sealed class SearchFilterSelectionHandler :
-    ISearchFilterSelectionHandler
+public sealed class SearchFilterSelectionHandler : ISearchFilterSelectionHandler
 {
     public void Handle(SearchRequestViewModel request)
     {
@@ -22,6 +21,7 @@ public sealed class SearchFilterSelectionHandler :
         SearchRequestViewModel request)
     {
         request.SelectedFacets.Clear();
+        request.Filters.Clear();
         request.ClearFilters = false;
         request.RemoveFilter = null;
     }
@@ -38,6 +38,8 @@ public sealed class SearchFilterSelectionHandler :
         }
 
         request.RemoveFilter = null;
+
+        request.Filters.Remove(facetName);
 
         if (!request.SelectedFacets.TryGetValue(
                 facetName,

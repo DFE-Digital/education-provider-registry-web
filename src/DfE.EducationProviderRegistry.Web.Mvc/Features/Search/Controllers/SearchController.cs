@@ -17,23 +17,23 @@ public sealed class SearchController : Controller
 {
     private readonly IUseCase<SearchRequest, UseCaseResponse<SearchResponse>> _searchUseCase;
     private readonly IMapper<SearchResultsMappingContext, SearchResultsViewModel> _searchResponseToViewModelMapper;
-    private readonly IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>> _selectedFacetsToFilterRequestsMapper;
+    private readonly IMapper<SearchRequestViewModel, ReadOnlyCollection<FilterRequest>> _selectedFiltersToFiltersRequestsMapper;
     private readonly ISearchFilterSelectionHandler _searchFilterSelectionHandler;
 
     public SearchController(
         IUseCase<SearchRequest, UseCaseResponse<SearchResponse>> searchUseCase,
         IMapper<SearchResultsMappingContext, SearchResultsViewModel> searchResponseToViewModelMapper,
-        IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>> selectedFacetsToFilterRequestsMapper,
+        IMapper<SearchRequestViewModel, ReadOnlyCollection<FilterRequest>> selectedFiltersToFiltersRequestsMapper,
         ISearchFilterSelectionHandler searchFilterSelectionHandler)
     {
         ArgumentNullException.ThrowIfNull(searchUseCase);
         ArgumentNullException.ThrowIfNull(searchResponseToViewModelMapper);
-        ArgumentNullException.ThrowIfNull(selectedFacetsToFilterRequestsMapper);
+        ArgumentNullException.ThrowIfNull(selectedFiltersToFiltersRequestsMapper);
         ArgumentNullException.ThrowIfNull(searchFilterSelectionHandler);
 
         _searchUseCase = searchUseCase;
         _searchResponseToViewModelMapper = searchResponseToViewModelMapper;
-        _selectedFacetsToFilterRequestsMapper = selectedFacetsToFilterRequestsMapper;
+        _selectedFiltersToFiltersRequestsMapper = selectedFiltersToFiltersRequestsMapper;
         _searchFilterSelectionHandler = searchFilterSelectionHandler;
     }
 
@@ -44,12 +44,19 @@ public sealed class SearchController : Controller
     }
 
     [HttpGet("results")]
-    public async Task<IActionResult> Search(
-        SearchRequestViewModel model)
+    public async Task<IActionResult> Search(SearchRequestViewModel model)
     {
         if (!ModelState.IsValid)
         {
-            return View("Index", model);
+            return View("Results", new SearchResultsViewModel()
+            {
+                SearchRequest = model,
+                PrimarySearchTerms = model.What,
+                SecondarySearchTerms = model.What,
+                SelectedSortDirection = model.Sort,
+                TotalSearchResults = 0,
+                SearchAggregateResults = []
+            });
         }
 
         string sortDirection = model.Sort switch
@@ -69,8 +76,7 @@ public sealed class SearchController : Controller
         _searchFilterSelectionHandler.Handle(model);
 
         ReadOnlyCollection<FilterRequest> searchFilterRequests =
-            _selectedFacetsToFilterRequestsMapper.Map(
-                model.SelectedFacets);
+            _selectedFiltersToFiltersRequestsMapper.Map(model);
 
         SearchRequest searchRequest = new(
             searchTerms: [

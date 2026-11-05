@@ -1,0 +1,148 @@
+﻿@model (string BindingName, DateRangeFilterViewModel Range)
+
+@{
+    string bindingName = $"Filters[{Model.BindingName}].DateRange";
+    string idPrefix = $"filter-{Model.BindingName.Replace("_", "-")}";
+
+    string? fromError = ViewData.ModelState[$"{bindingName}.From"]?.Errors.FirstOrDefault()?.ErrorMessage;
+    string? toError = ViewData.ModelState[$"{bindingName}.To"]?.Errors.FirstOrDefault()?.ErrorMessage;
+}
+
+
+<div class="govuk-form-group">
+    <fieldset class="govuk-fieldset" role="group">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+            <h1 class="govuk-fieldset__heading">
+                From
+            </h1>
+        </legend>
+
+        @if (fromError is not null)
+        {
+            <p id="@($"{idPrefix}-from-error")"
+               class="govuk-error-message">
+                <span>@fromError</span>
+            </p>
+        }
+
+        <div class="govuk-date-input">
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label"
+                           for="@($"{idPrefix}-from-day")">
+                        Day
+                    </label>
+                    <input id="@($"{idPrefix}-from-day")"
+                           name="@($"{bindingName}.From.Day")"
+                           type="text"
+                           inputmode="numeric"
+                           pattern="[0-9]*"
+                           maxlength="2"
+                           value="@Model.Range.From.Day"
+                           class="govuk-input govuk-date-input__input govuk-input--width-2" />
+                </div>
+            </div>
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label"
+                           for="@($"{idPrefix}-from-month")">
+                        Month
+                    </label>
+                    <input id="@($"{idPrefix}-from-month")"
+                           name="@($"{bindingName}.From.Month")"
+                           type="text"
+                           inputmode="numeric"
+                           pattern="[0-9]*"
+                           maxlength="2"
+                           value="@Model.Range.From.Month"
+                           class="govuk-input govuk-date-input__input govuk-input--width-2" />
+                </div>
+            </div>
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label"
+                           for="@($"{idPrefix}-from-year")">
+                        Year
+                    </label>
+                    <input id="@($"{idPrefix}-from-year")"
+                           name="@($"{bindingName}.From.Year")"
+                           type="text"
+                           inputmode="numeric"
+                           pattern="[0-9]*"
+                           maxlength="4"
+                           value="@Model.Range.From.Year"
+                           class="govuk-input govuk-date-input__input govuk-input--width-4" />
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</div>
+
+<div class="govuk-form-group">
+    <fieldset class="govuk-fieldset" role="group">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+            <h1 class="govuk-fieldset__heading">
+                To
+            </h1>
+        </legend>
+
+        @if (toError is not null)
+        {
+            <p id="@($"{idPrefix}-to-error")"
+               class="govuk-error-message">
+                <span>@toError</span>
+            </p>
+        }
+
+        <div class="govuk-date-input">
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label"
+                           for="@($"{idPrefix}-to-day")">
+                        Day
+                    </label>
+                    <input id="@($"{idPrefix}-to-day")"
+                           name="@($"{bindingName}.To.Day")"
+                           type="text"
+                           inputmode="numeric"
+                           pattern="[0-9]*"
+                           maxlength="2"
+                           value="@Model.Range.To.Day"
+                           class="govuk-input govuk-date-input__input govuk-input--width-2" />
+                </div>
+            </div>
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label"
+                           for="@($"{idPrefix}-to-month")">
+                        Month
+                    </label>
+                    <input id="@($"{idPrefix}-to-month")"
+                           name="@($"{bindingName}.To.Month")"
+                           type="text"
+                           inputmode="numeric"
+                           pattern="[0-9]*"
+                           maxlength="2"
+                           value="@Model.Range.To.Month"
+                           class="govuk-input govuk-date-input__input govuk-input--width-2" />
+                </div>
+            </div>
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label"
+                           for="@($"{idPrefix}-to-year")">
+                        Year
+                    </label>
+                    <input id="@($"{idPrefix}-to-year")"
+                           name="@($"{bindingName}.To.Year")"
+                           type="text"
+                           inputmode="numeric"
+                           pattern="[0-9]*"
+                           maxlength="4"
+                           value="@Model.Range.To.Year"
+                           class="govuk-input govuk-date-input__input govuk-input--width-4" />
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</div>

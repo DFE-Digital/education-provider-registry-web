@@ -33,6 +33,8 @@ internal static class SearchServiceCollectionExtensions
                 IReadOnlyCollection<SearchAggregateResult>, List<GovUkTable>>, SearchAggregateResultsToViewModelMapper>()
             .AddSingleton<IMapper<
                 Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>, SelectedFacetsToFilterRequestsMapper>()
+            .AddSingleton<IMapper<
+                SearchRequestViewModel, ReadOnlyCollection<FilterRequest>>, SearchFiltersToFilterRequestsMapper>()
             .AddSingleton<ISearchFilterSelectionHandler, SearchFilterSelectionHandler>()
             .AddSingleton<ISearchAggregateCategoryToModelMapper, SearchAggregateCategoryEstablishmentMapper>()
             .AddSingleton<ISearchAggregateCategoryToModelMapper, SearchAggregateCategoryGroupMapper>();

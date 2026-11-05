@@ -24,7 +24,6 @@ public sealed class SearchResultsViewModel
     public string? SelectedSortDirection { get; set; }
 
     public bool HasResults => TotalSearchResults >= 1;
-    public bool HasMoreThanOneResult => TotalSearchResults > 1;
     public bool HasFilters => Facets?.Count > 0;
 
     public SearchRequestViewModel SearchRequest { get; set; } = new();

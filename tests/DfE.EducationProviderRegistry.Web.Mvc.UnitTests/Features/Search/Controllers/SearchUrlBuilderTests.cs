@@ -1,4 +1,4 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Controllers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
@@ -201,5 +201,136 @@ public sealed class SearchUrlBuilderTests
 
         // Assert
         Assert.Throws<ArgumentNullException>(action);
+    }
+
+    [Fact]
+    public void BuildPageUrl_WithDateRangeFilter_AddsDateRangeToQueryString()
+    {
+        // Arrange
+        SearchRequestViewModel searchRequest = new()
+        {
+            RecordsPerPage = 20,
+            Filters = new Dictionary<string, FilterInputViewModel>
+        {
+            {
+                "OpenDate",
+                new FilterInputViewModel
+                {
+                    DateRange = new DateRangeFilterViewModel
+                    {
+                        From = new DateInputViewModel
+                        {
+                            Day = "1",
+                            Month = "1",
+                            Year = "2024"
+                        },
+                        To = new DateInputViewModel
+                        {
+                            Day = "31",
+                            Month = "12",
+                            Year = "2024"
+                        }
+                    }
+                }
+            }
+        }
+        };
+
+        // Act
+        string result = SearchUrlBuilder.BuildPageUrl(
+            _urlHelper.Object,
+            searchRequest,
+            1);
+
+        // Assert
+        Uri uri = new($"https://test.local{result}");
+
+        Dictionary<string, StringValues> query =
+            QueryHelpers.ParseQuery(uri.Query);
+
+        Assert.Equal("1", query["Filters[OpenDate].DateRange.From.Day"]);
+        Assert.Equal("1", query["Filters[OpenDate].DateRange.From.Month"]);
+        Assert.Equal("2024", query["Filters[OpenDate].DateRange.From.Year"]);
+        Assert.Equal("31", query["Filters[OpenDate].DateRange.To.Day"]);
+        Assert.Equal("12", query["Filters[OpenDate].DateRange.To.Month"]);
+        Assert.Equal("2024", query["Filters[OpenDate].DateRange.To.Year"]);
+    }
+
+    [Fact]
+    public void BuildPageUrl_WithEmptyDateRange_DoesNotAddDateRangeToQueryString()
+    {
+        // Arrange
+        SearchRequestViewModel searchRequest = new()
+        {
+            RecordsPerPage = 20,
+            Filters = new Dictionary<string, FilterInputViewModel>
+        {
+            {
+                "OpenDate",
+                new FilterInputViewModel
+                {
+                    DateRange = new DateRangeFilterViewModel()
+                }
+            }
+        }
+        };
+
+        // Act
+        string result = SearchUrlBuilder.BuildPageUrl(
+            _urlHelper.Object,
+            searchRequest,
+            1);
+
+        // Assert
+        Uri uri = new($"https://test.local{result}");
+
+        Dictionary<string, StringValues> query =
+            QueryHelpers.ParseQuery(uri.Query);
+
+        Assert.DoesNotContain(
+            query.Keys,
+            key => key.StartsWith("Filters[OpenDate]"));
+    }
+
+    [Fact]
+    public void BuildPageUrl_WithPartialDateRange_AddsEmptyStringsForMissingValues()
+    {
+        // Arrange
+        SearchRequestViewModel searchRequest = new()
+        {
+            RecordsPerPage = 20,
+            Filters = new Dictionary<string, FilterInputViewModel>
+        {
+            {
+                "OpenDate",
+                new FilterInputViewModel
+                {
+                    DateRange = new DateRangeFilterViewModel
+                    {
+                        From = new DateInputViewModel
+                        {
+                            Year = "2024"
+                        }
+                    }
+                }
+            }
+        }
+        };
+
+        // Act
+        string result = SearchUrlBuilder.BuildPageUrl(
+            _urlHelper.Object,
+            searchRequest,
+            1);
+
+        // Assert
+        Uri uri = new($"https://test.local{result}");
+
+        Dictionary<string, StringValues> query =
+            QueryHelpers.ParseQuery(uri.Query);
+
+        Assert.Equal(string.Empty, query["Filters[OpenDate].DateRange.From.Day"]);
+        Assert.Equal(string.Empty, query["Filters[OpenDate].DateRange.From.Month"]);
+        Assert.Equal("2024", query["Filters[OpenDate].DateRange.From.Year"]);
     }
 }

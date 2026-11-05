@@ -60,25 +60,6 @@ public sealed class SearchResultsViewModelTests
         Assert.Equal(expected, result);
     }
 
-    [Theory]
-    [InlineData(0, false)]
-    [InlineData(1, false)]
-    [InlineData(2, true)]
-    public void HasMoreThanOneResult_ReturnsExpectedResult(
-        int totalEstablishmentResults,
-        bool expected)
-    {
-        // Arrange
-        SearchResultsViewModel model = CreateModel();
-        model.TotalSearchResults = totalEstablishmentResults;
-
-        // Act
-        bool result = model.HasMoreThanOneResult;
-
-        // Assert
-        Assert.Equal(expected, result);
-    }
-
     [Fact]
     public void HasFilters_WithFacets_ReturnsTrue()
     {

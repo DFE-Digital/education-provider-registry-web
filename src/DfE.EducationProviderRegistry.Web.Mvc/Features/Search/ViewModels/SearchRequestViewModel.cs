@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 
 public sealed class SearchRequestViewModel
@@ -19,6 +20,8 @@ public sealed class SearchRequestViewModel
     /// cleared for the request.
     /// </remarks>
     public Dictionary<string, List<string>> SelectedFacets { get; set; } = [];
+
+    public Dictionary<string, FilterInputViewModel> Filters { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the search keywords entered by the user.

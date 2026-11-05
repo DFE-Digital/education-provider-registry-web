@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Filter;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 

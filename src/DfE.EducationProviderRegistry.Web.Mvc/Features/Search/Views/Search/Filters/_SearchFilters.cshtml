@@ -1,8 +1,8 @@
 ﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels
-@model IEnumerable<FacetViewModel>
+@model SearchResultsViewModel
 
 @{
-    var selectedFilters = (Model ?? [])
+    var selectedFacets = (Model.Facets ?? [])
         .SelectMany(facet =>
             facet.Values
                 .Where(value => value.IsSelected)
@@ -13,13 +13,31 @@
                     Label = value.Label
                 }))
         .ToList();
+
+    var dateFilters = new[]
+    {
+        (
+            Name: "opened_date",
+            Label: "Opened date",
+            Range: Model.SearchRequest.Filters
+        .GetValueOrDefault("opened_date")?.DateRange ?? new()),
+        (
+            Name: "closed_date",
+            Label: "Closed date",
+            Range: Model.SearchRequest.Filters
+        .GetValueOrDefault("closed_date")?.DateRange ?? new()),
+    };
+
+    var selectedDateFilters = dateFilters
+    .Where(filter => filter.Range.SelectedLabel is not null)
+    .ToList();
 }
 
 <div class="moj-filter">
     <div class="moj-filter__content">
         <div class="moj-filter__options">
 
-            @if (selectedFilters.Any())
+            @if (selectedFacets.Any() || selectedDateFilters.Any())
             {
                 <div class="moj-filter__selected app-selected-filters">
                     <div class="app-selected-filters__header">
@@ -36,7 +54,24 @@
                     </div>
 
                     <ul class="app-selected-filters__list">
-                        @foreach (var filter in selectedFilters)
+                        @foreach (var filter in selectedDateFilters)
+                        {
+                            <li>
+                                <button type="submit"
+                                        class="app-selected-filter"
+                                        name="RemoveFilter"
+                                        value="@($"{filter.Name}|filter")">
+
+                                    @filter.Range.SelectedLabel
+
+                                    <span aria-hidden="true">&times;</span>
+                                    <span class="govuk-visually-hidden">
+                                        Remove @filter.Label.ToLowerInvariant() filter
+                                    </span>
+                                </button>
+                            </li>
+                        }
+                        @foreach (var filter in selectedFacets)
                         {
                             <li>
                                 <button type="submit"
@@ -58,7 +93,7 @@
                 </div>
             }
 
-            @foreach (var facet in Model ?? [])
+            @foreach (var facet in Model.Facets ?? [])
             {
                 <details class="govuk-details filter-section">
                     <summary class="govuk-details__summary">
@@ -83,6 +118,20 @@
                     </div>
                 </details>
             }
+
+            @foreach (var filter in dateFilters)
+            {
+                <details class="govuk-details filter-section">
+                    <summary class="govuk-details__summary">
+                        <span class="govuk-details__summary-text">
+                            @filter.Label
+                        </span>
+                    </summary>
+
+                    @await Html.PartialAsync("_DateRangeFilter", (filter.Name, filter.Range))
+                </details>
+            }
+
             <button type="submit"
                     class="govuk-button"
                     data-module="govuk-button">

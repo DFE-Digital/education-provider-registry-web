@@ -2,13 +2,14 @@
 @model FacetViewModel
 
 <div class="govuk-checkboxes govuk-checkboxes--small">
-    @foreach (var facetValue in Model.Values)
+    @for (int i = 0; i < Model.Values.Count; i++)
     {
         @await Html.PartialAsync(
             "_FiltersComponentGroup.cshtml",
             (
+                $"filter-{Model.Name}-{i}",
                 Model.Name,
-                facetValue
+                Model.Values[i]
             ))
     }
 </div>

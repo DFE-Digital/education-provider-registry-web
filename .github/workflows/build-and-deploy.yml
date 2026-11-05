@@ -196,6 +196,12 @@ jobs:
 
     - name: Validate formatting
       run: dotnet format --verify-no-changes --verbosity diagnostic
+
+    - name: Run Document.Anglesharp UnitTests
+      run: dotnet test tests/DfE.Document.Anglesharp
+
+    - name: Run Document.WebDriver UnitTests
+      run: dotnet test tests/DfE.Document.Webdriver
       
   deploy-review-app:
     name: Deployment To Review

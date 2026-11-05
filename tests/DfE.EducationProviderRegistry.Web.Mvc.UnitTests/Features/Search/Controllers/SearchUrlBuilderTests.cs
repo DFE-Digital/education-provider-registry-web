@@ -1,4 +1,4 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Controllers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;

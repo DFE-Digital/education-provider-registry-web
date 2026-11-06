@@ -12,9 +12,9 @@ public sealed class NumberRangeFilterViewModel
 
     public string? SelectedLabel => (From, To) switch
     {
-        (int from, int to) => $"Age range {from} to {to}",
-        (int from, null) => $"Age range from {from}",
-        (null, int to) => $"Age range up to {to}",
+        (int from, int to) => $"{from} to {to}",
+        (int from, null) => $"{from} and over",
+        (null, int to) => $"up to {to}",
         _ => null
     };
 

@@ -40,7 +40,7 @@
     <div class="moj-filter__content">
         <div class="moj-filter__options">
 
-            @if (selectedFacets.Any() || selectedDateFilters.Any())
+            @if (selectedFacets.Any() || selectedDateFilters.Any() || ageRange?.SelectedLabel is not null)
             {
                 <div class="moj-filter__selected app-selected-filters">
                     <div class="app-selected-filters__header">
@@ -57,6 +57,24 @@
                     </div>
 
                     <ul class="app-selected-filters__list">
+                        @if (ageRange?.SelectedLabel is not null)
+                        {
+                            <li>
+                                <button type="submit"
+                                        class="app-selected-filter"
+                                        name="RemoveFilter"
+                                        value="@($"age_range|filter")">
+
+                                    @ageRange?.SelectedLabel
+
+                                    <span aria-hidden="true">&times;</span>
+
+                                    <span class="govuk-visually-hidden">
+                                        Remove age range filter
+                                    </span>
+                                </button>
+                            </li>
+                        }
                         @foreach (var filter in selectedDateFilters)
                         {
                             <li>

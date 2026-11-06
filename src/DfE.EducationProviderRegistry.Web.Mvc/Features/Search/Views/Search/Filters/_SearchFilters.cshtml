@@ -28,9 +28,12 @@
         .GetValueOrDefault("closed_date")?.DateRange ?? new()),
     };
 
+    var ageRange = Model.SearchRequest.Filters
+        .GetValueOrDefault("age_range")?.NumberRange ?? new();
+
     var selectedDateFilters = dateFilters
-    .Where(filter => filter.Range.SelectedLabel is not null)
-    .ToList();
+        .Where(filter => filter.Range.SelectedLabel is not null)
+        .ToList();
 }
 
 <div class="moj-filter">
@@ -131,6 +134,16 @@
                     @await Html.PartialAsync("_DateRangeFilter", (filter.Name, filter.Range))
                 </details>
             }
+
+            <details class="govuk-details filter-section">
+                <summary class="govuk-details__summary">
+                    <span class="govuk-details__summary-text">
+                        Age range
+                    </span>
+                </summary>
+
+                @await Html.PartialAsync("_NumberRangeFilter", ("age_range", ageRange))
+            </details>
 
             <button type="submit"
                     class="govuk-button"

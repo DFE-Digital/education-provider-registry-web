@@ -369,6 +369,200 @@ public sealed class SearchFiltersToFilterRequestsMapperTests
             filter => filter.FilterName == "OpenDate");
     }
 
+    [Fact]
+    public void Map_DoesNotAddNumberRangeFilter_WhenNumberRangeIsEmpty()
+    {
+        // arrange
+        Mock<IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>> facetMapper =
+            SearchFacetsResultsMapperTestDouble.MockFor([]);
+
+        SearchFiltersToFilterRequestsMapper mapper =
+            new(facetMapper.Object);
+
+        SearchRequestViewModel input = new()
+        {
+            Filters = new Dictionary<string, FilterInputViewModel>
+        {
+            {
+                "AgeRange",
+                new FilterInputViewModel
+                {
+                    NumberRange = new NumberRangeFilterViewModel()
+                }
+            }
+        }
+        };
+
+        // act
+        ReadOnlyCollection<FilterRequest> result = mapper.Map(input);
+
+        // assert
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public void Map_AddsNumberRangeFilter_WhenBothValuesProvided()
+    {
+        // arrange
+        Mock<IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>> facetMapper =
+            SearchFacetsResultsMapperTestDouble.MockFor([]);
+
+        SearchFiltersToFilterRequestsMapper mapper =
+            new(facetMapper.Object);
+
+        SearchRequestViewModel input = new()
+        {
+            Filters = new Dictionary<string, FilterInputViewModel>
+        {
+            {
+                "AgeRange",
+                new FilterInputViewModel
+                {
+                    NumberRange = new NumberRangeFilterViewModel
+                    {
+                        From = 5,
+                        To = 11
+                    }
+                }
+            }
+        }
+        };
+
+        // act
+        ReadOnlyCollection<FilterRequest> result = mapper.Map(input);
+
+        // assert
+        FilterRequest filter = Assert.Single(result);
+
+        Assert.Equal("AgeRange", filter.FilterName);
+        Assert.Equal(5, filter.FilterValues[0]);
+        Assert.Equal(11, filter.FilterValues[1]);
+    }
+
+    [Fact]
+    public void Map_AddsNumberRangeFilter_WhenOnlyFromProvided()
+    {
+        // arrange
+        Mock<IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>> facetMapper =
+            SearchFacetsResultsMapperTestDouble.MockFor([]);
+
+        SearchFiltersToFilterRequestsMapper mapper =
+            new(facetMapper.Object);
+
+        SearchRequestViewModel input = new()
+        {
+            Filters = new Dictionary<string, FilterInputViewModel>
+        {
+            {
+                "AgeRange",
+                new FilterInputViewModel
+                {
+                    NumberRange = new NumberRangeFilterViewModel
+                    {
+                        From = 5
+                    }
+                }
+            }
+        }
+        };
+
+        // act
+        ReadOnlyCollection<FilterRequest> result = mapper.Map(input);
+
+        // assert
+        FilterRequest filter = Assert.Single(result);
+
+        Assert.Equal("AgeRange", filter.FilterName);
+        Assert.Equal(5, filter.FilterValues[0]);
+        Assert.Null(filter.FilterValues[1]);
+    }
+
+    [Fact]
+    public void Map_AddsNumberRangeFilter_WhenOnlyToProvided()
+    {
+        // arrange
+        Mock<IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>> facetMapper =
+            SearchFacetsResultsMapperTestDouble.MockFor([]);
+
+        SearchFiltersToFilterRequestsMapper mapper =
+            new(facetMapper.Object);
+
+        SearchRequestViewModel input = new()
+        {
+            Filters = new Dictionary<string, FilterInputViewModel>
+        {
+            {
+                "AgeRange",
+                new FilterInputViewModel
+                {
+                    NumberRange = new NumberRangeFilterViewModel
+                    {
+                        To = 11
+                    }
+                }
+            }
+        }
+        };
+
+        // act
+        ReadOnlyCollection<FilterRequest> result = mapper.Map(input);
+
+        // assert
+        FilterRequest filter = Assert.Single(result);
+
+        Assert.Equal("AgeRange", filter.FilterName);
+        Assert.Null(filter.FilterValues[0]);
+        Assert.Equal(11, filter.FilterValues[1]);
+    }
+
+    [Fact]
+    public void Map_ReturnsFacetAndNumberRangeFilters()
+    {
+        // arrange
+        ReadOnlyCollection<FilterRequest> facetFilters =
+        [
+            new("Phase", ["Primary"])
+        ];
+
+        Mock<IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>> facetMapper =
+            SearchFacetsResultsMapperTestDouble.MockFor(facetFilters);
+
+        SearchFiltersToFilterRequestsMapper mapper =
+            new(facetMapper.Object);
+
+        SearchRequestViewModel input = new()
+        {
+            Filters = new Dictionary<string, FilterInputViewModel>
+        {
+            {
+                "AgeRange",
+                new FilterInputViewModel
+                {
+                    NumberRange = new NumberRangeFilterViewModel
+                    {
+                        From = 5,
+                        To = 11
+                    }
+                }
+            }
+        }
+        };
+
+        // act
+        ReadOnlyCollection<FilterRequest> result = mapper.Map(input);
+
+        // assert
+        Assert.Equal(2, result.Count);
+
+        Assert.Contains(
+            result,
+            filter => filter.FilterName == "Phase");
+
+        Assert.Contains(
+            result,
+            filter => filter.FilterName == "AgeRange");
+    }
+
     private static DateInputViewModel CreateDateInput(
         int day,
         int month,

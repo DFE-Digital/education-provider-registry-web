@@ -1,6 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
-
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 
 public sealed class NumberRangeFilterViewModel
@@ -17,6 +15,4 @@ public sealed class NumberRangeFilterViewModel
         (null, int to) => $"up to {to}",
         _ => null
     };
-
-
 }

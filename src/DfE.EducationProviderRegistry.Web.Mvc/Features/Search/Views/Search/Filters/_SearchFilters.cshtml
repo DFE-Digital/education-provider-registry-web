@@ -57,7 +57,7 @@
                     </div>
 
                     <ul class="app-selected-filters__list">
-                        @if (ageRange?.SelectedLabel is not null)
+                        @if (ageRange.SelectedLabel is not null)
                         {
                             <li>
                                 <button type="submit"
@@ -65,7 +65,7 @@
                                         name="RemoveFilter"
                                         value="@($"age_range|filter")">
 
-                                    @ageRange?.SelectedLabel
+                                    @ageRange.SelectedLabel
 
                                     <span aria-hidden="true">&times;</span>
 

@@ -111,8 +111,8 @@ public static class SearchUrlBuilder
 
     private static void AddDateRangeInput(QueryBuilder query, string prefix, DateInputViewModel? date)
     {
-        query.Add($"{prefix}.Day", date.Day ?? string.Empty);
-        query.Add($"{prefix}.Month", date.Month ?? string.Empty);
-        query.Add($"{prefix}.Year", date.Year ?? string.Empty);
+        query.Add($"{prefix}.Day", date?.Day ?? string.Empty);
+        query.Add($"{prefix}.Month", date?.Month ?? string.Empty);
+        query.Add($"{prefix}.Year", date?.Year ?? string.Empty);
     }
 }

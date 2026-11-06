@@ -333,4 +333,172 @@ public sealed class SearchUrlBuilderTests
         Assert.Equal(string.Empty, query["Filters[OpenDate].DateRange.From.Month"]);
         Assert.Equal("2024", query["Filters[OpenDate].DateRange.From.Year"]);
     }
+
+
+    [Fact]
+    public void BuildPageUrl_WithNumberRangeFilter_AddsNumberRangeToQueryString()
+    {
+        // Arrange
+        SearchRequestViewModel searchRequest = new()
+        {
+            RecordsPerPage = 20,
+            Filters = new Dictionary<string, FilterInputViewModel>
+        {
+            {
+                "AgeRange",
+                new FilterInputViewModel
+                {
+                    NumberRange = new NumberRangeFilterViewModel
+                    {
+                        From = 5,
+                        To = 11
+                    }
+                }
+            }
+        }
+        };
+
+        // Act
+        string result = SearchUrlBuilder.BuildPageUrl(
+            _urlHelper.Object,
+            searchRequest,
+            1);
+
+        // Assert
+        Uri uri = new($"https://test.local{result}");
+
+        Dictionary<string, StringValues> query =
+            QueryHelpers.ParseQuery(uri.Query);
+
+        Assert.Equal(
+            "5",
+            query["Filters[AgeRange].NumberRange.From"]);
+
+        Assert.Equal(
+            "11",
+            query["Filters[AgeRange].NumberRange.To"]);
+    }
+
+    [Fact]
+    public void BuildPageUrl_WithNumberRangeFromOnly_AddsOnlyFromValue()
+    {
+        // Arrange
+        SearchRequestViewModel searchRequest = new()
+        {
+            RecordsPerPage = 20,
+            Filters = new Dictionary<string, FilterInputViewModel>
+        {
+            {
+                "AgeRange",
+                new FilterInputViewModel
+                {
+                    NumberRange = new NumberRangeFilterViewModel
+                    {
+                        From = 5
+                    }
+                }
+            }
+        }
+        };
+
+        // Act
+        string result = SearchUrlBuilder.BuildPageUrl(
+            _urlHelper.Object,
+            searchRequest,
+            1);
+
+        // Assert
+        Uri uri = new($"https://test.local{result}");
+
+        Dictionary<string, StringValues> query =
+            QueryHelpers.ParseQuery(uri.Query);
+
+        Assert.Equal(
+            "5",
+            query["Filters[AgeRange].NumberRange.From"]);
+
+        Assert.False(
+            query.ContainsKey(
+                "Filters[AgeRange].NumberRange.To"));
+    }
+
+    [Fact]
+    public void BuildPageUrl_WithNumberRangeToOnly_AddsOnlyToValue()
+    {
+        // Arrange
+        SearchRequestViewModel searchRequest = new()
+        {
+            RecordsPerPage = 20,
+            Filters = new Dictionary<string, FilterInputViewModel>
+        {
+            {
+                "AgeRange",
+                new FilterInputViewModel
+                {
+                    NumberRange = new NumberRangeFilterViewModel
+                    {
+                        To = 11
+                    }
+                }
+            }
+        }
+        };
+
+        // Act
+        string result = SearchUrlBuilder.BuildPageUrl(
+            _urlHelper.Object,
+            searchRequest,
+            1);
+
+        // Assert
+        Uri uri = new($"https://test.local{result}");
+
+        Dictionary<string, StringValues> query =
+            QueryHelpers.ParseQuery(uri.Query);
+
+        Assert.False(
+            query.ContainsKey(
+                "Filters[AgeRange].NumberRange.From"));
+
+        Assert.Equal(
+            "11",
+            query["Filters[AgeRange].NumberRange.To"]);
+    }
+
+    [Fact]
+    public void BuildPageUrl_WithEmptyNumberRange_DoesNotAddNumberRangeToQueryString()
+    {
+        // Arrange
+        SearchRequestViewModel searchRequest = new()
+        {
+            RecordsPerPage = 20,
+            Filters = new Dictionary<string, FilterInputViewModel>
+        {
+            {
+                "AgeRange",
+                new FilterInputViewModel
+                {
+                    NumberRange = new NumberRangeFilterViewModel()
+                }
+            }
+        }
+        };
+
+        // Act
+        string result = SearchUrlBuilder.BuildPageUrl(
+            _urlHelper.Object,
+            searchRequest,
+            1);
+
+        // Assert
+        Uri uri = new($"https://test.local{result}");
+
+        Dictionary<string, StringValues> query =
+            QueryHelpers.ParseQuery(uri.Query);
+
+        Assert.DoesNotContain(
+            query.Keys,
+            key => key.StartsWith(
+                "Filters[AgeRange].NumberRange"));
+    }
 }

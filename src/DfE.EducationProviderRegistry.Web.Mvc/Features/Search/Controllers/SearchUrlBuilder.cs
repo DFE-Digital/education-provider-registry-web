@@ -105,14 +105,12 @@ public static class SearchUrlBuilder
                 }
             }
             // Add other filter types here as needed
+            // Look to combine all filters -> key / value where value is x type to map to query
         }
     }
 
     private static void AddDateRangeInput(QueryBuilder query, string prefix, DateInputViewModel? date)
     {
-        if (date is null)
-            return;
-
         query.Add($"{prefix}.Day", date.Day ?? string.Empty);
         query.Add($"{prefix}.Month", date.Month ?? string.Empty);
         query.Add($"{prefix}.Year", date.Year ?? string.Empty);

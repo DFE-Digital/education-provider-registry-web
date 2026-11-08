@@ -8,15 +8,15 @@ namespace DfE.EducationProviderRegistry.Web.MVC.UITests;
 
 public sealed class AnalyticsUITests : UIBaseTest
 {
-    private readonly UrlRequestsCounterNetworkHandler clarityTracker;
-    private readonly UrlRequestsCounterNetworkHandler tagManagerTracker;
+    private readonly UrlRequestsCounterNetworkHandler _clarityTracker;
+    private readonly UrlRequestsCounterNetworkHandler _tagManagerTracker;
     private readonly IReadOnlyList<NetworkRequestHandler> _requestHandlers;
 
     public AnalyticsUITests(IServiceProvider provider) : base(provider)
     {
-        clarityTracker = new("clarity.ms", UrlRequestsCounterNetworkHandler.RouteUrlToUnknownDomain);
-        tagManagerTracker = new("googletagmanager.com", UrlRequestsCounterNetworkHandler.RouteUrlToUnknownDomain);
-        _requestHandlers = [clarityTracker, tagManagerTracker];
+        _clarityTracker = new("clarity.ms", UrlRequestsCounterNetworkHandler.RouteUrlToUnknownDomain);
+        _tagManagerTracker = new("googletagmanager.com", UrlRequestsCounterNetworkHandler.RouteUrlToUnknownDomain);
+        _requestHandlers = [_clarityTracker, _tagManagerTracker];
     }
 
     [Fact]
@@ -28,7 +28,7 @@ public sealed class AnalyticsUITests : UIBaseTest
         using IWebDriver webDriver = await WebDriverBuilder.Build().StartDriverAsync(ct);
 
         await RegisterNetworkMonitoringAsync(webDriver, HostedEnvironment, _requestHandlers);
-        GovUkCookieBanner banner = new(webDriver);
+        GovUkCookieBanner banner = new(new WebDriverCommandDispatcher(webDriver));
 
         // Act
         banner.Reject();
@@ -38,8 +38,8 @@ public sealed class AnalyticsUITests : UIBaseTest
         AssertPreferenceCookieSet(webDriver);
         await TriggerAnalyticsWithBrowserActionAsync(webDriver, HostedEnvironment);
 
-        Assert.Equal(0, clarityTracker.RequestsMatchCounter);
-        Assert.Equal(0, tagManagerTracker.RequestsMatchCounter);
+        Assert.Equal(0, _clarityTracker.RequestsMatchCounter);
+        Assert.Equal(0, _tagManagerTracker.RequestsMatchCounter);
     }
 
     [Fact]
@@ -50,7 +50,8 @@ public sealed class AnalyticsUITests : UIBaseTest
 
         using IWebDriver webDriver = await WebDriverBuilder.Build().StartDriverAsync(ct);
         await RegisterNetworkMonitoringAsync(webDriver, HostedEnvironment, _requestHandlers);
-        GovUkCookieBanner banner = new(webDriver);
+
+        GovUkCookieBanner banner = new(new WebDriverCommandDispatcher(webDriver));
 
         // Act
         banner.Accept();
@@ -59,8 +60,8 @@ public sealed class AnalyticsUITests : UIBaseTest
         AssertPreferenceCookieSet(webDriver);
         await TriggerAnalyticsWithBrowserActionAsync(webDriver, HostedEnvironment);
 
-        Assert.True(clarityTracker.RequestsMatchCounter > 0, "Clarity should be called when analytics events are triggered and user has agreed to analytics");
-        Assert.True(tagManagerTracker.RequestsMatchCounter > 0, "TagManager should be called when analytics events are triggered and user has agreed to analytics");
+        Assert.True(_clarityTracker.RequestsMatchCounter > 0, "Clarity should be called when analytics events are triggered and user has agreed to analytics");
+        Assert.True(_tagManagerTracker.RequestsMatchCounter > 0, "TagManager should be called when analytics events are triggered and user has agreed to analytics");
     }
 
     private static void AssertPreferenceCookieSet(IWebDriver driver)

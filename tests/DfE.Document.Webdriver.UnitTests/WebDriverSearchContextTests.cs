@@ -1,4 +1,5 @@
 ﻿using DfE.Document.Abstractions;
+using DfE.Document.WebDriver;
 using DfE.Document.WebDriver.UnitTests;
 using OpenQA.Selenium;
 

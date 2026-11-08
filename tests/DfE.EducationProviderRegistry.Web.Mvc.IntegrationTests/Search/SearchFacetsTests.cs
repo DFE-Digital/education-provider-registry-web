@@ -40,9 +40,12 @@ public sealed class SearchFacetsTests
             await client.SendAsync(message, TestContext.Current.CancellationToken);
 
         // Assert
-        ISearchContext document = SearchContext.From(document: await response.AssertSuccessfulHtmlResponseAsync());
+        IQueryHandler query =
+            new QueryHandler(
+                SearchContext.From(
+                    await response.AssertSuccessfulHtmlResponseAsync()));
 
-        AssertFiltersDisplay(document, responseFacets, selections: null);
+        AssertFiltersDisplay(query, responseFacets, selections: null);
     }
 
     [Fact]
@@ -81,10 +84,15 @@ public sealed class SearchFacetsTests
             ["facet2"] = ["value-4"]
         };
 
-        AssertFiltersDisplay(SearchContext.From(document), responseFacets, expectedSelections);
+        IQueryHandler query =
+            new QueryHandler(
+                SearchContext.From(
+                    await response.AssertSuccessfulHtmlResponseAsync()));
+
+        AssertFiltersDisplay(query, responseFacets, expectedSelections);
     }
 
-    private static void AssertFiltersDisplay(ISearchContext context, SearchFacets facets, Dictionary<string, List<string>>? selections = null)
+    private static void AssertFiltersDisplay(IQueryHandler context, SearchFacets facets, Dictionary<string, List<string>>? selections = null)
     {
         SearchFiltersComponent filterComponent = new(context);
 

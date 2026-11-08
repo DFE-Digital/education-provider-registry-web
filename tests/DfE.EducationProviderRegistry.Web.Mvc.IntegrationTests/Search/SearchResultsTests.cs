@@ -1,4 +1,5 @@
 ﻿using DfE.Core.Libraries.CleanArchitecture.Application;
+using DfE.Document.Abstractions;
 using DfE.Document.Anglesharp;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Request;
@@ -37,7 +38,9 @@ public sealed class SearchResultsTests
 
         // Assert
         using IHtmlDocument responseDocument = await response.AssertSuccessfulHtmlResponseAsync();
-        SearchResultsComponent results = new(SearchContext.From(responseDocument));
+        IQueryHandler query = new QueryHandler(SearchContext.From(responseDocument));
+
+        SearchResultsComponent results = new(query);
 
         string resultsHeading = results.GetHeading();
         Assert.StartsWith("Search results for ", resultsHeading);
@@ -72,7 +75,9 @@ public sealed class SearchResultsTests
 
         // Assert
         using IHtmlDocument doc = await response.AssertSuccessfulHtmlResponseAsync();
-        SearchResultsComponent results = new(SearchContext.From(doc));
+        IQueryHandler query = new QueryHandler(SearchContext.From(doc));
+
+        SearchResultsComponent results = new(query);
         string resultsHeading = results.GetHeading();
 
         Assert.StartsWith($"Search results for ", resultsHeading);
@@ -106,7 +111,8 @@ public sealed class SearchResultsTests
 
         // Assert
         using IHtmlDocument doc = await response.AssertSuccessfulHtmlResponseAsync();
-        SearchResultsComponent results = new(SearchContext.From(doc));
+        IQueryHandler query = new QueryHandler(SearchContext.From(doc));
+        SearchResultsComponent results = new(query);
 
         string resultsHeading = results.GetHeading();
         Assert.StartsWith($"Search results for ", resultsHeading);

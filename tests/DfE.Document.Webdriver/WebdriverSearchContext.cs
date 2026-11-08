@@ -1,24 +1,24 @@
 ﻿using DfE.Document.Abstractions;
 using OpenQA.Selenium;
-using ISearchContext = DfE.Document.Abstractions.ISearchContext;
 
-namespace DfE.Document.Webdriver;
+namespace DfE.Document.WebDriver;
 
-internal sealed class WebDriverSearchContext : ISearchContext
+public sealed class WebDriverSearchContext : Abstractions.ISearchContext
 {
-    private readonly OpenQA.Selenium.ISearchContext _searchContext;
+    private readonly OpenQA.Selenium.ISearchContext _context;
 
-    public WebDriverSearchContext(OpenQA.Selenium.ISearchContext searchContext)
+    public WebDriverSearchContext(OpenQA.Selenium.ISearchContext context)
     {
-        ArgumentNullException.ThrowIfNull(searchContext);
-        _searchContext = searchContext;
+        ArgumentNullException.ThrowIfNull(context);
+
+        _context = context;
     }
 
     public IElement? Find(string selector)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(selector);
 
-        IWebElement? element = _searchContext
+        IWebElement? element = _context
             .FindElements(By.CssSelector(selector))
             .FirstOrDefault();
 
@@ -31,9 +31,9 @@ internal sealed class WebDriverSearchContext : ISearchContext
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(selector);
 
-        return _searchContext
-            .FindElements(By.CssSelector(selector))
-            .Select(element => new WebDriverElement(element))
-            .ToArray();
+        return [.._context
+                    .FindElements(By.CssSelector(selector))
+                    .Select((element) =>
+                        new WebDriverElement(element))];
     }
 }

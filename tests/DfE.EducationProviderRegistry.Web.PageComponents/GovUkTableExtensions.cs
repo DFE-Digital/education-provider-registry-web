@@ -9,8 +9,7 @@ public static class GovUkTableExtensions
         ArgumentNullException.ThrowIfNull(element);
 
         string? caption = element
-            .FindAll("caption")
-            .SingleOrDefault()?
+            .Find("caption")?
             .Text
             .Trim();
 

@@ -41,11 +41,12 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
         HttpResponseMessage response = await client.SendAsync(message, ct);
 
         // Assert
-        ISearchContext context =
-                SearchContext.From(document: await response.AssertSuccessfulHtmlResponseAsync());
+        IQueryHandler queryHandler =
+                new QueryHandler(
+                    SearchContext.From(document: await response.AssertSuccessfulHtmlResponseAsync()));
 
-        SearchFiltersComponent filters = new(context);
-        SearchResultsComponent results = new(context);
+        SearchFiltersComponent filters = new(queryHandler);
+        SearchResultsComponent results = new(queryHandler);
 
         Assert.NotEmpty(results.GetSearchResults());
 
@@ -82,10 +83,12 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
         HttpResponseMessage response = await client.SendAsync(message, ct);
 
         // Assert
-        ISearchContext context =
-                SearchContext.From(document: await response.AssertSuccessfulHtmlResponseAsync());
-        SearchFiltersComponent filters = new(context);
-        SearchResultsComponent results = new(context);
+        IQueryHandler queryHandler =
+                new QueryHandler(
+                    SearchContext.From(document: await response.AssertSuccessfulHtmlResponseAsync()));
+
+        SearchFiltersComponent filters = new(queryHandler);
+        SearchResultsComponent results = new(queryHandler);
 
         Assert.NotEmpty(results.GetSearchResults());
 
@@ -136,7 +139,9 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
         IHtmlDocument document = await filteredResults.AssertSuccessfulHtmlResponseAsync();
 
         SearchFiltersComponent filtersApplied =
-            new(SearchContext.From(document));
+            new(
+                new QueryHandler(
+                    SearchContext.From(document)));
 
         // Act
         HttpResponseMessage removalResponse =
@@ -148,11 +153,12 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
                 ct);
 
         // Assert
-        ISearchContext context =
-            SearchContext.From(document: await removalResponse.AssertSuccessfulHtmlResponseAsync());
+        IQueryHandler queryHandler =
+            new QueryHandler(
+                SearchContext.From(document: await removalResponse.AssertSuccessfulHtmlResponseAsync()));
 
-        SearchFiltersComponent removedFilters = new(context);
-        SearchResultsComponent results = new(context);
+        SearchFiltersComponent removedFilters = new(queryHandler);
+        SearchResultsComponent results = new(queryHandler);
 
         Assert.NotEmpty(results.GetSearchResults());
 
@@ -189,7 +195,9 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
         IHtmlDocument document = await filteredResults.AssertSuccessfulHtmlResponseAsync();
 
         SearchFiltersComponent filtersApplied =
-            new(SearchContext.From(document));
+            new(
+                new QueryHandler(
+                    SearchContext.From(document)));
 
         // Act
         HttpResponseMessage removalResponse =
@@ -199,8 +207,8 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
         ISearchContext context =
             SearchContext.From(document: await removalResponse.AssertSuccessfulHtmlResponseAsync());
 
-        SearchFiltersComponent clearedFilters = new(context);
-        SearchResultsComponent results = new(context);
+        SearchFiltersComponent clearedFilters = new(new QueryHandler(context));
+        SearchResultsComponent results = new(new QueryHandler(context));
 
         Assert.NotEmpty(results.GetSearchResults());
 

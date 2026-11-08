@@ -1,32 +1,33 @@
 ﻿using DfE.Document.Abstractions;
 using OpenQA.Selenium;
 
-namespace DfE.Document.Webdriver;
+namespace DfE.Document.WebDriver;
 
 internal sealed class WebDriverElement : IElement
 {
-    private readonly IWebElement __element;
+    private readonly IWebElement _element;
 
     public WebDriverElement(IWebElement element)
     {
         ArgumentNullException.ThrowIfNull(element);
-        __element = element;
+
+        _element = element;
     }
 
-    public string Text => __element.Text;
+    public string Text => _element.Text;
 
     public string? Attribute(string name)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
 
-        return __element.GetDomAttribute(name);
+        return _element.GetDomAttribute(name);
     }
 
     public IElement? Find(string selector)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(selector);
 
-        IWebElement? descendant = __element
+        IWebElement? descendant = _element
             .FindElements(By.CssSelector(selector))
             .FirstOrDefault();
 
@@ -39,7 +40,7 @@ internal sealed class WebDriverElement : IElement
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(selector);
 
-        return __element
+        return _element
             .FindElements(By.CssSelector(selector))
             .Select(descendant => (IElement)new WebDriverElement(descendant))
             .ToArray();

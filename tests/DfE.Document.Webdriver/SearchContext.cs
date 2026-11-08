@@ -1,4 +1,5 @@
-﻿using ISearchContext = DfE.Document.Abstractions.ISearchContext;
+﻿using DfE.Document.WebDriver;
+using ISearchContext = DfE.Document.Abstractions.ISearchContext;
 
 namespace DfE.Document.Webdriver;
 

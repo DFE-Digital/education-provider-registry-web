@@ -4,12 +4,12 @@ namespace DfE.EducationProviderRegistry.Web.PageComponents;
 
 public sealed class PaginationComponent
 {
-    private readonly ISearchContext _context;
+    private readonly IQueryHandler _query;
 
-    public PaginationComponent(ISearchContext context)
+    public PaginationComponent(IQueryHandler query)
     {
-        ArgumentNullException.ThrowIfNull(context);
-        _context = context;
+        ArgumentNullException.ThrowIfNull(query);
+        _query = query;
     }
 
     public PaginationReadModel? Pages()
@@ -21,10 +21,13 @@ public sealed class PaginationComponent
 
         int current = int.Parse(CurrentPage());
 
-        IReadOnlyCollection<int> items = _context
-            .FindAll(".govuk-pagination__item")
-            .Select(element => int.Parse(element.Text.Trim()))
-            .ToArray();
+        IReadOnlyCollection<int> items =
+            _query.Handle((context)
+                => context
+                    .FindAll(".govuk-pagination__item")
+                    .Select(element => int.Parse(element.Text.Trim()))
+                    .ToArray());
+
 
         // TODO make fetching previous and next page numbers more robust, e.g. by using the href attribute of the link elements, than the text - OR - model them as links
 
@@ -39,23 +42,24 @@ public sealed class PaginationComponent
 
     private bool Displayed()
     {
-        return _context.Find(".govuk-pagination") is not null;
+        return _query.Handle(context => context.Find(".govuk-pagination") is not null);
     }
 
     private bool DisplaysNextLink()
     {
-        return _context.Find(".govuk-pagination__next") is not null;
+        return _query.Handle(context => context.Find(".govuk-pagination__next") is not null);
     }
 
     private bool DisplaysPreviousLink()
     {
-        return _context.Find(".govuk-pagination__prev") is not null;
+        return _query.Handle(context => context.Find(".govuk-pagination__prev") is not null);
     }
 
     private string CurrentPage()
     {
-        return _context.Find(".govuk-pagination__item--current")?.Text.Trim() ??
-            throw new ArgumentException("Could not locate current page");
+        return _query.Handle(
+            (context) => context.Find(".govuk-pagination__item--current")?.Text.Trim() ??
+                throw new ArgumentException("Could not locate current page"));
     }
 }
 

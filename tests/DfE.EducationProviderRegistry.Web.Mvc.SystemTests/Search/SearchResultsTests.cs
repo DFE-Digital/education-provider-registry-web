@@ -1,11 +1,12 @@
 ﻿using AngleSharp.Html.Dom;
+using DfE.Document.Anglesharp;
 using DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles.Search.Configuration.Extensions;
 using DfE.EducationProviderRegistry.Core.Query.Test.Database.Data.Search;
 using DfE.EducationProviderRegistry.Data.DatabaseModels.Models;
+using DfE.EducationProviderRegistry.Web.PageComponents;
+using DfE.EducationProviderRegistry.Web.PageComponents.Pages;
 using DfE.EducationProviderRegistry.Web.SharedTests.AngleSharp.Extensions;
-using DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
-using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search.Components;
 using Microsoft.Extensions.Configuration;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.SystemTests.Search;
@@ -68,7 +69,7 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
         // Assert
         using IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
 
-        SearchResultsComponent resultsComponent = new(document);
+        SearchResultsComponent resultsComponent = new(SearchContext.From(document));
         SearchResult displayedResult = Assert.Single(resultsComponent.GetSearchResults());
         Assert.Equal("school 1", displayedResult.Name.Text);
     }
@@ -112,7 +113,7 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
         // Assert
         using IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
 
-        SearchResultsComponent resultsComponent = new(document);
+        SearchResultsComponent resultsComponent = new(SearchContext.From(document));
         IReadOnlyList<SearchResult> searchResults = resultsComponent.GetSearchResults();
         IReadOnlyList<string> searchResultNames = searchResults.Select(t => t.Name.Text).ToList();
 
@@ -164,7 +165,7 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
         // Assert
         using IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
 
-        SearchResultsComponent resultsComponent = new(document);
+        SearchResultsComponent resultsComponent = new(SearchContext.From(document));
 
         IReadOnlyList<SearchResult> searchResults = resultsComponent.GetSearchResults();
         IReadOnlyList<string> searchResultNames = searchResults.Select(t => t.Name.Text).ToList();
@@ -199,13 +200,13 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
         // Assert
         using IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
 
-        SearchResultsComponent resultsComponent = new(document);
-        PaginationComponent component = new(document);
+        SearchResultsComponent resultsComponent = new(SearchContext.From(document));
+        PaginationComponent component = new(SearchContext.From(document));
 
         IReadOnlyList<SearchResult> searchResults = resultsComponent.GetSearchResults();
 
         Assert.Equal(4, searchResults.Count);
-        Assert.Equal("2", component.GetCurrentPage());
+        Assert.Equal(2, component.Pages()!.Current);
     }
 
     [Fact]
@@ -233,7 +234,7 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
         // Assert
         using IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
 
-        SearchResultsComponent resultsComponent = new(document);
+        SearchResultsComponent resultsComponent = new(SearchContext.From(document));
         IReadOnlyList<SearchResult> searchResults = resultsComponent.GetSearchResults();
 
         List<SearchAggregate> sortedSeedResults = [.. seed.OrderByDescending(t => t.ProviderName)];
@@ -279,7 +280,7 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
         // Assert
         using IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
 
-        SearchResultsComponent resultsComponent = new(document);
+        SearchResultsComponent resultsComponent = new(SearchContext.From(document));
 
         SearchResult displayedResult = Assert.Single(resultsComponent.GetSearchResults());
         List<(TextContent key, TextContent value)> displayedResultContent = [.. displayedResult.Values];
@@ -337,7 +338,7 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
         // Assert
         using IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
 
-        SearchResultsComponent resultsComponent = new(document);
+        SearchResultsComponent resultsComponent = new(SearchContext.From(document));
 
         SearchResult displayedResult = Assert.Single(resultsComponent.GetSearchResults());
         List<(TextContent key, TextContent values)> displayedResultContent = [.. displayedResult.Values];

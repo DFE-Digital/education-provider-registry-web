@@ -1,11 +1,13 @@
-﻿using DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles.Search;
+﻿using DfE.Document.Abstractions;
+using DfE.Document.Anglesharp;
+using DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles.Search;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Request;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
 using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Search.TestDoubles;
 using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestDoubles;
+using DfE.EducationProviderRegistry.Web.PageComponents.Pages;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
-using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search.Components;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Search;
 
@@ -38,7 +40,7 @@ public sealed class SearchFacetsTests
             await client.SendAsync(message, TestContext.Current.CancellationToken);
 
         // Assert
-        IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
+        ISearchContext document = SearchContext.From(document: await response.AssertSuccessfulHtmlResponseAsync());
 
         AssertFiltersDisplay(document, responseFacets, selections: null);
     }
@@ -79,12 +81,12 @@ public sealed class SearchFacetsTests
             ["facet2"] = ["value-4"]
         };
 
-        AssertFiltersDisplay(document, responseFacets, expectedSelections);
+        AssertFiltersDisplay(SearchContext.From(document), responseFacets, expectedSelections);
     }
 
-    private static void AssertFiltersDisplay(IHtmlDocument document, SearchFacets facets, Dictionary<string, List<string>>? selections = null)
+    private static void AssertFiltersDisplay(ISearchContext context, SearchFacets facets, Dictionary<string, List<string>>? selections = null)
     {
-        SearchFiltersComponent filterComponent = new(document);
+        SearchFiltersComponent filterComponent = new(context);
 
         Dictionary<string, List<string>> facetSelections = selections ?? [];
 

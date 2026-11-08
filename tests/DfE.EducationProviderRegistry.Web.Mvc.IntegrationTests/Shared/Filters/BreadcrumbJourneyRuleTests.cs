@@ -1,8 +1,9 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Models;
+﻿using DfE.Document.Anglesharp;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Models;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Options;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Store;
-using DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents.AngleSharp;
-using DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.Filters;
+using DfE.EducationProviderRegistry.Web.PageComponents;
+using DfE.EducationProviderRegistry.Web.SharedTests.Features.BreadcrumbsFilters;
 using DfE.EducationProviderRegistry.Web.SharedTests.TestDoubles;
 using DfE.EducationProviderRegistry.Web.SharedTests.TestDoubles.Filters;
 
@@ -38,7 +39,7 @@ public sealed class BreadcrumbJourneyRuleTests
         IHtmlDocument document =
             await httpResponse.AssertSuccessfulHtmlResponseAsync();
 
-        BreadcrumbsComponent component = new(document);
+        BreadcrumbsComponent component = new(SearchContext.From(document));
 
         Assert.Collection(component.Breadcrumbs(),
             (first) =>
@@ -97,7 +98,7 @@ public sealed class BreadcrumbJourneyRuleTests
             await httpResponse.AssertSuccessfulHtmlResponseAsync();
 
         // Assert breadcrumbs displayed
-        BreadcrumbsComponent component = new(document);
+        BreadcrumbsComponent component = new(SearchContext.From(document));
         Assert.Collection(component.Breadcrumbs(),
             (first) =>
             {
@@ -169,7 +170,7 @@ public sealed class BreadcrumbJourneyRuleTests
             await httpResponse.AssertSuccessfulHtmlResponseAsync();
 
         // Assert breadcrumbs displayed
-        BreadcrumbsComponent component = new(document);
+        BreadcrumbsComponent component = new(SearchContext.From(document));
         Assert.Empty(component.Breadcrumbs());
 
         // Assert observable store
@@ -219,7 +220,7 @@ public sealed class BreadcrumbJourneyRuleTests
 
 
         // Assert Breadcrumbs displayed
-        BreadcrumbsComponent component = new(document);
+        BreadcrumbsComponent component = new(SearchContext.From(document));
         Breadcrumb breadcrumb = Assert.Single(component.Breadcrumbs());
 
         Assert.Equal("title1", breadcrumb.Text);
@@ -284,7 +285,7 @@ public sealed class BreadcrumbJourneyRuleTests
             await httpResponse.AssertSuccessfulHtmlResponseAsync();
 
         // Assert Breadcrumbs displayed
-        BreadcrumbsComponent component = new(document);
+        BreadcrumbsComponent component = new(SearchContext.From(document));
         Assert.Collection(
             component.Breadcrumbs(),
             (first) =>
@@ -360,7 +361,7 @@ public sealed class BreadcrumbJourneyRuleTests
             await httpResponse.AssertSuccessfulHtmlResponseAsync();
 
         // Assert Breadcrumbs displayed
-        BreadcrumbsComponent component = new(document);
+        BreadcrumbsComponent component = new(SearchContext.From(document));
         Assert.Empty(component.Breadcrumbs());
 
         // Assert observable store

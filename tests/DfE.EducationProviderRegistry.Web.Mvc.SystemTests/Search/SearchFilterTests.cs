@@ -1,11 +1,13 @@
 ﻿using AngleSharp.Html.Dom;
+using DfE.Document.Abstractions;
+using DfE.Document.Anglesharp;
 using DfE.EducationProviderRegistry.Core.Query.Test.Database.Data.Search;
 using DfE.EducationProviderRegistry.Data.DatabaseModels.Models;
+using DfE.EducationProviderRegistry.Web.PageComponents.Pages;
 using DfE.EducationProviderRegistry.Web.SharedTests.AngleSharp.Extensions;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
-using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search.Components;
-using SearchFiltersComponent = DfE.EducationProviderRegistry.Web.SharedTests.Features.Search.Components.SearchFiltersComponent;
-using SearchResultsComponent = DfE.EducationProviderRegistry.Web.SharedTests.Features.Search.Components.SearchResultsComponent;
+using SearchFiltersComponent = DfE.EducationProviderRegistry.Web.PageComponents.Pages.SearchFiltersComponent;
+using SearchResultsComponent = DfE.EducationProviderRegistry.Web.PageComponents.Pages.SearchResultsComponent;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.SystemTests.Search;
 
@@ -39,9 +41,11 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
         HttpResponseMessage response = await client.SendAsync(message, ct);
 
         // Assert
-        IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
-        SearchFiltersComponent filters = new(document);
-        SearchResultsComponent results = new(document);
+        ISearchContext context =
+                SearchContext.From(document: await response.AssertSuccessfulHtmlResponseAsync());
+
+        SearchFiltersComponent filters = new(context);
+        SearchResultsComponent results = new(context);
 
         Assert.NotEmpty(results.GetSearchResults());
 
@@ -78,9 +82,10 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
         HttpResponseMessage response = await client.SendAsync(message, ct);
 
         // Assert
-        IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
-        SearchFiltersComponent filters = new(document);
-        SearchResultsComponent results = new(document);
+        ISearchContext context =
+                SearchContext.From(document: await response.AssertSuccessfulHtmlResponseAsync());
+        SearchFiltersComponent filters = new(context);
+        SearchResultsComponent results = new(context);
 
         Assert.NotEmpty(results.GetSearchResults());
 
@@ -127,21 +132,27 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
                 .Build();
 
         HttpResponseMessage filteredResults = await client.SendAsync(message, ct);
-        SearchFiltersComponent filtersApplied = new(document: await filteredResults.AssertSuccessfulHtmlResponseAsync());
+
+        IHtmlDocument document = await filteredResults.AssertSuccessfulHtmlResponseAsync();
+
+        SearchFiltersComponent filtersApplied =
+            new(SearchContext.From(document));
 
         // Act
         HttpResponseMessage removalResponse =
             await filtersApplied.RemoveFilterAsync(
                 client,
+                new Uri(document.DocumentUri),
                 facet: "providertypename",
                 facetValue: "Community school",
                 ct);
 
-        IHtmlDocument document = await removalResponse.AssertSuccessfulHtmlResponseAsync();
-
         // Assert
-        SearchFiltersComponent removedFilters = new(document);
-        SearchResultsComponent results = new(document);
+        ISearchContext context =
+            SearchContext.From(document: await removalResponse.AssertSuccessfulHtmlResponseAsync());
+
+        SearchFiltersComponent removedFilters = new(context);
+        SearchResultsComponent results = new(context);
 
         Assert.NotEmpty(results.GetSearchResults());
 
@@ -174,15 +185,22 @@ public sealed class SearchFilterTests : WebApplicationFactoryBaseSystemTest
                 .Build();
 
         HttpResponseMessage filteredResults = await client.SendAsync(message, ct);
-        SearchFiltersComponent filtersApplied = new(document: await filteredResults.AssertSuccessfulHtmlResponseAsync());
+
+        IHtmlDocument document = await filteredResults.AssertSuccessfulHtmlResponseAsync();
+
+        SearchFiltersComponent filtersApplied =
+            new(SearchContext.From(document));
 
         // Act
-        HttpResponseMessage removalResponse = await filtersApplied.ClearFiltersAsync(client, ct);
+        HttpResponseMessage removalResponse =
+            await filtersApplied.ClearFiltersAsync(client, new Uri(document.DocumentUri), ct);
 
         // Assert
-        IHtmlDocument document = await removalResponse.AssertSuccessfulHtmlResponseAsync();
-        SearchFiltersComponent clearedFilters = new(document);
-        SearchResultsComponent results = new(document);
+        ISearchContext context =
+            SearchContext.From(document: await removalResponse.AssertSuccessfulHtmlResponseAsync());
+
+        SearchFiltersComponent clearedFilters = new(context);
+        SearchResultsComponent results = new(context);
 
         Assert.NotEmpty(results.GetSearchResults());
 

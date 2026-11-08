@@ -1,6 +1,7 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Options;
-using DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents.AngleSharp;
-using DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.Filters;
+﻿using DfE.Document.Anglesharp;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Options;
+using DfE.EducationProviderRegistry.Web.PageComponents;
+using DfE.EducationProviderRegistry.Web.SharedTests.Features.BreadcrumbsFilters;
 using DfE.EducationProviderRegistry.Web.SharedTests.TestDoubles;
 using DfE.EducationProviderRegistry.Web.SharedTests.TestDoubles.Filters;
 
@@ -56,7 +57,7 @@ public sealed class BreadcrumbSessionTests
         IHtmlDocument newDocument =
             await newResponse.AssertSuccessfulHtmlResponseAsync();
 
-        BreadcrumbsComponent breadcrumb = new(newDocument);
+        BreadcrumbsComponent breadcrumb = new(SearchContext.From(newDocument));
 
         Breadcrumb homeBreadcrumb = Assert.Single(breadcrumb.Breadcrumbs());
 
@@ -74,7 +75,7 @@ public sealed class BreadcrumbSessionTests
         IHtmlDocument document =
             await httpResponse.AssertSuccessfulHtmlResponseAsync();
 
-        BreadcrumbsComponent component = new(document);
+        BreadcrumbsComponent component = new(SearchContext.From(document));
 
         Assert.Empty(component.Breadcrumbs());
     }

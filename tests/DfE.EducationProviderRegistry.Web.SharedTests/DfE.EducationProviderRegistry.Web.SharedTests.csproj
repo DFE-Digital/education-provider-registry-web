@@ -15,6 +15,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\DfE.EducationProviderRegistry.Web.Mvc\DfE.EducationProviderRegistry.Web.Mvc.csproj" />
     <ProjectReference Include="..\DfE.Document.Abstractions\DfE.Document.Abstractions.csproj" />
+    <ProjectReference Include="..\DfE.Document.Webdriver\DfE.Document.Webdriver.csproj" />
+    <ProjectReference Include="..\DfE.EducationProviderRegistry.Web.PageComponents\DfE.EducationProviderRegistry.Web.PageComponents.csproj" />
     <ProjectReference Include="..\DfE.WebDriver\DfE.WebDriver.csproj" />
   </ItemGroup>
 

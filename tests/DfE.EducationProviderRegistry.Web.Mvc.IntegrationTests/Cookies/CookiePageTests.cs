@@ -1,5 +1,6 @@
-﻿using DfE.EducationProviderRegistry.Web.SharedTests.AngleSharp;
-using DfE.EducationProviderRegistry.Web.SharedTests.Features.Cookies;
+﻿using DfE.Document.Anglesharp;
+using DfE.EducationProviderRegistry.Web.PageComponents;
+using DfE.EducationProviderRegistry.Web.PageComponents.Pages;
 using Microsoft.AspNetCore.TestHost;
 
 
@@ -22,7 +23,7 @@ public sealed class CookiesPageTests
         // Assert
         using IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
 
-        CookiesPageAnalyticsFormComponent page = new(document);
+        CookiesPageAnalyticsFormComponent page = new(SearchContext.From(document));
 
         Assert.False(page.AcceptAnalyticsSelected());
         Assert.False(page.RejectAnalyticsSelected());
@@ -49,11 +50,12 @@ public sealed class CookiesPageTests
 
         AntiForgeryContext antiForgery = await client.GetAntiforgeryTokensAsync(ct);
 
+        HttpResponseMessage initialResponse = await client.GetAsync("/cookies", ct);
+
         CookiesPageAnalyticsFormComponent page =
             new(
-                await (
-                    await client.GetAsync("/cookies", ct))
-                        .AssertSuccessfulHtmlResponseAsync());
+                SearchContext.From(
+                    await initialResponse.AssertSuccessfulHtmlResponseAsync()));
 
         HtmlForm form =
             page.GetForm(analytics)
@@ -66,9 +68,9 @@ public sealed class CookiesPageTests
         using HttpResponseMessage response = await client.SendAsync(request, ct);
 
         // Assert
-        using IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
+        using IHtmlDocument responseDocument = await response.AssertSuccessfulHtmlResponseAsync();
 
-        CookiesPageAnalyticsFormComponent updatedPage = new(document);
+        CookiesPageAnalyticsFormComponent updatedPage = new(SearchContext.From(responseDocument));
 
         if (analytics)
         {

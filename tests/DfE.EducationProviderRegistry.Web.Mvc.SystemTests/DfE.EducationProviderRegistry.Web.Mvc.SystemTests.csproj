@@ -23,6 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DfE.Document.Anglesharp\DfE.Document.Anglesharp.csproj" />
+    <ProjectReference Include="..\DfE.EducationProviderRegistry.Web.PageComponents\DfE.EducationProviderRegistry.Web.PageComponents.csproj" />
     <ProjectReference Include="..\DfE.EducationProviderRegistry.Web.SharedTests\DfE.EducationProviderRegistry.Web.SharedTests.csproj" />
   </ItemGroup>
 

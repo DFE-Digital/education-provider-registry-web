@@ -1,4 +1,6 @@
-﻿using DfE.EducationProviderRegistry.Web.SharedTests.Features.Cookies;
+﻿using DfE.Document.Anglesharp;
+using DfE.EducationProviderRegistry.Web.PageComponents;
+using DfE.EducationProviderRegistry.Web.SharedTests.Features.Cookies;
 using Microsoft.AspNetCore.Mvc.Testing;
 using HttpMethod = System.Net.Http.HttpMethod;
 
@@ -23,7 +25,7 @@ public sealed class CookieBannerTests
         // Assert
         using IHtmlDocument doc = await response.AssertSuccessfulHtmlResponseAsync();
 
-        CookieBannerComponent banner = new(doc);
+        CookieBannerComponent banner = new(SearchContext.From(doc));
         Assert.True(banner.Exists());
     }
 
@@ -49,7 +51,7 @@ public sealed class CookieBannerTests
 
         // Assert
         using IHtmlDocument doc = await response.AssertSuccessfulHtmlResponseAsync();
-        CookieBannerComponent banner = new(doc);
+        CookieBannerComponent banner = new(SearchContext.From(doc));
         Assert.False(banner.Exists());
     }
 }

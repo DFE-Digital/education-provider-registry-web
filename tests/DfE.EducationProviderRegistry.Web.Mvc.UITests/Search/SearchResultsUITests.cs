@@ -1,7 +1,8 @@
-﻿using DfE.EducationProviderRegistry.Core.Query.Test.Database.Data.Search;
+﻿using DfE.Document.Webdriver;
+using DfE.EducationProviderRegistry.Core.Query.Test.Database.Data.Search;
 using DfE.EducationProviderRegistry.Data.DatabaseModels.Models;
-using DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents.WebDriver.Search;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
+using DfE.EducationProviderRegistry.Web.SharedTests.WebDriver.Search;
 
 namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Search;
 
@@ -28,7 +29,7 @@ public sealed class SearchResultsUITests : UIBaseTest
         await driver.Navigate().GoToUrlAsync(uri);
 
         SearchPanelComponent panel = new(driver);
-        SearchResultsComponent results = new(driver);
+        SearchResultsComponent results = new(SearchContext.From(driver));
 
         SearchResult preSortFirstResult = results.GetSearchResults().First();
 
@@ -60,7 +61,7 @@ public sealed class SearchResultsUITests : UIBaseTest
 
         await driver.Navigate().GoToUrlAsync(uri);
 
-        SearchResultsComponent results = new(driver);
+        SearchResultsComponent results = new(SearchContext.From(driver));
         SearchFiltersComponent filters = new(driver);
 
         const string targetFacet = "Provider type";

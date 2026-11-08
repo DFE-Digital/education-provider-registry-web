@@ -1,11 +1,13 @@
 ﻿using DfE.Core.Libraries.CleanArchitecture.Application;
 using DfE.Core.Libraries.IntegrationTests.Abstractions;
+using DfE.Document.Anglesharp;
 using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.Model;
 using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.UseCases.GetEstablishmentByUrn;
 using DfE.EducationProviderRegistry.Core.Query.Test.Database.Data.Establishments;
 using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestDoubles;
+using DfE.EducationProviderRegistry.Web.PageComponents;
+using DfE.EducationProviderRegistry.Web.PageComponents.Pages;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.EstablishmentDetails;
-using DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Establishments.Details;
 
@@ -45,7 +47,7 @@ public sealed class EstablishmentDetailsWebsiteDisplayTests : IntegrationTestsBa
         // Assert
 
         using IHtmlDocument document = await httpResponseMessage.AssertSuccessfulHtmlResponseAsync();
-        EstablishmentDetailsPage page = new(document);
+        EstablishmentDetailsPage page = new(SearchContext.From(document));
 
         TextContent websiteValue = page.GetEstablishmentDetailsTable().Rows["Website"];
 
@@ -95,7 +97,7 @@ public sealed class EstablishmentDetailsWebsiteDisplayTests : IntegrationTestsBa
         using IHtmlDocument document =
             await response.AssertSuccessfulHtmlResponseAsync();
 
-        EstablishmentDetailsPage page = new(document);
+        EstablishmentDetailsPage page = new(SearchContext.From(document));
         GovUkTable table = page.GetEstablishmentDetailsTable();
 
         Assert.NotEmpty(table.Rows);

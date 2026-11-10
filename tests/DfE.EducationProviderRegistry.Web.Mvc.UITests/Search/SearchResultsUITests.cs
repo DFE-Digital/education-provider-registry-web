@@ -4,7 +4,7 @@ using DfE.EducationProviderRegistry.Data.DatabaseModels.Models;
 using DfE.EducationProviderRegistry.Web.PageComponents;
 using DfE.EducationProviderRegistry.Web.PageComponents.Pages;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
-using DfE.EducationProviderRegistry.Web.SharedTests.WebDriver;
+using DfE.EducationProviderRegistry.Web.SharedTests.PageComponents;
 
 namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Search;
 

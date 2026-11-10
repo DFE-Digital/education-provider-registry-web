@@ -1,7 +1,6 @@
 ﻿using DfE.Document.Abstractions;
 using DfE.EducationProviderRegistry.Web.PageComponents.Commands;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Support.UI;
 
 namespace DfE.EducationProviderRegistry.Web.SharedTests.PageComponents;
 
@@ -23,21 +22,23 @@ public sealed class WebDriverCommandHandler : ICommandHandler
         if (typeof(TCommand) == typeof(ClickCommand) &&
             model is ClickCommandModel clickCommandModel)
         {
-            new WebDriverClickCommandHandler(_driver).Handle(clickCommandModel);
+            new ClickCommandHandler(_driver, new ClickCommandModelValidator())
+                .Handle(clickCommandModel);
             return;
         }
 
         if (typeof(TCommand) == typeof(SendKeysCommand) &&
             model is SendKeysCommandModel sendKeysCommandModel)
         {
-            new WebDriverSendKeysCommandHandler(_driver).Handle(sendKeysCommandModel);
+            new SendKeysCommandHandler(_driver, new SendKeysCommandModelValidator())
+                .Handle(sendKeysCommandModel);
             return;
         }
 
-        if (typeof(TCommand) == typeof(SelectValueInDropdownCommand) &&
-            model is SelectValueInDropdownCommandModel selectValueCommandModel)
+        if (typeof(TCommand) == typeof(SelectDropdownValueCommand) &&
+            model is SelectDropdownValueCommandModel selectValueCommandModel)
         {
-            new WebDriverSelectValueInDropdownCommandHandler(_driver)
+            new SelectDropdownValueCommandHandler(_driver, new SelectDropdownValueCommandModelValidator())
                 .Handle(selectValueCommandModel);
 
             return;
@@ -47,148 +48,7 @@ public sealed class WebDriverCommandHandler : ICommandHandler
     }
 }
 
-internal sealed class WebDriverClickCommandHandler
-{
-    private readonly WebDriverWait _wait;
 
-    public WebDriverClickCommandHandler(IWebDriver driver)
-    {
-        ArgumentNullException.ThrowIfNull(driver);
 
-        _wait = new WebDriverWait(
-            driver,
-            TimeSpan.FromSeconds(15));
-    }
 
-    public void Handle(ClickCommandModel model)
-    {
-        ArgumentNullException.ThrowIfNull(model);
 
-        By by = By.CssSelector(model.Selector);
-
-        _wait.Until(driver =>
-        {
-            try
-            {
-                IEnumerable<IWebElement> elements = driver.FindElements(by);
-
-                if (!string.IsNullOrWhiteSpace(model.WithText))
-                {
-                    elements = elements.Where(element =>
-                        element.Text.Contains(
-                            model.WithText,
-                            StringComparison.OrdinalIgnoreCase));
-                }
-
-                IReadOnlyCollection<IWebElement> matches = [.. elements];
-
-                if (matches.Count != 1)
-                {
-                    return false;
-                }
-
-                matches.Single().Click();
-
-                return true;
-            }
-            catch (StaleElementReferenceException)
-            {
-                return false;
-            }
-            catch (ElementClickInterceptedException)
-            {
-                return false;
-            }
-        });
-    }
-}
-
-internal sealed class WebDriverSendKeysCommandHandler
-{
-    private readonly WebDriverWait _wait;
-
-    public WebDriverSendKeysCommandHandler(IWebDriver driver)
-    {
-        ArgumentNullException.ThrowIfNull(driver);
-
-        _wait = new WebDriverWait(
-            driver,
-            TimeSpan.FromSeconds(15));
-    }
-
-    public void Handle(SendKeysCommandModel model)
-    {
-        ArgumentNullException.ThrowIfNull(model);
-
-        By by = By.CssSelector(model.Selector);
-
-        _wait.Until(driver =>
-        {
-            try
-            {
-                IWebElement? element = driver
-                    .FindElements(by)
-                    .FirstOrDefault();
-
-                if (element is null)
-                {
-                    return false;
-                }
-
-                element.SendKeys(model.Text);
-
-                return true;
-            }
-            catch (StaleElementReferenceException)
-            {
-                return false;
-            }
-        });
-    }
-}
-
-internal sealed class WebDriverSelectValueInDropdownCommandHandler
-{
-    private readonly WebDriverWait _wait;
-
-    public WebDriverSelectValueInDropdownCommandHandler(IWebDriver driver)
-    {
-        ArgumentNullException.ThrowIfNull(driver);
-
-        _wait = new WebDriverWait(
-            driver,
-            TimeSpan.FromSeconds(15));
-    }
-
-    public void Handle(SelectValueInDropdownCommandModel model)
-    {
-        ArgumentNullException.ThrowIfNull(model);
-
-        By by = By.CssSelector(model.Selector);
-
-        _wait.Until(driver =>
-        {
-            try
-            {
-                IWebElement? element = driver
-                    .FindElements(by)
-                    .FirstOrDefault();
-
-                if (element is null)
-                {
-                    return false;
-                }
-
-                SelectElement selectElement = new(element);
-
-                selectElement.SelectByValue(model.Value);
-
-                return true;
-            }
-            catch (StaleElementReferenceException)
-            {
-                return false;
-            }
-        });
-    }
-}

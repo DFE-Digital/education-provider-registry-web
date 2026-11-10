@@ -1,8 +1,7 @@
 ﻿using DfE.EducationProviderRegistry.Web.PageComponents.GovUk;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
 using DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.ApplicationContainer;
-using DfE.EducationProviderRegistry.Web.SharedTests.WebDriver;
-using OpenQA.Selenium;
+using DfE.EducationProviderRegistry.Web.SharedTests.PageComponents;
 using OpenQA.Selenium.Support.UI;
 
 namespace DfE.EducationProviderRegistry.Web.MVC.UITests;

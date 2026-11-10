@@ -61,7 +61,7 @@ public sealed class SearchPanelComponent
             _ => "az"
         };
 
-        _commandDispatcher.Handle<SelectValueInDropdownCommand, SelectValueInDropdownCommandModel>(new()
+        _commandDispatcher.Handle<SelectDropdownValueCommand, SelectDropdownValueCommandModel>(new()
         {
             Selector = SortDropdown,
             Value = sortValue

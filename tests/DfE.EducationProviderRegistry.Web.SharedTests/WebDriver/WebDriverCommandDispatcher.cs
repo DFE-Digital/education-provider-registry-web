@@ -101,17 +101,6 @@ internal sealed class WebDriverClickCommandHandler
             }
         });
     }
-
-    private static By GetBy(string selector, SelectorType type)
-    {
-        return type switch
-        {
-            SelectorType.Css => By.CssSelector(selector),
-            SelectorType.XPath => By.XPath(selector),
-            _ => throw new NotSupportedException(
-                $"Selector type '{type}' is not supported.")
-        };
-    }
 }
 
 internal sealed class WebDriverSendKeysCommandHandler

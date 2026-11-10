@@ -6,6 +6,7 @@ using DfE.EducationProviderRegistry.Data.DatabaseModels.Models;
 using DfE.EducationProviderRegistry.Web.PageComponents.Pages;
 using DfE.EducationProviderRegistry.Web.SharedTests.AngleSharp.Extensions;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
+using DfE.EducationProviderRegistry.Web.SharedTests.PageComponents;
 using SearchFiltersComponent = DfE.EducationProviderRegistry.Web.PageComponents.Pages.SearchFiltersComponent;
 using SearchResultsComponent = DfE.EducationProviderRegistry.Web.PageComponents.Pages.SearchResultsComponent;
 

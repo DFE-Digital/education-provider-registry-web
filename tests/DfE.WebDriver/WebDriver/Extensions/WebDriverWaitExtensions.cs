@@ -1,61 +1,9 @@
 ﻿using OpenQA.Selenium;
-using OpenQA.Selenium.Support.UI;
 
 namespace DfE.WebDriver.WebDriver.Extensions;
 
 public static class WebDriverWaitExtensions
 {
-    public static void Until(this IWait<IWebDriver> wait, Action<IWebDriver> action)
-    {
-        if (wait is null)
-        {
-            throw new ArgumentNullException(nameof(wait));
-        }
-
-        if (action is null)
-        {
-            throw new ArgumentNullException(nameof(action));
-        }
-
-        wait.Until(driver =>
-        {
-            action(driver);
-            return true;
-        });
-    }
-
-    public static void Click(this IWait<IWebDriver> wait, By by)
-    {
-        IWebElement element = wait.Until(ElementClickable(by));
-
-        element.Click();
-
-        // Core Implementation from Selenium.Support
-        static Func<IWebDriver, IWebElement?> ElementClickable(By by)
-        {
-            return driver =>
-            {
-                try
-                {
-                    IWebElement element = driver.FindElement(by);
-
-                    return
-                        ElementIfVisibleOrDefault(element) is not null &&
-                        ElementIfEnabledOrDefault(element) is not null
-                            ? element : null;
-                }
-                catch (StaleElementReferenceException)
-                {
-                    return null;
-                }
-                catch (NoSuchElementException)
-                {
-                    return null;
-                }
-            };
-        }
-    }
-
     // Core Implementation from Selenium.Support
     public static Func<IWebDriver, IWebElement?> ElementToBeClickable(this IWebElement element)
     {

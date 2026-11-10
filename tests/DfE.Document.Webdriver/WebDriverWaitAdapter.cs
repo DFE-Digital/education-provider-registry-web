@@ -5,7 +5,7 @@ namespace DfE.Document.Webdriver;
 
 public sealed class WebDriverWaitAdapter
 {
-    private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(15);
+    private static readonly TimeSpan _timeout = TimeSpan.FromSeconds(30);
 
     private readonly IWebDriver _driver;
 
@@ -20,7 +20,7 @@ public sealed class WebDriverWaitAdapter
     {
         ArgumentNullException.ThrowIfNull(action);
 
-        WebDriverWait wait = new(_driver, Timeout);
+        WebDriverWait wait = new(_driver, _timeout);
 
         wait.IgnoreExceptionTypes(
             typeof(StaleElementReferenceException));

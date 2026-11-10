@@ -45,18 +45,6 @@ public sealed class SearchResultsComponent
                                     .ToList()))
                     .ToList();
     }
-
-    //public IReadOnlyCollection<SearchResult> GetSearchResults()
-    //{
-    //    return _query.Handle(context =>
-    //        context
-    //            .FindAll(".search-results .govuk-table")
-    //            .Select(tableElement => tableElement.ToGovUkTable())
-    //            .Select(table => new SearchResult(
-    //                Name: table.Caption ?? string.Empty,
-    //                Type: table.Rows["Type"].Text))
-    //            .ToArray());
-    //}
 }
 
 public sealed record class SearchResult(TextContent Name, IReadOnlyList<(TextContent key, TextContent value)> Values);

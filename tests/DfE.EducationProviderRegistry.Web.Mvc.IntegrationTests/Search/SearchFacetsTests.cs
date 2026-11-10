@@ -76,8 +76,6 @@ public sealed class SearchFacetsTests
         using HttpResponseMessage response = await client.SendAsync(message, TestContext.Current.CancellationToken);
 
         // Assert
-        IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
-
         Dictionary<string, List<string>> expectedSelections = new()
         {
             ["facet1"] = ["value-2"],

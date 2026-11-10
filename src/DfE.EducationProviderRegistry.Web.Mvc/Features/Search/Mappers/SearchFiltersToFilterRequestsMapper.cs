@@ -25,11 +25,17 @@ public sealed class SearchFiltersToFilterRequestsMapper
 
         foreach ((string? name, FilterInputViewModel? filter) in input.Filters)
         {
-            if (filter.DateRange is { } dateRange)
+            if (filter.DateRange is { IsEmpty: false } dateRange)
             {
                 AddDateRange(filters, name, dateRange);
             }
-            // if number range filter is added in the future, it can be handled here
+
+            if (filter.NumberRange is { IsEmpty: false } ageRange)
+            {
+                filters.Add(new FilterRequest(
+                    filterName: name,
+                    filterValues: [ageRange.From!, ageRange.To!]));
+            }
         }
 
 

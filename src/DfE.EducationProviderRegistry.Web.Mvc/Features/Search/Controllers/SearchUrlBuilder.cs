@@ -1,4 +1,5 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+﻿using System.Globalization;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
@@ -91,17 +92,27 @@ public static class SearchUrlBuilder
                 AddDateRangeInput(query, $"{prefix}.To", dateRange.To);
             }
 
+            if (filter.NumberRange is { IsEmpty: false } ageRange)
+            {
+                string prefix = $"Filters[{name}].NumberRange";
+                if (ageRange.From is int from)
+                {
+                    query.Add($"{prefix}.From", from.ToString(CultureInfo.InvariantCulture));
+                }
+                if (ageRange.To is int to)
+                {
+                    query.Add($"{prefix}.To", to.ToString(CultureInfo.InvariantCulture));
+                }
+            }
             // Add other filter types here as needed
+            // Look to combine all filters -> key / value where value is x type to map to query
         }
     }
 
     private static void AddDateRangeInput(QueryBuilder query, string prefix, DateInputViewModel? date)
     {
-        if (date is null)
-            return;
-
-        query.Add($"{prefix}.Day", date.Day ?? string.Empty);
-        query.Add($"{prefix}.Month", date.Month ?? string.Empty);
-        query.Add($"{prefix}.Year", date.Year ?? string.Empty);
+        query.Add($"{prefix}.Day", date?.Day ?? string.Empty);
+        query.Add($"{prefix}.Month", date?.Month ?? string.Empty);
+        query.Add($"{prefix}.Year", date?.Year ?? string.Empty);
     }
 }

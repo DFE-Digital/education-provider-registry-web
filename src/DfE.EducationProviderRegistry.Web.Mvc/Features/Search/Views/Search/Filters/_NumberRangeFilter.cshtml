@@ -5,30 +5,43 @@
     string idPrefix = $"filter-{Model.BindingName.Replace("_", "-")}";
 }
 
-<div>
-    <label class="govuk-label govuk-label--s"
-           for="@($"{idPrefix}-from")">
-        From
-    </label>
-    <input class="govuk-input govuk-input--width-2"
-           id="@($"{idPrefix}-from")"
-           name=@($"{bindingName}.From")
-           type="text"
-           pattern="[0-9]*"
-           maxlength="2"
-           inputmode="numeric">
-</div>
 
-<div>
-    <label class="govuk-label govuk-label--s"
-           for="@($"{idPrefix}-to")">
-        To
-    </label>
-    <input class="govuk-input govuk-input--width-2"
-           id="@($"{idPrefix}-to")"
-           name=@($"{bindingName}.To")
-           type="text"
-           pattern="[0-9]*"
-           maxlength="2"
-           inputmode="numeric">
+<div class="govuk-form-group">
+    <fieldset class="govuk-fieldset" role="group">
+
+        <div class="govuk-date-input">
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label"
+                           for="@($"{idPrefix}-from")">
+                        From
+                    </label>
+                    <input class="govuk-input govuk-input--width-2"
+                           id="@($"{idPrefix}-from")"
+                           name=@($"{bindingName}.From")
+                           value="@Model.Range.From"
+                           type="text"
+                           pattern="[0-9]*"
+                           maxlength="2"
+                           inputmode="numeric">
+                </div>
+            </div>
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label"
+                           for="@($"{idPrefix}-to")">
+                        To
+                    </label>
+                    <input class="govuk-input govuk-input--width-2"
+                           id="@($"{idPrefix}-to")"
+                           name=@($"{bindingName}.To")
+                           value="@Model.Range.To"
+                           type="text"
+                           pattern="[0-9]*"
+                           maxlength="2"
+                           inputmode="numeric">
+                </div>
+            </div>
+        </div>
+    </fieldset>
 </div>

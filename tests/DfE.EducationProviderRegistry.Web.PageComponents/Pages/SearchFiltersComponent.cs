@@ -92,7 +92,7 @@ public sealed class SearchFiltersComponent
         ArgumentException.ThrowIfNullOrWhiteSpace(facetLabel);
         ArgumentException.ThrowIfNullOrWhiteSpace(facetValueLabel);
 
-        if(_commandHandler is null)
+        if (_commandHandler is null)
         {
             throw new InvalidOperationException("No command handler passed for command FilterBy");
         }

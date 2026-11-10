@@ -114,6 +114,17 @@ public sealed class SearchFiltersComponent
             {
                 Selector = SubmitFiltersSelector
             });
+
+        // Validate Filter applied state transition
+
+        _queryHandler.Handle(context =>
+            context
+                .FindAll(SelectedFiltersSelector)
+                .Select(CreateSelectedFilter)
+                .Any(filter =>
+                    filter.Text.Contains(
+                        facetValueLabel,
+                        StringComparison.OrdinalIgnoreCase)));
     }
 
     public IReadOnlyCollection<SelectedFilter> GetSelectedFilters()

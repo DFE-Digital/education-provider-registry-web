@@ -13,13 +13,6 @@ public sealed record class ClickCommandModel
     public string? WithText { get; init; }
 }
 
-
-public enum Target
-{
-    Selector = 1,
-    Text = 2
-}
-
 public enum SelectorType
 {
     Css,

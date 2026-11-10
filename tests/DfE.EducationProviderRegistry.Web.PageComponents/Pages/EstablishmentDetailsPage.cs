@@ -1,4 +1,5 @@
 ﻿using DfE.Document.Abstractions;
+using DfE.EducationProviderRegistry.Web.PageComponents.GovUk;
 
 namespace DfE.EducationProviderRegistry.Web.PageComponents.Pages;
 

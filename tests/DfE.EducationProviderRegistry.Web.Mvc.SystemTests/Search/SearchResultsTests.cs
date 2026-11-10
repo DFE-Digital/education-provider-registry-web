@@ -1,9 +1,11 @@
 ﻿using AngleSharp.Html.Dom;
+using DfE.Document.Abstractions;
 using DfE.Document.Anglesharp;
 using DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles.Search.Configuration.Extensions;
 using DfE.EducationProviderRegistry.Core.Query.Test.Database.Data.Search;
 using DfE.EducationProviderRegistry.Data.DatabaseModels.Models;
 using DfE.EducationProviderRegistry.Web.PageComponents;
+using DfE.EducationProviderRegistry.Web.PageComponents.GovUk;
 using DfE.EducationProviderRegistry.Web.PageComponents.Pages;
 using DfE.EducationProviderRegistry.Web.SharedTests.AngleSharp.Extensions;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
@@ -69,7 +71,9 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
         // Assert
         using IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
 
-        SearchResultsComponent resultsComponent = new(SearchContext.From(document));
+        IQueryHandler query = new QueryHandler(SearchContext.From(document));
+
+        SearchResultsComponent resultsComponent = new(query);
         SearchResult displayedResult = Assert.Single(resultsComponent.GetSearchResults());
         Assert.Equal("school 1", displayedResult.Name.Text);
     }
@@ -112,8 +116,9 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
 
         // Assert
         using IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
+        IQueryHandler query = new QueryHandler(SearchContext.From(document));
 
-        SearchResultsComponent resultsComponent = new(SearchContext.From(document));
+        SearchResultsComponent resultsComponent = new(query);
         IReadOnlyList<SearchResult> searchResults = resultsComponent.GetSearchResults();
         IReadOnlyList<string> searchResultNames = searchResults.Select(t => t.Name.Text).ToList();
 
@@ -164,8 +169,9 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
 
         // Assert
         using IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
+        IQueryHandler query = new QueryHandler(SearchContext.From(document));
 
-        SearchResultsComponent resultsComponent = new(SearchContext.From(document));
+        SearchResultsComponent resultsComponent = new(query);
 
         IReadOnlyList<SearchResult> searchResults = resultsComponent.GetSearchResults();
         IReadOnlyList<string> searchResultNames = searchResults.Select(t => t.Name.Text).ToList();
@@ -200,8 +206,10 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
         // Assert
         using IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
 
-        SearchResultsComponent resultsComponent = new(SearchContext.From(document));
-        PaginationComponent component = new(SearchContext.From(document));
+        IQueryHandler query = new QueryHandler(SearchContext.From(document));
+
+        SearchResultsComponent resultsComponent = new(query);
+        GovUkPaginationComponent component = new(query);
 
         IReadOnlyList<SearchResult> searchResults = resultsComponent.GetSearchResults();
 
@@ -234,7 +242,9 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
         // Assert
         using IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
 
-        SearchResultsComponent resultsComponent = new(SearchContext.From(document));
+        IQueryHandler query = new QueryHandler(SearchContext.From(document));
+
+        SearchResultsComponent resultsComponent = new(query);
         IReadOnlyList<SearchResult> searchResults = resultsComponent.GetSearchResults();
 
         List<SearchAggregate> sortedSeedResults = [.. seed.OrderByDescending(t => t.ProviderName)];
@@ -279,8 +289,9 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
 
         // Assert
         using IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
+        IQueryHandler query = new QueryHandler(SearchContext.From(document));
 
-        SearchResultsComponent resultsComponent = new(SearchContext.From(document));
+        SearchResultsComponent resultsComponent = new(query);
 
         SearchResult displayedResult = Assert.Single(resultsComponent.GetSearchResults());
         List<(TextContent key, TextContent value)> displayedResultContent = [.. displayedResult.Values];
@@ -337,8 +348,9 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
 
         // Assert
         using IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
+        IQueryHandler query = new QueryHandler(SearchContext.From(document));
 
-        SearchResultsComponent resultsComponent = new(SearchContext.From(document));
+        SearchResultsComponent resultsComponent = new(query);
 
         SearchResult displayedResult = Assert.Single(resultsComponent.GetSearchResults());
         List<(TextContent key, TextContent values)> displayedResultContent = [.. displayedResult.Values];

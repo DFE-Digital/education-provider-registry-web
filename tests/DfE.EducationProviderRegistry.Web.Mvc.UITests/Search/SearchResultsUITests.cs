@@ -1,8 +1,10 @@
-﻿using DfE.Document.Webdriver;
+﻿using DfE.Document.Abstractions;
 using DfE.EducationProviderRegistry.Core.Query.Test.Database.Data.Search;
 using DfE.EducationProviderRegistry.Data.DatabaseModels.Models;
+using DfE.EducationProviderRegistry.Web.PageComponents;
+using DfE.EducationProviderRegistry.Web.PageComponents.Pages;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
-using DfE.EducationProviderRegistry.Web.SharedTests.WebDriver.Search;
+using DfE.EducationProviderRegistry.Web.SharedTests.PageComponents;
 
 namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Search;
 
@@ -28,19 +30,22 @@ public sealed class SearchResultsUITests : UIBaseTest
 
         await driver.Navigate().GoToUrlAsync(uri);
 
-        SearchPanelComponent panel = new(driver);
-        SearchResultsComponent results = new(SearchContext.From(driver));
+        ICommandHandler commandDispatcher = new WebDriverCommandHandler(driver);
+        IQueryHandler query = new WebDriverQueryHandler(driver);
 
-        SearchResult preSortFirstResult = results.GetSearchResults().First();
+        SearchPanelComponent panel = new(query, commandDispatcher);
+        SearchResultsComponent results = new(query);
+
+        SearchResult preSortFirstResult = results.GetSearchResults()[0];
 
         // Act
         panel.SortBy("name", SearchPanelComponent.SortDirection.Descending);
 
         // Assert
-        SearchResult postSortFirstResult = results.GetSearchResults().First();
+        SearchResult postSortFirstResult = results.GetSearchResults()[0];
 
         int comparison = string.Compare(
-            preSortFirstResult.Name, postSortFirstResult.Name, StringComparison.Ordinal);
+            preSortFirstResult.Name.Text, postSortFirstResult.Name.Text, StringComparison.Ordinal);
 
         Assert.True(comparison < 0, "Expected pre-sorted name to come before post-sort name when descending sort");
     }
@@ -61,8 +66,9 @@ public sealed class SearchResultsUITests : UIBaseTest
 
         await driver.Navigate().GoToUrlAsync(uri);
 
-        SearchResultsComponent results = new(SearchContext.From(driver));
-        SearchFiltersComponent filters = new(driver);
+        IQueryHandler queryHandler = new WebDriverQueryHandler(driver);
+        SearchResultsComponent results = new(queryHandler);
+        TemporaryUISearchFiltersComponent filters = new(queryHandler, new WebDriverCommandHandler(driver));
 
         const string targetFacet = "Provider type";
         const string targetFacetValueLabel = "Academy converter";
@@ -76,18 +82,30 @@ public sealed class SearchResultsUITests : UIBaseTest
         IReadOnlyCollection<SearchResult> postFilterResults = results.GetSearchResults();
 
         // Selected results are filtered
+
         Assert.All(
             postFilterResults,
-            (result) => Assert.Equal(targetFacetValueLabel, result.Type, ignoreCase: true));
+            (result) =>
+            {
+                (TextContent key, TextContent value) providerType = Assert.Single(
+                        result.Values,
+                        value => value.key.Text.Equals(
+                        "Type",
+                        StringComparison.OrdinalIgnoreCase));
+
+                Assert.Equal(
+                    targetFacetValueLabel,
+                    providerType.value.Text,
+                    ignoreCase: true);
+            });
 
         // Assert selected filter is displayed
         SelectedFilter actualSingleSelectedFilter = Assert.Single(filters.GetSelectedFilters());
         Assert.StartsWith(targetFacetValueLabel, actualSingleSelectedFilter.Text);
 
         // Assert selected filter value is in correct form
-        Assert.Equal(
-            "providertypename|Academy converter",
-            actualSingleSelectedFilter.Value);
+        Assert.Equal("providertypename", actualSingleSelectedFilter.FilterName);
+        Assert.Equal("Academy converter", actualSingleSelectedFilter.FilterId);
     }
 }
 

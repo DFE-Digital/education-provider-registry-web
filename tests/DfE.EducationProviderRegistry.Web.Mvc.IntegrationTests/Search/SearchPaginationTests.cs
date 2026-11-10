@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using DfE.Core.Libraries.CleanArchitecture.Application;
+using DfE.Document.Abstractions;
 using DfE.Document.Anglesharp;
 using DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles.Search;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
@@ -7,7 +8,7 @@ using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Reque
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
 using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Search.TestDoubles;
 using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestDoubles;
-using DfE.EducationProviderRegistry.Web.PageComponents;
+using DfE.EducationProviderRegistry.Web.PageComponents.GovUk;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Search;
@@ -113,7 +114,9 @@ public sealed class SearchPaginationTests
         IHtmlDocument document =
             await response.AssertSuccessfulHtmlResponseAsync();
 
-        PaginationComponent paginationComponent = new(SearchContext.From(document));
+        IQueryHandler query = new QueryHandler(SearchContext.From(document));
+
+        GovUkPaginationComponent paginationComponent = new(query);
 
         Assert.Null(paginationComponent.Pages());
     }
@@ -149,7 +152,9 @@ public sealed class SearchPaginationTests
         IHtmlDocument document =
             await response.AssertSuccessfulHtmlResponseAsync();
 
-        PaginationComponent paginationComponent = new(SearchContext.From(document));
+        IQueryHandler query = new QueryHandler(SearchContext.From(document));
+
+        GovUkPaginationComponent paginationComponent = new(query);
 
         Assert.NotNull(paginationComponent.Pages());
     }
@@ -184,7 +189,9 @@ public sealed class SearchPaginationTests
         IHtmlDocument document =
             await response.AssertSuccessfulHtmlResponseAsync();
 
-        PaginationComponent paginationComponent = new(SearchContext.From(document));
+        IQueryHandler query = new QueryHandler(SearchContext.From(document));
+
+        GovUkPaginationComponent paginationComponent = new(query);
 
         Assert.Null(paginationComponent.Pages()!.Previous);
     }
@@ -221,7 +228,9 @@ public sealed class SearchPaginationTests
         IHtmlDocument document =
             await response.AssertSuccessfulHtmlResponseAsync();
 
-        PaginationComponent paginationComponent = new(SearchContext.From(document));
+        IQueryHandler query = new QueryHandler(SearchContext.From(document));
+
+        GovUkPaginationComponent paginationComponent = new(query);
 
         Assert.Equal(3, paginationComponent.Pages()!.Current);
         Assert.NotNull(paginationComponent.Pages()!.Previous);

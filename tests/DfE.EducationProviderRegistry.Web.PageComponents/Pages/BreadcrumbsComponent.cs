@@ -1,7 +1,7 @@
 ﻿using DfE.Document.Abstractions;
 using IElement = DfE.Document.Abstractions.IElement;
 
-namespace DfE.EducationProviderRegistry.Web.PageComponents;
+namespace DfE.EducationProviderRegistry.Web.PageComponents.Pages;
 
 public sealed class BreadcrumbsComponent
 {

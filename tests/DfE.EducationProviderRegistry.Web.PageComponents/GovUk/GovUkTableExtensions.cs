@@ -1,6 +1,6 @@
 ﻿using DfE.Document.Abstractions;
 
-namespace DfE.EducationProviderRegistry.Web.PageComponents;
+namespace DfE.EducationProviderRegistry.Web.PageComponents.GovUk;
 
 public static class GovUkTableExtensions
 {
@@ -9,8 +9,7 @@ public static class GovUkTableExtensions
         ArgumentNullException.ThrowIfNull(element);
 
         string? caption = element
-            .FindAll("caption")
-            .SingleOrDefault()?
+            .Find("caption")?
             .Text
             .Trim();
 

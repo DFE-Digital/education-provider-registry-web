@@ -1,6 +1,6 @@
 ﻿using DfE.Document.Anglesharp;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Options;
-using DfE.EducationProviderRegistry.Web.PageComponents;
+using DfE.EducationProviderRegistry.Web.PageComponents.Pages;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.BreadcrumbsFilters;
 using DfE.EducationProviderRegistry.Web.SharedTests.TestDoubles;
 using DfE.EducationProviderRegistry.Web.SharedTests.TestDoubles.Filters;

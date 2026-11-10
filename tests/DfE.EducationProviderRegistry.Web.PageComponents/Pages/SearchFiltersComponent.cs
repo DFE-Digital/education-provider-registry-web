@@ -1,51 +1,76 @@
 ﻿using System.Text;
 using DfE.Document.Abstractions;
 using HttpMethod = System.Net.Http.HttpMethod;
-using IElement = DfE.Document.Abstractions.IElement;
 
 namespace DfE.EducationProviderRegistry.Web.PageComponents.Pages;
 
 public sealed class SearchFiltersComponent
 {
-    private readonly ISearchContext _context;
+    private readonly IQueryHandler _query;
 
-    public SearchFiltersComponent(ISearchContext context)
+    public SearchFiltersComponent(IQueryHandler query)
     {
-        ArgumentNullException.ThrowIfNull(context);
-        _context = context;
+        ArgumentNullException.ThrowIfNull(query);
+
+        _query = query;
     }
 
     public List<Filter> GetFilters()
     {
-        List<Filter> filters = [];
-
-        foreach (IElement filterElement in _context.FindAll(".filter-section"))
+        return _query.Handle(context =>
         {
-            string filterName = filterElement.Find(".govuk-details__summary-text")?.Text?.Trim() ?? string.Empty;
+            List<Filter> filters = [];
 
-            List<FilterValue> filterValues = [];
-
-            foreach (IElement valueElement in filterElement.FindAll(".govuk-checkboxes__item"))
+            foreach (IElement filterElement in context.FindAll(".filter-section"))
             {
-                string label = valueElement.Find("label")?.Text?.Trim() ?? string.Empty;
+                string filterName =
+                    filterElement
+                        .Find(".govuk-details__summary-text")?
+                        .Text
+                        .Trim()
+                    ?? string.Empty;
 
-                IElement input = valueElement.Find("input") ?? throw new InvalidOperationException("Input element not found");
+                List<FilterValue> filterValues = [];
 
-                filterValues.Add(
-                    new FilterValue(
-                        Label: label,
-                        Selected: input.Attribute("checked") is not null,
-                        Value: input.Attribute("value") ?? string.Empty));
+                foreach (IElement valueElement in
+                    filterElement.FindAll(".govuk-checkboxes__item"))
+                {
+                    string label =
+                        valueElement
+                            .Find("label")?
+                            .Text
+                            .Trim()
+                        ?? string.Empty;
+
+                    IElement input =
+                        valueElement.Find("input")
+                        ?? throw new InvalidOperationException(
+                            "Input element not found");
+
+                    filterValues.Add(
+                        new FilterValue(
+                            Label: label,
+                            Selected: input.Attribute("checked") is not null,
+                            Value: input.Attribute("value") ?? string.Empty));
+                }
+
+                filters.Add(
+                    new Filter(
+                        filterName,
+                        filterValues));
             }
 
-            filters.Add(new Filter(filterName, filterValues));
-        }
-        return filters;
+            return filters;
+        });
     }
 
     public List<Filter> GetFacetFilters()
     {
-        return [.. GetFilters().Where(filter => filter.FilterValues.Count != 0)];
+        return
+        [
+            .. GetFilters()
+                .Where(filter => filter.FilterValues.Count != 0)
+        ];
     }
 
     // TODO ensure it's embedded within FORM else submission won't submit it natively
@@ -58,31 +83,56 @@ public sealed class SearchFiltersComponent
     {
         string removalButtonValue = $"{facet}|{facetValue}";
 
-        IElement? element = _context.FindAll($"[value='{removalButtonValue}']").SingleOrDefault() ??
-            throw new ArgumentException($"Element for facet {facet} and facetValue {facetValue} could not be found");
-
         HttpRequestMessage request =
-            CreateUpdatedHttpRequest(
-                baseUri: currentUri,
-                addQueryParams: [new(element.Attribute("name")!, removalButtonValue)]
-            );
+            _query.Handle(context =>
+            {
+                IElement element =
+                    context
+                        .FindAll($"[value='{removalButtonValue}']")
+                        .SingleOrDefault()
+                    ?? throw new ArgumentException(
+                        $"Element for facet {facet} and facetValue {facetValue} could not be found");
+
+                return CreateUpdatedHttpRequest(
+                    baseUri: currentUri,
+                    addQueryParams:
+                    [
+                        new(
+                            element.Attribute("name")!,
+                            removalButtonValue)
+                    ]);
+            });
 
         return client.SendAsync(request, ct);
     }
 
-    public Task<HttpResponseMessage> ClearFiltersAsync(HttpClient client, Uri currentUri, CancellationToken ct)
+    public Task<HttpResponseMessage> ClearFiltersAsync(
+        HttpClient client,
+        Uri currentUri,
+        CancellationToken ct)
     {
-        string buttonName = "ClearFilters";
-        string buttonLocator = $"[name='{buttonName}']";
-
-        IElement element = _context.FindAll(buttonLocator).SingleOrDefault() ??
-            throw new ArgumentException($"Could not find button locator {buttonLocator} to clear filters");
+        const string buttonName = "ClearFilters";
+        const string buttonLocator = "[name='ClearFilters']";
 
         HttpRequestMessage request =
-            CreateUpdatedHttpRequest(
-                baseUri: currentUri,
-                addQueryParams: [new(buttonName!, element.Attribute("value")!)]
-            );
+            _query.Handle(context =>
+            {
+                IElement element =
+                    context
+                        .FindAll(buttonLocator)
+                        .SingleOrDefault()
+                    ?? throw new ArgumentException(
+                        $"Could not find button locator {buttonLocator} to clear filters");
+
+                return CreateUpdatedHttpRequest(
+                    baseUri: currentUri,
+                    addQueryParams:
+                    [
+                        new(
+                            buttonName,
+                            element.Attribute("value")!)
+                    ]);
+            });
 
         return client.SendAsync(request, ct);
     }
@@ -91,17 +141,28 @@ public sealed class SearchFiltersComponent
         Uri baseUri,
         IReadOnlyList<KeyValuePair<string, string>> addQueryParams)
     {
-        StringBuilder outputQueryParams = addQueryParams.Aggregate(
-            seed: new StringBuilder(),
-            func: (sb, kv) => sb.Append($"&{kv.Key}={kv.Value}"));
+        StringBuilder outputQueryParams =
+            addQueryParams.Aggregate(
+                seed: new StringBuilder(),
+                func: (sb, kv) =>
+                    sb.Append($"&{kv.Key}={kv.Value}"));
 
-        return new HttpRequestMessage()
+        return new HttpRequestMessage
         {
             Method = HttpMethod.Get,
-            RequestUri = new(string.Concat(baseUri, outputQueryParams.ToString()))
+            RequestUri = new(
+                string.Concat(
+                    baseUri,
+                    outputQueryParams.ToString()))
         };
     }
 }
 
-public sealed record Filter(string Name, List<FilterValue> FilterValues);
-public sealed record FilterValue(string Label, bool Selected, string Value);
+public sealed record Filter(
+    string Name,
+    List<FilterValue> FilterValues);
+
+public sealed record FilterValue(
+    string Label,
+    bool Selected,
+    string Value);

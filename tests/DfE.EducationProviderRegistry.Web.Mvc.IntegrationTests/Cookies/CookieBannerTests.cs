@@ -1,5 +1,5 @@
 ﻿using DfE.Document.Anglesharp;
-using DfE.EducationProviderRegistry.Web.PageComponents;
+using DfE.EducationProviderRegistry.Web.PageComponents.Pages;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Cookies;
 using Microsoft.AspNetCore.Mvc.Testing;
 using HttpMethod = System.Net.Http.HttpMethod;

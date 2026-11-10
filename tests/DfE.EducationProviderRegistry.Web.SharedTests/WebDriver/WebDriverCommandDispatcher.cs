@@ -13,7 +13,6 @@ public sealed class WebDriverCommandDispatcher : ICommandDispatcher
     public WebDriverCommandDispatcher(IWebDriver driver)
     {
         ArgumentNullException.ThrowIfNull(driver);
-
         _driver = driver;
     }
 
@@ -28,11 +27,25 @@ public sealed class WebDriverCommandDispatcher : ICommandDispatcher
             return;
         }
 
-        throw new NotSupportedException(
-            $"Command '{typeof(TCommand).Name}' is not supported.");
+        if (typeof(TCommand) == typeof(SendKeysCommand) &&
+            model is SendKeysCommandModel sendKeysCommandModel)
+        {
+            new WebDriverSendKeysCommandHandler(_driver).Handle(sendKeysCommandModel);
+            return;
+        }
+
+        if (typeof(TCommand) == typeof(SelectValueInDropdownCommand) &&
+            model is SelectValueInDropdownCommandModel selectValueCommandModel)
+        {
+            new WebDriverSelectValueInDropdownCommandHandler(_driver)
+                .Handle(selectValueCommandModel);
+
+            return;
+        }
+
+        throw new NotSupportedException($"Command '{typeof(TCommand).Name}' is not supported.");
     }
 }
-
 
 internal sealed class WebDriverClickCommandHandler
 {
@@ -40,7 +53,6 @@ internal sealed class WebDriverClickCommandHandler
 
     public WebDriverClickCommandHandler(IWebDriver driver)
     {
-
         ArgumentNullException.ThrowIfNull(driver);
 
         _wait = new WebDriverWait(
@@ -52,13 +64,74 @@ internal sealed class WebDriverClickCommandHandler
     {
         ArgumentNullException.ThrowIfNull(model);
 
-        By by = model.Type switch
+        By by = By.CssSelector(model.Selector);
+
+        _wait.Until(driver =>
         {
-            SelectorType.Css => By.CssSelector(model.Selector),
-            SelectorType.XPath => By.XPath(model.Selector),
+            try
+            {
+                IEnumerable<IWebElement> elements = driver.FindElements(by);
+
+                if (!string.IsNullOrWhiteSpace(model.WithText))
+                {
+                    elements = elements.Where(element =>
+                        element.Text.Contains(
+                            model.WithText,
+                            StringComparison.OrdinalIgnoreCase));
+                }
+
+                IReadOnlyCollection<IWebElement> matches = [.. elements];
+
+                if (matches.Count != 1)
+                {
+                    return false;
+                }
+
+                matches.Single().Click();
+
+                return true;
+            }
+            catch (StaleElementReferenceException)
+            {
+                return false;
+            }
+            catch (ElementClickInterceptedException)
+            {
+                return false;
+            }
+        });
+    }
+
+    private static By GetBy(string selector, SelectorType type)
+    {
+        return type switch
+        {
+            SelectorType.Css => By.CssSelector(selector),
+            SelectorType.XPath => By.XPath(selector),
             _ => throw new NotSupportedException(
-                $"Selector type '{model.Type}' is not supported.")
+                $"Selector type '{type}' is not supported.")
         };
+    }
+}
+
+internal sealed class WebDriverSendKeysCommandHandler
+{
+    private readonly WebDriverWait _wait;
+
+    public WebDriverSendKeysCommandHandler(IWebDriver driver)
+    {
+        ArgumentNullException.ThrowIfNull(driver);
+
+        _wait = new WebDriverWait(
+            driver,
+            TimeSpan.FromSeconds(15));
+    }
+
+    public void Handle(SendKeysCommandModel model)
+    {
+        ArgumentNullException.ThrowIfNull(model);
+
+        By by = By.CssSelector(model.Selector);
 
         _wait.Until(driver =>
         {
@@ -73,20 +146,60 @@ internal sealed class WebDriverClickCommandHandler
                     return false;
                 }
 
-                element.Click();
+                element.SendKeys(model.Text);
 
                 return true;
-
             }
             catch (StaleElementReferenceException)
             {
                 return false;
             }
-            catch (ElementClickInterceptedException)
+        });
+    }
+}
+
+internal sealed class WebDriverSelectValueInDropdownCommandHandler
+{
+    private readonly WebDriverWait _wait;
+
+    public WebDriverSelectValueInDropdownCommandHandler(IWebDriver driver)
+    {
+        ArgumentNullException.ThrowIfNull(driver);
+
+        _wait = new WebDriverWait(
+            driver,
+            TimeSpan.FromSeconds(15));
+    }
+
+    public void Handle(SelectValueInDropdownCommandModel model)
+    {
+        ArgumentNullException.ThrowIfNull(model);
+
+        By by = By.CssSelector(model.Selector);
+
+        _wait.Until(driver =>
+        {
+            try
+            {
+                IWebElement? element = driver
+                    .FindElements(by)
+                    .FirstOrDefault();
+
+                if (element is null)
+                {
+                    return false;
+                }
+
+                SelectElement selectElement = new(element);
+
+                selectElement.SelectByValue(model.Value);
+
+                return true;
+            }
+            catch (StaleElementReferenceException)
             {
                 return false;
             }
         });
-
     }
 }

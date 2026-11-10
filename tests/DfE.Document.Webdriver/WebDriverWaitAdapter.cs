@@ -3,7 +3,7 @@ using OpenQA.Selenium.Support.UI;
 
 namespace DfE.Document.Webdriver;
 
-internal sealed class WebDriverWaitAdapter
+public sealed class WebDriverWaitAdapter
 {
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(15);
 

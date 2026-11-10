@@ -5,7 +5,6 @@ using DfE.EducationProviderRegistry.Web.PageComponents;
 using DfE.EducationProviderRegistry.Web.PageComponents.Pages;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
 using DfE.EducationProviderRegistry.Web.SharedTests.WebDriver;
-using DfE.EducationProviderRegistry.Web.SharedTests.WebDriver.Search;
 
 namespace DfE.EducationProviderRegistry.Web.MVC.UITests.Search;
 
@@ -31,10 +30,11 @@ public sealed class SearchResultsUITests : UIBaseTest
 
         await driver.Navigate().GoToUrlAsync(uri);
 
-        SearchPanelComponent panel = new(driver);
-        SearchResultsComponent results =
-            new(
-                new WebDriverQueryHandler(driver));
+        ICommandDispatcher commandDispatcher = new WebDriverCommandDispatcher(driver);
+        IQueryHandler query = new WebDriverQueryHandler(driver);
+
+        SearchPanelComponent panel = new(query, commandDispatcher);
+        SearchResultsComponent results = new(query);
 
         SearchResult preSortFirstResult = results.GetSearchResults()[0];
 

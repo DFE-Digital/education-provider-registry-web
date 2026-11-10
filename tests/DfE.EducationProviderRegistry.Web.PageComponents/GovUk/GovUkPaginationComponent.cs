@@ -1,12 +1,12 @@
 ﻿using DfE.Document.Abstractions;
 
-namespace DfE.EducationProviderRegistry.Web.PageComponents;
+namespace DfE.EducationProviderRegistry.Web.PageComponents.GovUk;
 
-public sealed class PaginationComponent
+public sealed class GovUkPaginationComponent
 {
     private readonly IQueryHandler _query;
 
-    public PaginationComponent(IQueryHandler query)
+    public GovUkPaginationComponent(IQueryHandler query)
     {
         ArgumentNullException.ThrowIfNull(query);
         _query = query;
@@ -19,9 +19,9 @@ public sealed class PaginationComponent
             return null;
         }
 
-        int current = int.Parse(CurrentPage());
+        int current = CurrentPage();
 
-        IReadOnlyCollection<int> items =
+        IReadOnlyCollection<int> pages =
             _query.Handle((context)
                 => context
                     .FindAll(".govuk-pagination__item")
@@ -33,7 +33,7 @@ public sealed class PaginationComponent
 
         return new PaginationReadModel
         {
-            Items = items,
+            Pages = pages,
             Current = current,
             Previous = DisplaysPreviousLink() ? current - 1 : null,
             Next = DisplaysNextLink() ? current + 1 : null
@@ -55,18 +55,20 @@ public sealed class PaginationComponent
         return _query.Handle(context => context.Find(".govuk-pagination__prev") is not null);
     }
 
-    private string CurrentPage()
+    private int CurrentPage()
     {
-        return _query.Handle(
-            (context) => context.Find(".govuk-pagination__item--current")?.Text.Trim() ??
+        string current = _query.Handle((context) =>
+            context.Find(".govuk-pagination__item--current")?.Text.Trim() ??
                 throw new ArgumentException("Could not locate current page"));
+
+        return int.Parse(current);
     }
 }
 
 
 public sealed record class PaginationReadModel
 {
-    public IReadOnlyCollection<int> Items { get; init; } = [];
+    public IReadOnlyCollection<int> Pages { get; init; } = [];
     public required int Current { get; init; }
     public int? Previous { get; init; }
     public int? Next { get; init; }

@@ -2,7 +2,7 @@
 using AngleSharp.Html.Dom;
 using DfE.Document.Anglesharp;
 using DfE.EducationProviderRegistry.Web.Mvc.Settings;
-using DfE.EducationProviderRegistry.Web.PageComponents;
+using DfE.EducationProviderRegistry.Web.PageComponents.Pages;
 using DfE.EducationProviderRegistry.Web.SharedTests.AngleSharp.Extensions;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Cookies;

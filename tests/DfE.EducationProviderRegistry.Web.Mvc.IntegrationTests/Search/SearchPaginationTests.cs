@@ -8,7 +8,7 @@ using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Reque
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
 using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Search.TestDoubles;
 using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestDoubles;
-using DfE.EducationProviderRegistry.Web.PageComponents;
+using DfE.EducationProviderRegistry.Web.PageComponents.GovUk;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Search;
@@ -116,7 +116,7 @@ public sealed class SearchPaginationTests
 
         IQueryHandler query = new QueryHandler(SearchContext.From(document));
 
-        PaginationComponent paginationComponent = new(query);
+        GovUkPaginationComponent paginationComponent = new(query);
 
         Assert.Null(paginationComponent.Pages());
     }
@@ -154,7 +154,7 @@ public sealed class SearchPaginationTests
 
         IQueryHandler query = new QueryHandler(SearchContext.From(document));
 
-        PaginationComponent paginationComponent = new(query);
+        GovUkPaginationComponent paginationComponent = new(query);
 
         Assert.NotNull(paginationComponent.Pages());
     }
@@ -191,7 +191,7 @@ public sealed class SearchPaginationTests
 
         IQueryHandler query = new QueryHandler(SearchContext.From(document));
 
-        PaginationComponent paginationComponent = new(query);
+        GovUkPaginationComponent paginationComponent = new(query);
 
         Assert.Null(paginationComponent.Pages()!.Previous);
     }
@@ -230,7 +230,7 @@ public sealed class SearchPaginationTests
 
         IQueryHandler query = new QueryHandler(SearchContext.From(document));
 
-        PaginationComponent paginationComponent = new(query);
+        GovUkPaginationComponent paginationComponent = new(query);
 
         Assert.Equal(3, paginationComponent.Pages()!.Current);
         Assert.NotNull(paginationComponent.Pages()!.Previous);

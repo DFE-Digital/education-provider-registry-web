@@ -1,4 +1,4 @@
-﻿namespace DfE.EducationProviderRegistry.Web.PageComponents;
+﻿namespace DfE.EducationProviderRegistry.Web.PageComponents.GovUk;
 
 public sealed class GovUkTable
 {

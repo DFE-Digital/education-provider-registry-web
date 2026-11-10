@@ -10,10 +10,15 @@ public sealed record class ClickCommand : ICommand<ClickCommandModel>
 public sealed record class ClickCommandModel
 {
     public required string Selector { get; init; }
-    // Temporary to facilitate clicking by text through XPath
-    public SelectorType Type { get; init; } = SelectorType.Css;
+    public string? WithText { get; init; }
 }
 
+
+public enum Target
+{
+    Selector = 1,
+    Text = 2
+}
 
 public enum SelectorType
 {

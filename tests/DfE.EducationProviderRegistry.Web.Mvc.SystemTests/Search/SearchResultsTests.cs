@@ -5,6 +5,7 @@ using DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles.Search.Conf
 using DfE.EducationProviderRegistry.Core.Query.Test.Database.Data.Search;
 using DfE.EducationProviderRegistry.Data.DatabaseModels.Models;
 using DfE.EducationProviderRegistry.Web.PageComponents;
+using DfE.EducationProviderRegistry.Web.PageComponents.GovUk;
 using DfE.EducationProviderRegistry.Web.PageComponents.Pages;
 using DfE.EducationProviderRegistry.Web.SharedTests.AngleSharp.Extensions;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
@@ -208,7 +209,7 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
         IQueryHandler query = new QueryHandler(SearchContext.From(document));
 
         SearchResultsComponent resultsComponent = new(query);
-        PaginationComponent component = new(query);
+        GovUkPaginationComponent component = new(query);
 
         IReadOnlyList<SearchResult> searchResults = resultsComponent.GetSearchResults();
 

@@ -1,7 +1,7 @@
 ﻿using DfE.Document.Abstractions;
 using DfE.EducationProviderRegistry.Web.PageComponents.Commands;
 
-namespace DfE.EducationProviderRegistry.Web.SharedTests.WebDriver;
+namespace DfE.EducationProviderRegistry.Web.PageComponents.GovUk;
 
 public sealed class GovUkCookieBanner
 {

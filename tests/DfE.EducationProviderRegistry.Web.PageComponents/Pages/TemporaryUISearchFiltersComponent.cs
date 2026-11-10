@@ -1,8 +1,8 @@
 ﻿using DfE.Document.Abstractions;
-using DfE.EducationProviderRegistry.Web.PageComponents;
 using DfE.EducationProviderRegistry.Web.PageComponents.Commands;
+using DfE.EducationProviderRegistry.Web.PageComponents.GovUk;
 
-namespace DfE.EducationProviderRegistry.Web.SharedTests.WebDriver.Search;
+namespace DfE.EducationProviderRegistry.Web.PageComponents.Pages;
 
 public sealed class TemporaryUISearchFiltersComponent
 {
@@ -25,7 +25,7 @@ public sealed class TemporaryUISearchFiltersComponent
 
         _queryHandler = queryHandler;
         _dispatcher = dispatcher;
-        _details = new GovUkDetailsComponent(queryHandler, dispatcher);
+        _details = new GovUkDetailsComponent(dispatcher);
     }
 
     public void FilterBy(

@@ -1,8 +1,8 @@
 ﻿namespace DfE.Document.Abstractions;
 
-public interface ICommandDispatcher
+public interface ICommandHandler
 {
-    void Dispatch<TCommand, TCommandModel>(TCommandModel model)
+    void Handle<TCommand, TCommandModel>(TCommandModel model)
         where TCommand : ICommand<TCommandModel>
         where TCommandModel : notnull;
 }

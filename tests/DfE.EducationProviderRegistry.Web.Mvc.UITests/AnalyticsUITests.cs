@@ -29,7 +29,7 @@ public sealed class AnalyticsUITests : UIBaseTest
         using IWebDriver webDriver = await WebDriverBuilder.Build().StartDriverAsync(ct);
 
         await RegisterNetworkMonitoringAsync(webDriver, HostedEnvironment, _requestHandlers);
-        GovUkCookieBanner banner = new(new WebDriverCommandDispatcher(webDriver));
+        GovUkCookieBanner banner = new(new WebDriverCommandHandler(webDriver));
 
         // Act
         banner.Reject();
@@ -52,7 +52,7 @@ public sealed class AnalyticsUITests : UIBaseTest
         using IWebDriver webDriver = await WebDriverBuilder.Build().StartDriverAsync(ct);
         await RegisterNetworkMonitoringAsync(webDriver, HostedEnvironment, _requestHandlers);
 
-        GovUkCookieBanner banner = new(new WebDriverCommandDispatcher(webDriver));
+        GovUkCookieBanner banner = new(new WebDriverCommandHandler(webDriver));
 
         // Act
         banner.Accept();

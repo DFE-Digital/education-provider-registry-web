@@ -6,7 +6,7 @@ namespace DfE.EducationProviderRegistry.Web.PageComponents.Pages;
 public sealed class SearchPanelComponent
 {
     private readonly IQueryHandler _queryHandler;
-    private readonly ICommandDispatcher _commandDispatcher;
+    private readonly ICommandHandler _commandDispatcher;
 
     private const string IdentityInput = "#SearchKeywords";
     private const string LocationInput = "#Address";
@@ -15,7 +15,7 @@ public sealed class SearchPanelComponent
 
     public SearchPanelComponent(
         IQueryHandler queryHandler,
-        ICommandDispatcher commandDispatcher)
+        ICommandHandler commandDispatcher)
     {
         ArgumentNullException.ThrowIfNull(queryHandler);
         ArgumentNullException.ThrowIfNull(commandDispatcher);
@@ -38,7 +38,7 @@ public sealed class SearchPanelComponent
             return;
         }
 
-        _commandDispatcher.Dispatch<SendKeysCommand, SendKeysCommandModel>(new()
+        _commandDispatcher.Handle<SendKeysCommand, SendKeysCommandModel>(new()
         {
             Selector = selector,
             Text = term
@@ -47,7 +47,7 @@ public sealed class SearchPanelComponent
 
     private void Submit()
     {
-        _commandDispatcher.Dispatch<ClickCommand, ClickCommandModel>(new()
+        _commandDispatcher.Handle<ClickCommand, ClickCommandModel>(new()
         {
             Selector = SubmitSearch
         });
@@ -61,7 +61,7 @@ public sealed class SearchPanelComponent
             _ => "az"
         };
 
-        _commandDispatcher.Dispatch<SelectValueInDropdownCommand, SelectValueInDropdownCommandModel>(new()
+        _commandDispatcher.Handle<SelectValueInDropdownCommand, SelectValueInDropdownCommandModel>(new()
         {
             Selector = SortDropdown,
             Value = sortValue

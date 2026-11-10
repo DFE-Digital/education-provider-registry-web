@@ -3,7 +3,7 @@ using DfE.Document.WebDriver;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 
-namespace DfE.EducationProviderRegistry.Web.SharedTests.WebDriver;
+namespace DfE.EducationProviderRegistry.Web.SharedTests.PageComponents;
 
 public sealed class WebDriverQueryHandler : IQueryHandler
 {
@@ -28,7 +28,6 @@ public sealed class WebDriverQueryHandler : IQueryHandler
 
         return wait.Until(driver =>
         {
-
             WebDriverSearchContext context = new(driver);
             return query(context);
         });

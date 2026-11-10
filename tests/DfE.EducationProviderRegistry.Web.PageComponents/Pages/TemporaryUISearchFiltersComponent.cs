@@ -14,11 +14,11 @@ public sealed class TemporaryUISearchFiltersComponent
 
     private readonly GovUkDetailsComponent _details;
     private readonly IQueryHandler _queryHandler;
-    private readonly ICommandDispatcher _dispatcher;
+    private readonly ICommandHandler _dispatcher;
 
     public TemporaryUISearchFiltersComponent(
         IQueryHandler queryHandler,
-        ICommandDispatcher dispatcher)
+        ICommandHandler dispatcher)
     {
         ArgumentNullException.ThrowIfNull(queryHandler);
         ArgumentNullException.ThrowIfNull(dispatcher);
@@ -39,13 +39,13 @@ public sealed class TemporaryUISearchFiltersComponent
 
         string targetId = GetFacetValueId(facetLabel, facetValueLabel);
 
-        _dispatcher.Dispatch<ClickCommand, ClickCommandModel>(
+        _dispatcher.Handle<ClickCommand, ClickCommandModel>(
             new ClickCommandModel
             {
                 Selector = $"#{targetId}"
             });
 
-        _dispatcher.Dispatch<ClickCommand, ClickCommandModel>(
+        _dispatcher.Handle<ClickCommand, ClickCommandModel>(
             new ClickCommandModel
             {
                 Selector = SubmitFiltersSelector

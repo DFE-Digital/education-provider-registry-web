@@ -5,11 +5,11 @@ namespace DfE.EducationProviderRegistry.Web.PageComponents.GovUk;
 
 public sealed class GovUkDetailsComponent
 {
-    private readonly ICommandDispatcher _commandDispatcher;
+    private readonly ICommandHandler _commandDispatcher;
 
     private const string SummaryTextSelector = ".govuk-details__summary-text";
 
-    public GovUkDetailsComponent(ICommandDispatcher commandDispatcher)
+    public GovUkDetailsComponent(ICommandHandler commandDispatcher)
     {
         ArgumentNullException.ThrowIfNull(commandDispatcher);
 
@@ -20,7 +20,7 @@ public sealed class GovUkDetailsComponent
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(label);
 
-        _commandDispatcher.Dispatch<ClickCommand, ClickCommandModel>(new()
+        _commandDispatcher.Handle<ClickCommand, ClickCommandModel>(new()
         {
             Selector = SummaryTextSelector,
             WithText = label

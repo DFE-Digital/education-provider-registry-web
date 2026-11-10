@@ -5,9 +5,9 @@ namespace DfE.EducationProviderRegistry.Web.PageComponents.GovUk;
 
 public sealed class GovUkCookieBanner
 {
-    private readonly ICommandDispatcher _commandDispatcher;
+    private readonly ICommandHandler _commandDispatcher;
 
-    public GovUkCookieBanner(ICommandDispatcher commandDispatcher)
+    public GovUkCookieBanner(ICommandHandler commandDispatcher)
     {
         ArgumentNullException.ThrowIfNull(commandDispatcher);
         _commandDispatcher = commandDispatcher;
@@ -15,7 +15,7 @@ public sealed class GovUkCookieBanner
 
     public void Accept()
     {
-        _commandDispatcher.Dispatch<ClickCommand, ClickCommandModel>(new()
+        _commandDispatcher.Handle<ClickCommand, ClickCommandModel>(new()
         {
             Selector = ".govuk-cookie-banner button[value='true']"
         });
@@ -23,7 +23,7 @@ public sealed class GovUkCookieBanner
 
     public void Reject()
     {
-        _commandDispatcher.Dispatch<ClickCommand, ClickCommandModel>(new()
+        _commandDispatcher.Handle<ClickCommand, ClickCommandModel>(new()
         {
             Selector = ".govuk-cookie-banner button[value='false']"
         });

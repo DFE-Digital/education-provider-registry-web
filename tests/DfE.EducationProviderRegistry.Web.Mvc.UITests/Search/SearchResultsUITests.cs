@@ -30,7 +30,7 @@ public sealed class SearchResultsUITests : UIBaseTest
 
         await driver.Navigate().GoToUrlAsync(uri);
 
-        ICommandDispatcher commandDispatcher = new WebDriverCommandDispatcher(driver);
+        ICommandHandler commandDispatcher = new WebDriverCommandHandler(driver);
         IQueryHandler query = new WebDriverQueryHandler(driver);
 
         SearchPanelComponent panel = new(query, commandDispatcher);
@@ -68,7 +68,7 @@ public sealed class SearchResultsUITests : UIBaseTest
 
         IQueryHandler queryHandler = new WebDriverQueryHandler(driver);
         SearchResultsComponent results = new(queryHandler);
-        TemporaryUISearchFiltersComponent filters = new(queryHandler, new WebDriverCommandDispatcher(driver));
+        TemporaryUISearchFiltersComponent filters = new(queryHandler, new WebDriverCommandHandler(driver));
 
         const string targetFacet = "Provider type";
         const string targetFacetValueLabel = "Academy converter";

@@ -6,14 +6,14 @@ namespace DfE.EducationProviderRegistry.Web.PageComponents.GovUk;
 public sealed class GovUkCheckboxComponent
 {
     private readonly IQueryHandler _queryHandler;
-    private readonly ICommandDispatcher _commandDispatcher;
+    private readonly ICommandHandler _commandDispatcher;
 
     private const string CheckboxSelector = ".govuk-checkboxes";
     private const string CheckboxLabelSelector = ".govuk-checkboxes .govuk-checkboxes__label";
 
     public GovUkCheckboxComponent(
         IQueryHandler queryHandler,
-        ICommandDispatcher commandDispatcher)
+        ICommandHandler commandDispatcher)
     {
         ArgumentNullException.ThrowIfNull(queryHandler);
         ArgumentNullException.ThrowIfNull(commandDispatcher);
@@ -32,7 +32,7 @@ public sealed class GovUkCheckboxComponent
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(text);
 
-        _commandDispatcher.Dispatch<
+        _commandDispatcher.Handle<
             ClickCommand,
             ClickCommandModel>(new()
             {

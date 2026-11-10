@@ -3,20 +3,20 @@ using DfE.EducationProviderRegistry.Web.PageComponents.Commands;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 
-namespace DfE.EducationProviderRegistry.Web.SharedTests.WebDriver;
+namespace DfE.EducationProviderRegistry.Web.SharedTests.PageComponents;
 
 // Temporary in dispatcher until lifecycle retrieval and composition are linked.
-public sealed class WebDriverCommandDispatcher : ICommandDispatcher
+public sealed class WebDriverCommandHandler : ICommandHandler
 {
     private readonly IWebDriver _driver;
 
-    public WebDriverCommandDispatcher(IWebDriver driver)
+    public WebDriverCommandHandler(IWebDriver driver)
     {
         ArgumentNullException.ThrowIfNull(driver);
         _driver = driver;
     }
 
-    public void Dispatch<TCommand, TCommandModel>(TCommandModel model)
+    public void Handle<TCommand, TCommandModel>(TCommandModel model)
         where TCommand : ICommand<TCommandModel>
         where TCommandModel : notnull
     {

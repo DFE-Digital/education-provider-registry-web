@@ -68,7 +68,7 @@ public sealed class SearchResultsUITests : UIBaseTest
 
         IQueryHandler queryHandler = new WebDriverQueryHandler(driver);
         SearchResultsComponent results = new(queryHandler);
-        TemporaryUISearchFiltersComponent filters = new(queryHandler, new WebDriverCommandHandler(driver));
+        SearchFiltersComponent filters = new(queryHandler, new WebDriverCommandHandler(driver));
 
         const string targetFacet = "Provider type";
         const string targetFacetValueLabel = "Academy converter";

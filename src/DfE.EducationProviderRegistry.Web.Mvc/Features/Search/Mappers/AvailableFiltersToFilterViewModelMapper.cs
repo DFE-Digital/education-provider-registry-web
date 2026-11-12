@@ -72,6 +72,6 @@ public sealed class AvailableFiltersToViewModelMapper : IMapper<AvailableFilters
         string filterKey)
     {
         return searchRequest.Filters
-            .GetValueOrDefault(filterKey)? .NumberRange ?? new NumberRangeInputFilterViewModel();
+            .GetValueOrDefault(filterKey)?.NumberRange ?? new NumberRangeInputFilterViewModel();
     }
 }

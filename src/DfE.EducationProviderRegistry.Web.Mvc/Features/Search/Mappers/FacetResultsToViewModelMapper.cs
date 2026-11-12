@@ -20,7 +20,7 @@ public sealed class FacetResultsToViewModelMapper : IMapper<FacetResultsMappingC
         ["furthereducationtype"] = "Further education type",
         ["gender"] = "Gender",
         ["grouptype"] = "Group type",
-        ["localAuthority"] = "Local Authority",
+        ["localauthority"] = "Local Authority",
         ["nursery"] = "Nursery provision",
         ["religiouscharacter"] = "Religious character",
         ["religiousethos"] = "Religious ethos",
@@ -69,7 +69,7 @@ public sealed class FacetResultsToViewModelMapper : IMapper<FacetResultsMappingC
 
         List<string> autocompleteFacets = ["localAuthority", "diocese"];
 
-        if(autocompleteFacets.Contains(searchFacet.Name))
+        if (autocompleteFacets.Contains(searchFacet.Name))
         {
             return new AutocompleteFilterViewModel(searchFacet.Name, label, values);
         }

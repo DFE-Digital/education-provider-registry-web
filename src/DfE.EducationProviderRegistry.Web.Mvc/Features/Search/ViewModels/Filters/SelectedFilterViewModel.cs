@@ -1,4 +1,5 @@
 ﻿namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Filters;
+
 public sealed record SelectedFilterViewModel(
     string FilterKey,
     string? Value,

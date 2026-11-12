@@ -4,6 +4,7 @@ using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Controllers;
+
 public static class SearchFilterKeys
 {
     public const string OpenedDate = "opened_date";

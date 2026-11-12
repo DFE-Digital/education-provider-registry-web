@@ -24,7 +24,7 @@ public sealed class SearchResultsUITests : UIBaseTest
 
         await HostedEnvironment.DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableSearchAggregates>(seed, ct);
 
-        using IWebDriver driver = await WebDriverBuilder.WithHeadless(false).Build().StartDriverAsync(ct);
+        using IWebDriver driver = await WebDriverBuilder.Build().StartDriverAsync(ct);
 
         Uri uri = new(baseUri: HostedEnvironment.GetApplicationUrl(), relativeUri: SearchRoutes.SearchResults(identityTerm: "sch"));
 

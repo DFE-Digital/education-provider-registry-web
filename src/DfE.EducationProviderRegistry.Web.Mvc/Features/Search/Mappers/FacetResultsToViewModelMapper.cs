@@ -67,7 +67,7 @@ public sealed class FacetResultsToViewModelMapper : IMapper<FacetResultsMappingC
                 searchFacet.Name,
                 searchFacet.Name);
 
-        List<string> autocompleteFacets = ["localAuthority", "diocese"];
+        List<string> autocompleteFacets = ["localauthority", "diocese"];
 
         if (autocompleteFacets.Contains(searchFacet.Name))
         {

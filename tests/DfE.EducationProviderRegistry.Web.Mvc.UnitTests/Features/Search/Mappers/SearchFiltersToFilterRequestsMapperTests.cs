@@ -209,11 +209,13 @@ public sealed class SearchFiltersToFilterRequestsMapperTests
     }
 
     [Fact]
-    public void Map_ThrowsInvalidOperationException_WhenFromDateIsInvalid()
+    public void Map_GivenInvalidFromDate_PreservesSubmittedValue()
     {
-        // arrange
-        Mock<IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>> facetMapper =
-            SearchFacetsResultsMapperTestDouble.MockFor([]);
+        // Arrange
+        Mock<IMapper<
+            Dictionary<string, List<string>>?,
+            ReadOnlyCollection<FilterRequest>>> facetMapper =
+                SearchFacetsResultsMapperTestDouble.MockFor([]);
 
         SearchFiltersToFilterRequestsMapper mapper =
             new(facetMapper.Object);
@@ -221,103 +223,202 @@ public sealed class SearchFiltersToFilterRequestsMapperTests
         SearchRequestViewModel input = new()
         {
             Filters = new Dictionary<string, FilterInputViewModel>
-            {
-                {
-                    "OpenDate",
-                    new FilterInputViewModel
-                    {
-                        DateRange = new()
-                        {
-                            From = new DateInputViewModel
-                            {
-                                Day = "32",
-                                Month = "1",
-                                Year = "2024"
-                            }
-                        }
-                    }
-                }
-            }
-        };
-
-        // act/assert
-        Assert.Throws<InvalidOperationException>(() =>
-            mapper.Map(input));
-    }
-
-    [Fact]
-    public void Map_ThrowsInvalidOperationException_WhenToDateIsInvalid()
-    {
-        // arrange
-        Mock<IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>> facetMapper =
-            SearchFacetsResultsMapperTestDouble.MockFor([]);
-
-        SearchFiltersToFilterRequestsMapper mapper =
-            new(facetMapper.Object);
-
-        SearchRequestViewModel input = new()
         {
-            Filters = new Dictionary<string, FilterInputViewModel>
             {
+                "OpenDate",
+                new FilterInputViewModel
                 {
-                    "OpenDate",
-                    new FilterInputViewModel
+                    DateRange = new()
                     {
-                        DateRange = new()
+                        From = new DateInputViewModel
                         {
-                            To = new DateInputViewModel
-                            {
-                                Day = "31",
-                                Month = "13",
-                                Year = "2024"
-                            }
+                            Day = "32",
+                            Month = "1",
+                            Year = "2024"
                         }
                     }
                 }
             }
+        }
         };
 
-        // act/assert
-        Assert.Throws<InvalidOperationException>(() =>
-            mapper.Map(input));
-    }
+        // Act
+        ReadOnlyCollection<FilterRequest> result =
+            mapper.Map(input);
 
-    [Fact]
-    public void Map_ThrowsInvalidOperationException_WhenFromDateIsAfterToDate()
-    {
-        // arrange
-        Mock<IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>> facetMapper =
-            SearchFacetsResultsMapperTestDouble.MockFor([]);
-
-        SearchFiltersToFilterRequestsMapper mapper =
-            new(facetMapper.Object);
-
-        SearchRequestViewModel input = new()
-        {
-            Filters = new Dictionary<string, FilterInputViewModel>
-            {
-                {
-                    "OpenDate",
-                    new FilterInputViewModel
-                    {
-                        DateRange = new()
-                        {
-                            From = CreateDateInput(31, 12, 2024),
-                            To = CreateDateInput(1, 1, 2024)
-                        }
-                    }
-                }
-            }
-        };
-
-        // act/assert
-        InvalidOperationException exception =
-            Assert.Throws<InvalidOperationException>(() =>
-                mapper.Map(input));
+        // Assert
+        FilterRequest filter =
+            Assert.Single(result);
 
         Assert.Equal(
-            "Invalid date range for filter 'OpenDate'.",
-            exception.Message);
+            "OpenDate",
+            filter.FilterName);
+
+        Assert.Equal(
+            "2024-1-32",
+            filter.FilterValues[0]);
+
+        Assert.Null(
+            filter.FilterValues[1]);
+    }
+
+    [Fact]
+    public void Map_GivenInvalidToDate_PreservesSubmittedValue()
+    {
+        // Arrange
+        Mock<IMapper<
+            Dictionary<string, List<string>>?,
+            ReadOnlyCollection<FilterRequest>>> facetMapper =
+                SearchFacetsResultsMapperTestDouble.MockFor([]);
+
+        SearchFiltersToFilterRequestsMapper mapper =
+            new(facetMapper.Object);
+
+        SearchRequestViewModel input = new()
+        {
+            Filters = new Dictionary<string, FilterInputViewModel>
+        {
+            {
+                "OpenDate",
+                new FilterInputViewModel
+                {
+                    DateRange = new()
+                    {
+                        To = new DateInputViewModel
+                        {
+                            Day = "31",
+                            Month = "13",
+                            Year = "2024"
+                        }
+                    }
+                }
+            }
+        }
+        };
+
+        // Act
+        ReadOnlyCollection<FilterRequest> result =
+            mapper.Map(input);
+
+        // Assert
+        FilterRequest filter =
+            Assert.Single(result);
+
+        Assert.Equal(
+            "OpenDate",
+            filter.FilterName);
+
+        Assert.Null(
+            filter.FilterValues[0]);
+
+        Assert.Equal(
+            "2024-13-31",
+            filter.FilterValues[1]);
+    }
+
+    [Fact]
+    public void Map_GivenFromDateAfterToDate_MapsBothValues()
+    {
+        // Arrange
+        Mock<IMapper<
+            Dictionary<string, List<string>>?,
+            ReadOnlyCollection<FilterRequest>>> facetMapper =
+                SearchFacetsResultsMapperTestDouble.MockFor([]);
+
+        SearchFiltersToFilterRequestsMapper mapper =
+            new(facetMapper.Object);
+
+        SearchRequestViewModel input = new()
+        {
+            Filters = new Dictionary<string, FilterInputViewModel>
+        {
+            {
+                "OpenDate",
+                new FilterInputViewModel
+                {
+                    DateRange = new()
+                    {
+                        From = CreateDateInput(
+                            31,
+                            12,
+                            2024),
+
+                        To = CreateDateInput(
+                            1,
+                            1,
+                            2024)
+                    }
+                }
+            }
+        }
+        };
+
+        // Act
+        ReadOnlyCollection<FilterRequest> result =
+            mapper.Map(input);
+
+        // Assert
+        FilterRequest filter =
+            Assert.Single(result);
+
+        Assert.Equal(
+            "OpenDate",
+            filter.FilterName);
+
+        Assert.Equal(
+            "2024-12-31",
+            filter.FilterValues[0]);
+
+        Assert.Equal(
+            "2024-01-01",
+            filter.FilterValues[1]);
+    }
+
+    [Fact]
+    public void Map_GivenPartialFromDate_PreservesSubmittedValue()
+    {
+        // Arrange
+        Mock<IMapper<
+            Dictionary<string, List<string>>?,
+            ReadOnlyCollection<FilterRequest>>> facetMapper =
+                SearchFacetsResultsMapperTestDouble.MockFor([]);
+
+        SearchFiltersToFilterRequestsMapper mapper = new(facetMapper.Object);
+
+        SearchRequestViewModel input = new()
+        {
+            Filters = new Dictionary<string, FilterInputViewModel>
+        {
+            {
+                "OpenDate",
+                new FilterInputViewModel
+                {
+                    DateRange = new()
+                    {
+                        From = new DateInputViewModel
+                        {
+                            Year = "2026"
+                        }
+                    }
+                }
+            }
+        }
+        };
+
+        // Act
+        ReadOnlyCollection<FilterRequest> result =
+            mapper.Map(input);
+
+        // Assert
+        FilterRequest filter =
+            Assert.Single(result);
+
+        Assert.Equal(
+            "2026--",
+            filter.FilterValues[0]);
+
+        Assert.Null(
+            filter.FilterValues[1]);
     }
 
     [Fact]

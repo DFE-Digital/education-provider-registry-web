@@ -13,7 +13,7 @@ internal static class UseCaseResponseSearchResponseTestDouble
         SearchAggregateResults searchAggregateResults,
         SearchFacets? facets = null)
     {
-        SearchResponse response = new(searchAggregateResults, facets, 1);
+        SearchResponse response = new(searchAggregateResults, facets, 1, []);
         return UseCaseResponse<SearchResponse>.Success(response);
     }
 
@@ -21,7 +21,7 @@ internal static class UseCaseResponseSearchResponseTestDouble
     {
         SearchAggregateResults emptyResults = new([]);
         SearchFacets emptyFacets = new([]);
-        SearchResponse response = new(emptyResults, emptyFacets, 1);
+        SearchResponse response = new(emptyResults, emptyFacets, 1, []);
 
         return UseCaseResponse<SearchResponse>.Success(response);
     }
@@ -32,7 +32,7 @@ internal static class UseCaseResponseSearchResponseTestDouble
         SearchAggregateResults? errResult = null;
         SearchFacets? errFacets = null;
 
-        SearchResponse errorModel = new(errResult, errFacets, 0);
+        SearchResponse errorModel = new(errResult, errFacets, 0, []);
         return UseCaseResponse<SearchResponse>.Failure(errorModel, errorMessage);
     }
 

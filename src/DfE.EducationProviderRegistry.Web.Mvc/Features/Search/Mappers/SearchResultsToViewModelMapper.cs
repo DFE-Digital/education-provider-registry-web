@@ -88,13 +88,22 @@ public sealed class SearchResultsToViewModelMapper : IMapper<SearchResultsMappin
         IReadOnlyCollection<SearchFacet> facets,
         IReadOnlyCollection<string> filters)
     {
-        return [
-            // facets
-            .._facetResultsToFiltersViewModelMapper.Map(
-                    new FacetResultsMappingContext(facets ?? [], request.SelectedFacets)),
-            // filters
-            .._filtersToFiltersViewModelMapper.Map(
-                new AvailableFiltersMappingContext(filters, request))
-            ];
+        IReadOnlyCollection<IFilterViewModel> mappedFacets =
+            _facetResultsToFiltersViewModelMapper.Map(
+                new FacetResultsMappingContext(
+                    facets,
+                    request.SelectedFacets));
+
+        IReadOnlyCollection<IFilterViewModel> mappedFilters =
+            _filtersToFiltersViewModelMapper.Map(
+                new AvailableFiltersMappingContext(
+                    filters,
+                    request));
+
+        return
+        [
+            .. mappedFacets,
+            .. mappedFilters
+        ];
     }
 }

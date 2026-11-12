@@ -6,6 +6,7 @@ using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Respo
 using DfE.EducationProviderRegistry.Core.Query.Shared;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Filters;
 using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Mappers.TestDoubles;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 using Moq;
@@ -14,12 +15,505 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Mapper
 
 public sealed class SearchResultsToViewModelMapperTests
 {
-    private static SearchAggregateResult MakeSearchAggregate(string identifier = "111111", string name = "School A")
+    [Fact]
+    public void Map_ThrowsArgumentNullException_WhenInputIsNull()
+    {
+        // Arrange
+        Mock<IMapper<
+            IReadOnlyCollection<SearchAggregateResult>,
+            List<GovUkTable>>> searchAggregateMapper =
+                new();
+
+        Mock<IMapper<
+            FacetResultsMappingContext,
+            IReadOnlyCollection<IFilterViewModel>>> facetsMapper =
+                CreateFacetsMapper();
+
+        Mock<IMapper<
+            AvailableFiltersMappingContext,
+            IReadOnlyCollection<IFilterViewModel>>> availableFiltersMapper =
+                CreateAvailableFiltersMapper();
+
+        SearchResultsToViewModelMapper mapper =
+            CreateSut(
+                searchAggregateMapper,
+                facetsMapper,
+                availableFiltersMapper);
+
+        // Act
+        Action map = () =>
+            mapper.Map(null!);
+
+        // Assert
+        Assert.Throws<ArgumentNullException>(map);
+    }
+
+    [Fact]
+    public void Map_MapsEstablishmentResults_WhenPresent()
+    {
+        // Arrange
+        List<SearchAggregateResult> searchAggregateResults =
+        [
+            MakeSearchAggregate()
+        ];
+
+        List<GovUkTable> searchAggregateTables =
+        [
+            new(
+                [new TableColumn { Text = "testColumn" }],
+                [
+                    new TableRow
+                    {
+                        Cells =
+                        [
+                            new TableCell
+                            {
+                                Text = "Test Cell"
+                            }
+                        ]
+                    }
+                ],
+                "School A")
+        ];
+
+        Mock<IMapper<
+            IReadOnlyCollection<SearchAggregateResult>,
+            List<GovUkTable>>> searchAggregateMapper =
+                SearchAggregatesMapperTestDouble.MockFor(
+                    searchAggregateResults,
+                    searchAggregateTables);
+
+        Mock<IMapper<
+            FacetResultsMappingContext,
+            IReadOnlyCollection<IFilterViewModel>>> facetsMapper =
+                CreateFacetsMapper();
+
+        Mock<IMapper<
+            AvailableFiltersMappingContext,
+            IReadOnlyCollection<IFilterViewModel>>> availableFiltersMapper =
+                CreateAvailableFiltersMapper();
+
+        SearchResultsToViewModelMapper mapper =
+            CreateSut(
+                searchAggregateMapper,
+                facetsMapper,
+                availableFiltersMapper);
+
+        SearchResponse response = new(
+            new SearchAggregateResults(
+                searchAggregateResults),
+            null,
+            1,
+            []);
+
+        SearchResultsMappingContext input = new(
+            new SearchRequestViewModel(),
+            UseCaseResponse<SearchResponse>.Success(
+                response));
+
+        // Act
+        SearchResultsViewModel result =
+            mapper.Map(input);
+
+        // Assert
+        Assert.Single(
+            result.SearchAggregateResults);
+
+        Assert.Equal(
+            "School A",
+            result.SearchAggregateResults[0].Caption);
+
+        Assert.Equal(
+            "testColumn",
+            result.SearchAggregateResults[0]
+                .Columns[0]
+                .Text);
+
+        Assert.Equal(
+            "Test Cell",
+            result.SearchAggregateResults[0]
+                .Rows[0]
+                .Cells[0]
+                .Text);
+
+        searchAggregateMapper.Verify(
+            mapper =>
+                mapper.Map(searchAggregateResults),
+            Times.Once);
+    }
+
+    [Fact]
+    public void Map_MapsFacetResults_WhenPresent()
+    {
+        // Arrange
+        List<SearchFacet> facets =
+        [
+            MakeFacet()
+        ];
+
+        IReadOnlyCollection<IFilterViewModel> facetFilters =
+        [
+            new CheckboxFilterViewModel(
+                "Phase",
+                "Phase",
+                [])
+        ];
+
+        Mock<IMapper<
+            IReadOnlyCollection<SearchAggregateResult>,
+            List<GovUkTable>>> searchAggregateMapper =
+                new();
+
+        Mock<IMapper<
+            FacetResultsMappingContext,
+            IReadOnlyCollection<IFilterViewModel>>> facetsMapper =
+                CreateFacetsMapper();
+
+        Mock<IMapper<
+            AvailableFiltersMappingContext,
+            IReadOnlyCollection<IFilterViewModel>>> availableFiltersMapper =
+                CreateAvailableFiltersMapper();
+
+        FacetResultsMappingContext? capturedContext =
+            null;
+
+        facetsMapper
+            .Setup(mapper =>
+                mapper.Map(
+                    It.IsAny<FacetResultsMappingContext>()))
+            .Callback<FacetResultsMappingContext>(
+                context =>
+                    capturedContext = context)
+            .Returns(facetFilters);
+
+        SearchResultsToViewModelMapper mapper =
+            CreateSut(
+                searchAggregateMapper,
+                facetsMapper,
+                availableFiltersMapper);
+
+        SearchRequestViewModel searchRequest =
+            new();
+
+        SearchResponse response = new(
+            null!,
+            new SearchFacets(facets),
+            1,
+            []);
+
+        SearchResultsMappingContext input = new(
+            searchRequest,
+            UseCaseResponse<SearchResponse>.Success(
+                response));
+
+        // Act
+        SearchResultsViewModel result =
+            mapper.Map(input);
+
+        // Assert
+        IFilterViewModel filter =
+            Assert.Single(result.Filters);
+
+        CheckboxFilterViewModel checkboxFilter =
+            Assert.IsType<CheckboxFilterViewModel>(
+                filter);
+
+        Assert.Equal(
+            "Phase",
+            checkboxFilter.Name);
+
+        Assert.NotNull(capturedContext);
+
+        Assert.Equal(
+            facets,
+            capturedContext.Facets);
+
+        Assert.Equal(
+            searchRequest.SelectedFacets,
+            capturedContext.SelectedFacets);
+
+        facetsMapper.Verify(
+            mapper =>
+                mapper.Map(
+                    It.IsAny<FacetResultsMappingContext>()),
+            Times.Once);
+    }
+
+    [Fact]
+    public void Map_MapsAvailableFilters_WhenPresent()
+    {
+        // Arrange
+        List<string> availableFilters =
+        [
+            "opened_date",
+            "closed_date",
+            "age_range"
+        ];
+
+        IReadOnlyCollection<IFilterViewModel> mappedFilters =
+        [
+            new DateRangeFilterViewModel(
+                "opened_date",
+                "Opened date",
+                new DateRangeInputFilterViewModel()),
+
+            new DateRangeFilterViewModel(
+                "closed_date",
+                "Closed date",
+                new DateRangeInputFilterViewModel()),
+
+            new NumberRangeFilterViewModel(
+                "age_range",
+                "Age range",
+                new NumberRangeInputFilterViewModel())
+        ];
+
+        Mock<IMapper<
+            IReadOnlyCollection<SearchAggregateResult>,
+            List<GovUkTable>>> searchAggregateMapper =
+                new();
+
+        Mock<IMapper<
+            FacetResultsMappingContext,
+            IReadOnlyCollection<IFilterViewModel>>> facetsMapper =
+                CreateFacetsMapper();
+
+        Mock<IMapper<
+            AvailableFiltersMappingContext,
+            IReadOnlyCollection<IFilterViewModel>>> availableFiltersMapper =
+                CreateAvailableFiltersMapper();
+
+        AvailableFiltersMappingContext? capturedContext =
+            null;
+
+        availableFiltersMapper
+            .Setup(mapper =>
+                mapper.Map(
+                    It.IsAny<AvailableFiltersMappingContext>()))
+            .Callback<AvailableFiltersMappingContext>(
+                context =>
+                    capturedContext = context)
+            .Returns(mappedFilters);
+
+        SearchResultsToViewModelMapper mapper =
+            CreateSut(
+                searchAggregateMapper,
+                facetsMapper,
+                availableFiltersMapper);
+
+        SearchRequestViewModel searchRequest =
+            new();
+
+        SearchResponse response = new(
+            null!,
+            null,
+            0,
+            availableFilters);
+
+        SearchResultsMappingContext input = new(
+            searchRequest,
+            UseCaseResponse<SearchResponse>.Success(
+                response));
+
+        // Act
+        SearchResultsViewModel result =
+            mapper.Map(input);
+
+        // Assert
+        Assert.Equal(
+            3,
+            result.Filters.Count);
+
+        Assert.Equal(
+            mappedFilters,
+            result.Filters);
+
+        Assert.NotNull(capturedContext);
+
+        Assert.Equal(
+            availableFilters,
+            capturedContext.AvailableFilters);
+
+        Assert.Same(
+            searchRequest,
+            capturedContext.SearchRequest);
+
+        availableFiltersMapper.Verify(
+            mapper =>
+                mapper.Map(
+                    It.IsAny<AvailableFiltersMappingContext>()),
+            Times.Once);
+    }
+
+    [Fact]
+    public void Map_CombinesFacetAndAvailableFilters()
+    {
+        // Arrange
+        List<SearchFacet> facets =
+        [
+            MakeFacet()
+        ];
+
+        IReadOnlyCollection<IFilterViewModel> facetFilters =
+        [
+            new CheckboxFilterViewModel(
+                "Phase",
+                "Phase",
+                [])
+        ];
+
+        IReadOnlyCollection<IFilterViewModel> availableFilters =
+        [
+            new NumberRangeFilterViewModel(
+                "age_range",
+                "Age range",
+                new NumberRangeInputFilterViewModel())
+        ];
+
+        Mock<IMapper<
+            IReadOnlyCollection<SearchAggregateResult>,
+            List<GovUkTable>>> searchAggregateMapper =
+                new();
+
+        Mock<IMapper<
+            FacetResultsMappingContext,
+            IReadOnlyCollection<IFilterViewModel>>> facetsMapper =
+                CreateFacetsMapper();
+
+        Mock<IMapper<
+            AvailableFiltersMappingContext,
+            IReadOnlyCollection<IFilterViewModel>>> availableFiltersMapper =
+                CreateAvailableFiltersMapper();
+
+        facetsMapper
+            .Setup(mapper =>
+                mapper.Map(
+                    It.IsAny<FacetResultsMappingContext>()))
+            .Returns(facetFilters);
+
+        availableFiltersMapper
+            .Setup(mapper =>
+                mapper.Map(
+                    It.IsAny<AvailableFiltersMappingContext>()))
+            .Returns(availableFilters);
+
+        SearchResultsToViewModelMapper mapper =
+            CreateSut(
+                searchAggregateMapper,
+                facetsMapper,
+                availableFiltersMapper);
+
+        SearchResponse response = new(
+            null!,
+            new SearchFacets(facets),
+            0,
+            ["age_range"]);
+
+        SearchResultsMappingContext input = new(
+            new SearchRequestViewModel(),
+            UseCaseResponse<SearchResponse>.Success(
+                response));
+
+        // Act
+        SearchResultsViewModel result =
+            mapper.Map(input);
+
+        // Assert
+        Assert.Equal(
+            2,
+            result.Filters.Count);
+
+        Assert.Same(
+            facetFilters.First(),
+            result.Filters[0]);
+
+        Assert.Same(
+            availableFilters.First(),
+            result.Filters[1]);
+    }
+
+    [Fact]
+    public void Map_ReturnsEmptyLists_WhenSectionsAreMissing()
+    {
+        // Arrange
+        Mock<IMapper<
+            IReadOnlyCollection<SearchAggregateResult>,
+            List<GovUkTable>>> searchAggregateMapper =
+                new();
+
+        Mock<IMapper<
+            FacetResultsMappingContext,
+            IReadOnlyCollection<IFilterViewModel>>> facetsMapper =
+                CreateFacetsMapper();
+
+        Mock<IMapper<
+            AvailableFiltersMappingContext,
+            IReadOnlyCollection<IFilterViewModel>>> availableFiltersMapper =
+                CreateAvailableFiltersMapper();
+
+        SearchResultsToViewModelMapper mapper =
+            CreateSut(
+                searchAggregateMapper,
+                facetsMapper,
+                availableFiltersMapper);
+
+        SearchResponse response =
+            new(
+                searchProviderResults: null,
+                facetedResults: null,
+                totalNumberOfResults: 0,
+                availableFilters: []);
+
+        SearchResultsMappingContext input =
+            new(
+                new SearchRequestViewModel(),
+                UseCaseResponse<SearchResponse>.Success(
+                    response));
+
+        // Act
+        SearchResultsViewModel result =
+            mapper.Map(input);
+
+        // Assert
+        Assert.Empty(
+            result.SearchAggregateResults);
+
+        Assert.Empty(
+            result.Filters);
+
+        searchAggregateMapper.Verify(
+            mapper =>
+                mapper.Map(
+                    It.IsAny<
+                        IReadOnlyCollection<SearchAggregateResult>>()),
+            Times.Never);
+
+        facetsMapper.Verify(
+            mapper =>
+                mapper.Map(
+                    It.Is<FacetResultsMappingContext>(
+                        context =>
+                            context.Facets.Count == 0)),
+            Times.Once);
+
+        availableFiltersMapper.Verify(
+            mapper =>
+                mapper.Map(
+                    It.Is<AvailableFiltersMappingContext>(
+                        context =>
+                            context.AvailableFilters.Count == 0)),
+            Times.Once);
+    }
+
+    private static SearchAggregateResult MakeSearchAggregate(
+    string identifier = "111111",
+    string name = "School A")
     {
         return SearchAggregateResult.Create(
             new ProviderIdentifier(identifier),
             new Name(name),
-            new SearchAddress("Street, Street 2, Town, County, AB1 2CD"),
+            new SearchAddress(
+                "Street, Street 2, Town, County, AB1 2CD"),
             new SearchType("Academy"),
             new GroupDetail("Group Name", "1234"),
             new SearchLocalAuthority("LA Name"),
@@ -28,309 +522,75 @@ public sealed class SearchResultsToViewModelMapperTests
             0);
     }
 
-    private static SearchFacet MakeFacet(string name = "Phase")
+    private static SearchFacet MakeFacet(
+        string name = "Phase")
     {
         return new SearchFacet(
             name,
             [
-                new FacetResult("1", "Primary", 10),
-                new FacetResult("2", "Secondary", 20)
+                new FacetResult(
+                    "1",
+                    "Primary",
+                    10),
+
+                new FacetResult(
+                    "2",
+                    "Secondary",
+                    20)
             ]);
     }
 
-    [Fact]
-    public void Map_ThrowsArgumentNullException_WhenInputIsNull()
-    {
-        // arrange
+    private static SearchResultsToViewModelMapper CreateSut(
         Mock<IMapper<
             IReadOnlyCollection<SearchAggregateResult>,
-            List<GovUkTable>>> searchAggregateMapper =
-                SearchAggregatesMapperTestDouble.Mock();
-
+            List<GovUkTable>>> searchAggregateMapper,
         Mock<IMapper<
-            IReadOnlyCollection<SearchFacet>,
-            List<FacetViewModel>>> facetsMapper =
-                FacetsMapperTestDouble.Mock();
-
-        SearchResultsToViewModelMapper mapper =
-            new(searchAggregateMapper.Object, facetsMapper.Object);
-
-        // act/assert
-        Assert.Throws<ArgumentNullException>(() => mapper.Map(null!));
-    }
-
-    [Fact]
-    public void Map_MapsEstablishmentResults_WhenPresent()
+            FacetResultsMappingContext,
+            IReadOnlyCollection<IFilterViewModel>>> facetsMapper,
+        Mock<IMapper<
+            AvailableFiltersMappingContext,
+            IReadOnlyCollection<IFilterViewModel>>> availableFiltersMapper)
     {
-        // arrange
-        List<SearchAggregateResult> searchAggregateResults = [MakeSearchAggregate()];
-        List<GovUkTable> searchAggregateTables = [new([new TableColumn { Text = "testColumn" }], [new TableRow { Cells = [new TableCell { Text = "Test Cell" }] }], "School A")];
-
-        Mock<IMapper<
-            IReadOnlyCollection<SearchAggregateResult>,
-            List<GovUkTable>>> searchAggregateMapper =
-                SearchAggregatesMapperTestDouble.MockFor(searchAggregateResults, searchAggregateTables);
-
-        Mock<IMapper<
-            IReadOnlyCollection<SearchFacet>,
-            List<FacetViewModel>>> facetsMapper =
-                FacetsMapperTestDouble.Mock();
-
-        SearchResultsToViewModelMapper mapper =
-            new(searchAggregateMapper.Object, facetsMapper.Object);
-
-        SearchResponse response =
-            new(
-                new SearchAggregateResults(searchAggregateResults),
-                null, 1);
-
-        SearchResultsMappingContext input = new(new SearchRequestViewModel(), UseCaseResponse<SearchResponse>.Success(response));
-
-        // act
-        SearchResultsViewModel vm = mapper.Map(input);
-
-        // assert
-        Assert.Single(vm.SearchAggregateResults);
-        Assert.Equal("School A", vm.SearchAggregateResults[0].Caption);
-        Assert.Equal("testColumn", vm.SearchAggregateResults[0].Columns[0].Text);
-        Assert.Equal("Test Cell", vm.SearchAggregateResults[0].Rows[0].Cells[0].Text);
-        searchAggregateMapper.Verify(m => m.Map(searchAggregateResults), Times.Once);
+        return new SearchResultsToViewModelMapper(
+            searchAggregateMapper.Object,
+            facetsMapper.Object,
+            availableFiltersMapper.Object);
     }
 
-    [Fact]
-    public void Map_MapsFacetResults_WhenPresent()
+    private static Mock<IMapper<
+        FacetResultsMappingContext,
+        IReadOnlyCollection<IFilterViewModel>>> CreateFacetsMapper()
     {
-        // arrange
-        List<SearchFacet> facets = [MakeFacet()];
-
-        List<FacetViewModel> facetVMs =
-        [
-            new FacetViewModel("Phase", "Phase", [])
-        ];
-
         Mock<IMapper<
-            IReadOnlyCollection<SearchAggregateResult>,
-            List<GovUkTable>>> searchAggregateMapper =
-                SearchAggregatesMapperTestDouble.Mock();
+            FacetResultsMappingContext,
+            IReadOnlyCollection<IFilterViewModel>>> mapper =
+                new();
 
-        Mock<IMapper<
-            IReadOnlyCollection<SearchFacet>,
-            List<FacetViewModel>>> facetsMapper =
-                FacetsMapperTestDouble.MockFor(facets, facetVMs);
+        mapper
+            .Setup(mapper =>
+                mapper.Map(
+                    It.IsAny<FacetResultsMappingContext>()))
+            .Returns([]);
 
-        SearchResultsToViewModelMapper mapper =
-            new(searchAggregateMapper.Object, facetsMapper.Object);
-
-        SearchResponse response =
-             new(
-                null!,
-                new SearchFacets(facets), 1);
-
-        SearchResultsMappingContext input = new(new SearchRequestViewModel(), UseCaseResponse<SearchResponse>.Success(response));
-
-        // act
-        SearchResultsViewModel vm = mapper.Map(input);
-
-        // assert
-        Assert.Single(vm.Facets!);
-        Assert.Equal("Phase", vm.Facets![0].Name);
-        facetsMapper.Verify(mapper => mapper.Map(facets), Times.Once);
+        return mapper;
     }
 
-    [Fact]
-    public void Map_ReturnsEmptyLists_WhenSectionsAreMissing()
+    private static Mock<IMapper<
+        AvailableFiltersMappingContext,
+        IReadOnlyCollection<IFilterViewModel>>> CreateAvailableFiltersMapper()
     {
-        // arrange
         Mock<IMapper<
-            IReadOnlyCollection<SearchAggregateResult>,
-            List<GovUkTable>>> searchAggregateMapper =
-                SearchAggregatesMapperTestDouble.Mock();
+            AvailableFiltersMappingContext,
+            IReadOnlyCollection<IFilterViewModel>>> mapper =
+                new();
 
-        Mock<IMapper<
-            IReadOnlyCollection<SearchFacet>,
-            List<FacetViewModel>>> facetsMapper =
-                FacetsMapperTestDouble.Mock();
+        mapper
+            .Setup(mapper =>
+                mapper.Map(
+                    It.IsAny<AvailableFiltersMappingContext>()))
+            .Returns([]);
 
-        SearchResultsToViewModelMapper mapper =
-            new(searchAggregateMapper.Object, facetsMapper.Object);
-
-        SearchResponse response = new(null!, null, 1);
-        SearchResultsMappingContext input = new(new SearchRequestViewModel(), UseCaseResponse<SearchResponse>.Success(response));
-
-        // act
-        SearchResultsViewModel vm = mapper.Map(input);
-
-        // assert
-        Assert.Empty(vm.SearchAggregateResults);
-        Assert.Empty(vm.Facets!);
-        searchAggregateMapper.Verify(mapper => mapper.Map(It.IsAny<IReadOnlyCollection<SearchAggregateResult>>()), Times.Never);
-        facetsMapper.Verify(mapper => mapper.Map(It.IsAny<IReadOnlyCollection<SearchFacet>>()), Times.Never);
+        return mapper;
     }
 
-    [Fact]
-    public void Map_MarksSelectedFacetValuesAsSelected()
-    {
-        // arrange
-        List<SearchFacet> facets =
-        [
-            MakeFacet("EstablishmentType")
-        ];
-
-        List<FacetViewModel> facetViewModels =
-        [
-            new FacetViewModel(
-            "EstablishmentType",
-            "Establishment Type",
-            [
-                new FacetValueViewModel(
-                    "1",
-                    "Primary",
-                    10,
-                    false),
-
-                new FacetValueViewModel(
-                    "2",
-                    "Secondary",
-                    20,
-                    false)
-            ])
-        ];
-
-        Mock<IMapper<
-            IReadOnlyCollection<SearchAggregateResult>,
-            List<GovUkTable>>> searchAggregateMapper =
-                SearchAggregatesMapperTestDouble.Mock();
-
-        Mock<IMapper<
-            IReadOnlyCollection<SearchFacet>,
-            List<FacetViewModel>>> facetsMapper =
-                FacetsMapperTestDouble.MockFor(
-                    facets,
-                    facetViewModels);
-
-        SearchResultsToViewModelMapper mapper =
-            new(
-                searchAggregateMapper.Object,
-                facetsMapper.Object);
-
-        SearchRequestViewModel searchRequest = new()
-        {
-            SelectedFacets = new Dictionary<string, List<string>>
-            {
-                ["EstablishmentType"] =
-                [
-                    "1"
-                ]
-            }
-        };
-
-        SearchResponse response =
-            new(
-                null!,
-                new SearchFacets(facets), 1);
-
-        SearchResultsMappingContext input =
-            new(
-                searchRequest,
-                UseCaseResponse<SearchResponse>.Success(response));
-
-        // act
-        SearchResultsViewModel result = mapper.Map(input);
-
-        // assert
-        FacetViewModel phaseFacet =
-            Assert.Single(result.Facets!);
-
-        FacetValueViewModel primary =
-            Assert.Single(
-                phaseFacet.Values,
-                value => value.Label == "Primary");
-
-        FacetValueViewModel secondary =
-            Assert.Single(
-                phaseFacet.Values,
-                value => value.Label == "Secondary");
-
-        Assert.True(primary.IsSelected);
-        Assert.False(secondary.IsSelected);
-    }
-
-    [Fact]
-    public void Map_LeavesFacetValuesUnselected_WhenFacetHasNotBeenSelected()
-    {
-        // arrange
-        List<SearchFacet> facets =
-        [
-            MakeFacet("Phase")
-        ];
-
-        List<FacetViewModel> facetViewModels =
-        [
-            new FacetViewModel(
-            "Phase",
-            "Phase",
-            [
-                new FacetValueViewModel(
-                    "1",
-                    "Primary",
-                    10,
-                    false),
-
-                new FacetValueViewModel(
-                    "2",
-                    "Secondary",
-                    20,
-                    false)
-            ])
-        ];
-
-        Mock<IMapper<
-            IReadOnlyCollection<SearchAggregateResult>,
-            List<GovUkTable>>> establishmentMapper =
-                SearchAggregatesMapperTestDouble.Mock();
-
-        Mock<IMapper<
-            IReadOnlyCollection<SearchFacet>,
-            List<FacetViewModel>>> facetsMapper =
-                FacetsMapperTestDouble.MockFor(
-                    facets,
-                    facetViewModels);
-
-        SearchResultsToViewModelMapper mapper =
-            new(
-                establishmentMapper.Object,
-                facetsMapper.Object);
-
-        SearchRequestViewModel searchRequest = new()
-        {
-            SelectedFacets = new Dictionary<string, List<string>>
-            {
-                ["EstablishmentType"] =
-                [
-                    "1"
-                ]
-            }
-        };
-
-        SearchResponse response =
-            new(
-                null!,
-                new SearchFacets(facets), 1);
-
-        SearchResultsMappingContext input =
-            new(
-                searchRequest,
-                UseCaseResponse<SearchResponse>.Success(response));
-
-        // act
-        SearchResultsViewModel result = mapper.Map(input);
-
-        // assert
-        FacetViewModel phaseFacet =
-            Assert.Single(result.Facets!);
-
-        Assert.All(
-            phaseFacet.Values,
-            value => Assert.False(value.IsSelected));
-    }
 }

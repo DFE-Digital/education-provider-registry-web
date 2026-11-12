@@ -12,7 +12,7 @@ public sealed class SearchResultsViewModel
     public List<IFilterViewModel> Filters
     {
         get => _filters;
-        set => _filters = [.. value];
+        set => _filters = value ?? [];
     }
 
     public string? PrimarySearchTerms { get; set; }

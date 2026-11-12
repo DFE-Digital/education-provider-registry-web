@@ -10,8 +10,7 @@ internal static class SearchResultsViewModelStub
     public static SearchResultsViewModel Empty() =>
         new()
         {
-            SearchAggregateResults = [],
-            Facets = null
+            SearchAggregateResults = []
         };
 
     public static SearchResultsViewModel WithEstablishmentResults(
@@ -19,7 +18,6 @@ internal static class SearchResultsViewModelStub
         new()
         {
             SearchAggregateResults = results,
-            Facets = null
         };
 
     public static SearchResultsViewModel WithPrimarySearchTerms(
@@ -28,7 +26,6 @@ internal static class SearchResultsViewModelStub
         new()
         {
             SearchAggregateResults = results,
-            Facets = null,
             PrimarySearchTerms = searchTerms
         };
 }

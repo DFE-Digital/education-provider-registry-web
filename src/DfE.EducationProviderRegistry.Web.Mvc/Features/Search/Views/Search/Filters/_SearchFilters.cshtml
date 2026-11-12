@@ -65,7 +65,7 @@
                 </div>
             }
 
-            @foreach (IFilterViewModel filter in Model.Filters)
+            @foreach (IFilterViewModel filter in Model.Filters ?? [])
             {
                 <details class="govuk-details filter-section">
                     <summary class="govuk-details__summary">

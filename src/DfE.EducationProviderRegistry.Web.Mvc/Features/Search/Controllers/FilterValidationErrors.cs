@@ -45,35 +45,35 @@ public static class FilterValidationErrors
                 ValidationErrorCode.LowerNotValid
             ) => new(
                 SearchFilterModelStateKeys.OpenedDateFrom,
-                "'Open from' date must be a real date."),
+                "'Open from' date must be a real date"),
 
             (
                 SearchFilterKeys.OpenedDate,
                 ValidationErrorCode.UpperNotValid
             ) => new(
                 SearchFilterModelStateKeys.OpenedDateTo,
-                "'Open to' date must be a real date."),
+                "'Open to' date must be a real date"),
 
             (
                 SearchFilterKeys.OpenedDate,
                 ValidationErrorCode.LowerBeforeMinimum
             ) => new(
                 SearchFilterModelStateKeys.OpenedDateFrom,
-                "'Open from' date must be after 1 January 1800."),
+                "'Open from' date must be after 1 January 1800"),
 
             (
                 SearchFilterKeys.OpenedDate,
                 ValidationErrorCode.UpperBeforeMinimum
             ) => new(
                 SearchFilterModelStateKeys.OpenedDateTo,
-                "'Open to' date must be after 1 January 1800."),
+                "'Open to' date must be after 1 January 1800"),
 
             (
                 SearchFilterKeys.OpenedDate,
                 ValidationErrorCode.UpperNotGreaterThanLower
             ) => new(
                 SearchFilterModelStateKeys.OpenedDateTo,
-                "'Open to' date must be after 'From' date."),
+                "'Open to' date must be after 'From' date"),
 
             // Closed date
             (
@@ -81,85 +81,85 @@ public static class FilterValidationErrors
                 ValidationErrorCode.LowerNotValid
             ) => new(
                 SearchFilterModelStateKeys.ClosedDateFrom,
-                "'Closed from' date must be a real date."),
+                "'Closed from' date must be a real date"),
 
             (
                 SearchFilterKeys.ClosedDate,
                 ValidationErrorCode.UpperNotValid
             ) => new(
                 SearchFilterModelStateKeys.ClosedDateTo,
-                "'Closed to' date must be a real date."),
+                "'Closed to' date must be a real date"),
 
             (
                 SearchFilterKeys.ClosedDate,
                 ValidationErrorCode.LowerBeforeMinimum
             ) => new(
                 SearchFilterModelStateKeys.ClosedDateFrom,
-                "'Closed from' date must be after 1 January 1800."),
+                "'Closed from' date must be after 1 January 1800"),
 
             (
                 SearchFilterKeys.ClosedDate,
                 ValidationErrorCode.UpperBeforeMinimum
             ) => new(
                 SearchFilterModelStateKeys.ClosedDateTo,
-                "'Closed to' date must be after 1 January 1800."),
+                "'Closed to' date must be after 1 January 1800"),
 
             (
                 SearchFilterKeys.ClosedDate,
                 ValidationErrorCode.UpperNotGreaterThanLower
             ) => new(
                 SearchFilterModelStateKeys.ClosedDateTo,
-                "'Closed to' date must be after 'From' date."),
+                "'Closed to' date must be after 'From' date"),
 
             // Age range
             (
                 SearchFilterKeys.AgeRange,
                 ValidationErrorCode.LowerNotValid
             ) => new(
-                "Filters[age_range].NumberRange.From",
-                "'From' age must be a number."),
+                SearchFilterModelStateKeys.AgeRangeFrom,
+                "'From' age must be a number"),
 
             (
                 SearchFilterKeys.AgeRange,
                 ValidationErrorCode.UpperNotValid
             ) => new(
-                "Filters[age_range].NumberRange.To",
-                "'To' age must be a number."),
+                SearchFilterModelStateKeys.AgeRangeTo,
+                "'To' age must be a number"),
 
             (
                 SearchFilterKeys.AgeRange,
                 ValidationErrorCode.LowerBeforeMinimum
             ) => new(
-                "Filters[age_range].NumberRange.From",
-                "'From' age must be 0 or more."),
+                SearchFilterModelStateKeys.AgeRangeFrom,
+                "'From' age must be 0 or more"),
 
             (
                 SearchFilterKeys.AgeRange,
                 ValidationErrorCode.UpperBeforeMinimum
             ) => new(
-                "Filters[age_range].NumberRange.To",
-                "'To' age must be 0 or more."),
+                SearchFilterModelStateKeys.AgeRangeTo,
+                "'To' age must be 0 or more"),
 
             (
                 SearchFilterKeys.AgeRange,
                 ValidationErrorCode.LowerAfterMaximum
             ) => new(
-                "Filters[age_range].NumberRange.From",
-                "'From' age must be 99 or less."),
+                SearchFilterModelStateKeys.AgeRangeFrom,
+                "'From' age must be 99 or less"),
 
             (
                 SearchFilterKeys.AgeRange,
                 ValidationErrorCode.UpperAfterMaximum
             ) => new(
-                "Filters[age_range].NumberRange.To",
-                "'To' age must be 99 or less."),
+                SearchFilterModelStateKeys.AgeRangeTo,
+                "'To' age must be 99 or less"),
 
             (
                 SearchFilterKeys.AgeRange,
                 ValidationErrorCode.UpperNotGreaterThanLower
             ) => new(
-                "Filters[age_range].NumberRange.To",
-                "'To' age must be after 'From' age."),
+                SearchFilterModelStateKeys.AgeRangeTo,
+                "'To' age must be before 'From' age"),
 
             _ => throw new InvalidOperationException($"No Web validation mapping exists for filter '{error.FilterName}' and error '{error.Error}.")
         };

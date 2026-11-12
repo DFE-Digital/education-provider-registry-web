@@ -124,18 +124,8 @@
                     </summary>
 
                     <div class="govuk-details__text">
-                        @if (facet.Name == "LocalAuthority")
-                        {
-                            @await Html.PartialAsync(
-                                "_AutocompleteFilter",
-                                facet)
-                        }
-                        else
-                        {
-                            @await Html.PartialAsync(
-                                "_FiltersCheckboxComponent",
-                                facet)
-                        }
+                        @await Html.PartialAsync(
+                            "_FiltersCheckboxComponent", facet)
                     </div>
                 </details>
             }

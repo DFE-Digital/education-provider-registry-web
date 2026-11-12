@@ -24,7 +24,7 @@ public sealed class SearchResultsUITests : UIBaseTest
 
         await HostedEnvironment.DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableSearchAggregates>(seed, ct);
 
-        using IWebDriver driver = await WebDriverBuilder.Build().StartDriverAsync(ct);
+        using IWebDriver driver = await WebDriverBuilder.WithHeadless(false).Build().StartDriverAsync(ct);
 
         Uri uri = new(baseUri: HostedEnvironment.GetApplicationUrl(), relativeUri: SearchRoutes.SearchResults(identityTerm: "sch"));
 
@@ -36,7 +36,8 @@ public sealed class SearchResultsUITests : UIBaseTest
         SearchPanelComponent panel = new(query, commandDispatcher);
         SearchResultsComponent results = new(query);
 
-        SearchResult preSortFirstResult = results.GetSearchResults()[0];
+        IReadOnlyList<SearchResult> preSortFirstResult = results.GetSearchResults();
+        Assert.NotEmpty(preSortFirstResult);
 
         // Act
         panel.SortBy("name", SearchPanelComponent.SortDirection.Descending);
@@ -45,7 +46,9 @@ public sealed class SearchResultsUITests : UIBaseTest
         SearchResult postSortFirstResult = results.GetSearchResults()[0];
 
         int comparison = string.Compare(
-            preSortFirstResult.Name.Text, postSortFirstResult.Name.Text, StringComparison.Ordinal);
+            preSortFirstResult[0].Name.Text,
+            postSortFirstResult.Name.Text,
+                StringComparison.Ordinal);
 
         Assert.True(comparison < 0, "Expected pre-sorted name to come before post-sort name when descending sort");
     }

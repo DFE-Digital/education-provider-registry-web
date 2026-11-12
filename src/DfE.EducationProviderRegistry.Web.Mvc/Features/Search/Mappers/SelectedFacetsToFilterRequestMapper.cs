@@ -40,21 +40,34 @@ public sealed class SelectedFacetsToFilterRequestsMapper :
     /// </code>
     /// </remarks>
     public ReadOnlyCollection<FilterRequest> Map(
-        Dictionary<string, List<string>>? selectedFacets)
+        Dictionary<string, List<string>>? input)
     {
-        if (selectedFacets is null || selectedFacets.Count == 0)
+        List<FilterRequest> filters = [];
+
+        if (input is null)
         {
-            return [];
+            return filters.AsReadOnly();
         }
 
-        List<FilterRequest> mapped =
-        [
-            .. selectedFacets.Select(kvp =>
-            new FilterRequest(
-                filterName: kvp.Key,
-                filterValues: [.. kvp.Value.Cast<object>()]))
-        ];
+        foreach (KeyValuePair<string, List<string>> facet in input)
+        {
+            List<string> selectedValues =
+            [
+                .. facet.Value.Where((value) =>
+                    !string.IsNullOrWhiteSpace(value))
+            ];
 
-        return mapped.AsReadOnly();
+            if (selectedValues.Count == 0)
+            {
+                continue;
+            }
+
+            filters.Add(
+                new FilterRequest(
+                    filterName: facet.Key,
+                    filterValues: [.. selectedValues]));
+        }
+
+        return filters.AsReadOnly();
     }
 }

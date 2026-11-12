@@ -1,5 +1,5 @@
 ﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Controllers;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Request;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.WebUtilities;
@@ -363,8 +363,8 @@ public sealed class SearchUrlBuilderTests
                 {
                     NumberRange = new NumberRangeInputFilterViewModel
                     {
-                        From = 5,
-                        To = 11
+                        From = "5",
+                        To = "11"
                     }
                 }
             }
@@ -407,7 +407,7 @@ public sealed class SearchUrlBuilderTests
                 {
                     NumberRange = new NumberRangeInputFilterViewModel
                     {
-                        From = 5
+                        From = "5"
                     }
                 }
             }
@@ -450,7 +450,7 @@ public sealed class SearchUrlBuilderTests
                 {
                     NumberRange = new NumberRangeInputFilterViewModel
                     {
-                        To = 11
+                        To = "11"
                     }
                 }
             }

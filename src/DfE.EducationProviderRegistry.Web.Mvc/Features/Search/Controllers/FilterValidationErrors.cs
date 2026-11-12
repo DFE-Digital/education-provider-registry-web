@@ -1,6 +1,6 @@
 ﻿using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
 using DfE.EducationProviderRegistry.Core.Query.Search.Infrastructure.Filtering.Filters.Exceptions;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Results;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Controllers;

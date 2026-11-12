@@ -1,4 +1,6 @@
-﻿namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Filters;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Request;
+
+namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Results;
 
 public sealed record DateRangeFilterViewModel(
     string Name,

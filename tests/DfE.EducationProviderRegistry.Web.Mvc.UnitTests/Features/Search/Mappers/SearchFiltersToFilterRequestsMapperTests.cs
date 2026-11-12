@@ -2,7 +2,7 @@
 using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Filter;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Request;
 using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Controllers.TestDoubles;
 using Moq;
 
@@ -521,8 +521,8 @@ public sealed class SearchFiltersToFilterRequestsMapperTests
                 {
                     NumberRange = new NumberRangeInputFilterViewModel
                     {
-                        From = 5,
-                        To = 11
+                        From = "5",
+                        To = "11"
                     }
                 }
             }
@@ -536,8 +536,8 @@ public sealed class SearchFiltersToFilterRequestsMapperTests
         FilterRequest filter = Assert.Single(result);
 
         Assert.Equal("AgeRange", filter.FilterName);
-        Assert.Equal(5, filter.FilterValues[0]);
-        Assert.Equal(11, filter.FilterValues[1]);
+        Assert.Equal("5", filter.FilterValues[0]);
+        Assert.Equal("11", filter.FilterValues[1]);
     }
 
     [Fact]
@@ -560,7 +560,7 @@ public sealed class SearchFiltersToFilterRequestsMapperTests
                 {
                     NumberRange = new NumberRangeInputFilterViewModel
                     {
-                        From = 5
+                        From = "5"
                     }
                 }
             }
@@ -574,7 +574,7 @@ public sealed class SearchFiltersToFilterRequestsMapperTests
         FilterRequest filter = Assert.Single(result);
 
         Assert.Equal("AgeRange", filter.FilterName);
-        Assert.Equal(5, filter.FilterValues[0]);
+        Assert.Equal("5", filter.FilterValues[0]);
         Assert.Null(filter.FilterValues[1]);
     }
 
@@ -598,7 +598,7 @@ public sealed class SearchFiltersToFilterRequestsMapperTests
                 {
                     NumberRange = new NumberRangeInputFilterViewModel
                     {
-                        To = 11
+                        To = "11"
                     }
                 }
             }
@@ -613,7 +613,7 @@ public sealed class SearchFiltersToFilterRequestsMapperTests
 
         Assert.Equal("AgeRange", filter.FilterName);
         Assert.Null(filter.FilterValues[0]);
-        Assert.Equal(11, filter.FilterValues[1]);
+        Assert.Equal("11", filter.FilterValues[1]);
     }
 
     [Fact]
@@ -641,8 +641,8 @@ public sealed class SearchFiltersToFilterRequestsMapperTests
                 {
                     NumberRange = new NumberRangeInputFilterViewModel
                     {
-                        From = 5,
-                        To = 11
+                        From = "5",
+                        To = "11"
                     }
                 }
             }

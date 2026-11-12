@@ -1,4 +1,4 @@
-﻿namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+﻿namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Results;
 
 public static class SearchFilterModelStateKeys
 {

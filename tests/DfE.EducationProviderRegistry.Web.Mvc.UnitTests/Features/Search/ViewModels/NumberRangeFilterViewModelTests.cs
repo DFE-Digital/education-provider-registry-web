@@ -1,4 +1,4 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Request;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.ViewModels;
 
@@ -20,7 +20,7 @@ public sealed class NumberRangeFilterViewModelTests
         // arrange
         NumberRangeInputFilterViewModel sut = new()
         {
-            From = 10
+            From = "10"
         };
 
         // act/assert
@@ -33,7 +33,7 @@ public sealed class NumberRangeFilterViewModelTests
         // arrange
         NumberRangeInputFilterViewModel sut = new()
         {
-            To = 20
+            To = "20"
         };
 
         // act/assert
@@ -59,8 +59,8 @@ public sealed class NumberRangeFilterViewModelTests
         // arrange
         NumberRangeInputFilterViewModel sut = new()
         {
-            From = 10,
-            To = 20
+            From = "10",
+            To = "20"
         };
 
         // act
@@ -78,7 +78,7 @@ public sealed class NumberRangeFilterViewModelTests
         // arrange
         NumberRangeInputFilterViewModel sut = new()
         {
-            From = 10
+            From = "10"
         };
 
         // act
@@ -96,7 +96,7 @@ public sealed class NumberRangeFilterViewModelTests
         // arrange
         NumberRangeInputFilterViewModel sut = new()
         {
-            To = 20
+            To = "20"
         };
 
         // act
@@ -104,7 +104,7 @@ public sealed class NumberRangeFilterViewModelTests
 
         // assert
         Assert.Equal(
-            "up to 20",
+            "Up to 20",
             result);
     }
 
@@ -114,8 +114,8 @@ public sealed class NumberRangeFilterViewModelTests
         // arrange
         NumberRangeInputFilterViewModel sut = new()
         {
-            From = 10,
-            To = 10
+            From = "10",
+            To = "10"
         };
 
         // act

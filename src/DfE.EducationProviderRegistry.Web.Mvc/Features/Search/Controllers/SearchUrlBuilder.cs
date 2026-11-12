@@ -1,4 +1,4 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Request;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 

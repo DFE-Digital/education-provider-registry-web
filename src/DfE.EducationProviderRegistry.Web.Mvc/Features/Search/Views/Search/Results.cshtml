@@ -1,5 +1,4 @@
-﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels
-@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Filters
+﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Results
 @using Microsoft.AspNetCore.Mvc.ModelBinding
 @model SearchResultsViewModel
 
@@ -44,7 +43,7 @@
                     <ul class="govuk-list govuk-error-summary__list">
                         @foreach (KeyValuePair<string, ModelStateEntry> entry in ViewData.ModelState)
                         {
-                            string? targetId = FilterInputId.ForModelStateKey(entry.Key);
+                            string? targetId = FilterInputIdModelStateMapping.ForModelStateKey(entry.Key);
 
                             foreach (ModelError error in entry.Value.Errors)
                             {

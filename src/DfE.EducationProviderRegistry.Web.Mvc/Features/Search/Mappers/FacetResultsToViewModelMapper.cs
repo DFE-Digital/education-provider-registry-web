@@ -1,7 +1,7 @@
 ﻿using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Filters;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Results;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 

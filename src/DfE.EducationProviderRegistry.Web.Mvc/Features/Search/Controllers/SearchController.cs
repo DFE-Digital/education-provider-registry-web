@@ -7,7 +7,8 @@ using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Reque
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Services;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Request;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Results;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Controllers;

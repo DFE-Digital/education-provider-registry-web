@@ -1,7 +1,7 @@
 ﻿using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Filters;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Results;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Mappers;
 
@@ -61,7 +61,7 @@ public sealed class FacetResultsToViewModelMapperUnitTests
             SelectedFacets: null);
 
         // Act
-        IReadOnlyList<IFilterViewModel> result = mapper.Map(context).ToList();
+        List<IFilterViewModel> result = [.. mapper.Map(context)];
 
         // Assert
         Assert.Equal(2, result.Count);
@@ -481,10 +481,10 @@ public sealed class FacetResultsToViewModelMapperUnitTests
     }
 
     private static SearchFacet MakeFacet(
-    string name = "Phase",
-    params (string key, string value, int count)[] results)
+        string name = "Phase",
+        params (string key, string value, int count)[] results)
     {
-        List<FacetResult> facetResults = new();
+        List<FacetResult> facetResults = [];
 
         foreach ((string key, string value, int count) in results)
         {
@@ -495,8 +495,8 @@ public sealed class FacetResultsToViewModelMapperUnitTests
                     count));
         }
 
-        return new SearchFacet(
-            name,
-            facetResults);
+        return new(
+            facetName: name,
+            facetResults: facetResults);
     }
 }

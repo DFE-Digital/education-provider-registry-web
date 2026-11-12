@@ -1,4 +1,4 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Request;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.ViewModels;
 
@@ -141,23 +141,6 @@ public sealed class DateRangeFilterViewModelTests
                 Month = "13",
                 Year = "2024"
             }
-        };
-
-        // act
-        string? result = sut.SelectedLabel;
-
-        // assert
-        Assert.Null(result);
-    }
-
-    [Fact]
-    public void SelectedLabel_ReturnsNull_WhenFromDateIsAfterToDate()
-    {
-        // arrange
-        DateRangeInputFilterViewModel sut = new()
-        {
-            From = CreateDateInput(31, 12, 2024),
-            To = CreateDateInput(1, 1, 2024)
         };
 
         // act

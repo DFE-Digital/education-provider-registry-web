@@ -1,7 +1,7 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Filters;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Request;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Results;
 
 public sealed class SearchResultsViewModel
 {

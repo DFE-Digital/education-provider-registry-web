@@ -2,7 +2,7 @@
 using System.Globalization;
 using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Filter;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Request;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 

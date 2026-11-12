@@ -5,8 +5,8 @@ using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Filter;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Services;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Filters;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Request;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Results;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search;

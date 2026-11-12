@@ -1,6 +1,6 @@
-﻿namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Filters;
+﻿namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Results;
 
-public static class FilterInputId
+public static class FilterInputIdModelStateMapping
 {
     public static string? ForModelStateKey(string modelStateKey)
     {

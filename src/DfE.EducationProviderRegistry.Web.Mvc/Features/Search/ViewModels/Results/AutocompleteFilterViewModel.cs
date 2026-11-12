@@ -1,4 +1,4 @@
-﻿namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Filters;
+﻿namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Results;
 
 public sealed record AutocompleteFilterViewModel(
     string Name,

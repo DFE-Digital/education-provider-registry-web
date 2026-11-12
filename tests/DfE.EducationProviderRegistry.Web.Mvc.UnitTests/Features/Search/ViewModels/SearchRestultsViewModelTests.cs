@@ -1,44 +1,33 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Request;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Results;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.ViewModels;
 
 public sealed class SearchResultsViewModelTests
 {
     [Fact]
-    public void Facets_WhenSet_OrdersFacetsByName()
+    public void Filters_WhenSet_ReturnsFiltersInSameOrder()
     {
         // Arrange
         SearchResultsViewModel model = CreateModel();
 
-        List<FacetViewModel> facets =
+        List<IFilterViewModel> filters =
         [
-            CreateFacet("Type"),
-            CreateFacet("Local Authority"),
-            CreateFacet("Status")
+            CreateFilter("Type"),
+            CreateFilter("Local Authority"),
+            CreateFilter("Status")
         ];
 
         // Act
-        model.Facets = facets;
+        model.Filters = filters;
 
         // Assert
         Assert.Collection(
-            model.Facets!,
-            facet => Assert.Equal("Local Authority", facet.Name),
-            facet => Assert.Equal("Status", facet.Name),
-            facet => Assert.Equal("Type", facet.Name));
-    }
+            model.Filters,
+            filter => Assert.Equal("Type", filter.Name),
+            filter => Assert.Equal("Local Authority", filter.Name),
+            filter => Assert.Equal("Status", filter.Name));
 
-    [Fact]
-    public void Facets_WhenSetToNull_ReturnsNull()
-    {
-        // Arrange
-        SearchResultsViewModel model = CreateModel();
-
-        // Act
-        model.Facets = null;
-
-        // Assert
-        Assert.Null(model.Facets);
     }
 
     [Theory]
@@ -51,58 +40,52 @@ public sealed class SearchResultsViewModelTests
     {
         // Arrange
         SearchResultsViewModel model = CreateModel();
-        model.TotalSearchResults = totalEstablishmentResults;
+
+        model.TotalSearchResults =
+            totalEstablishmentResults;
 
         // Act
-        bool result = model.HasResults;
+        bool result =
+            model.HasResults;
 
         // Assert
-        Assert.Equal(expected, result);
+        Assert.Equal(
+            expected,
+            result);
     }
 
     [Fact]
-    public void HasFilters_WithFacets_ReturnsTrue()
+    public void HasFilters_WithFilters_ReturnsTrue()
     {
         // Arrange
-        SearchResultsViewModel model = CreateModel();
+        SearchResultsViewModel model =
+            CreateModel();
 
-        model.Facets =
+        model.Filters =
         [
-            CreateFacet("Type")
+            CreateFilter("Type")
         ];
 
         // Act
-        bool result = model.HasFilters;
+        bool result =
+            model.HasFilters;
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void HasFilters_WithEmptyFacets_ReturnsFalse()
+    public void HasFilters_WithEmptyFilters_ReturnsFalse()
     {
         // Arrange
-        SearchResultsViewModel model = CreateModel
-        ();
+        SearchResultsViewModel model =
+            CreateModel();
 
-        model.Facets = [];
-
-        // Act
-        bool result = model.HasFilters;
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void HasFilters_WithNullFacets_ReturnsFalse()
-    {
-        // Arrange
-        SearchResultsViewModel model = CreateModel();
-        model.Facets = null;
+        model.Filters = [];
 
         // Act
-        bool result = model.HasFilters;
+        bool result =
+            model.HasFilters;
 
         // Assert
         Assert.False(result);
@@ -120,16 +103,23 @@ public sealed class SearchResultsViewModelTests
         int expected)
     {
         // Arrange
-        SearchResultsViewModel model = CreateModel();
+        SearchResultsViewModel model =
+            CreateModel();
 
-        model.TotalSearchResults = totalEstablishmentResults;
-        model.SearchRequest.RecordsPerPage = recordsPerPage;
+        model.TotalSearchResults =
+            totalEstablishmentResults;
+
+        model.SearchRequest.RecordsPerPage =
+            recordsPerPage;
 
         // Act
-        int result = model.TotalPages;
+        int result =
+            model.TotalPages;
 
         // Assert
-        Assert.Equal(expected, result);
+        Assert.Equal(
+            expected,
+            result);
     }
 
     [Theory]
@@ -139,16 +129,22 @@ public sealed class SearchResultsViewModelTests
         int recordsPerPage)
     {
         // Arrange
-        SearchResultsViewModel model = CreateModel();
+        SearchResultsViewModel model =
+            CreateModel();
 
         model.TotalSearchResults = 100;
-        model.SearchRequest.RecordsPerPage = recordsPerPage;
+
+        model.SearchRequest.RecordsPerPage =
+            recordsPerPage;
 
         // Act
-        int result = model.TotalPages;
+        int result =
+            model.TotalPages;
 
         // Assert
-        Assert.Equal(0, result);
+        Assert.Equal(
+            0,
+            result);
     }
 
     [Theory]
@@ -160,14 +156,20 @@ public sealed class SearchResultsViewModelTests
         bool expected)
     {
         // Arrange
-        SearchResultsViewModel model = CreateModel();
-        model.SearchRequest.PageNumber = pageNumber;
+        SearchResultsViewModel model =
+            CreateModel();
+
+        model.SearchRequest.PageNumber =
+            pageNumber;
 
         // Act
-        bool result = model.HasPreviousPage;
+        bool result =
+            model.HasPreviousPage;
 
         // Assert
-        Assert.Equal(expected, result);
+        Assert.Equal(
+            expected,
+            result);
     }
 
     [Theory]
@@ -180,17 +182,26 @@ public sealed class SearchResultsViewModelTests
         bool expected)
     {
         // Arrange
-        SearchResultsViewModel model = CreateModel();
+        SearchResultsViewModel model =
+            CreateModel();
 
-        model.TotalSearchResults = totalEstablishmentResults;
-        model.SearchRequest.PageNumber = pageNumber;
-        model.SearchRequest.RecordsPerPage = 20;
+        model.TotalSearchResults =
+            totalEstablishmentResults;
+
+        model.SearchRequest.PageNumber =
+            pageNumber;
+
+        model.SearchRequest.RecordsPerPage =
+            20;
 
         // Act
-        bool result = model.HasNextPage;
+        bool result =
+            model.HasNextPage;
 
         // Assert
-        Assert.Equal(expected, result);
+        Assert.Equal(
+            expected,
+            result);
     }
 
     private static SearchResultsViewModel CreateModel()
@@ -198,6 +209,7 @@ public sealed class SearchResultsViewModelTests
         return new SearchResultsViewModel
         {
             SearchAggregateResults = [],
+            Filters = [],
             SearchRequest = new SearchRequestViewModel
             {
                 PageNumber = 1,
@@ -206,13 +218,12 @@ public sealed class SearchResultsViewModelTests
         };
     }
 
-    private static FacetViewModel CreateFacet(string name)
+    private static IFilterViewModel CreateFilter(
+        string name)
     {
-        return new FacetViewModel
-        (
+        return new CheckboxFilterViewModel(
             Name: name,
             Label: name,
-            Values: []
-        );
+            Values: []);
     }
 }

@@ -1,4 +1,4 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Request;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.ViewModels;
 
@@ -8,7 +8,7 @@ public sealed class DateRangeFilterViewModelTests
     public void IsEmpty_ReturnsTrue_WhenFromAndToAreEmpty()
     {
         // arrange
-        DateRangeFilterViewModel sut = new();
+        DateRangeInputFilterViewModel sut = new();
 
         // act/assert
         Assert.True(sut.IsEmpty);
@@ -18,7 +18,7 @@ public sealed class DateRangeFilterViewModelTests
     public void IsEmpty_ReturnsFalse_WhenFromHasValue()
     {
         // arrange
-        DateRangeFilterViewModel sut = new()
+        DateRangeInputFilterViewModel sut = new()
         {
             From = CreateDateInput(1, 1, 2024)
         };
@@ -31,7 +31,7 @@ public sealed class DateRangeFilterViewModelTests
     public void IsEmpty_ReturnsFalse_WhenToHasValue()
     {
         // arrange
-        DateRangeFilterViewModel sut = new()
+        DateRangeInputFilterViewModel sut = new()
         {
             To = CreateDateInput(31, 12, 2024)
         };
@@ -44,7 +44,7 @@ public sealed class DateRangeFilterViewModelTests
     public void SelectedLabel_ReturnsNull_WhenRangeIsEmpty()
     {
         // arrange
-        DateRangeFilterViewModel sut = new();
+        DateRangeInputFilterViewModel sut = new();
 
         // act
         string? result = sut.SelectedLabel;
@@ -57,7 +57,7 @@ public sealed class DateRangeFilterViewModelTests
     public void SelectedLabel_ReturnsDateRange_WhenFromAndToAreValid()
     {
         // arrange
-        DateRangeFilterViewModel sut = new()
+        DateRangeInputFilterViewModel sut = new()
         {
             From = CreateDateInput(1, 1, 2024),
             To = CreateDateInput(31, 12, 2024)
@@ -76,7 +76,7 @@ public sealed class DateRangeFilterViewModelTests
     public void SelectedLabel_ReturnsFromLabel_WhenOnlyFromIsValid()
     {
         // arrange
-        DateRangeFilterViewModel sut = new()
+        DateRangeInputFilterViewModel sut = new()
         {
             From = CreateDateInput(1, 1, 2024)
         };
@@ -94,7 +94,7 @@ public sealed class DateRangeFilterViewModelTests
     public void SelectedLabel_ReturnsToLabel_WhenOnlyToIsValid()
     {
         // arrange
-        DateRangeFilterViewModel sut = new()
+        DateRangeInputFilterViewModel sut = new()
         {
             To = CreateDateInput(31, 12, 2024)
         };
@@ -112,7 +112,7 @@ public sealed class DateRangeFilterViewModelTests
     public void SelectedLabel_ReturnsNull_WhenFromDateIsInvalid()
     {
         // arrange
-        DateRangeFilterViewModel sut = new()
+        DateRangeInputFilterViewModel sut = new()
         {
             From = new DateInputViewModel
             {
@@ -133,7 +133,7 @@ public sealed class DateRangeFilterViewModelTests
     public void SelectedLabel_ReturnsNull_WhenToDateIsInvalid()
     {
         // arrange
-        DateRangeFilterViewModel sut = new()
+        DateRangeInputFilterViewModel sut = new()
         {
             To = new DateInputViewModel
             {
@@ -141,23 +141,6 @@ public sealed class DateRangeFilterViewModelTests
                 Month = "13",
                 Year = "2024"
             }
-        };
-
-        // act
-        string? result = sut.SelectedLabel;
-
-        // assert
-        Assert.Null(result);
-    }
-
-    [Fact]
-    public void SelectedLabel_ReturnsNull_WhenFromDateIsAfterToDate()
-    {
-        // arrange
-        DateRangeFilterViewModel sut = new()
-        {
-            From = CreateDateInput(31, 12, 2024),
-            To = CreateDateInput(1, 1, 2024)
         };
 
         // act

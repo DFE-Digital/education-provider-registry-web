@@ -1,5 +1,5 @@
 ﻿using System.Globalization;
-namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Request;
 
 public sealed class DateInputViewModel
 {

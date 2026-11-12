@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Results;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Controllers.TestDoubles;
@@ -10,8 +10,7 @@ internal static class SearchResultsViewModelStub
     public static SearchResultsViewModel Empty() =>
         new()
         {
-            SearchAggregateResults = [],
-            Facets = null
+            SearchAggregateResults = []
         };
 
     public static SearchResultsViewModel WithEstablishmentResults(
@@ -19,7 +18,6 @@ internal static class SearchResultsViewModelStub
         new()
         {
             SearchAggregateResults = results,
-            Facets = null
         };
 
     public static SearchResultsViewModel WithPrimarySearchTerms(
@@ -28,7 +26,6 @@ internal static class SearchResultsViewModelStub
         new()
         {
             SearchAggregateResults = results,
-            Facets = null,
             PrimarySearchTerms = searchTerms
         };
 }

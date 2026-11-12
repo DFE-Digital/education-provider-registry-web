@@ -7,7 +7,8 @@ using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Reque
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Services;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Request;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Results;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Controllers;
@@ -46,6 +47,9 @@ public sealed class SearchController : Controller
     [HttpGet("results")]
     public async Task<IActionResult> Search(SearchRequestViewModel model)
     {
+        // TODO should fall onto mapper ... tidy so it uses the normal results composition path
+        // compose Results through the same Web presentation path
+        // without executing the search?
         if (!ModelState.IsValid)
         {
             return View("Results", new SearchResultsViewModel()
@@ -89,8 +93,7 @@ public sealed class SearchController : Controller
             model.RecordsPerPage);
 
         UseCaseResponse<SearchResponse> searchResponse =
-            await _searchUseCase.HandleRequestAsync(
-                searchRequest);
+            await _searchUseCase.HandleRequestAsync(searchRequest);
 
         SearchResultsViewModel updatedModel =
             _searchResponseToViewModelMapper.Map(
@@ -99,6 +102,8 @@ public sealed class SearchController : Controller
                     searchResponse));
 
         ModelState.Clear();
+
+        FilterValidationErrors.Apply(ModelState, searchResponse.Model.ValidationErrors);
 
         return View("Results", updatedModel);
     }

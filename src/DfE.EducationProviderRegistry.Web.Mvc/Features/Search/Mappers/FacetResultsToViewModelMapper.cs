@@ -1,11 +1,15 @@
 ﻿using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Results;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 
-public sealed class FacetResultsToViewModelMapper :
-    IMapper<IReadOnlyCollection<SearchFacet>, List<FacetViewModel>>
+public sealed record FacetResultsMappingContext(
+    IReadOnlyCollection<SearchFacet> Facets,
+    Dictionary<string, List<string>>? SelectedFacets);
+
+public sealed class FacetResultsToViewModelMapper : IMapper<FacetResultsMappingContext, IReadOnlyCollection<IFilterViewModel>>
 {
     private static readonly Dictionary<string, string> _labelMappings = new()
     {
@@ -16,7 +20,7 @@ public sealed class FacetResultsToViewModelMapper :
         ["furthereducationtype"] = "Further education type",
         ["gender"] = "Gender",
         ["grouptype"] = "Group type",
-        ["LocalAuthority"] = "Local Authority",
+        ["localauthority"] = "Local Authority",
         ["nursery"] = "Nursery provision",
         ["religiouscharacter"] = "Religious character",
         ["religiousethos"] = "Religious ethos",
@@ -28,39 +32,62 @@ public sealed class FacetResultsToViewModelMapper :
         ["status"] = "Status"
     };
 
-    public List<FacetViewModel> Map(IReadOnlyCollection<SearchFacet> input)
+    public IReadOnlyCollection<IFilterViewModel> Map(FacetResultsMappingContext input)
     {
         ArgumentNullException.ThrowIfNull(input);
 
-        List<FacetViewModel> facets = new(input.Count);
+        List<IFilterViewModel> filters = new(input.Facets.Count);
 
-        foreach (SearchFacet searchFacet in input)
+        foreach (SearchFacet searchFacet in input.Facets)
         {
             ArgumentNullException.ThrowIfNull(searchFacet);
 
-            FacetViewModel facetViewModel = MapFacet(searchFacet);
-            facets.Add(facetViewModel);
+            filters.Add(
+                MapFacet(
+                    searchFacet,
+                    input.SelectedFacets));
         }
 
-        return facets;
+        return filters;
     }
 
-    private static FacetViewModel MapFacet(SearchFacet searchFacet)
+    private static IFilterViewModel MapFacet(
+        SearchFacet searchFacet,
+        Dictionary<string, List<string>>? selectedFacets)
     {
         ArgumentNullException.ThrowIfNull(searchFacet.Name);
 
-        List<FacetValueViewModel> values = MapFacetValues(searchFacet);
+        List<FacetValueViewModel> values =
+            MapFacetValues(
+                searchFacet,
+                selectedFacets);
 
-        return new FacetViewModel(
-            Name: searchFacet.Name,
-            Label: _labelMappings.GetValueOrDefault(searchFacet.Name, searchFacet.Name),
-            Values: values
-        );
+        string label =
+            _labelMappings.GetValueOrDefault(
+                searchFacet.Name,
+                searchFacet.Name);
+
+        List<string> autocompleteFacets = ["localauthority", "diocese"];
+
+        if (autocompleteFacets.Contains(searchFacet.Name))
+        {
+            return new AutocompleteFilterViewModel(searchFacet.Name, label, values);
+        }
+
+        return new CheckboxFilterViewModel(
+            searchFacet.Name,
+            label,
+            values);
     }
 
-    private static List<FacetValueViewModel> MapFacetValues(SearchFacet searchFacet)
+    private static List<FacetValueViewModel> MapFacetValues(
+        SearchFacet searchFacet,
+        Dictionary<string, List<string>>? selectedFacets)
     {
         ArgumentNullException.ThrowIfNull(searchFacet.Results);
+
+        List<string> selectedValues =
+            selectedFacets?.GetValueOrDefault(searchFacet.Name) ?? [];
 
         List<FacetValueViewModel> values = new(searchFacet.Results.Count);
 
@@ -68,31 +95,41 @@ public sealed class FacetResultsToViewModelMapper :
         {
             ArgumentNullException.ThrowIfNull(result);
 
-            FacetValueViewModel valueViewModel = MapFacetValue(result);
-            values.Add(valueViewModel);
+            values.Add(
+                MapFacetValue(
+                    result,
+                    selectedValues));
         }
 
         return values;
     }
 
-    private static FacetValueViewModel MapFacetValue(FacetResult result)
+    private static FacetValueViewModel MapFacetValue(
+        FacetResult result,
+        IReadOnlyCollection<string> selectedValues)
     {
         ArgumentNullException.ThrowIfNull(result.Value);
         ArgumentNullException.ThrowIfNull(result.Label);
 
-        if (result.Count == null)
+        if (result.Count is null)
         {
             throw new ArgumentException(
                 "Facet result count cannot be null.",
-                nameof(result)
-            );
+                nameof(result));
         }
+
+        bool isSelected =
+            selectedValues.Any((selectedValue) =>
+                !string.IsNullOrWhiteSpace(selectedValue) &&
+                    string.Equals(
+                        selectedValue,
+                        result.Value,
+                        StringComparison.OrdinalIgnoreCase));
 
         return new FacetValueViewModel(
             Value: result.Value,
             Label: result.Label,
             Count: result.Count.Value,
-            IsSelected: false
-        );
+            IsSelected: isSelected);
     }
 }

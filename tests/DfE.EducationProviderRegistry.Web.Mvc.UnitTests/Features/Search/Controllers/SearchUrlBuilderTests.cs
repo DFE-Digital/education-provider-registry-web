@@ -1,5 +1,5 @@
 ﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Controllers;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Request;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.WebUtilities;
@@ -216,7 +216,7 @@ public sealed class SearchUrlBuilderTests
                 "OpenDate",
                 new FilterInputViewModel
                 {
-                    DateRange = new DateRangeFilterViewModel
+                    DateRange = new DateRangeInputFilterViewModel
                     {
                         From = new DateInputViewModel
                         {
@@ -269,7 +269,7 @@ public sealed class SearchUrlBuilderTests
                 "OpenDate",
                 new FilterInputViewModel
                 {
-                    DateRange = new DateRangeFilterViewModel()
+                    DateRange = new DateRangeInputFilterViewModel()
                 }
             }
         }
@@ -293,47 +293,60 @@ public sealed class SearchUrlBuilderTests
     }
 
     [Fact]
-    public void BuildPageUrl_WithPartialDateRange_AddsEmptyStringsForMissingValues()
+    public void BuildPageUrl_WithPartialDateRange_AddsOnlyProvidedValues()
     {
         // Arrange
-        SearchRequestViewModel searchRequest = new()
+        SearchRequestViewModel request = new()
         {
-            RecordsPerPage = 20,
             Filters = new Dictionary<string, FilterInputViewModel>
-        {
             {
-                "OpenDate",
-                new FilterInputViewModel
+                ["OpenDate"] = new FilterInputViewModel
                 {
-                    DateRange = new DateRangeFilterViewModel
+                    DateRange = new DateRangeInputFilterViewModel
                     {
                         From = new DateInputViewModel
                         {
-                            Year = "2024"
+                            Year = "2026"
                         }
                     }
                 }
             }
-        }
         };
 
         // Act
-        string result = SearchUrlBuilder.BuildPageUrl(
-            _urlHelper.Object,
-            searchRequest,
-            1);
+        string result =
+            SearchUrlBuilder.BuildPageUrl(
+                _urlHelper.Object,
+                request,
+                1);
+
+        Dictionary<string, StringValues> query = QueryHelpers.ParseQuery(result);
 
         // Assert
-        Uri uri = new($"https://test.local{result}");
+        Assert.False(
+            query.ContainsKey(
+                "Filters[OpenDate].DateRange.From.Day"));
 
-        Dictionary<string, StringValues> query =
-            QueryHelpers.ParseQuery(uri.Query);
+        Assert.False(
+            query.ContainsKey(
+                "Filters[OpenDate].DateRange.From.Month"));
 
-        Assert.Equal(string.Empty, query["Filters[OpenDate].DateRange.From.Day"]);
-        Assert.Equal(string.Empty, query["Filters[OpenDate].DateRange.From.Month"]);
-        Assert.Equal("2024", query["Filters[OpenDate].DateRange.From.Year"]);
+        Assert.Equal(
+            "2026",
+            query["Filters[OpenDate].DateRange.From.Year"]);
+
+        Assert.False(
+            query.ContainsKey(
+                "Filters[OpenDate].DateRange.To.Day"));
+
+        Assert.False(
+            query.ContainsKey(
+                "Filters[OpenDate].DateRange.To.Month"));
+
+        Assert.False(
+            query.ContainsKey(
+                "Filters[OpenDate].DateRange.To.Year"));
     }
-
 
     [Fact]
     public void BuildPageUrl_WithNumberRangeFilter_AddsNumberRangeToQueryString()
@@ -348,10 +361,10 @@ public sealed class SearchUrlBuilderTests
                 "AgeRange",
                 new FilterInputViewModel
                 {
-                    NumberRange = new NumberRangeFilterViewModel
+                    NumberRange = new NumberRangeInputFilterViewModel
                     {
-                        From = 5,
-                        To = 11
+                        From = "5",
+                        To = "11"
                     }
                 }
             }
@@ -392,9 +405,9 @@ public sealed class SearchUrlBuilderTests
                 "AgeRange",
                 new FilterInputViewModel
                 {
-                    NumberRange = new NumberRangeFilterViewModel
+                    NumberRange = new NumberRangeInputFilterViewModel
                     {
-                        From = 5
+                        From = "5"
                     }
                 }
             }
@@ -435,9 +448,9 @@ public sealed class SearchUrlBuilderTests
                 "AgeRange",
                 new FilterInputViewModel
                 {
-                    NumberRange = new NumberRangeFilterViewModel
+                    NumberRange = new NumberRangeInputFilterViewModel
                     {
-                        To = 11
+                        To = "11"
                     }
                 }
             }
@@ -478,7 +491,7 @@ public sealed class SearchUrlBuilderTests
                 "AgeRange",
                 new FilterInputViewModel
                 {
-                    NumberRange = new NumberRangeFilterViewModel()
+                    NumberRange = new NumberRangeInputFilterViewModel()
                 }
             }
         }

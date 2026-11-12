@@ -1,52 +1,30 @@
-﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels
+﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Results
+
 @model SearchResultsViewModel
 
 @{
-    var selectedFacets = (Model.Facets ?? [])
-        .SelectMany(facet =>
-            facet.Values
-                .Where(value => value.IsSelected)
-                .Select(value => new
-                {
-                    FacetName = facet.Name,
-                    Value = value.Value,
-                    Label = value.Label
-                }))
-        .ToList();
-
-    var dateFilters = new[]
-    {
-        (
-            Name: "opened_date",
-            Label: "Opened date",
-            Range: Model.SearchRequest.Filters
-        .GetValueOrDefault("opened_date")?.DateRange ?? new()),
-        (
-            Name: "closed_date",
-            Label: "Closed date",
-            Range: Model.SearchRequest.Filters
-        .GetValueOrDefault("closed_date")?.DateRange ?? new()),
-    };
-
-    var ageRange = Model.SearchRequest.Filters
-        .GetValueOrDefault("age_range")?.NumberRange ?? new();
-
-    var selectedDateFilters = dateFilters
-        .Where(filter => filter.Range.SelectedLabel is not null)
-        .ToList();
+    List<(IFilterViewModel Filter, SelectedFilterValueViewModel Value)> selectedFilters =
+        Model.Filters
+            .SelectMany(filter =>
+                filter.SelectedValues.Select(selectedValue =>
+                    (
+                        Filter: filter,
+                        Value: selectedValue
+                    )))
+            .ToList();
 }
 
 <div class="moj-filter">
     <div class="moj-filter__content">
         <div class="moj-filter__options">
 
-            @if (selectedFacets.Any() || selectedDateFilters.Any() || ageRange.SelectedLabel is not null)
+            @if (selectedFilters.Count > 0)
             {
                 <div class="moj-filter__selected app-selected-filters">
                     <div class="app-selected-filters__header">
-                        <h1 class="govuk-heading-s">
+                        <h2 class="govuk-heading-s">
                             Selected filters
-                        </h1>
+                        </h2>
 
                         <button type="submit"
                                 name="ClearFilters"
@@ -57,55 +35,27 @@
                     </div>
 
                     <ul class="app-selected-filters__list">
-                        @if (ageRange.SelectedLabel is not null)
+                        @foreach ((IFilterViewModel filter, SelectedFilterValueViewModel selectedValue) in selectedFilters)
                         {
+                            string removeValue =
+                                selectedValue.Value is null
+                                    ? $"{filter.Name}|filter"
+                                    : $"{filter.Name}|{selectedValue.Value}";
+
                             <li>
                                 <button type="submit"
                                         class="app-selected-filter"
                                         name="RemoveFilter"
-                                        value="@($"age_range|filter")">
+                                        value="@removeValue">
 
-                                    @ageRange.SelectedLabel
+                                    @selectedValue.Label
 
-                                    <span aria-hidden="true">&times;</span>
-
-                                    <span class="govuk-visually-hidden">
-                                        Remove age range filter
+                                    <span aria-hidden="true">
+                                        &times;
                                     </span>
-                                </button>
-                            </li>
-                        }
-                        @foreach (var filter in selectedDateFilters)
-                        {
-                            <li>
-                                <button type="submit"
-                                        class="app-selected-filter"
-                                        name="RemoveFilter"
-                                        value="@($"{filter.Name}|filter")">
-
-                                    @filter.Range.SelectedLabel
-
-                                    <span aria-hidden="true">&times;</span>
-                                    <span class="govuk-visually-hidden">
-                                        Remove @filter.Label.ToLowerInvariant() filter
-                                    </span>
-                                </button>
-                            </li>
-                        }
-                        @foreach (var filter in selectedFacets)
-                        {
-                            <li>
-                                <button type="submit"
-                                        class="app-selected-filter"
-                                        name="RemoveFilter"
-                                        value="@($"{filter.FacetName}|{filter.Value}")">
-
-                                    @filter.Label
-
-                                    <span aria-hidden="true">&times;</span>
 
                                     <span class="govuk-visually-hidden">
-                                        Remove @filter.Label filter
+                                        Remove @selectedValue.Label filter
                                     </span>
                                 </button>
                             </li>
@@ -114,44 +64,55 @@
                 </div>
             }
 
-            @foreach (var facet in Model.Facets ?? [])
+            @foreach (IFilterViewModel filter in Model.Filters ?? [])
             {
-                <details class="govuk-details filter-section">
-                    <summary class="govuk-details__summary">
-                        <span class="govuk-details__summary-text">
-                            @facet.Label
-                        </span>
-                    </summary>
+                string filterPrefix = $"Filters[{filter.Name}]";
 
-                    <div class="govuk-details__text">
-                        @await Html.PartialAsync(
-                            "_FiltersCheckboxComponent", facet)
-                    </div>
-                </details>
-            }
+                bool hasError =
+                    ViewData.ModelState.Any((entry) =>
+                        entry.Key.StartsWith(filterPrefix, StringComparison.OrdinalIgnoreCase) &&
+                            entry.Value?.Errors.Count > 0);
 
-            @foreach (var filter in dateFilters)
-            {
-                <details class="govuk-details filter-section">
+                <details class="govuk-details filter-section" open="@hasError">
                     <summary class="govuk-details__summary">
                         <span class="govuk-details__summary-text">
                             @filter.Label
                         </span>
                     </summary>
 
-                    @await Html.PartialAsync("_DateRangeFilter", (filter.Name, filter.Range))
+                    <div class="govuk-details__text">
+                        @switch (filter)
+                        {
+                            case CheckboxFilterViewModel checkbox:
+                                @await Html.PartialAsync(
+                                    "_FiltersCheckboxComponent",
+                                    checkbox)
+                                break;
+
+                            case AutocompleteFilterViewModel autocomplete:
+                                @await Html.PartialAsync(
+                                    "_AutocompleteFilter",
+                                    autocomplete)
+                                break;
+
+                            case DateRangeFilterViewModel dateRange:
+                                @await Html.PartialAsync(
+                                    "_DateRangeFilter",
+                                    dateRange)
+                                break;
+
+                            case NumberRangeFilterViewModel numberRange:
+                                @await Html.PartialAsync(
+                                    "_NumberRangeFilter",
+                                    numberRange)
+                                break;
+
+                            default:
+                                continue;
+                        }
+                    </div>
                 </details>
             }
-
-            <details class="govuk-details filter-section">
-                <summary class="govuk-details__summary">
-                    <span class="govuk-details__summary-text">
-                        Age range
-                    </span>
-                </summary>
-
-                @await Html.PartialAsync("_NumberRangeFilter", ("age_range", ageRange))
-            </details>
 
             <button type="submit"
                     class="govuk-button"

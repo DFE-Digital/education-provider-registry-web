@@ -66,7 +66,14 @@
 
             @foreach (IFilterViewModel filter in Model.Filters ?? [])
             {
-                <details class="govuk-details filter-section">
+                string filterPrefix = $"Filters[{filter.Name}]";
+
+                bool hasError =
+                    ViewData.ModelState.Any((entry) =>
+                        entry.Key.StartsWith(filterPrefix, StringComparison.OrdinalIgnoreCase) &&
+                            entry.Value?.Errors.Count > 0);
+
+                <details class="govuk-details filter-section" open="@hasError">
                     <summary class="govuk-details__summary">
                         <span class="govuk-details__summary-text">
                             @filter.Label

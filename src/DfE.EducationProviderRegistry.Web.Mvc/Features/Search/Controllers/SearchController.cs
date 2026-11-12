@@ -47,7 +47,10 @@ public sealed class SearchController : Controller
     [HttpGet("results")]
     public async Task<IActionResult> Search(SearchRequestViewModel model)
     {
-        if (!ModelState.IsValid) // TODO should fall onto mapper
+        // TODO should fall onto mapper ... tidy so it uses the normal results composition path
+        // compose Results through the same Web presentation path
+        // without executing the search?
+        if (!ModelState.IsValid)
         {
             return View("Results", new SearchResultsViewModel()
             {

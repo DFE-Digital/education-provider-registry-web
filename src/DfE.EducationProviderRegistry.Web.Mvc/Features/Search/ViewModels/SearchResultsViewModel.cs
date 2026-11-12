@@ -1,20 +1,18 @@
-﻿using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Filters;
+using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 
 public sealed class SearchResultsViewModel
 {
+    private List<IFilterViewModel> _filters = [];
+
     public required List<GovUkTable> SearchAggregateResults { get; set; }
 
-    private List<FacetViewModel>? _facets;
-
-    /// <summary>
-    /// View model representation of the available facets.
-    /// </summary>
-    public List<FacetViewModel>? Facets
+    public List<IFilterViewModel> Filters
     {
-        get => _facets;
-        set => _facets = value?.OrderBy(facet => facet.Name).ToList();
+        get => _filters;
+        set => _filters = [.. value];
     }
 
     public string? PrimarySearchTerms { get; set; }
@@ -23,8 +21,11 @@ public sealed class SearchResultsViewModel
 
     public string? SelectedSortDirection { get; set; }
 
-    public bool HasResults => TotalSearchResults >= 1;
-    public bool HasFilters => Facets?.Count > 0;
+    public bool HasResults =>
+        TotalSearchResults >= 1;
+
+    public bool HasFilters =>
+        Filters.Count > 0;
 
     public SearchRequestViewModel SearchRequest { get; set; } = new();
 
@@ -34,7 +35,8 @@ public sealed class SearchResultsViewModel
         SearchRequest.RecordsPerPage <= 0
             ? 0
             : (int)Math.Ceiling(
-                TotalSearchResults / (double)SearchRequest.RecordsPerPage);
+                TotalSearchResults /
+                (double)SearchRequest.RecordsPerPage);
 
     public bool HasPreviousPage =>
         SearchRequest.PageNumber > 1;

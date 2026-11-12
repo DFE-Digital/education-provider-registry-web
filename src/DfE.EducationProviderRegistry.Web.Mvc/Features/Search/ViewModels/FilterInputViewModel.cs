@@ -2,6 +2,6 @@
 
 public sealed class FilterInputViewModel
 {
-    public DateRangeFilterViewModel? DateRange { get; set; }
-    public NumberRangeFilterViewModel? NumberRange { get; set; }
+    public DateRangeInputFilterViewModel? DateRange { get; set; }
+    public NumberRangeInputFilterViewModel? NumberRange { get; set; }
 }

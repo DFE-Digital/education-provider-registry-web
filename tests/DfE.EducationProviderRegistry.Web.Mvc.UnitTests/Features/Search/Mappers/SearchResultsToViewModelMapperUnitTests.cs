@@ -122,7 +122,7 @@ public sealed class SearchResultsToViewModelMapperTests
             new(searchAggregateMapper.Object, facetsMapper.Object);
 
         SearchResponse response =
-            new(
+             new(
                 null!,
                 new SearchFacets(facets), 1);
 

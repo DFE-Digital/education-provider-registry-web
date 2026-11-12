@@ -1,0 +1,11 @@
+﻿namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Filters;
+
+public sealed record DateRangeFilterViewModel(
+    string Name,
+    string Label,
+    DateRangeInputFilterViewModel Range) : IFilterViewModel
+{
+    public IReadOnlyList<SelectedFilterValueViewModel> SelectedValues =>
+        Range.SelectedLabel is null ? []
+            : [new SelectedFilterValueViewModel(Value: null, Label: Range.SelectedLabel)];
+}

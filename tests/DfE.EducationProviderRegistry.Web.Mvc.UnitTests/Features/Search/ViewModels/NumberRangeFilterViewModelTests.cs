@@ -8,7 +8,7 @@ public sealed class NumberRangeFilterViewModelTests
     public void IsEmpty_ReturnsTrue_WhenFromAndToAreNull()
     {
         // arrange
-        NumberRangeFilterViewModel sut = new();
+        NumberRangeInputFilterViewModel sut = new();
 
         // act/assert
         Assert.True(sut.IsEmpty);
@@ -18,7 +18,7 @@ public sealed class NumberRangeFilterViewModelTests
     public void IsEmpty_ReturnsFalse_WhenFromHasValue()
     {
         // arrange
-        NumberRangeFilterViewModel sut = new()
+        NumberRangeInputFilterViewModel sut = new()
         {
             From = 10
         };
@@ -31,7 +31,7 @@ public sealed class NumberRangeFilterViewModelTests
     public void IsEmpty_ReturnsFalse_WhenToHasValue()
     {
         // arrange
-        NumberRangeFilterViewModel sut = new()
+        NumberRangeInputFilterViewModel sut = new()
         {
             To = 20
         };
@@ -44,7 +44,7 @@ public sealed class NumberRangeFilterViewModelTests
     public void SelectedLabel_ReturnsNull_WhenFromAndToAreNull()
     {
         // arrange
-        NumberRangeFilterViewModel sut = new();
+        NumberRangeInputFilterViewModel sut = new();
 
         // act
         string? result = sut.SelectedLabel;
@@ -57,7 +57,7 @@ public sealed class NumberRangeFilterViewModelTests
     public void SelectedLabel_ReturnsRange_WhenFromAndToHaveValues()
     {
         // arrange
-        NumberRangeFilterViewModel sut = new()
+        NumberRangeInputFilterViewModel sut = new()
         {
             From = 10,
             To = 20
@@ -76,7 +76,7 @@ public sealed class NumberRangeFilterViewModelTests
     public void SelectedLabel_ReturnsAndOver_WhenOnlyFromHasValue()
     {
         // arrange
-        NumberRangeFilterViewModel sut = new()
+        NumberRangeInputFilterViewModel sut = new()
         {
             From = 10
         };
@@ -94,7 +94,7 @@ public sealed class NumberRangeFilterViewModelTests
     public void SelectedLabel_ReturnsUpTo_WhenOnlyToHasValue()
     {
         // arrange
-        NumberRangeFilterViewModel sut = new()
+        NumberRangeInputFilterViewModel sut = new()
         {
             To = 20
         };
@@ -112,7 +112,7 @@ public sealed class NumberRangeFilterViewModelTests
     public void SelectedLabel_ReturnsRange_WhenFromAndToAreEqual()
     {
         // arrange
-        NumberRangeFilterViewModel sut = new()
+        NumberRangeInputFilterViewModel sut = new()
         {
             From = 10,
             To = 10

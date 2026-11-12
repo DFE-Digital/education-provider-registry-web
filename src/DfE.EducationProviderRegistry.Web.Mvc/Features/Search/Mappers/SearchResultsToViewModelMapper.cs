@@ -2,24 +2,43 @@
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Filters;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 
 public sealed class SearchResultsToViewModelMapper : IMapper<SearchResultsMappingContext, SearchResultsViewModel>
 {
-    private readonly IMapper<IReadOnlyCollection<SearchAggregateResult>, List<GovUkTable>> _searchAggregateResultsToViewModelMapper;
-    private readonly IMapper<IReadOnlyCollection<SearchFacet>, List<FacetViewModel>> _facetResultsToFacetsViewModelMapper;
+    private readonly IMapper<
+        IReadOnlyCollection<SearchAggregateResult>,
+        List<GovUkTable>> _searchAggregateResultsToViewModelMapper;
+
+    private readonly IMapper<
+        FacetResultsMappingContext,
+        IReadOnlyCollection<IFilterViewModel>> _facetResultsToFiltersViewModelMapper;
+
+    private readonly IMapper<
+        AvailableFiltersMappingContext,
+        IReadOnlyCollection<IFilterViewModel>> _filtersToFiltersViewModelMapper;
 
     public SearchResultsToViewModelMapper(
-        IMapper<IReadOnlyCollection<SearchAggregateResult>, List<GovUkTable>> searchAggregateResultsToViewModelMapper,
-        IMapper<IReadOnlyCollection<SearchFacet>, List<FacetViewModel>> facetResultsToFacetsViewModelMapper)
+        IMapper<
+            IReadOnlyCollection<SearchAggregateResult>,
+            List<GovUkTable>> searchAggregateResultsToViewModelMapper,
+        IMapper<
+            FacetResultsMappingContext,
+            IReadOnlyCollection<IFilterViewModel>> facetResultsToFiltersViewModelMapper,
+        IMapper<
+            AvailableFiltersMappingContext,
+            IReadOnlyCollection<IFilterViewModel>> filtersToFiltersViewModelMapper)
     {
         ArgumentNullException.ThrowIfNull(searchAggregateResultsToViewModelMapper);
-        ArgumentNullException.ThrowIfNull(facetResultsToFacetsViewModelMapper);
+        ArgumentNullException.ThrowIfNull(facetResultsToFiltersViewModelMapper);
+        ArgumentNullException.ThrowIfNull(filtersToFiltersViewModelMapper);
 
         _searchAggregateResultsToViewModelMapper = searchAggregateResultsToViewModelMapper;
-        _facetResultsToFacetsViewModelMapper = facetResultsToFacetsViewModelMapper;
+        _facetResultsToFiltersViewModelMapper = facetResultsToFiltersViewModelMapper;
+        _filtersToFiltersViewModelMapper = filtersToFiltersViewModelMapper;
     }
 
     public SearchResultsViewModel Map(
@@ -27,22 +46,14 @@ public sealed class SearchResultsToViewModelMapper : IMapper<SearchResultsMappin
     {
         ArgumentNullException.ThrowIfNull(input);
 
-        SearchResponse searchResponse = input.SearchResponse.Model;
+        SearchResponse searchResponse =
+            input.SearchResponse.Model;
 
-        List<FacetViewModel> facets =
-            searchResponse.FacetedResults is not null
-                ? _facetResultsToFacetsViewModelMapper.Map(
-                    searchResponse.FacetedResults.Facets)
-                : [];
-
-        MarkSelectedFacetValues(
-            facets,
-            input.SearchRequest.SelectedFacets);
 
         return new SearchResultsViewModel
         {
             PrimarySearchTerms =
-                input.SearchRequest.What!,
+                input.SearchRequest.What,
 
             SecondarySearchTerms =
                 input.SearchRequest.Where,
@@ -50,7 +61,8 @@ public sealed class SearchResultsToViewModelMapper : IMapper<SearchResultsMappin
             SearchRequest =
                 input.SearchRequest,
 
-            SelectedSortDirection = input.SearchRequest.Sort,
+            SelectedSortDirection =
+                input.SearchRequest.Sort,
 
             SearchAggregateResults =
                 searchResponse.SearchProviderResults is not null
@@ -63,53 +75,26 @@ public sealed class SearchResultsToViewModelMapper : IMapper<SearchResultsMappin
             TotalSearchResults =
                 searchResponse.TotalNumberOfResults,
 
-            Facets = facets
+            Filters =
+                MapFilters(
+                    request: input.SearchRequest,
+                    input.SearchResponse.Model.FacetedResults?.Facets ?? [],
+                    input.SearchResponse.Model.AvailableFilters)
         };
     }
 
-    private static void MarkSelectedFacetValues(
-        List<FacetViewModel> facets,
-        Dictionary<string, List<string>>? selectedFacets)
+    private List<IFilterViewModel> MapFilters(
+        SearchRequestViewModel request,
+        IReadOnlyCollection<SearchFacet> facets,
+        IReadOnlyCollection<string> filters)
     {
-        if (selectedFacets is null)
-        {
-            return;
-        }
-
-        foreach (FacetViewModel facet in facets)
-        {
-            if (!selectedFacets.TryGetValue(
-                    facet.Name,
-                    out List<string>? selectedValues))
-            {
-                continue;
-            }
-
-            UpdateFacetSelections(
-                facet,
-                selectedValues);
-        }
-    }
-
-    private static void UpdateFacetSelections(
-        FacetViewModel facet,
-        List<string> selectedValues)
-    {
-        for (int index = 0; index < facet.Values.Count; index++)
-        {
-            FacetValueViewModel value = facet.Values[index];
-
-            facet.Values[index] = value with
-            {
-                IsSelected = selectedValues.Any(
-                    selectedValue =>
-                        !string.IsNullOrWhiteSpace(
-                            selectedValue) &&
-                        string.Equals(
-                            selectedValue,
-                            value.Value,
-                            StringComparison.OrdinalIgnoreCase))
-            };
-        }
+        return [
+            // facets
+            .._facetResultsToFiltersViewModelMapper.Map(
+                    new FacetResultsMappingContext(facets ?? [], request.SelectedFacets)),
+            // filters
+            .._filtersToFiltersViewModelMapper.Map(
+                new AvailableFiltersMappingContext(filters, request))
+            ];
     }
 }

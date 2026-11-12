@@ -88,7 +88,6 @@ public sealed class SearchAggregateCategoryEstablishmentMapper : ISearchAggregat
                     Href = $"/groups/{input.Group.Uid}"
                 });
         }
-        ;
 
         return builder.Build();
     }

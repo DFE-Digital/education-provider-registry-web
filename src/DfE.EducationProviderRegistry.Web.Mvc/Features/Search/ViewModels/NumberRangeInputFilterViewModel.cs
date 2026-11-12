@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 
-public sealed class NumberRangeFilterViewModel
+public sealed class NumberRangeInputFilterViewModel
 {
     public int? From { get; set; }
     public int? To { get; set; }

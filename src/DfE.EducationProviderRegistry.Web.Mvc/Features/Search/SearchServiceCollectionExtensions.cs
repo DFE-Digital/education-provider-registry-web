@@ -6,6 +6,7 @@ using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Services;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Filters;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search;
@@ -25,16 +26,36 @@ internal static class SearchServiceCollectionExtensions
 
         // Presentation
         services
-            .AddSingleton<IMapper<
-                SearchResultsMappingContext, SearchResultsViewModel>, SearchResultsToViewModelMapper>()
-            .AddSingleton<IMapper<
-                IReadOnlyCollection<SearchFacet>, List<FacetViewModel>>, FacetResultsToViewModelMapper>()
-            .AddSingleton<IMapper<
-                IReadOnlyCollection<SearchAggregateResult>, List<GovUkTable>>, SearchAggregateResultsToViewModelMapper>()
-            .AddSingleton<IMapper<
-                Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>, SelectedFacetsToFilterRequestsMapper>()
-            .AddSingleton<IMapper<
-                SearchRequestViewModel, ReadOnlyCollection<FilterRequest>>, SearchFiltersToFilterRequestsMapper>()
+            .AddSingleton<
+                IMapper<
+                    SearchResultsMappingContext,
+                    SearchResultsViewModel>,
+                SearchResultsToViewModelMapper>()
+            .AddSingleton<
+                IMapper<
+                    FacetResultsMappingContext,
+                    IReadOnlyCollection<IFilterViewModel>>,
+                FacetResultsToViewModelMapper>()
+            .AddSingleton<
+                IMapper<
+                    AvailableFiltersMappingContext,
+                    IReadOnlyCollection<IFilterViewModel>>,
+                AvailableFiltersToViewModelMapper>()
+            .AddSingleton<
+                IMapper<
+                    IReadOnlyCollection<SearchAggregateResult>,
+                    List<GovUkTable>>,
+                SearchAggregateResultsToViewModelMapper>()
+            .AddSingleton<
+                IMapper<
+                    Dictionary<string, List<string>>?,
+                    ReadOnlyCollection<FilterRequest>>,
+                SelectedFacetsToFilterRequestsMapper>()
+            .AddSingleton<
+                IMapper<
+                    SearchRequestViewModel,
+                    ReadOnlyCollection<FilterRequest>>,
+                SearchFiltersToFilterRequestsMapper>()
             .AddSingleton<ISearchFilterSelectionHandler, SearchFilterSelectionHandler>()
             .AddSingleton<ISearchAggregateCategoryToModelMapper, SearchAggregateCategoryEstablishmentMapper>()
             .AddSingleton<ISearchAggregateCategoryToModelMapper, SearchAggregateCategoryGroupMapper>();

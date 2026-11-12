@@ -216,7 +216,7 @@ public sealed class SearchUrlBuilderTests
                 "OpenDate",
                 new FilterInputViewModel
                 {
-                    DateRange = new DateRangeFilterViewModel
+                    DateRange = new DateRangeInputFilterViewModel
                     {
                         From = new DateInputViewModel
                         {
@@ -269,7 +269,7 @@ public sealed class SearchUrlBuilderTests
                 "OpenDate",
                 new FilterInputViewModel
                 {
-                    DateRange = new DateRangeFilterViewModel()
+                    DateRange = new DateRangeInputFilterViewModel()
                 }
             }
         }
@@ -305,7 +305,7 @@ public sealed class SearchUrlBuilderTests
                 "OpenDate",
                 new FilterInputViewModel
                 {
-                    DateRange = new DateRangeFilterViewModel
+                    DateRange = new DateRangeInputFilterViewModel
                     {
                         From = new DateInputViewModel
                         {
@@ -348,7 +348,7 @@ public sealed class SearchUrlBuilderTests
                 "AgeRange",
                 new FilterInputViewModel
                 {
-                    NumberRange = new NumberRangeFilterViewModel
+                    NumberRange = new NumberRangeInputFilterViewModel
                     {
                         From = 5,
                         To = 11
@@ -392,7 +392,7 @@ public sealed class SearchUrlBuilderTests
                 "AgeRange",
                 new FilterInputViewModel
                 {
-                    NumberRange = new NumberRangeFilterViewModel
+                    NumberRange = new NumberRangeInputFilterViewModel
                     {
                         From = 5
                     }
@@ -435,7 +435,7 @@ public sealed class SearchUrlBuilderTests
                 "AgeRange",
                 new FilterInputViewModel
                 {
-                    NumberRange = new NumberRangeFilterViewModel
+                    NumberRange = new NumberRangeInputFilterViewModel
                     {
                         To = 11
                     }
@@ -478,7 +478,7 @@ public sealed class SearchUrlBuilderTests
                 "AgeRange",
                 new FilterInputViewModel
                 {
-                    NumberRange = new NumberRangeFilterViewModel()
+                    NumberRange = new NumberRangeInputFilterViewModel()
                 }
             }
         }

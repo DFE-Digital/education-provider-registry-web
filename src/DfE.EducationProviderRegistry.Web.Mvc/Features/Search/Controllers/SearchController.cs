@@ -46,7 +46,7 @@ public sealed class SearchController : Controller
     [HttpGet("results")]
     public async Task<IActionResult> Search(SearchRequestViewModel model)
     {
-        if (!ModelState.IsValid)
+        if (!ModelState.IsValid) // TODO should fall onto mapper
         {
             return View("Results", new SearchResultsViewModel()
             {
@@ -89,8 +89,7 @@ public sealed class SearchController : Controller
             model.RecordsPerPage);
 
         UseCaseResponse<SearchResponse> searchResponse =
-            await _searchUseCase.HandleRequestAsync(
-                searchRequest);
+            await _searchUseCase.HandleRequestAsync(searchRequest);
 
         SearchResultsViewModel updatedModel =
             _searchResponseToViewModelMapper.Map(
@@ -99,6 +98,8 @@ public sealed class SearchController : Controller
                     searchResponse));
 
         ModelState.Clear();
+
+        FilterValidationErrors.Apply(ModelState, searchResponse.Model.ValidationErrors);
 
         return View("Results", updatedModel);
     }

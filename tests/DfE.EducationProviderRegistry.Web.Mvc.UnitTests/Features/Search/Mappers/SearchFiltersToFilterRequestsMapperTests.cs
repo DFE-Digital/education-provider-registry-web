@@ -387,7 +387,7 @@ public sealed class SearchFiltersToFilterRequestsMapperTests
                 "AgeRange",
                 new FilterInputViewModel
                 {
-                    NumberRange = new NumberRangeFilterViewModel()
+                    NumberRange = new NumberRangeInputFilterViewModel()
                 }
             }
         }
@@ -418,7 +418,7 @@ public sealed class SearchFiltersToFilterRequestsMapperTests
                 "AgeRange",
                 new FilterInputViewModel
                 {
-                    NumberRange = new NumberRangeFilterViewModel
+                    NumberRange = new NumberRangeInputFilterViewModel
                     {
                         From = 5,
                         To = 11
@@ -457,7 +457,7 @@ public sealed class SearchFiltersToFilterRequestsMapperTests
                 "AgeRange",
                 new FilterInputViewModel
                 {
-                    NumberRange = new NumberRangeFilterViewModel
+                    NumberRange = new NumberRangeInputFilterViewModel
                     {
                         From = 5
                     }
@@ -495,7 +495,7 @@ public sealed class SearchFiltersToFilterRequestsMapperTests
                 "AgeRange",
                 new FilterInputViewModel
                 {
-                    NumberRange = new NumberRangeFilterViewModel
+                    NumberRange = new NumberRangeInputFilterViewModel
                     {
                         To = 11
                     }
@@ -538,7 +538,7 @@ public sealed class SearchFiltersToFilterRequestsMapperTests
                 "AgeRange",
                 new FilterInputViewModel
                 {
-                    NumberRange = new NumberRangeFilterViewModel
+                    NumberRange = new NumberRangeInputFilterViewModel
                     {
                         From = 5,
                         To = 11

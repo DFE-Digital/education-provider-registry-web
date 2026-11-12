@@ -1,47 +1,89 @@
-﻿@model (string BindingName, NumberRangeFilterViewModel Range)
+﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Filters
+
+@model NumberRangeFilterViewModel
 
 @{
-    string bindingName = $"Filters[{Model.BindingName}].NumberRange";
-    string idPrefix = $"filter-{Model.BindingName.Replace("_", "-")}";
+    string bindingName = $"Filters[{Model.Name}].NumberRange";
+    string idPrefix = $"filter-{Model.Name.Replace("_", "-")}";
+
+    string fromKey = $"{bindingName}.From";
+    string toKey = $"{bindingName}.To";
+
+    string? fromError =
+        ViewData.ModelState[fromKey]?
+            .Errors
+            .FirstOrDefault()?
+            .ErrorMessage;
+
+    string? toError =
+        ViewData.ModelState[toKey]?
+            .Errors
+            .FirstOrDefault()?
+            .ErrorMessage;
 }
 
+<fieldset class="govuk-fieldset"
+          role="group">
 
-<div class="govuk-form-group">
-    <fieldset class="govuk-fieldset" role="group">
+    <div class="govuk-date-input">
+        <div class="govuk-date-input__item">
+            <div class="govuk-form-group @(fromError is null ? null : "govuk-form-group--error")">
 
-        <div class="govuk-date-input">
-            <div class="govuk-date-input__item">
-                <div class="govuk-form-group">
-                    <label class="govuk-label govuk-date-input__label"
-                           for="@($"{idPrefix}-from")">
-                        From
-                    </label>
-                    <input class="govuk-input govuk-input--width-2"
-                           id="@($"{idPrefix}-from")"
-                           name=@($"{bindingName}.From")
-                           value="@Model.Range.From"
-                           type="text"
-                           pattern="[0-9]*"
-                           maxlength="2"
-                           inputmode="numeric">
-                </div>
-            </div>
-            <div class="govuk-date-input__item">
-                <div class="govuk-form-group">
-                    <label class="govuk-label govuk-date-input__label"
-                           for="@($"{idPrefix}-to")">
-                        To
-                    </label>
-                    <input class="govuk-input govuk-input--width-2"
-                           id="@($"{idPrefix}-to")"
-                           name=@($"{bindingName}.To")
-                           value="@Model.Range.To"
-                           type="text"
-                           pattern="[0-9]*"
-                           maxlength="2"
-                           inputmode="numeric">
-                </div>
+                <label class="govuk-label govuk-date-input__label"
+                       for="@($"{idPrefix}-from")">
+                    From
+                </label>
+
+                @if (fromError is not null)
+                {
+                    <p id="@($"{idPrefix}-from-error")"
+                       class="govuk-error-message">
+                        <span class="govuk-visually-hidden">
+                            Error:
+                        </span>
+                        @fromError
+                    </p>
+                }
+
+                <input class="govuk-input govuk-input--width-2 @(fromError is null ? null : "govuk-input--error")"
+                       id="@($"{idPrefix}-from")"
+                       name="@fromKey"
+                       value="@Model.Range.From"
+                       type="text"
+                       maxlength="2"
+                       inputmode="numeric"
+                       aria-describedby="@(fromError is null ? null : $"{idPrefix}-from-error")" />
             </div>
         </div>
-    </fieldset>
-</div>
+
+        <div class="govuk-date-input__item">
+            <div class="govuk-form-group @(toError is null ? null : "govuk-form-group--error")">
+
+                <label class="govuk-label govuk-date-input__label"
+                       for="@($"{idPrefix}-to")">
+                    To
+                </label>
+
+                @if (toError is not null)
+                {
+                    <p id="@($"{idPrefix}-to-error")"
+                       class="govuk-error-message">
+                        <span class="govuk-visually-hidden">
+                            Error:
+                        </span>
+                        @toError
+                    </p>
+                }
+
+                <input class="govuk-input govuk-input--width-2 @(toError is null ? null : "govuk-input--error")"
+                       id="@($"{idPrefix}-to")"
+                       name="@toKey"
+                       value="@Model.Range.To"
+                       type="text"
+                       maxlength="2"
+                       inputmode="numeric"
+                       aria-describedby="@(toError is null ? null : $"{idPrefix}-to-error")" />
+            </div>
+        </div>
+    </div>
+</fieldset>

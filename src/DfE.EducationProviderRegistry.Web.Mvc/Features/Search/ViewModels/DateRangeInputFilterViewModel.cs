@@ -2,7 +2,7 @@
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
 
-public sealed class DateRangeFilterViewModel
+public sealed class DateRangeInputFilterViewModel
 {
     public DateInputViewModel From { get; set; } = new();
     public DateInputViewModel To { get; set; } = new();

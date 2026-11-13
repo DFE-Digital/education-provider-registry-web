@@ -9,6 +9,9 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments.Mappers;
 
 public sealed class EstablishmentDetailsBasicDetailsTableMapper : IMapper<EstablishmentDetailsModel, GovUkTable>
 {
+    private const string OfstedProviderBase = "http//www.ofsted.gov.uk/oxedu_providers/full/(urn)/";
+    private static readonly CultureInfo UkCulture = CultureInfo.GetCultureInfo("en-GB");
+
     public GovUkTable Map(EstablishmentDetailsModel dto)
     {
         GovUkTableBuilder builder = GovUkTableBuilder
@@ -17,150 +20,170 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapper : IMapper<Establ
                 new TableColumn { IsRowHeader = true },
                 new TableColumn());
 
-        builder.AddRow(
-            new TableCell { Text = "Status", IsBold = true },
-            new TableCell { Text = MapStatus(dto.Status) });
+        EstablishmentStatus? status = dto.Status?.Status;
+        string? type = dto.Type?.Value;
 
+        string? statusText = MapStatus(status, dto.OpenedDate, dto.ClosedDate);
+        AddTextRow("Status", MapStatus(
+            status: status,
+            openedDate: dto.OpenedDate,
+            closedDate: dto.ClosedDate));
 
-        List<TableCellRow> identifierValueRows = [];
-
-        if (!string.IsNullOrWhiteSpace(dto.Identifiers.LaEstab))
+        AddRow("ID numbers", new TableCell
         {
-            identifierValueRows.Add(
-                new TableCellRow
-                {
-                    Label = new TableCell { Text = "LAESTAB" },
-                    Value = new TableCell { Text = dto.Identifiers.LaEstab }
-                });
+            Rows = MapIdentifiers(dto.Identifiers)
+        });
+
+        AddTextRow("Headteacher", dto.Headteacher);
+        AddTextRow("Type", type);
+        AddTextRow("Phase of education", dto.Phase?.Value);
+        AddTextRow("Address", MappingHelpers.CombineAddress(dto.Address, dto.Name?.Value));
+        AddTextRow("Local authority", dto.LocalAuthority?.Name);
+
+        EstablishmentGroupModel? group = dto.Group;
+        if (group is not null)
+        {
+            AddTextRow("Part of group", MapGroupName(group.name), href: $"/groups/{group.uid}");
         }
 
-        if (!string.IsNullOrWhiteSpace(dto.Identifiers.Ukprn))
+        AddTextRow("Gender", dto.Gender);
+        AddTextRow("Number of pupils", MapPupilCounts(dto.Pupils));
+        AddTextRow("Pupils eligible for free school meals", MapFreeSchoolMeals(dto.FreeSchoolMeals));
+
+        AddTextRow("Age range", dto.AgeRange);
+        AddTextRow("Religious character", MapReligiousText(dto.ReligiousCharacter));
+        AddTextRow("Religious ethos", MapReligiousText(dto.ReligiousEthos));
+        AddTextRow("Diocese", MapDioceseText(dto.Diocese));
+        AddTextRow("Type of SEN provision", dto.SenProvision);
+
+        string? website = dto.ContactDetails?.Website;
+        AddTextRow("Website", website, href: MappingHelpers.CreateWebsiteUrl(website), openInNewTab: true);
+        AddTextRow("Telephone number", dto.ContactDetails?.TelephoneNumber);
+
+        string? ofstedUrl = MapOfstedUrl(status, type, dto.Identifiers.Urn);
+        if (ofstedUrl is not null)
         {
-            identifierValueRows.Add(
-                new TableCellRow
-                {
-                    Label = new TableCell { Text = "UKPRN" },
-                    Value = new TableCell { Text = dto.Identifiers.Ukprn }
-                });
+            AddTextRow("Ofsted", "View Ofsted report", href: ofstedUrl, openInNewTab: true);
         }
 
-        identifierValueRows.Add(
-            new TableCellRow
-            {
-                Label = new TableCell { Text = "URN" },
-                Value = new TableCell { Text = dto.Identifiers.Urn }
-            });
-
-
-        builder.AddRow(
-            new TableCell { Text = "ID numbers", IsBold = true },
-            new TableCell
-            {
-                Rows = identifierValueRows
-            });
-
-
-        if (!string.IsNullOrWhiteSpace(dto.Headteacher))
-        {
-            builder.AddRow(
-                new TableCell { Text = "Headteacher", IsBold = true },
-                new TableCell { Text = dto.Headteacher });
-        }
-
-        builder.AddRow(
-            new TableCell { Text = "Type", IsBold = true },
-            new TableCell { Text = dto.Type?.Value });
-
-        builder.AddRow(
-            new TableCell { Text = "Phase of education", IsBold = true },
-            new TableCell { Text = dto.Phase?.Value });
-
-        builder.AddRow(
-            new TableCell { Text = "Address", IsBold = true },
-            new TableCell { Text = MappingHelpers.CombineAddress(dto.Address, dto.Name?.Value) });
-
-        if (dto.LocalAuthority is not null)
-        {
-            builder.AddRow(
-            new TableCell { Text = "Local authority", IsBold = true },
-            new TableCell { Text = dto.LocalAuthority.Name });
-        }
-
-        if (dto.Group is not null)
-        {
-            builder.AddRow(
-            new TableCell { Text = "Part of group", IsBold = true },
-            new TableCell
-            {
-                Text = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(dto.Group.name.ToLowerInvariant()),
-                Href = $"/groups/{dto.Group.uid}"
-            });
-        }
-
-        builder.AddRow(
-            new TableCell { Text = "Gender", IsBold = true },
-            new TableCell { Text = dto.Gender ?? string.Empty });
-
-        builder.AddRow(
-            new TableCell { Text = "Number of pupils", IsBold = true },
-            new TableCell { Text = dto.Pupils?.Total.ToString() ?? string.Empty });
-
-        builder.AddRow(
-            new TableCell { Text = "Age range", IsBold = true },
-            new TableCell { Text = dto.AgeRange ?? string.Empty });
-
-        builder.AddRow(
-            new TableCell { Text = "Religious character", IsBold = true },
-            new TableCell { Text = dto.ReligiousCharacter ?? string.Empty });
-
-        builder.AddRow(
-            new TableCell { Text = "Type of SEN provision", IsBold = true },
-            new TableCell { Text = dto.SenProvision ?? "Not recorded" });
-
-        if (dto.ContactDetails is not null &&
-            !string.IsNullOrWhiteSpace(dto.ContactDetails.Website))
-        {
-            builder.AddRow(
-                new TableCell { Text = "Website", IsBold = true },
-                new TableCell { Text = dto.ContactDetails.Website, Href = MappingHelpers.CreateWebsiteUrl(dto.ContactDetails.Website), OpenInNewTab = true });
-        }
-
-        if (dto.ContactDetails is not null &&
-            !string.IsNullOrWhiteSpace(dto.ContactDetails.TelephoneNumber))
-        {
-            builder.AddRow(
-                new TableCell { Text = "Telephone number", IsBold = true },
-                new TableCell { Text = dto.ContactDetails.TelephoneNumber ?? string.Empty });
-        }
-
-        builder.AddRow(
-            new TableCell { Text = "Ofsted", IsBold = true },
-            new TableCell
-            {
-                Text = dto.Ofsted?.InspectionDate is DateOnly inspectionDate
-                    ? $"Latest report {inspectionDate:d MMMM yyyy} (opens in new tab)"
-                    : string.Empty,
-                Href = dto.Ofsted?.ReportUrl ?? string.Empty,
-                OpenInNewTab = true
-            });
 
         return builder.Build();
-    }
 
-    private static string MapStatus(EstablishmentStatusModel? status)
-    {
-        if (status is null)
+        void AddRow(string lable, TableCell value)
         {
-            return string.Empty;
+            builder.AddRow(
+                new TableCell { Text = lable, IsBold = true }, value);
         }
 
-        return status.Status switch
+        void AddTextRow(string label, string? value, string? href = null, bool openInNewTab = false)
         {
-            EstablishmentStatus.Open => "Open",
-            EstablishmentStatus.Closed => "Closed",
-            EstablishmentStatus.OpenButProposedToClose => "Open but proposed to close",
-            EstablishmentStatus.ProposedToOpen => "Proposed to open",
-            _ => string.Empty
+            if (string.IsNullOrWhiteSpace(value))
+                return;
+
+            AddRow(label, new TableCell { Text = value.Trim(), Href = href, OpenInNewTab = openInNewTab });
+        }
+    }
+
+    private static string? MapStatus(EstablishmentStatus? status, DateOnly? openedDate, DateOnly? closedDate)
+    {
+        (string label, DateOnly? date) = status switch
+        {
+            EstablishmentStatus.Open => ("Open", openedDate),
+            EstablishmentStatus.ProposedToOpen => ("Proposed to open", openedDate),
+            EstablishmentStatus.Closed => ("Closed", closedDate),
+            EstablishmentStatus.OpenButProposedToClose => ("Open but proposed to close", closedDate),
+            _ => (string.Empty, null)
         };
+
+        if (!date.HasValue)
+            return null;
+
+        string formattedDate = date.Value.ToString("dd MMMM yyyy", UkCulture);
+        return $"{label} on {formattedDate}";
+    }
+
+    private static IReadOnlyList<TableCellRow> MapIdentifiers(EstablishmentIdentifiersModel identifiers)
+    {
+        (string Label, string? Value)[] values =
+        [
+            ("LAESTAB", identifiers.LaEstab),
+            ("UKPRN", identifiers.Ukprn),
+            ("URN", identifiers.Urn)
+        ];
+
+        List<TableCellRow> rows = [];
+        foreach ((string? label, string? value) in values)
+        {
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                rows.Add(new TableCellRow
+                {
+                    Label = new TableCell { Text = label },
+                    Value = new TableCell { Text = value }
+                });
+            }
+        }
+
+        return rows;
+    }
+
+    private static string? MapGroupName(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return null;
+
+        return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.ToLowerInvariant());
+    }
+
+    private static string? MapPupilCounts(EstablishmentPupils? pupilCounts)
+    {
+        if (!pupilCounts.HasValue)
+            return null;
+
+        EstablishmentPupils counts = pupilCounts.Value;
+        return $"{counts.Total} ({counts.Boys} boys, {counts.Girls} girls)";
+    }
+
+    private static string? MapFreeSchoolMeals(EstablishmentFreeSchoolMeals? freeSchoolMeals)
+    {
+        if (freeSchoolMeals is null)
+            return null;
+
+        return $"{freeSchoolMeals.Number} ({freeSchoolMeals.Percentage}%)";
+    }
+
+    private static string? MapReligiousText(string? value) =>
+        ExcludeText(value, "None", "Does not apply");
+
+    private static string? MapDioceseText(string? value) =>
+       ExcludeText(value, "Not applicable");
+
+    private static string? MapOfstedUrl(EstablishmentStatus? status, string? type, string urn)
+    {
+        bool hasEligibleStatus = status is EstablishmentStatus.Open
+            or EstablishmentStatus.Closed
+            or EstablishmentStatus.OpenButProposedToClose;
+
+        if (!hasEligibleStatus)
+            return null;
+
+        type = type?.Trim();
+        if (string.IsNullOrWhiteSpace(type)
+            || string.Equals(type, "Other independent school", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(type, "Other independent special school", StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        return OfstedProviderBase + Uri.EscapeDataString(urn);
+    }
+
+    private static string? ExcludeText(string? value, params string[] excludedValues)
+    {
+        string? text = value?.Trim();
+        if (excludedValues.Contains(text, StringComparer.OrdinalIgnoreCase))
+            return null;
+
+        return text;
     }
 }

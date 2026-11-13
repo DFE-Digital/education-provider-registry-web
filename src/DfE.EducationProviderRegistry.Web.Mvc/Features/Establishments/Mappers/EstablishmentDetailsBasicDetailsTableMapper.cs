@@ -19,7 +19,7 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapper : IMapper<Establ
 
         builder.AddRow(
             new TableCell { Text = "Status", IsBold = true },
-            new TableCell { Text = MapStatus(dto.Status) });
+            new TableCell { Text = MapStatus(dto.Status, dto.OpenedDate, dto.OpenedDate) });
 
 
         List<TableCellRow> identifierValueRows = [];
@@ -103,7 +103,11 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapper : IMapper<Establ
 
         builder.AddRow(
             new TableCell { Text = "Number of pupils", IsBold = true },
-            new TableCell { Text = dto.Pupils?.Total.ToString() ?? string.Empty });
+            new TableCell
+            {
+                Text = $"{dto.Pupils?.Total.ToString() ?? string.Empty} " +
+                $"({dto.Pupils?.Girls.ToString()} girls, {dto.Pupils?.Boys.ToString()} boys)"
+            });
 
         builder.AddRow(
             new TableCell { Text = "Age range", IsBold = true },
@@ -112,6 +116,14 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapper : IMapper<Establ
         builder.AddRow(
             new TableCell { Text = "Religious character", IsBold = true },
             new TableCell { Text = dto.ReligiousCharacter ?? string.Empty });
+
+        builder.AddRow(
+           new TableCell { Text = "Religious ethos", IsBold = true },
+           new TableCell { Text = dto.ReligiousEthos ?? string.Empty });
+
+        builder.AddRow(
+           new TableCell { Text = "Diocese", IsBold = true },
+           new TableCell { Text = dto.Diocese ?? string.Empty });
 
         builder.AddRow(
             new TableCell { Text = "Type of SEN provision", IsBold = true },
@@ -147,19 +159,17 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapper : IMapper<Establ
         return builder.Build();
     }
 
-    private static string MapStatus(EstablishmentStatusModel? status)
+    private static string MapStatus(EstablishmentStatusModel? status, DateOnly? openedDate, DateOnly? closeedDate)
     {
         if (status is null)
-        {
             return string.Empty;
-        }
 
         return status.Status switch
         {
-            EstablishmentStatus.Open => "Open",
-            EstablishmentStatus.Closed => "Closed",
-            EstablishmentStatus.OpenButProposedToClose => "Open but proposed to close",
-            EstablishmentStatus.ProposedToOpen => "Proposed to open",
+            EstablishmentStatus.Open => $"Open on {openedDate:dd MMMM yyyy}",
+            EstablishmentStatus.ProposedToOpen => $"Proposed to open on {openedDate:dd MMMM yyyy}",
+            EstablishmentStatus.Closed => $"Closed on {closeedDate:dd MMMM yyyy}",
+            EstablishmentStatus.OpenButProposedToClose => $"Open but proposed to close on {closeedDate:dd MMMM yyyy}",
             _ => string.Empty
         };
     }

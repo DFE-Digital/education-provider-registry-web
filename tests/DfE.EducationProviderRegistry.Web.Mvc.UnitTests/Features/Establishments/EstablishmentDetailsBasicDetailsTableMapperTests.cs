@@ -168,7 +168,7 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
             ofstedCell.Text);
 
         Assert.Equal(
-            "http://www.ofsted.gov.uk/oxedu_providers/full/(urn)/123456",
+            "https://www.ofsted.gov.uk/oxedu_providers/full/(urn)/123456",
             ofstedCell.Href);
 
         Assert.True(ofstedCell.OpenInNewTab);

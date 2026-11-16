@@ -4,7 +4,6 @@ using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.Model;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
-using System.Linq;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments.Mappers;
 

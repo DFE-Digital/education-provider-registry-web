@@ -4,6 +4,7 @@ using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.Model;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
+using System.Linq;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments.Mappers;
 
@@ -23,7 +24,6 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapper : IMapper<Establ
         EstablishmentStatus? status = dto.Status?.Status;
         string? type = dto.Type?.Value;
 
-        string? statusText = MapStatus(status, dto.OpenedDate, dto.ClosedDate);
         AddTextRow("Status", MapStatus(
             status: status,
             openedDate: dto.OpenedDate,
@@ -54,7 +54,20 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapper : IMapper<Establ
         AddTextRow("Religious character", MapReligiousText(dto.ReligiousCharacter));
         AddTextRow("Religious ethos", MapReligiousText(dto.ReligiousEthos));
         AddTextRow("Diocese", MapDioceseText(dto.Diocese));
-        AddTextRow("Type of SEN provision", dto.SenProvision);
+
+        IReadOnlyList<TableCellRow> senProvisionRows = MapSenProvisions(
+            dto.SenProvisions,
+            dto.SenProvision);
+
+        if (senProvisionRows.Count > 0)
+        {
+            AddRow("Type of SEN provision", new TableCell
+            {
+                Rows = senProvisionRows
+            });
+        }
+
+        AddTextRow("Resourced provision", MapResourcedProvision(dto.SenProvision));
 
         string? website = dto.ContactDetails?.Website;
         AddTextRow("Website", website, href: MappingHelpers.CreateWebsiteUrl(website), openInNewTab: true);
@@ -152,11 +165,25 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapper : IMapper<Establ
         return $"{freeSchoolMeals.Number} ({freeSchoolMeals.Percentage}%)";
     }
 
-    private static string? MapReligiousText(string? value) =>
-        ExcludeText(value, "None", "Does not apply");
+    private static IReadOnlyList<TableCellRow> MapSenProvisions(
+        IReadOnlyCollection<string>? senProvisions, string? senProvision)
+    {
+        if (senProvisions is null ||
+            ExcludeText(senProvision, "Not applicable", "Not recorded") is null)
+            return [];
 
-    private static string? MapDioceseText(string? value) =>
-       ExcludeText(value, "Not applicable");
+        List<TableCellRow> rows = [];
+        rows.AddRange(senProvisions
+            .Where(value => !string.IsNullOrWhiteSpace(value))
+            .Select(value => new TableCellRow
+            {
+                Value = new TableCell
+                {
+                    Text = value.Trim()
+                }
+            }));
+        return rows;
+    }
 
     private static string? MapOfstedUrl(EstablishmentStatus? status, string? type, string urn)
     {
@@ -177,6 +204,15 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapper : IMapper<Establ
 
         return OfstedProviderBase + Uri.EscapeDataString(urn);
     }
+
+    private static string? MapReligiousText(string? value) =>
+       ExcludeText(value, "None", "Does not apply");
+
+    private static string? MapDioceseText(string? value) =>
+       ExcludeText(value, "Not applicable");
+
+    private static string? MapResourcedProvision(string? value) =>
+        ExcludeText(value, "Not applicable", "Not recorded");
 
     private static string? ExcludeText(string? value, params string[] excludedValues)
     {

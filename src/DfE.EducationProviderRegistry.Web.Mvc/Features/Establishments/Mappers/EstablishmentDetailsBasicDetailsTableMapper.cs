@@ -9,7 +9,7 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments.Mappers;
 
 public sealed class EstablishmentDetailsBasicDetailsTableMapper : IMapper<EstablishmentDetailsModel, GovUkTable>
 {
-    private const string OfstedProviderBase = "http//www.ofsted.gov.uk/oxedu_providers/full/(urn)/";
+    private const string OfstedProviderBase = "http://www.ofsted.gov.uk/oxedu_providers/full/(urn)/";
     private static readonly CultureInfo UkCulture = CultureInfo.GetCultureInfo("en-GB");
 
     public GovUkTable Map(EstablishmentDetailsModel dto)

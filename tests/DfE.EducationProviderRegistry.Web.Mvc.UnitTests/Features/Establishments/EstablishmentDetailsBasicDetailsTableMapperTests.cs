@@ -580,7 +580,7 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
         // Assert
         AssertValue(
             result,
-            "Type of SEN provision",
+            "Resourced provision",
             "SEN Unit");
     }
 

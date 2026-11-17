@@ -129,6 +129,10 @@ public sealed class SearchAggregateCategoryGroupMapper : ISearchAggregateCategor
            new TableCell { Text = "Academies" },
            new TableCell { Text = $"{input.AcademyCount}" });
 
+        builder.AddRow(
+           new TableCell { Text = "Education group type" },
+           new TableCell { Text = $"{input.Type.Name}" });
+
         return builder.Build();
     }
 }

@@ -68,7 +68,7 @@ internal sealed class GroupDetailsPageViewModelMapper : IMapper<GroupReadModel, 
         {
             values.Add(
                 new SummaryListRow(
-                    "Type",
+                    "Education group type",
                     new SummaryListValue(model.Type)));
         }
 

@@ -9,17 +9,14 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 
 public sealed class SearchResultsToViewModelMapper : IMapper<SearchResultsMappingContext, SearchResultsViewModel>
 {
-    private readonly IMapper<
-        IReadOnlyCollection<SearchAggregateResult>,
-        List<GovUkTable>> _searchAggregateResultsToViewModelMapper;
+    private readonly IMapper<IReadOnlyCollection<SearchAggregateResult>, List<GovUkTable>>
+        _searchAggregateResultsToViewModelMapper;
 
-    private readonly IMapper<
-        FacetResultsMappingContext,
-        IReadOnlyCollection<IFilterViewModel>> _facetResultsToFiltersViewModelMapper;
+    private readonly IMapper<FacetResultsMappingContext, IReadOnlyCollection<IFilterViewModel>>
+        _facetResultsToFiltersViewModelMapper;
 
-    private readonly IMapper<
-        AvailableFiltersMappingContext,
-        IReadOnlyCollection<IFilterViewModel>> _filtersToFiltersViewModelMapper;
+    private readonly IMapper<AvailableFiltersMappingContext, IReadOnlyCollection<IFilterViewModel>>
+        _filtersToFiltersViewModelMapper;
 
     public SearchResultsToViewModelMapper(
         IMapper<

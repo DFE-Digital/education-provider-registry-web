@@ -114,8 +114,8 @@ public sealed class SearchAggregateCategoryGroupMapper : ISearchAggregateCategor
             .WithColumns(columns);
 
         builder.AddRow(
-            new TableCell { Text = "Group ID" },
-            new TableCell { Text = input.UniqueIdentifier.Value });
+            new TableCell { Text = "UID" },
+            new TableCell { Text = input.Group?.Uid });
 
         builder.AddRow(
             new TableCell { Text = "Type" },

@@ -39,7 +39,7 @@ public sealed class GroupDetailsPageViewModelMapperTests
         Assert.Equal("Details", result.Details.Tab);
 
         GovUkSummaryList summary =
-            Assert.IsType<GovUkSummaryList>(result.Details.Summary);
+            Assert.IsType<GovUkSummaryList>(result.Details.Table);
 
         AssertSummaryRow(summary.Rows[0], "UID", "123");
         AssertSummaryRow(summary.Rows[1], "Group ID", "group-1");
@@ -63,7 +63,7 @@ public sealed class GroupDetailsPageViewModelMapperTests
 
         // Assert
         GovUkSummaryList summary =
-            Assert.IsType<GovUkSummaryList>(result.Details.Summary);
+            Assert.IsType<GovUkSummaryList>(result.Details.Table);
 
         Assert.Null(summary.Rows.SingleOrDefault((row) => row.Key == "UKPRN"));
     }
@@ -82,7 +82,7 @@ public sealed class GroupDetailsPageViewModelMapperTests
 
         // Assert
         GovUkSummaryList summary =
-            Assert.IsType<GovUkSummaryList>(result.Details.Summary);
+            Assert.IsType<GovUkSummaryList>(result.Details.Table);
 
         SummaryListRow row = Assert.Single(summary.Rows, (row) => row.Key == "UKPRN");
         Assert.Equal("testUkprn", row.Value.Text);
@@ -108,7 +108,7 @@ public sealed class GroupDetailsPageViewModelMapperTests
 
         // Assert
         GovUkSummaryList summary =
-            Assert.IsType<GovUkSummaryList>(result.Details.Summary);
+            Assert.IsType<GovUkSummaryList>(result.Details.Table);
 
         Assert.Null(summary.Rows.SingleOrDefault((row) => row.Key == "Company number"));
     }
@@ -127,7 +127,7 @@ public sealed class GroupDetailsPageViewModelMapperTests
 
         // Assert
         GovUkSummaryList summary =
-            Assert.IsType<GovUkSummaryList>(result.Details.Summary);
+            Assert.IsType<GovUkSummaryList>(result.Details.Table);
 
         SummaryListRow row = Assert.Single(summary.Rows, (row) => row.Key == "Company number");
         Assert.Equal("testCompaniesHouseId (opens in new tab)", row.Value.Text);
@@ -153,7 +153,7 @@ public sealed class GroupDetailsPageViewModelMapperTests
 
         // Assert
         GovUkSummaryList summary =
-            Assert.IsType<GovUkSummaryList>(result.Details.Summary);
+            Assert.IsType<GovUkSummaryList>(result.Details.Table);
 
         Assert.Null(summary.Rows.SingleOrDefault((row) => row.Key == "Status"));
     }
@@ -172,7 +172,7 @@ public sealed class GroupDetailsPageViewModelMapperTests
 
         // Assert
         GovUkSummaryList summary =
-            Assert.IsType<GovUkSummaryList>(result.Details.Summary);
+            Assert.IsType<GovUkSummaryList>(result.Details.Table);
 
         SummaryListRow row = Assert.Single(summary.Rows, (row) => row.Key == "Status");
         Assert.Equal("testStatus", row.Value.Text);
@@ -198,7 +198,7 @@ public sealed class GroupDetailsPageViewModelMapperTests
 
         // Assert
         GovUkSummaryList summary =
-            Assert.IsType<GovUkSummaryList>(result.Details.Summary);
+            Assert.IsType<GovUkSummaryList>(result.Details.Table);
 
         Assert.Null(summary.Rows.SingleOrDefault((row) => row.Key == "Address"));
     }
@@ -217,7 +217,7 @@ public sealed class GroupDetailsPageViewModelMapperTests
 
         // Assert
         GovUkSummaryList summary =
-            Assert.IsType<GovUkSummaryList>(result.Details.Summary);
+            Assert.IsType<GovUkSummaryList>(result.Details.Table);
 
         SummaryListRow row = Assert.Single(summary.Rows, (row) => row.Key == "Address");
         Assert.Equal("testAddress, testVille, TE5 1ST", row.Value.Text);
@@ -243,7 +243,7 @@ public sealed class GroupDetailsPageViewModelMapperTests
 
         // Assert
         GovUkSummaryList summary =
-            Assert.IsType<GovUkSummaryList>(result.Details.Summary);
+            Assert.IsType<GovUkSummaryList>(result.Details.Table);
 
         Assert.Null(summary.Rows.SingleOrDefault((row) => row.Key == "Type"));
     }
@@ -262,7 +262,7 @@ public sealed class GroupDetailsPageViewModelMapperTests
 
         // Assert
         GovUkSummaryList summary =
-            Assert.IsType<GovUkSummaryList>(result.Details.Summary);
+            Assert.IsType<GovUkSummaryList>(result.Details.Table);
 
         SummaryListRow row = Assert.Single(summary.Rows, (row) => row.Key == "Type");
         Assert.Equal("Single-Academy trust", row.Value.Text);

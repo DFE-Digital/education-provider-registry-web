@@ -175,8 +175,8 @@ public sealed class SearchResultsTests
         };
 
         List<(TextContent, TextContent)> results = [
-            (new TextContent(){ Text = "Group ID" }, new TextContent(){ Text = response.UniqueIdentifier.Value }),
-            (new TextContent(){ Text = "Type" }, new TextContent(){ Text = response.Type!.Name! }),
+            (new TextContent(){ Text = "UID" }, new TextContent(){ Text = response.UniqueIdentifier.Value }),
+            (new TextContent(){ Text = "Education group type" }, new TextContent(){ Text = response.Type!.Name! }),
             (new TextContent(){ Text = "Address" }, new TextContent(){ Text = response.Address!.FullAddress }),
             (new TextContent(){ Text = "Academies" }, new TextContent(){ Text = response.AcademyCount.ToString() })
         ];

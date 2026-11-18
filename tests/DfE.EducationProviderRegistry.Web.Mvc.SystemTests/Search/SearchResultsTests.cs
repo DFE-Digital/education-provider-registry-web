@@ -358,10 +358,10 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
 
         Assert.Equal(4, displayedResult.Values.Count());
 
-        Assert.Equal("Group ID", displayedResultContent[0].key.Text);
+        Assert.Equal("UID", displayedResultContent[0].key.Text);
         Assert.Equal("1234", displayedResultContent[0].values.Text);
 
-        Assert.Equal("Type", displayedResultContent[1].key.Text);
+        Assert.Equal("Education group type", displayedResultContent[1].key.Text);
         Assert.Equal("STUB-provider-type", displayedResultContent[1].values.Text);
 
         Assert.Equal("Address", displayedResultContent[2].key.Text);

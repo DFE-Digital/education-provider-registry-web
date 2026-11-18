@@ -3,7 +3,6 @@ using DfE.EducationProviderRegistry.Core.Query.Groups.Application.Model;
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupByUid;
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupByUid.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
-using DfE.EducationProviderRegistry.Web.ViewComponents.SummaryList;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
@@ -33,57 +32,51 @@ internal sealed class GroupDetailsPageViewModelMapper : IMapper<GroupReadModel, 
             new TableCell() { Text = "ID Numbers" },
             new TableCell() { Rows = MapIdentifiers(model) });
 
-        AddTextRow("Status", model.Status);
-        AddTextRow("Address", model.Address);
-        AddTextRow("Education group type", model.Type);
+        AddRow(builder, "Status", model.Status);
+        AddRow(builder, "Address", model.Address);
+        AddRow(builder, "Education group type", model.Type);
 
         return new()
         {
             Tab = "Details",
             Table = builder.Build()
         };
+    }
 
-        void AddTextRow(string label, string? value)
-        {
-            if (!string.IsNullOrWhiteSpace(value))
-            {
-                builder.AddRow(
-                    new TableCell { Text = label },
-                    new TableCell { Text = value.Trim() });
-            }
-        }
+    private static void AddRow(GovUkTableBuilder builder, string label, string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return;
+
+        builder.AddRow(
+            new TableCell { Text = label },
+            new TableCell { Text = value.Trim() });
     }
 
     private static IReadOnlyList<TableCellRow> MapIdentifiers(GroupReadModel model)
     {
-        List<TableCellRow> rows = [];
+        (string Label, string? value, string? Href)[] values =
+        [
+            ("Group Id", model.GroupId, null),
+            ("UID", model.GroupUID.ToString(), null),
+            ("UKPRN" , model.UKPRN, null),
+            ("Company number", model.CompaniesHouseId, $"https://find-and-update.company-information.service.gov.uk/company/{model.CompaniesHouseId}")
+        ];
 
-        AddIdentifier(model.GroupId, "Group Id");
-        AddIdentifier(model.GroupUID.ToString(), "UID");
-        AddIdentifier(model.UKPRN, "UKPRN");
-        AddIdentifier(
-            identifier: model.CompaniesHouseId,
-            name: "Company number",
-            href: $"https://find-and-update.company-information.service.gov.uk/company/{model.CompaniesHouseId}");
+        List<TableCellRow> rows = [];
+        foreach ((string identifier, string? label, string? href) in values)
+        {
+            if (!string.IsNullOrWhiteSpace(label))
+            {
+                rows.Add(new TableCellRow
+                {
+                    Label = new TableCell { Text = label, Href = href, OpenInNewTab = true },
+                    Value = new TableCell { Text = identifier }
+                });
+            }
+        }
 
         return rows;
-
-        void AddIdentifier(string? identifier, string name, string? href = null)
-        {
-            if (string.IsNullOrWhiteSpace(identifier))
-                return;
-
-            rows.Add(new TableCellRow()
-            {
-                Label = new TableCell()
-                {
-                    Text = href is null ? identifier : $"{identifier}",
-                    Href = href,
-                    OpenInNewTab = true
-                },
-                Value = new TableCell() { Text = name }
-            });
-        }
     }
 
     private static GroupDetailsAcademyTabViewModel CreateAcademies(GroupReadModel model)

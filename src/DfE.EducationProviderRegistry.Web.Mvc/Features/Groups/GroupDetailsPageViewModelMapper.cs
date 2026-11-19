@@ -2,7 +2,7 @@
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.Model;
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupByUid;
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupByUid.Mappers;
-using DfE.EducationProviderRegistry.Web.ViewComponents.SummaryList;
+using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
@@ -22,63 +22,61 @@ internal sealed class GroupDetailsPageViewModelMapper : IMapper<GroupReadModel, 
 
     private static GroupDetailsTabViewModel CreateBasicDetails(GroupReadModel model)
     {
-        List<SummaryListRow> values = [];
+        GovUkTableBuilder builder = GovUkTableBuilder
+            .Create()
+            .WithColumns(
+                new TableColumn { IsRowHeader = true },
+                new TableColumn());
 
-        values.AddRange(
-            new SummaryListRow(
-                "UID",
-                new SummaryListValue(text: model.GroupUID.ToString())),
-            new SummaryListRow(
-                "Group ID",
-                new SummaryListValue(text: model.GroupId)));
+        builder.AddRow(
+            new TableCell() { Text = "ID Numbers" },
+            new TableCell() { Rows = MapIdentifiers(model) });
 
-        if (!string.IsNullOrWhiteSpace(model.UKPRN))
-        {
-            values.Add(
-                new SummaryListRow(
-                    "UKPRN",
-                    new SummaryListValue(text: model.UKPRN)));
-        }
-
-        if (!string.IsNullOrWhiteSpace(model.CompaniesHouseId))
-        {
-            values.Add(
-                new SummaryListRow(
-                    "Company number",
-                    new SummaryListValue(text: $"{model.CompaniesHouseId} (opens in new tab)", href: $"https://find-and-update.company-information.service.gov.uk/company/{model.CompaniesHouseId}")));
-        }
-
-        if (!string.IsNullOrWhiteSpace(model.Status))
-        {
-            values.Add(
-                new SummaryListRow(
-                    "Status",
-                    new SummaryListValue(text: model.Status)));
-        }
-
-        if (!string.IsNullOrWhiteSpace(model.Address))
-        {
-            values.Add(
-                new SummaryListRow(
-                    "Address",
-                    new SummaryListValue(text: model.Address)));
-        }
-
-        if (!string.IsNullOrWhiteSpace(model.Type))
-        {
-            values.Add(
-                new SummaryListRow(
-                    "Type",
-                    new SummaryListValue(model.Type)));
-        }
-
-        GovUkSummaryList details = new(rows: values);
+        AddRow(builder, "Status", model.Status);
+        AddRow(builder, "Address", model.Address);
+        AddRow(builder, "Education group type", model.Type);
 
         return new()
         {
             Tab = "Details",
-            Summary = details
+            Table = builder.Build()
         };
+    }
+
+    private static void AddRow(GovUkTableBuilder builder, string label, string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return;
+
+        builder.AddRow(
+            new TableCell { Text = label },
+            new TableCell { Text = value.Trim() });
+    }
+
+    private static IReadOnlyList<TableCellRow> MapIdentifiers(GroupReadModel model)
+    {
+        (string Label, string? value, string? Href)[] values =
+        [
+            ("Group Id", model.GroupId, null),
+            ("UID", model.GroupUID.ToString(), null),
+            ("UKPRN" , model.UKPRN, null),
+            ("Company number", model.CompaniesHouseId, $"https://find-and-update.company-information.service.gov.uk/company/{model.CompaniesHouseId}")
+        ];
+
+        List<TableCellRow> rows = [];
+        foreach ((string identifier, string? label, string? href) in values)
+        {
+            if (!string.IsNullOrWhiteSpace(label))
+            {
+                rows.Add(new TableCellRow
+                {
+                    Label = new TableCell { Text = label, Href = href, OpenInNewTab = true },
+                    Value = new TableCell { Text = identifier }
+                });
+            }
+        }
+
+        return rows;
     }
 
     private static GroupDetailsAcademyTabViewModel CreateAcademies(GroupReadModel model)

@@ -33,7 +33,7 @@ public sealed class SearchAggregateResultsToViewModelMapperTests
             new Name(name),
             new SearchAddress("Group Address"),
             new SearchType("MAT"),
-            null,
+            new GroupDetail(name, identifier),
             null,
             new SearchCategory("Group"),
             SearchProviderStatus.Open,
@@ -110,7 +110,7 @@ public sealed class SearchAggregateResultsToViewModelMapperTests
             row => row.Cells[0].Text == "URN");
         Assert.DoesNotContain(
             result.Rows,
-            row => row.Cells[0].Text == "Group ID");
+            row => row.Cells[0].Text == "UID");
     }
 
     [Fact]
@@ -136,7 +136,7 @@ public sealed class SearchAggregateResultsToViewModelMapperTests
 
         Assert.Contains(
             result.Rows,
-            row => row.Cells[0].Text == "Group ID");
+            row => row.Cells[0].Text == "UID");
         Assert.DoesNotContain(
            result.Rows,
            row => row.Cells[0].Text == "URN");

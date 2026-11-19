@@ -114,20 +114,23 @@ public sealed class SearchAggregateCategoryGroupMapper : ISearchAggregateCategor
             .WithColumns(columns);
 
         builder.AddRow(
-            new TableCell { Text = "Group ID" },
-            new TableCell { Text = input.UniqueIdentifier.Value });
+            new TableCell { Text = "UID" },
+            new TableCell { Text = input.Group?.Uid });
 
-        builder.AddRow(
-            new TableCell { Text = "Type" },
-            new TableCell { Text = input.Type?.Name });
-
-        builder.AddRow(
-            new TableCell { Text = "Address" },
-            new TableCell { Text = input.Address?.FullAddress });
+        if (input.Address is not null)
+        {
+            builder.AddRow(
+                new TableCell { Text = "Address" },
+                new TableCell { Text = input.Address.FullAddress });
+        }
 
         builder.AddRow(
            new TableCell { Text = "Academies" },
            new TableCell { Text = $"{input.AcademyCount}" });
+
+        builder.AddRow(
+           new TableCell { Text = "Education group type" },
+           new TableCell { Text = $"{input.Type?.Name}" });
 
         return builder.Build();
     }

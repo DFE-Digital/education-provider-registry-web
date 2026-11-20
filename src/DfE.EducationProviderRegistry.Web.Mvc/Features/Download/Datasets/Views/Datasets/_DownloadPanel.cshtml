@@ -2,29 +2,38 @@
     ViewData["Title"] = "Download";
 }
 
-<div id="download-version-question">
-    <div class="govuk-form-group">
-        <fieldset class="govuk-fieldset">
-            <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-                Which version of the information do you want to download?
-            </legend>
-            <div class="govuk-radios" data-module="govuk-radios" data-govuk-radios-init="">
-                <div class="govuk-radios__item">
-                    <input
-                        class="govuk-radios__input"
-                        id="download-version"
-                        name="Filename"
-                        type="radio"
-                        value="all-establisment-data"
-                        checked>
-                    <label class="govuk-label govuk-radios__label" for="download-version">
-                        All Establishment Data
-                    </label>
-                </div>
+<p class="govuk-body">Select all the data you need</p>
+
+<!-- Education providers -->
+<div class="govuk-form-group">
+    <fieldset class="govuk-fieldset">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Education providers</legend>
+        <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+            <div class="govuk-checkboxes__item">
+                <input class="govuk-checkboxes__input" id="provider-open" name="SelectedDatasets" type="checkbox" value="open-provider">
+                <label class="govuk-label govuk-checkboxes__label" for="provider-open">Open education provider data</label>
             </div>
-        </fieldset>
-    </div>
-</div>      
+            <div class="govuk-checkboxes__item">
+                <input class="govuk-checkboxes__input" id="provider-closed" name="SelectedDatasets" type="checkbox" value="closed-provider">
+                <label class="govuk-label govuk-checkboxes__label" for="provider-closed">Closed education provider data</label>
+            </div>
+        </div>
+    </fieldset>
+</div>
+
+<!-- Education provider groups -->
+<div class="govuk-form-group">
+    <fieldset class="govuk-fieldset">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Education provider groups</legend>
+        <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+            <div class="govuk-checkboxes__item">
+                <input class="govuk-checkboxes__input" id="provider-group-open" name="SelectedDatasets" type="checkbox" value="open-provider-group">
+                <label class="govuk-label govuk-checkboxes__label" for="provider-group-open">Open education provider group data</label>
+            </div>
+        </div>
+    </fieldset>
+</div>
+
 <button type="submit" class="govuk-button" data-module="govuk-button" data-govuk-button-init="">
     Download file
 </button>

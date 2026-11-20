@@ -17,7 +17,7 @@ public sealed class DatasetsController : Controller
         UseCaseResponse<DownloadDatasetsResponse>> _downloadDatasetUsecase;
 
     private readonly IMapper<
-        Dataset,
+        DatasetFile,
         DownloadedDatasetViewModel> _useCaseReponseToViewModelMapper;
 
     private readonly ISession _sessionContext;
@@ -29,7 +29,7 @@ public sealed class DatasetsController : Controller
             DownloadDatasetsRequest,
             UseCaseResponse<DownloadDatasetsResponse>> downloadDatasetUsecase,
         IMapper<
-            Dataset,
+            DatasetFile,
             DownloadedDatasetViewModel> useCaseReponseToViewModelMapper,
         ISession sessionContext)
     {
@@ -68,9 +68,9 @@ public sealed class DatasetsController : Controller
     }
 
     [HttpGet("file")]
-    public async Task<IActionResult> FileDownload(string filename)
+    public async Task<IActionResult> FileDownload([FromQuery] List<string> filenames)
     {
-        DownloadDatasetsRequest request = new(filename);
+        DownloadDatasetsRequest request = new("Dataset-Download", [.. filenames]);
 
         UseCaseResponse<DownloadDatasetsResponse> response =
             await _downloadDatasetUsecase.HandleRequestAsync(request)
@@ -82,7 +82,7 @@ public sealed class DatasetsController : Controller
                 ?? throw new InvalidOperationException(
                     "Use case response.Model was null.");
 
-        Dataset dataset =
+        DatasetFile dataset =
             model.DownloadedDataset
                 ?? throw new InvalidOperationException(
                     "DownloadedDataset was null.");

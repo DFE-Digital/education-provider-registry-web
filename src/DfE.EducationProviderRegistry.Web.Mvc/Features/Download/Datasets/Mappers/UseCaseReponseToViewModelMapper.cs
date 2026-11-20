@@ -4,9 +4,9 @@ using DfE.EducationProviderRegistry.Web.Mvc.Features.Download.Datasets.ViewModel
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Download.Datasets.Mappers;
 
-public class UseCaseReponseToViewModelMapper : IMapper<Dataset, DownloadedDatasetViewModel>
+public class UseCaseReponseToViewModelMapper : IMapper<DatasetFile, DownloadedDatasetViewModel>
 {
-    public DownloadedDatasetViewModel Map(Dataset input)
+    public DownloadedDatasetViewModel Map(DatasetFile input)
     {
         ArgumentNullException.ThrowIfNull(input);
 

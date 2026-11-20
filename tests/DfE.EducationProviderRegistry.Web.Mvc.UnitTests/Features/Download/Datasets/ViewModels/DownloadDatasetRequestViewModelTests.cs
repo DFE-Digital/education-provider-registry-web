@@ -14,13 +14,13 @@ public sealed class DownloadDatasetRequestViewModelTests
     }
 
     [Fact]
-    public void Filename_IsRequired_WhenNull()
+    public void SelectedDatasets_IsInvalid_WhenEmpty()
     {
         // arrange
         DownloadDatasetRequestViewModel viewModel =
             new()
             {
-                Filename = null
+                SelectedDatasets = []
             };
 
         // act
@@ -28,37 +28,18 @@ public sealed class DownloadDatasetRequestViewModelTests
 
         // assert
         Assert.Single(results);
-        Assert.Equal("A download file name is required.", results[0].ErrorMessage);
-        Assert.Contains("Filename", results[0].MemberNames);
+        Assert.Equal("Please select at least one dataset.", results[0].ErrorMessage);
+        Assert.Contains("SelectedDatasets", results[0].MemberNames);
     }
 
     [Fact]
-    public void Filename_IsRequired_WhenEmptyString()
+    public void SelectedDatasets_ValidatesSuccessfully_WhenItemsProvided()
     {
         // arrange
         DownloadDatasetRequestViewModel viewModel =
             new()
             {
-                Filename = string.Empty
-            };
-
-        // act
-        IList<ValidationResult> results = Validate(viewModel);
-
-        // arrange
-        Assert.Single(results);
-        Assert.Equal("A download file name is required.", results[0].ErrorMessage);
-        Assert.Contains("Filename", results[0].MemberNames);
-    }
-
-    [Fact]
-    public void Filename_ValidatesSuccessfully_WhenProvided()
-    {
-        // arrange
-        DownloadDatasetRequestViewModel viewModel =
-            new()
-            {
-                Filename = "dataset.csv"
+                SelectedDatasets = ["establishment-data"]
             };
 
         // act

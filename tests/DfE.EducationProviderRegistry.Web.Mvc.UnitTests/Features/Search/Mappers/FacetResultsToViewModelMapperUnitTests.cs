@@ -79,7 +79,7 @@ public sealed class FacetResultsToViewModelMapperUnitTests
     }
 
     [Fact]
-    public void Map_GivenLocalAuthorityFacet_MapsToAutocompleteFilterViewModel()
+    public void Map_GivenLocalAuthorityFacet_MapsToCheckboxFilterViewModel()
     {
         // Arrange
         FacetResultsToViewModelMapper mapper = new();
@@ -98,8 +98,8 @@ public sealed class FacetResultsToViewModelMapperUnitTests
             mapper.Map(context);
 
         // Assert
-        AutocompleteFilterViewModel filter =
-            Assert.IsType<AutocompleteFilterViewModel>(
+        CheckboxFilterViewModel filter =
+            Assert.IsType<CheckboxFilterViewModel>(
                 Assert.Single(result));
 
         Assert.Equal(

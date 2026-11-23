@@ -38,6 +38,8 @@ public sealed class SearchRequestViewModel
     //[Required(ErrorMessage = "Enter an address name")]
     public string? Where { get; set; }
 
+    public bool IncludeClosedProviders { get; set; } = false;
+
     /// <summary>
     /// Gets or sets the number of records to display per page.
     /// </summary>

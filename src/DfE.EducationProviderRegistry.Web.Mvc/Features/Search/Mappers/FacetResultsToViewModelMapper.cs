@@ -67,13 +67,6 @@ public sealed class FacetResultsToViewModelMapper : IMapper<FacetResultsMappingC
                 searchFacet.Name,
                 searchFacet.Name);
 
-        //List<string> autocompleteFacets = ["localauthority", "diocese"];
-
-        //if (autocompleteFacets.Contains(searchFacet.Name))
-        //{
-        //    return new AutocompleteFilterViewModel(searchFacet.Name, label, values);
-        //}
-
         return new CheckboxFilterViewModel(
             searchFacet.Name,
             label,

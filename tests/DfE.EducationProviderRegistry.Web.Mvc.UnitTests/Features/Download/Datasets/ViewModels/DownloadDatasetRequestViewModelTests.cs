@@ -28,7 +28,7 @@ public sealed class DownloadDatasetRequestViewModelTests
 
         // assert
         Assert.Single(results);
-        Assert.Equal("Please select at least one dataset.", results[0].ErrorMessage);
+        Assert.Equal("Choose at least one dataset file download name.", results[0].ErrorMessage);
         Assert.Contains("SelectedDatasets", results[0].MemberNames);
     }
 

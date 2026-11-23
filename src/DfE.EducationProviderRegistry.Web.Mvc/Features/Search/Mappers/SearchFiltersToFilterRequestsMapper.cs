@@ -20,6 +20,23 @@ public sealed class SearchFiltersToFilterRequestsMapper : IMapper<SearchRequestV
     public ReadOnlyCollection<FilterRequest> Map(SearchRequestViewModel input)
     {
         ArgumentNullException.ThrowIfNull(input);
+
+        const string statusFacet = "status";
+        const string closedStatusValue = "closed";
+
+        if (!input.SelectedFacets.TryGetValue(statusFacet, out List<string>? statuses) ||
+            !statuses.Any(value => !string.IsNullOrWhiteSpace(value)))
+        {
+            statuses = input.IncludeClosedProviders
+                ? ["Open", "Open, but proposed to close", "Closed"]
+                : ["Open", "Open, but proposed to close"];
+
+            input.SelectedFacets[statusFacet] = statuses;
+        }
+
+        input.IncludeClosedProviders =
+            statuses.Contains(closedStatusValue, StringComparer.OrdinalIgnoreCase);
+
         List<FilterRequest> filters = [.. _facetMapper.Map(input.SelectedFacets)];
 
         foreach ((string? name, FilterInputViewModel? filter) in input.Filters)

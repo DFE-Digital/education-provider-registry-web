@@ -664,6 +664,152 @@ public sealed class SearchFiltersToFilterRequestsMapperTests
             filter => filter.FilterName == "AgeRange");
     }
 
+    [Fact]
+    public void Map_AddsDefaultOpenStatuses_WhenStatusFacetMissing_AndIncludeClosedProvidersIsFalse()
+    {
+        // arrange
+        Mock<IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>> facetMapper =
+            new();
+
+        facetMapper
+            .Setup(m => m.Map(It.Is<Dictionary<string, List<string>>>(
+                d => d.ContainsKey("status") &&
+                     d["status"].Count == 2 &&
+                     d["status"].Contains("Open") &&
+                     d["status"].Contains("Open, but proposed to close"))))
+            .Returns([]);
+
+        SearchFiltersToFilterRequestsMapper mapper =
+            new(facetMapper.Object);
+
+        SearchRequestViewModel input = new()
+        {
+            IncludeClosedProviders = false,
+            SelectedFacets = []
+        };
+
+        // act
+        mapper.Map(input);
+
+        // assert
+        facetMapper.VerifyAll();
+        Assert.False(input.IncludeClosedProviders);
+    }
+
+    [Fact]
+    public void Map_AddsDefaultStatusesIncludingClosed_WhenStatusFacetMissing_AndIncludeClosedProvidersIsTrue()
+    {
+        // arrange
+        Mock<IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>> facetMapper =
+            new();
+
+        facetMapper
+            .Setup(m => m.Map(It.Is<Dictionary<string, List<string>>>(
+                d => d.ContainsKey("status") &&
+                     d["status"].Contains("Open") &&
+                     d["status"].Contains("Open, but proposed to close") &&
+                     d["status"].Contains("Closed"))))
+            .Returns([]);
+
+        SearchFiltersToFilterRequestsMapper mapper =
+            new(facetMapper.Object);
+
+        SearchRequestViewModel input = new()
+        {
+            IncludeClosedProviders = true,
+            SelectedFacets = []
+        };
+
+        // act
+        mapper.Map(input);
+
+        // assert
+        facetMapper.VerifyAll();
+        Assert.True(input.IncludeClosedProviders);
+    }
+
+    [Fact]
+    public void Map_SetsIncludeClosedProvidersToTrue_WhenClosedStatusSelected()
+    {
+        // arrange
+        Mock<IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>> facetMapper =
+            SearchFacetsResultsMapperTestDouble.MockFor([]);
+
+        SearchFiltersToFilterRequestsMapper mapper =
+            new(facetMapper.Object);
+
+        SearchRequestViewModel input = new()
+        {
+            SelectedFacets = new Dictionary<string, List<string>>
+            {
+                ["status"] = ["Open", "Closed"]
+            },
+            IncludeClosedProviders = false
+        };
+
+        // act
+        mapper.Map(input);
+
+        // assert
+        Assert.True(input.IncludeClosedProviders);
+    }
+
+    [Fact]
+    public void Map_SetsIncludeClosedProvidersToFalse_WhenClosedStatusNotSelected()
+    {
+        // arrange
+        Mock<IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>> facetMapper =
+            SearchFacetsResultsMapperTestDouble.MockFor([]);
+
+        SearchFiltersToFilterRequestsMapper mapper =
+            new(facetMapper.Object);
+
+        SearchRequestViewModel input = new()
+        {
+            SelectedFacets = new Dictionary<string, List<string>>
+            {
+                ["status"] = ["Open"]
+            },
+            IncludeClosedProviders = true
+        };
+
+        // act
+        mapper.Map(input);
+
+        // assert
+        Assert.False(input.IncludeClosedProviders);
+    }
+
+    [Fact]
+    public void Map_ReplacesEmptyStatusFacet_WhenStatusValuesAreBlank()
+    {
+        // arrange
+        Mock<IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>>> facetMapper =
+            new();
+
+        facetMapper
+            .Setup(m => m.Map(It.Is<Dictionary<string, List<string>>>(
+                d => d["status"].Contains("Open"))))
+            .Returns([]);
+
+        SearchFiltersToFilterRequestsMapper mapper =
+            new(facetMapper.Object);
+
+        SearchRequestViewModel input = new()
+        {
+            SelectedFacets = new Dictionary<string, List<string>>
+            {
+                ["status"] = ["", " "]
+            }
+        };
+
+        // act
+        mapper.Map(input);
+
+        // assert
+        facetMapper.VerifyAll();
+    }
+
     private static DateInputViewModel CreateDateInput(
         int day,
         int month,

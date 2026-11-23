@@ -1,4 +1,5 @@
-﻿using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
+﻿using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Establishment;
+using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
 using DfE.EducationProviderRegistry.Core.Query.Shared;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
@@ -16,8 +17,8 @@ public sealed class SearchAggregateCategoryGroupMapperTests
             new Name("Trust Name"),
             new SearchAddress("Trust Address"),
             new SearchType("MAT"),
-            null,
-            null,
+            new GroupDetail("Group Name", "124567"),
+            new SearchLocalAuthority("Trust Local Authority"),
             new SearchCategory("Group"),
             SearchProviderStatus.Open,
             12);
@@ -57,14 +58,14 @@ public sealed class SearchAggregateCategoryGroupMapperTests
     }
 
     [Fact]
-    public void Map_AddsGroupIdRow()
+    public void Map_AddsGroupUidRow()
     {
         GovUkTable table = _mapper.Map(MakeResult());
 
         TableRow row =
-            table.Rows.Single(x => x.Cells[0].Text == "Group ID");
+            table.Rows.Single(x => x.Cells[0].Text == "UID");
 
-        Assert.Equal("222222", row.Cells[1].Text);
+        Assert.Equal("124567", row.Cells[1].Text);
     }
 
     [Fact]
@@ -73,7 +74,7 @@ public sealed class SearchAggregateCategoryGroupMapperTests
         GovUkTable table = _mapper.Map(MakeResult());
 
         TableRow row =
-            table.Rows.Single(x => x.Cells[0].Text == "Type");
+            table.Rows.Single(x => x.Cells[0].Text == "Education group type");
 
         Assert.Equal("MAT", row.Cells[1].Text);
     }
@@ -101,7 +102,7 @@ public sealed class SearchAggregateCategoryGroupMapperTests
     }
 
     [Fact]
-    public void Map_UsesNullAddress_WhenAddressIsNull()
+    public void Map_OmitsNullAddressRow_WhenAddressIsNull()
     {
         SearchAggregateResult input =
             SearchAggregateResult.Create(
@@ -117,14 +118,11 @@ public sealed class SearchAggregateCategoryGroupMapperTests
 
         GovUkTable table = _mapper.Map(input);
 
-        TableRow row =
-            table.Rows.Single(x => x.Cells[0].Text == "Address");
-
-        Assert.Null(row.Cells[1].Text);
+        Assert.DoesNotContain("Address", table.Rows.SelectMany(r => r.Cells).Select(c => c.Text));
     }
 
     [Fact]
-    public void Map_UsesNullType_WhenTypeIsNull()
+    public void Map_UsesEmptyGroupType_WhenTypeIsNull()
     {
         SearchAggregateResult input =
             SearchAggregateResult.Create(
@@ -141,8 +139,8 @@ public sealed class SearchAggregateCategoryGroupMapperTests
         GovUkTable table = _mapper.Map(input);
 
         TableRow row =
-            table.Rows.Single(x => x.Cells[0].Text == "Type");
+            table.Rows.Single(x => x.Cells[0].Text == "Education group type");
 
-        Assert.Null(row.Cells[1].Text);
+        Assert.Equal(string.Empty, row.Cells[1].Text);
     }
 }

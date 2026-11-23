@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Services;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Request;
 using Moq;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Controllers.TestDoubles;

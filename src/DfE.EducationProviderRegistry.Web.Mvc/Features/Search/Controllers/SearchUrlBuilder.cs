@@ -1,8 +1,8 @@
-﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Request;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search;
+namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Controllers;
 
 public static class SearchUrlBuilder
 {
@@ -14,28 +14,22 @@ public static class SearchUrlBuilder
         ArgumentNullException.ThrowIfNull(urlHelper);
         ArgumentNullException.ThrowIfNull(searchRequest);
 
-        QueryBuilder query = new();
+        QueryBuilder query = [];
 
-        if (!string.IsNullOrWhiteSpace(searchRequest.What))
-        {
-            query.Add(
-                nameof(searchRequest.What),
-                searchRequest.What);
-        }
+        AddIfNotEmpty(
+            query,
+            nameof(searchRequest.What),
+            searchRequest.What);
 
-        if (!string.IsNullOrWhiteSpace(searchRequest.Where))
-        {
-            query.Add(
-                nameof(searchRequest.Where),
-                searchRequest.Where);
-        }
+        AddIfNotEmpty(
+            query,
+            nameof(searchRequest.Where),
+            searchRequest.Where);
 
-        if (!string.IsNullOrWhiteSpace(searchRequest.Sort))
-        {
-            query.Add(
-                nameof(searchRequest.Sort),
-                searchRequest.Sort);
-        }
+        AddIfNotEmpty(
+            query,
+            nameof(searchRequest.Sort),
+            searchRequest.Sort);
 
         query.Add(
             nameof(searchRequest.PageNumber),
@@ -49,9 +43,11 @@ public static class SearchUrlBuilder
             query,
             searchRequest.SelectedFacets);
 
-        string path = urlHelper.Action(
-            "Search",
-            "Search")!;
+        AddFilters(
+            query,
+            searchRequest.Filters);
+
+        string path = urlHelper.Action(action: "Search", controller: "Search")!;
 
         return path + query.ToQueryString();
     }
@@ -67,12 +63,98 @@ public static class SearchUrlBuilder
 
         foreach (KeyValuePair<string, List<string>> facet in selectedFacets)
         {
-            foreach (string value in facet.Value)
+            foreach (string? value in facet.Value)
             {
-                query.Add(
+                AddIfNotEmpty(
+                    query,
                     $"SelectedFacets[{facet.Key}]",
                     value);
             }
+        }
+    }
+
+    private static void AddFilters(
+        QueryBuilder query,
+        Dictionary<string, FilterInputViewModel> filters)
+    {
+        foreach ((string name, FilterInputViewModel filter) in filters)
+        {
+            if (filter.DateRange is { IsEmpty: false } dateRange)
+            {
+                string prefix =
+                    $"Filters[{name}].DateRange";
+
+                AddDateRangeInput(
+                    query,
+                    $"{prefix}.From",
+                    dateRange.From);
+
+                AddDateRangeInput(
+                    query,
+                    $"{prefix}.To",
+                    dateRange.To);
+            }
+
+            if (filter.NumberRange is { IsEmpty: false } numberRange)
+            {
+                string prefix =
+                    $"Filters[{name}].NumberRange";
+
+                AddNumberRangeInput(
+                    query,
+                    prefix,
+                    numberRange);
+            }
+        }
+    }
+
+    private static void AddDateRangeInput(
+        QueryBuilder query,
+        string prefix,
+        DateInputViewModel date)
+    {
+        AddIfNotEmpty(
+            query,
+            $"{prefix}.Day",
+            date.Day);
+
+        AddIfNotEmpty(
+            query,
+            $"{prefix}.Month",
+            date.Month);
+
+        AddIfNotEmpty(
+            query,
+            $"{prefix}.Year",
+            date.Year);
+    }
+
+    private static void AddNumberRangeInput(
+        QueryBuilder query,
+        string prefix,
+        NumberRangeInputFilterViewModel range)
+    {
+        AddIfNotEmpty(
+            query,
+            $"{prefix}.From",
+            range.From?.ToString() ?? string.Empty);
+
+        AddIfNotEmpty(
+            query,
+            $"{prefix}.To",
+            range.To?.ToString() ?? string.Empty);
+    }
+
+    private static void AddIfNotEmpty(
+        QueryBuilder query,
+        string key,
+        string? value)
+    {
+        if (!string.IsNullOrWhiteSpace(value))
+        {
+            query.Add(
+                key,
+                value);
         }
     }
 }

@@ -1,11 +1,14 @@
 ﻿using AngleSharp.Html.Dom;
+using DfE.Document.Abstractions;
+using DfE.Document.Anglesharp;
 using DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles.Search.Configuration.Extensions;
 using DfE.EducationProviderRegistry.Core.Query.Test.Database.Data.Search;
 using DfE.EducationProviderRegistry.Data.DatabaseModels.Models;
+using DfE.EducationProviderRegistry.Web.PageComponents;
+using DfE.EducationProviderRegistry.Web.PageComponents.GovUk;
+using DfE.EducationProviderRegistry.Web.PageComponents.Pages;
 using DfE.EducationProviderRegistry.Web.SharedTests.AngleSharp.Extensions;
-using DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
-using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search.Components;
 using Microsoft.Extensions.Configuration;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.SystemTests.Search;
@@ -68,7 +71,9 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
         // Assert
         using IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
 
-        SearchResultsComponent resultsComponent = new(document);
+        IQueryHandler query = new QueryHandler(SearchContext.From(document));
+
+        SearchResultsComponent resultsComponent = new(query);
         SearchResult displayedResult = Assert.Single(resultsComponent.GetSearchResults());
         Assert.Equal("school 1", displayedResult.Name.Text);
     }
@@ -111,8 +116,9 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
 
         // Assert
         using IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
+        IQueryHandler query = new QueryHandler(SearchContext.From(document));
 
-        SearchResultsComponent resultsComponent = new(document);
+        SearchResultsComponent resultsComponent = new(query);
         IReadOnlyList<SearchResult> searchResults = resultsComponent.GetSearchResults();
         IReadOnlyList<string> searchResultNames = searchResults.Select(t => t.Name.Text).ToList();
 
@@ -163,8 +169,9 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
 
         // Assert
         using IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
+        IQueryHandler query = new QueryHandler(SearchContext.From(document));
 
-        SearchResultsComponent resultsComponent = new(document);
+        SearchResultsComponent resultsComponent = new(query);
 
         IReadOnlyList<SearchResult> searchResults = resultsComponent.GetSearchResults();
         IReadOnlyList<string> searchResultNames = searchResults.Select(t => t.Name.Text).ToList();
@@ -199,13 +206,15 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
         // Assert
         using IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
 
-        SearchResultsComponent resultsComponent = new(document);
-        PaginationComponent component = new(document);
+        IQueryHandler query = new QueryHandler(SearchContext.From(document));
+
+        SearchResultsComponent resultsComponent = new(query);
+        GovUkPaginationComponent component = new(query);
 
         IReadOnlyList<SearchResult> searchResults = resultsComponent.GetSearchResults();
 
         Assert.Equal(4, searchResults.Count);
-        Assert.Equal("2", component.GetCurrentPage());
+        Assert.Equal(2, component.Pages()!.Current);
     }
 
     [Fact]
@@ -233,7 +242,9 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
         // Assert
         using IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
 
-        SearchResultsComponent resultsComponent = new(document);
+        IQueryHandler query = new QueryHandler(SearchContext.From(document));
+
+        SearchResultsComponent resultsComponent = new(query);
         IReadOnlyList<SearchResult> searchResults = resultsComponent.GetSearchResults();
 
         List<SearchAggregate> sortedSeedResults = [.. seed.OrderByDescending(t => t.ProviderName)];
@@ -278,8 +289,9 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
 
         // Assert
         using IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
+        IQueryHandler query = new QueryHandler(SearchContext.From(document));
 
-        SearchResultsComponent resultsComponent = new(document);
+        SearchResultsComponent resultsComponent = new(query);
 
         SearchResult displayedResult = Assert.Single(resultsComponent.GetSearchResults());
         List<(TextContent key, TextContent value)> displayedResultContent = [.. displayedResult.Values];
@@ -316,6 +328,8 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
                 .WithGroup()
                 .WithProviderName("group 1")
                 .WithProviderId(1234)
+                .WithGroupName("group 1")
+                .WithGroupUid("1234")
                 .WithProviderTypeName("STUB-provider-type")
                 .WithAddress("1 test street, testville, TE1 5ST")
                 .WithAcademyCount(97)
@@ -336,25 +350,20 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
 
         // Assert
         using IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
+        IQueryHandler query = new QueryHandler(SearchContext.From(document));
 
-        SearchResultsComponent resultsComponent = new(document);
+        SearchResultsComponent resultsComponent = new(query);
 
         SearchResult displayedResult = Assert.Single(resultsComponent.GetSearchResults());
-        List<(TextContent key, TextContent values)> displayedResultContent = [.. displayedResult.Values];
         Assert.Equal("group 1", displayedResult.Name.Text);
+        Assert.Equal("/groups/1234", displayedResult.Name.Link!.Url);
 
-        Assert.Equal(4, displayedResult.Values.Count());
-
-        Assert.Equal("Group ID", displayedResultContent[0].key.Text);
-        Assert.Equal("1234", displayedResultContent[0].values.Text);
-
-        Assert.Equal("Type", displayedResultContent[1].key.Text);
-        Assert.Equal("STUB-provider-type", displayedResultContent[1].values.Text);
-
-        Assert.Equal("Address", displayedResultContent[2].key.Text);
-        Assert.Equal("1 test street, testville, TE1 5ST", displayedResultContent[2].values.Text);
-
-        Assert.Equal("Academies", displayedResultContent[3].key.Text);
-        Assert.Equal("97", displayedResultContent[3].values.Text);
+        Assert.Collection(
+            displayedResult.Values,
+            row => Assert.Equal(("UID", "1234"), (row.key.Text, row.value.Text)),
+            row => Assert.Equal(("Address", "1 test street, testville, TE1 5ST"), (row.key.Text, row.value.Text)),
+            row => Assert.Equal(("Academies", "97"), (row.key.Text, row.value.Text)),
+            row => Assert.Equal(("Education group type", "STUB-provider-type"), (row.key.Text, row.value.Text))
+        );
     }
 }

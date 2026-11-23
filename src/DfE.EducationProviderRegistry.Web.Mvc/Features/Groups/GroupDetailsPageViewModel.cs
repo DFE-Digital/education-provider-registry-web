@@ -1,4 +1,4 @@
-﻿using DfE.EducationProviderRegistry.Web.ViewComponents.SummaryList;
+﻿using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 
@@ -13,18 +13,18 @@ public sealed record GroupDetailsPageViewModel
 public sealed class GroupDetailsTabViewModel
 {
     public string? Tab { get; set; }
-    public GovUkSummaryList? Summary { get; set; }
+    public GovUkTable? Table { get; set; }
 }
 
 public sealed class GroupDetailsAcademyTabViewModel
 {
     public string? Tab { get; set; }
-    public Web.ViewComponents.Table.GovUkTable? Table { get; set; }
+    public GovUkTable? Table { get; set; }
 }
 
 public sealed class GroupDetailsGovernanceTabViewModel
 {
     public string? Tab { get; set; }
-    public Web.ViewComponents.Table.GovUkTable? TrusteesTable { get; set; }
-    public Web.ViewComponents.Table.GovUkTable? MembersTable { get; set; }
+    public GovUkTable? TrusteesTable { get; set; }
+    public GovUkTable? MembersTable { get; set; }
 }

@@ -10,17 +10,17 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Download.Data
 internal static class UseCaseReponseToViewModelMapperTestDouble
 {
     public static Mock<IMapper<
-        Dataset,
+        DatasetFile,
         DownloadedDatasetViewModel>> Mock() => new(MockBehavior.Strict);
 
     public static Mock<IMapper<
-        Dataset,
+        DatasetFile,
         DownloadedDatasetViewModel>> MockFor(
         DownloadedDatasetViewModel viewModel,
-        Dataset dataset)
+        DatasetFile dataset)
     {
         Mock<IMapper<
-            Dataset,
+            DatasetFile,
             DownloadedDatasetViewModel>> mock = Mock();
 
         mock

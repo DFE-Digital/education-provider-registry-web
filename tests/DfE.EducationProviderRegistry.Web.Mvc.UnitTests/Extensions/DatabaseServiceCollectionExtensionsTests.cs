@@ -22,7 +22,7 @@ public sealed class DatabaseServiceCollectionExtensionsTests
                 () => services.AddPostgresDatabase(configuration));
 
         Assert.Equal(
-            "Configuration value 'eprweb_eprapi_dotnet_db_connection' is missing.",
+            "Configuration value 'eprweb_dotnet_db_connection' is missing.",
             exception.Message);
     }
 
@@ -33,7 +33,7 @@ public sealed class DatabaseServiceCollectionExtensionsTests
         Dictionary<string, string?> configurationValues =
             new()
             {
-                ["eprweb_eprapi_dotnet_db_connection"] =
+                ["eprweb_dotnet_db_connection"] =
                     "Host=localhost;Port=invalid"
             };
 
@@ -56,7 +56,7 @@ public sealed class DatabaseServiceCollectionExtensionsTests
         Dictionary<string, string?> configurationValues =
             new()
             {
-                ["eprweb_eprapi_dotnet_db_connection"] =
+                ["eprweb_dotnet_db_connection"] =
                     "Host=localhost;Database=test;Username=user;Password=password"
             };
 

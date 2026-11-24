@@ -31,6 +31,6 @@ internal sealed class DatabaseConnectionStringBuilderHandler
                 networkName: networkName,
                 cancellationToken: cancellationToken);
 
-        return builder.WithEnvironment(name: "eprweb_eprapi_dotnet_db_connection", value: connectionString);
+        return builder.WithEnvironment(name: "eprweb_dotnet_db_connection", value: connectionString);
     }
 }

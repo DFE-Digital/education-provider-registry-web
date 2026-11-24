@@ -6,7 +6,7 @@ public sealed record GroupDetailsPageViewModel
 {
     public required string Heading { get; set; }
     public required GroupDetailsTabViewModel Details { get; set; }
-    public required GroupDetailsAcademyTabViewModel Academies { get; init; }
+    public required GroupDetailsEstablishmentTabViewModel Establishments { get; init; }
     public required GroupDetailsGovernanceTabViewModel Governance { get; init; }
 }
 
@@ -16,10 +16,12 @@ public sealed class GroupDetailsTabViewModel
     public GovUkTable? Table { get; set; }
 }
 
-public sealed class GroupDetailsAcademyTabViewModel
+public sealed class GroupDetailsEstablishmentTabViewModel
 {
     public string? Tab { get; set; }
     public GovUkTable? Table { get; set; }
+    public bool HasEstablishments => Table is not null;
+    public string? NoEstablishmentsMessage { get; set; }
 }
 
 public sealed class GroupDetailsGovernanceTabViewModel

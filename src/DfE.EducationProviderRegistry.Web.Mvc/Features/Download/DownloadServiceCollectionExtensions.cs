@@ -12,7 +12,7 @@ public static class DownloadServiceCollectionExtensions
     {
         services
             .AddSingleton<IMapper<
-                Dataset, DownloadedDatasetViewModel>,
+                DatasetFile, DownloadedDatasetViewModel>,
                 UseCaseReponseToViewModelMapper>();
 
         services.AddDownloadDatasetDependencies();

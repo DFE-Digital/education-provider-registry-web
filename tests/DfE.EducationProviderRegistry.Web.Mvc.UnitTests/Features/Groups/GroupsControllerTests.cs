@@ -3,6 +3,7 @@ using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.Core.Libraries.Testing.Logger;
 using DfE.Core.Libraries.Testing.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupByUid;
+using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupByUid.Response;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Groups.TestDoubles;
 using DfE.EducationProviderRegistry.Web.SharedTests.TestDoubles;
@@ -120,7 +121,7 @@ public sealed class GroupsControllerTests
         // Arrange
         GroupDetailsPageViewModel viewModel = new()
         {
-            Academies = new(),
+            Establishments = new(),
             Details = new(),
             Governance = new(),
             Heading = "heading"

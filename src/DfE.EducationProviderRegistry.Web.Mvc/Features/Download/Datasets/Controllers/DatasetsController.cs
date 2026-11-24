@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Data;
+using System.Text.Json;
 using DfE.Core.Libraries.CleanArchitecture.Application;
 using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Download.Datasets.Application.Models;
@@ -17,7 +18,7 @@ public sealed class DatasetsController : Controller
         UseCaseResponse<DownloadDatasetsResponse>> _downloadDatasetUsecase;
 
     private readonly IMapper<
-        Dataset,
+        DatasetFile,
         DownloadedDatasetViewModel> _useCaseReponseToViewModelMapper;
 
     private readonly ISession _sessionContext;
@@ -29,7 +30,7 @@ public sealed class DatasetsController : Controller
             DownloadDatasetsRequest,
             UseCaseResponse<DownloadDatasetsResponse>> downloadDatasetUsecase,
         IMapper<
-            Dataset,
+            DatasetFile,
             DownloadedDatasetViewModel> useCaseReponseToViewModelMapper,
         ISession sessionContext)
     {
@@ -70,7 +71,7 @@ public sealed class DatasetsController : Controller
     [HttpGet("file")]
     public async Task<IActionResult> FileDownload(string filename)
     {
-        DownloadDatasetsRequest request = new(filename);
+        DownloadDatasetsRequest request = new(filename, []);
 
         UseCaseResponse<DownloadDatasetsResponse> response =
             await _downloadDatasetUsecase.HandleRequestAsync(request)
@@ -82,7 +83,7 @@ public sealed class DatasetsController : Controller
                 ?? throw new InvalidOperationException(
                     "Use case response.Model was null.");
 
-        Dataset dataset =
+        DatasetFile dataset =
             model.DownloadedDataset
                 ?? throw new InvalidOperationException(
                     "DownloadedDataset was null.");

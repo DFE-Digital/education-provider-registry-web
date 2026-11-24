@@ -110,7 +110,7 @@ public sealed class SearchAggregateCategoryGroupMapper : ISearchAggregateCategor
             .Create()
             .WithCaption(
                 input.Name.Value,
-                $"/groups/{input.UniqueIdentifier.Value}")
+                link: input.Group?.Uid is null ? null : $"/groups/{input.Group.Uid}")
             .WithColumns(columns);
 
         builder.AddRow(

@@ -2,6 +2,7 @@
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.Model;
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupByUid;
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupByUid.Mappers;
+using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupByUid.Response;
 using DfE.EducationProviderRegistry.Core.Query.Shared;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 using DfE.EducationProviderRegistry.Web.ViewComponents.SummaryList;
@@ -221,7 +222,7 @@ public sealed class GroupDetailsPageViewModelMapperTests
         // Arrange
         GroupReadModel model =
             GroupReadModelBuilder.Create()
-              .WithGroupType(type)
+              .WithTypeName(type)
               .Build();
 
         // Act
@@ -238,7 +239,7 @@ public sealed class GroupDetailsPageViewModelMapperTests
         // Arrange
         GroupReadModel model =
             GroupReadModelBuilder.Create()
-                .WithGroupType("Single-Academy trust")
+                .WithTypeName("Single-Academy trust")
                 .Build();
 
         // Act
@@ -256,11 +257,13 @@ public sealed class GroupDetailsPageViewModelMapperTests
         // Arrange
         GroupReadModel readModel = GroupReadModelTestDoubles.Stub() with
         {
-            Academies =
+            Establishments =
             [
-                CreateAcademy(
-                    urn: "123456",
-                    name: "Test Academy")
+                new EstablishmentReadModel()
+                {
+                    Name = "Test Academy",
+                    Urn = "123456"
+                }
             ]
         };
 
@@ -268,10 +271,10 @@ public sealed class GroupDetailsPageViewModelMapperTests
         GroupDetailsPageViewModel result = _mapper.Map(readModel);
 
         // Assert
-        Assert.Equal("Academies (1)", result.Academies.Tab);
+        Assert.Equal("Academies (1)", result.Establishments.Tab);
 
         GovUkTable table =
-            Assert.IsType<GovUkTable>(result.Academies.Table);
+            Assert.IsType<GovUkTable>(result.Establishments.Table);
 
         Assert.Equal("Academies", table.Caption);
 
@@ -346,16 +349,15 @@ public sealed class GroupDetailsPageViewModelMapperTests
         // Arrange
         GroupReadModel readModel =
             GroupReadModelBuilder.Create()
-              .Build();
+                .Build();
 
         // Act
         GroupDetailsPageViewModel result = _mapper.Map(readModel);
 
         // Assert
-        Assert.Equal("Academies (0)", result.Academies.Tab);
+        Assert.Equal("Academies (0)", result.Establishments.Tab);
 
-        Assert.Empty(
-            Assert.IsType<GovUkTable>(result.Academies.Table).Rows);
+        Assert.Null(result.Establishments.Table);
 
         Assert.Empty(
             Assert.IsType<GovUkTable>(
@@ -425,15 +427,5 @@ public sealed class GroupDetailsPageViewModelMapperTests
         GovUkTable table = Assert.IsType<GovUkTable>(result.Details.Table);
         TableRow row = Assert.Single(table.Rows, row => row.Cells[0].Text == label);
         return row.Cells[1];
-    }
-
-    private static Academy CreateAcademy(
-        string urn,
-        string name)
-    {
-        return new Academy(
-            new AcademyId(
-                new UniqueReferenceNumber(urn)),
-            new AcademyName(name));
     }
 }

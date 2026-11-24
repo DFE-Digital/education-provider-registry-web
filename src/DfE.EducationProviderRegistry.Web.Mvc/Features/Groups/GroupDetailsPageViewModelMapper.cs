@@ -1,7 +1,6 @@
 ﻿using DfE.Core.Libraries.CrossCutting.Mapper;
-using DfE.EducationProviderRegistry.Core.Query.Groups.Application.Model;
-using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupByUid;
-using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupByUid.Mappers;
+using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupByUid.Response;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 
@@ -15,7 +14,7 @@ internal sealed class GroupDetailsPageViewModelMapper : IMapper<GroupReadModel, 
         {
             Heading = readModel.Name,
             Details = CreateBasicDetails(readModel),
-            Academies = CreateAcademies(readModel),
+            Establishments = CreateAcademies(readModel),
             Governance = CreateGovernance(readModel)
         };
     }
@@ -34,7 +33,7 @@ internal sealed class GroupDetailsPageViewModelMapper : IMapper<GroupReadModel, 
 
         AddRow(builder, "Status", model.Status);
         AddRow(builder, "Address", model.Address);
-        AddRow(builder, "Education group type", model.Type);
+        AddRow(builder, "Education group type", model.TypeName);
 
         return new()
         {
@@ -53,7 +52,7 @@ internal sealed class GroupDetailsPageViewModelMapper : IMapper<GroupReadModel, 
             new TableCell { Text = value.Trim() });
     }
 
-    private static IReadOnlyList<TableCellRow> MapIdentifiers(GroupReadModel model)
+    private static List<TableCellRow> MapIdentifiers(GroupReadModel model)
     {
         (string Label, string? value, string? Href)[] values =
         [
@@ -64,6 +63,7 @@ internal sealed class GroupDetailsPageViewModelMapper : IMapper<GroupReadModel, 
         ];
 
         List<TableCellRow> rows = [];
+
         foreach ((string identifier, string? label, string? href) in values)
         {
             if (!string.IsNullOrWhiteSpace(label))
@@ -79,40 +79,63 @@ internal sealed class GroupDetailsPageViewModelMapper : IMapper<GroupReadModel, 
         return rows;
     }
 
-    private static GroupDetailsAcademyTabViewModel CreateAcademies(GroupReadModel model)
+    private static GroupDetailsEstablishmentTabViewModel CreateAcademies(GroupReadModel model)
     {
-        TableColumn[] columns = [
+
+        TableColumn[] columns =
+        [
             new() { Text = "Name", IsRowHeader = true },
             new() { Text = "URN" }
         ];
 
+        string establishmentLabelForGroupType = model.TypeCode switch
+        {
+            GroupTypeCodes.Federation => "Providers",
+            GroupTypeCodes.ChildrensCentresGroup or GroupTypeCodes.ChildrensCentresCollaboration => "Centres",
+            _ => "Academies"
+        };
+
+        string tabLabel = $"{establishmentLabelForGroupType} ({model.Establishments.Count})";
+
+        if (model.Establishments.Count == 0)
+        {
+            return new()
+            {
+                Tab = tabLabel,
+                Table = null,
+                NoEstablishmentsMessage = "No centres are currently recorded for this group."
+            };
+        }
+
         List<TableRow> rows = [];
 
-        foreach (Academy academy in model.Academies)
+        foreach (EstablishmentReadModel establishment in model.Establishments)
         {
             TableCell name = new()
             {
-                Text = academy.Name.ToString(),
-                Href = $"/establishments/{academy.Id.Value}"
+                Text = establishment.Name,
+                Href = EstablishmentRoutes.EstablishmentDetails(urn: establishment.Urn).ToString()
             };
 
             TableCell urn = new()
             {
-                Text = academy.Id.Value
+                Text = establishment.Urn
             };
 
-            rows.Add(new TableRow { Cells = [name, urn] });
+            rows.Add(
+                new TableRow
+                {
+                    Cells = [name, urn]
+                });
         }
-
-        GovUkTable academiesTable = new(
-            columns: columns,
-            rows: rows,
-            caption: "Academies");
 
         return new()
         {
-            Tab = $"Academies ({model.Academies.Count})",
-            Table = academiesTable
+            Tab = tabLabel,
+            Table = new GovUkTable(
+                columns: columns,
+                rows: rows,
+                caption: establishmentLabelForGroupType)
         };
     }
 

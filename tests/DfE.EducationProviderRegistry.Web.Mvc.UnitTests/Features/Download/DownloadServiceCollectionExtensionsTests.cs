@@ -24,7 +24,7 @@ public class DownloadServiceCollectionExtensionsTests
         ServiceDescriptor? descriptor =
             services.FirstOrDefault(
                 descriptor =>
-                    descriptor.ServiceType == typeof(IMapper<Dataset, DownloadedDatasetViewModel>));
+                    descriptor.ServiceType == typeof(IMapper<DatasetFile, DownloadedDatasetViewModel>));
 
         Assert.NotNull(descriptor);
         Assert.Equal(typeof(UseCaseReponseToViewModelMapper), descriptor.ImplementationType);

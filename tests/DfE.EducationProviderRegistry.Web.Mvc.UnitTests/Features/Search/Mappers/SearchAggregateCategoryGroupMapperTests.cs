@@ -54,7 +54,7 @@ public sealed class SearchAggregateCategoryGroupMapperTests
         GovUkTable table = _mapper.Map(MakeResult());
 
         Assert.Equal("Trust Name", table.Caption);
-        Assert.Equal("/groups/222222", table.CaptionLinkUrl);
+        Assert.Equal("/groups/124567", table.CaptionLinkUrl);
     }
 
     [Fact]

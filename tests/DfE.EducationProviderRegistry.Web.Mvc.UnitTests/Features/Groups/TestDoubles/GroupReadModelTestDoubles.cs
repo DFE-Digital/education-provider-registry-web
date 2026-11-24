@@ -1,6 +1,4 @@
-﻿using DfE.EducationProviderRegistry.Core.Query.Groups.Application.Model;
-using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupByUid;
-using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupByUid.Mappers;
+﻿using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupByUid.Response;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Groups.TestDoubles;
 
@@ -19,10 +17,11 @@ internal static class GroupReadModelTestDoubles
             CompaniesHouseId = "CH123456",
             Address = "1 Test Street",
             Status = "Open",
-            Type = "Multi-academy trust",
-            Academies = Array.Empty<Academy>(),
+            TypeName = "Multi-academy trust",
+            TypeCode = "02",
             Members = Array.Empty<MemberReadModel>(),
-            Trustees = Array.Empty<TrusteeReadModel>()
+            Trustees = Array.Empty<TrusteeReadModel>(),
+            Establishments = Array.Empty<EstablishmentReadModel>()
         };
     }
 }

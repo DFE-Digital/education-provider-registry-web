@@ -1,6 +1,7 @@
 ﻿using DfE.Core.Libraries.CleanArchitecture.Application;
 using DfE.Core.Libraries.IntegrationTests.Abstractions;
 using DfE.Document.Anglesharp;
+using DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles.EstablishmentDetails;
 using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.Model;
 using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.UseCases.GetEstablishmentByUrn;
 using DfE.EducationProviderRegistry.Core.Query.Test.Database.Data.Establishments;

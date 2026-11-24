@@ -33,7 +33,7 @@ public sealed class DatabaseServiceCollectionExtensionsTests
         Dictionary<string, string?> configurationValues =
             new()
             {
-                ["eprweb_eprdat_dotnet_db_connection"] =
+                ["eprweb_eprapi_dotnet_db_connection"] =
                     "Host=localhost;Port=invalid"
             };
 
@@ -56,7 +56,7 @@ public sealed class DatabaseServiceCollectionExtensionsTests
         Dictionary<string, string?> configurationValues =
             new()
             {
-                ["eprweb_eprdat_dotnet_db_connection"] =
+                ["eprweb_eprapi_dotnet_db_connection"] =
                     "Host=localhost;Database=test;Username=user;Password=password"
             };
 

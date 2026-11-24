@@ -46,11 +46,13 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
         SearchAggregate match =
             SearchAggregateBuilder.Create()
                 .WithProviderName("school 1")
+                .SetValue(nameof(SearchAggregate.StatusName), "Open")
                 .Build();
 
         SearchAggregate doesNotMatch =
             SearchAggregateBuilder.Create()
                 .WithProviderName("College")
+                .SetValue(nameof(SearchAggregate.StatusName), "Open")
                 .Build();
 
         SearchAggregate[] seed = [match, doesNotMatch];
@@ -87,16 +89,19 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
         SearchAggregate match1 =
             SearchAggregateBuilder.Create()
                 .WithPostcode("BA22 6AS")
+                .SetValue(nameof(SearchAggregate.StatusName), "Open")
                     .Build();
 
         SearchAggregate match2 =
             SearchAggregateBuilder.Create()
                 .WithPostcode("ba2 2aw")
+                .SetValue(nameof(SearchAggregate.StatusName), "Open")
                     .Build();
 
         SearchAggregate doesNotMatch =
             SearchAggregateBuilder.Create()
                 .WithPostcode("B2 2aw")
+                .SetValue(nameof(SearchAggregate.StatusName), "Open")
                     .Build();
 
         SearchAggregate[] seed = [match1, match2, doesNotMatch];
@@ -137,18 +142,21 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
             SearchAggregateBuilder.Create()
                 .WithProviderName("school 1")
                 .WithPostcode("SW11 1EW")
+                .SetValue(nameof(SearchAggregate.StatusName), "Open")
                 .Build();
 
         SearchAggregate match2 =
             SearchAggregateBuilder.Create()
                 .WithProviderName("My School")
                 .WithPostcode("SW11 5LP")
+                .SetValue(nameof(SearchAggregate.StatusName), "Open")
                 .Build();
 
         SearchAggregate doesNotMatch =
             SearchAggregateBuilder.Create()
                 .WithProviderName("College")
                 .WithPostcode("SW11 5LP")
+                .SetValue(nameof(SearchAggregate.StatusName), "Open")
                 .Build();
 
         SearchAggregate[] seed = [match1, match2, doesNotMatch];
@@ -272,6 +280,7 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
                 .WithLocalAuthorityName("Stub local authority")
                 .WithGroupName("TEST GROUP name")
                 .WithGroupUid("1234")
+                .SetValue(nameof(SearchAggregate.StatusName), "Open")
                 .Build();
 
         await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableSearchAggregates>([match], ct);
@@ -333,6 +342,7 @@ public sealed class SearchResultsTests : WebApplicationFactoryBaseSystemTest
                 .WithProviderTypeName("STUB-provider-type")
                 .WithAddress("1 test street, testville, TE1 5ST")
                 .WithAcademyCount(97)
+                .SetValue(nameof(SearchAggregate.StatusName), "Open")
                 .Build();
 
         await DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableSearchAggregates>([match], ct);

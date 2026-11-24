@@ -1,4 +1,4 @@
-ARM_TEMPLATE_TAG=1.1.16
+ARM_TEMPLATE_TAG=1.1.17
 RG_TAGS={"Product" : "Find education provider information", "Service Offering" : "Find education provider information"}
 REGION=UK South
 SERVICE_NAME=education-provider-registry-web
@@ -89,9 +89,9 @@ arm-mon-deployment: composed-variables set-azure-account
 	az deployment sub create --name "monitoringdeploy-tsc-$(shell date +%Y%m%d%H%M%S)" \
         -l "${REGION}" \
 		--template-uri "https://raw.githubusercontent.com/DFE-Digital/tra-shared-services/${ARM_TEMPLATE_TAG}/azure/monitoringdeploy.json" \
-		--parameters "monitoringResourceGroupName=${AZURE_RESOURCE_PREFIX}-${SERVICE_SHORT}-mn-rg" 'tags=${RG_TAGS}' templateVersion="${ARM_TEMPLATE_TAG}" \
+		--parameters "monitoringResourceGroupName=${AZURE_RESOURCE_PREFIX}-${SERVICE_SHORT}-mn-rg" 'tags=${RG_TAGS}' "templateVersion=${ARM_TEMPLATE_TAG}" \
         "monitoringResourceGroupLocation=${REGION}" \
-        "actionGroupName=${AZURE_RESOURCE_PREFIX}-${SERVICE_SHORT}" \
+        "actionGroupName=${AZURE_RESOURCE_PREFIX}-${SERVICE_NAME}" \
 		"alertEmailAddress=$(ACTION_GROUP_EMAIL)" \
 		${WHAT_IF}
 

@@ -22,7 +22,7 @@ public sealed class DatabaseServiceCollectionExtensionsTests
                 () => services.AddPostgresDatabase(configuration));
 
         Assert.Equal(
-            "Configuration value 'eprweb_eprdat_dotnet_db_connection' is missing.",
+            "Configuration value 'eprweb_eprapi_dotnet_db_connection' is missing.",
             exception.Message);
     }
 

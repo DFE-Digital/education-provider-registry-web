@@ -114,7 +114,7 @@ internal sealed class GroupDetailsPageViewModelMapper : IMapper<GroupReadModel, 
             TableCell name = new()
             {
                 Text = establishment.Name,
-                Href = EstablishmentRoutes.EstablishmentDetails(urn: establishment.Urn).ToString()
+                Href = EstablishmentRoutes.Details(urn: establishment.Urn).ToString()
             };
 
             TableCell urn = new()

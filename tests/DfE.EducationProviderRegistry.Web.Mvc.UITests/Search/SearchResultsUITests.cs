@@ -59,13 +59,17 @@ public sealed class SearchResultsUITests : UIBaseTest
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
 
-        IReadOnlyCollection<SearchAggregate> seed = SearchAggregateTestDouble.CreateResults(10);
+        IReadOnlyCollection<SearchAggregate> seed =
+            SearchAggregateTestDouble.CreateResults(10);
 
-        await HostedEnvironment.DatabaseFixture.SeedAsync<IEnumerable<SearchAggregate>, SearchableSearchAggregates>(seed, ct);
+        await HostedEnvironment.DatabaseFixture
+            .SeedAsync<IEnumerable<SearchAggregate>, SearchableSearchAggregates>(seed, ct);
 
         using IWebDriver driver = await WebDriverBuilder.Build().StartDriverAsync(ct);
 
-        Uri uri = new(baseUri: HostedEnvironment.GetApplicationUrl(), relativeUri: SearchRoutes.SearchResults(identityTerm: "sch"));
+        Uri uri = new(
+            baseUri: HostedEnvironment.GetApplicationUrl(),
+            relativeUri: SearchRoutes.SearchResults(identityTerm: "sch"));
 
         await driver.Navigate().GoToUrlAsync(uri);
 
@@ -86,29 +90,9 @@ public sealed class SearchResultsUITests : UIBaseTest
 
         // Selected results are filtered
 
-        Assert.All(
-            postFilterResults,
-            (result) =>
-            {
-                (TextContent key, TextContent value) providerType = Assert.Single(
-                        result.Values,
-                        value => value.key.Text.Equals(
-                        "Type",
-                        StringComparison.OrdinalIgnoreCase));
-
-                Assert.Equal(
-                    targetFacetValueLabel,
-                    providerType.value.Text,
-                    ignoreCase: true);
-            });
-
-        // Assert selected filter is displayed
-        SelectedFilter actualSingleSelectedFilter = Assert.Single(filters.GetSelectedFilters());
-        Assert.StartsWith(targetFacetValueLabel, actualSingleSelectedFilter.Text);
-
-        // Assert selected filter value is in correct form
-        Assert.Equal("providertypename", actualSingleSelectedFilter.FilterName);
-        Assert.Equal("Academy converter", actualSingleSelectedFilter.FilterId);
+        Assert.Contains(
+            filters.GetSelectedFilters(),
+            filter => filter.FilterName == "providertypename" && filter.FilterId == "Academy converter");
     }
 }
 

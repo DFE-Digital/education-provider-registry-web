@@ -42,10 +42,11 @@ public sealed class ClarityTests
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
 
-        using WebApplicationFactory<Program> factory = new WebApplicationFactory<Program>()
-                    .WithWebHostBuilder((builder) =>
-                        builder.ConfigureServices((services)
-                            => services.WithClarity()));
+        using WebApplicationFactory<Program> factory =
+            new WebApplicationFactory<Program>()
+                .WithWebHostBuilder((builder) =>
+                    builder.ConfigureServices((services)
+                        => services.WithClarity()));
 
         using HttpClient client = factory.CreateClient();
 
@@ -69,7 +70,11 @@ public sealed class ClarityTests
         // Arrange
         CancellationToken ct = TestContext.Current.CancellationToken;
 
-        using WebApplicationFactory<Program> factory = new();
+        using WebApplicationFactory<Program> factory =
+            new WebApplicationFactory<Program>()
+                .WithWebHostBuilder((builder) =>
+                    builder.ConfigureServices((services)
+                        => services.WithClarity()));
 
         CookieContainer cookieContainer = new();
 

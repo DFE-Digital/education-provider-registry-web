@@ -1,11 +1,13 @@
-﻿using DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles.Search;
+﻿using DfE.Document.Abstractions;
+using DfE.Document.Anglesharp;
+using DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles.Search;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Request;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
 using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Search.TestDoubles;
 using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestDoubles;
+using DfE.EducationProviderRegistry.Web.PageComponents.Pages;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
-using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search.Components;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Search;
 
@@ -38,9 +40,12 @@ public sealed class SearchFacetsTests
             await client.SendAsync(message, TestContext.Current.CancellationToken);
 
         // Assert
-        IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
+        IQueryHandler query =
+            new QueryHandler(
+                SearchContext.From(
+                    await response.AssertSuccessfulHtmlResponseAsync()));
 
-        AssertFiltersDisplay(document, responseFacets, selections: null);
+        AssertFiltersDisplay(query, responseFacets, selections: null);
     }
 
     [Fact]
@@ -71,24 +76,27 @@ public sealed class SearchFacetsTests
         using HttpResponseMessage response = await client.SendAsync(message, TestContext.Current.CancellationToken);
 
         // Assert
-        IHtmlDocument document = await response.AssertSuccessfulHtmlResponseAsync();
-
         Dictionary<string, List<string>> expectedSelections = new()
         {
             ["facet1"] = ["value-2"],
             ["facet2"] = ["value-4"]
         };
 
-        AssertFiltersDisplay(document, responseFacets, expectedSelections);
+        IQueryHandler query =
+            new QueryHandler(
+                SearchContext.From(
+                    await response.AssertSuccessfulHtmlResponseAsync()));
+
+        AssertFiltersDisplay(query, responseFacets, expectedSelections);
     }
 
-    private static void AssertFiltersDisplay(IHtmlDocument document, SearchFacets facets, Dictionary<string, List<string>>? selections = null)
+    private static void AssertFiltersDisplay(IQueryHandler context, SearchFacets facets, Dictionary<string, List<string>>? selections = null)
     {
-        SearchFiltersComponent filterComponent = new(document);
+        SearchFiltersComponent filterComponent = new(context);
 
         Dictionary<string, List<string>> facetSelections = selections ?? [];
 
-        List<Filter> filters = filterComponent.GetFilters();
+        List<Filter> filters = filterComponent.GetFacetFilters();
 
         Assert.Equal(facets.Facets.Count, filters.Count);
 

@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Options;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Shared.Filters.Breadcrumbs.Store;
-using DfE.EducationProviderRegistry.Web.SharedTests.Infrastructure.Filters;
+using DfE.EducationProviderRegistry.Web.SharedTests.Features.BreadcrumbsFilters;
 using DfE.EducationProviderRegistry.Web.SharedTests.TestDoubles.Filters;
 using Moq;
 

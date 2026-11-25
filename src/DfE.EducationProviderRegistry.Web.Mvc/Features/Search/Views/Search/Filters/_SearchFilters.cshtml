@@ -1,31 +1,30 @@
-﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels
-@model IEnumerable<FacetViewModel>
+﻿@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Results
+
+@model SearchResultsViewModel
 
 @{
-    var selectedFilters = (Model ?? [])
-        .SelectMany(facet =>
-            facet.Values
-                .Where(value => value.IsSelected)
-                .Select(value => new
-                {
-                    FacetName = facet.Name,
-                    Value = value.Value,
-                    Label = value.Label
-                }))
-        .ToList();
+    List<(IFilterViewModel Filter, SelectedFilterValueViewModel Value)> selectedFilters =
+        Model.Filters
+            .SelectMany(filter =>
+                filter.SelectedValues.Select(selectedValue =>
+                    (
+                        Filter: filter,
+                        Value: selectedValue
+                    )))
+            .ToList();
 }
 
 <div class="moj-filter">
     <div class="moj-filter__content">
         <div class="moj-filter__options">
 
-            @if (selectedFilters.Any())
+            @if (selectedFilters.Count > 0)
             {
                 <div class="moj-filter__selected app-selected-filters">
                     <div class="app-selected-filters__header">
-                        <h1 class="govuk-heading-s">
+                        <h2 class="govuk-heading-s">
                             Selected filters
-                        </h1>
+                        </h2>
 
                         <button type="submit"
                                 name="ClearFilters"
@@ -36,20 +35,27 @@
                     </div>
 
                     <ul class="app-selected-filters__list">
-                        @foreach (var filter in selectedFilters)
+                        @foreach ((IFilterViewModel filter, SelectedFilterValueViewModel selectedValue) in selectedFilters)
                         {
+                            string removeValue =
+                                selectedValue.Value is null
+                                    ? $"{filter.Name}|filter"
+                                    : $"{filter.Name}|{selectedValue.Value}";
+
                             <li>
                                 <button type="submit"
                                         class="app-selected-filter"
                                         name="RemoveFilter"
-                                        value="@($"{filter.FacetName}|{filter.Value}")">
+                                        value="@removeValue">
 
-                                    @filter.Label
+                                    @selectedValue.Label
 
-                                    <span aria-hidden="true">&times;</span>
+                                    <span aria-hidden="true">
+                                        &times;
+                                    </span>
 
                                     <span class="govuk-visually-hidden">
-                                        Remove @filter.Label filter
+                                        Remove @selectedValue.Label filter
                                     </span>
                                 </button>
                             </li>
@@ -58,31 +64,56 @@
                 </div>
             }
 
-            @foreach (var facet in Model ?? [])
+            @foreach (IFilterViewModel filter in Model.Filters ?? [])
             {
-                <details class="govuk-details filter-section">
+                string filterPrefix = $"Filters[{filter.Name}]";
+
+                bool hasError =
+                    ViewData.ModelState.Any((entry) =>
+                        entry.Key.StartsWith(filterPrefix, StringComparison.OrdinalIgnoreCase) &&
+                            entry.Value?.Errors.Count > 0);
+
+                <details class="govuk-details filter-section" open="@hasError">
                     <summary class="govuk-details__summary">
                         <span class="govuk-details__summary-text">
-                            @facet.Label
+                            @filter.Label
                         </span>
                     </summary>
 
                     <div class="govuk-details__text">
-                        @if (facet.Name == "LocalAuthority")
+                        @switch (filter)
                         {
-                            @await Html.PartialAsync(
-                                "_AutocompleteFilter",
-                                facet)
-                        }
-                        else
-                        {
-                            @await Html.PartialAsync(
-                                "_FiltersCheckboxComponent",
-                                facet)
+                            case CheckboxFilterViewModel checkbox:
+                                @await Html.PartialAsync(
+                                    "_FiltersCheckboxComponent",
+                                    checkbox)
+                                break;
+
+                            case AutocompleteFilterViewModel autocomplete:
+                                @await Html.PartialAsync(
+                                    "_AutocompleteFilter",
+                                    autocomplete)
+                                break;
+
+                            case DateRangeFilterViewModel dateRange:
+                                @await Html.PartialAsync(
+                                    "_DateRangeFilter",
+                                    dateRange)
+                                break;
+
+                            case NumberRangeFilterViewModel numberRange:
+                                @await Html.PartialAsync(
+                                    "_NumberRangeFilter",
+                                    numberRange)
+                                break;
+
+                            default:
+                                continue;
                         }
                     </div>
                 </details>
             }
+
             <button type="submit"
                     class="govuk-button"
                     data-module="govuk-button">

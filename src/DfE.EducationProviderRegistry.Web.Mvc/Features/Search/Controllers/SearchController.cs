@@ -7,7 +7,8 @@ using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Reque
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Mappers;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Services;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Request;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Results;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Controllers;
@@ -17,23 +18,23 @@ public sealed class SearchController : Controller
 {
     private readonly IUseCase<SearchRequest, UseCaseResponse<SearchResponse>> _searchUseCase;
     private readonly IMapper<SearchResultsMappingContext, SearchResultsViewModel> _searchResponseToViewModelMapper;
-    private readonly IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>> _selectedFacetsToFilterRequestsMapper;
+    private readonly IMapper<SearchRequestViewModel, ReadOnlyCollection<FilterRequest>> _selectedFiltersToFiltersRequestsMapper;
     private readonly ISearchFilterSelectionHandler _searchFilterSelectionHandler;
 
     public SearchController(
         IUseCase<SearchRequest, UseCaseResponse<SearchResponse>> searchUseCase,
         IMapper<SearchResultsMappingContext, SearchResultsViewModel> searchResponseToViewModelMapper,
-        IMapper<Dictionary<string, List<string>>?, ReadOnlyCollection<FilterRequest>> selectedFacetsToFilterRequestsMapper,
+        IMapper<SearchRequestViewModel, ReadOnlyCollection<FilterRequest>> selectedFiltersToFiltersRequestsMapper,
         ISearchFilterSelectionHandler searchFilterSelectionHandler)
     {
         ArgumentNullException.ThrowIfNull(searchUseCase);
         ArgumentNullException.ThrowIfNull(searchResponseToViewModelMapper);
-        ArgumentNullException.ThrowIfNull(selectedFacetsToFilterRequestsMapper);
+        ArgumentNullException.ThrowIfNull(selectedFiltersToFiltersRequestsMapper);
         ArgumentNullException.ThrowIfNull(searchFilterSelectionHandler);
 
         _searchUseCase = searchUseCase;
         _searchResponseToViewModelMapper = searchResponseToViewModelMapper;
-        _selectedFacetsToFilterRequestsMapper = selectedFacetsToFilterRequestsMapper;
+        _selectedFiltersToFiltersRequestsMapper = selectedFiltersToFiltersRequestsMapper;
         _searchFilterSelectionHandler = searchFilterSelectionHandler;
     }
 
@@ -44,12 +45,22 @@ public sealed class SearchController : Controller
     }
 
     [HttpGet("results")]
-    public async Task<IActionResult> Search(
-        SearchRequestViewModel model)
+    public async Task<IActionResult> Search(SearchRequestViewModel model)
     {
+        // TODO should fall onto mapper ... tidy so it uses the normal results composition path
+        // compose Results through the same Web presentation path
+        // without executing the search?
         if (!ModelState.IsValid)
         {
-            return View("Index", model);
+            return View("Results", new SearchResultsViewModel()
+            {
+                SearchRequest = model,
+                PrimarySearchTerms = model.What,
+                SecondarySearchTerms = model.What,
+                SelectedSortDirection = model.Sort,
+                TotalSearchResults = 0,
+                SearchAggregateResults = []
+            });
         }
 
         string sortDirection = model.Sort switch
@@ -69,8 +80,7 @@ public sealed class SearchController : Controller
         _searchFilterSelectionHandler.Handle(model);
 
         ReadOnlyCollection<FilterRequest> searchFilterRequests =
-            _selectedFacetsToFilterRequestsMapper.Map(
-                model.SelectedFacets);
+            _selectedFiltersToFiltersRequestsMapper.Map(model);
 
         SearchRequest searchRequest = new(
             searchTerms: [
@@ -83,8 +93,7 @@ public sealed class SearchController : Controller
             model.RecordsPerPage);
 
         UseCaseResponse<SearchResponse> searchResponse =
-            await _searchUseCase.HandleRequestAsync(
-                searchRequest);
+            await _searchUseCase.HandleRequestAsync(searchRequest);
 
         SearchResultsViewModel updatedModel =
             _searchResponseToViewModelMapper.Map(
@@ -93,6 +102,8 @@ public sealed class SearchController : Controller
                     searchResponse));
 
         ModelState.Clear();
+
+        FilterValidationErrors.Apply(ModelState, searchResponse.Model.ValidationErrors);
 
         return View("Results", updatedModel);
     }

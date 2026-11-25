@@ -1,5 +1,5 @@
 ﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.Services;
-using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Request;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.Controllers;
 

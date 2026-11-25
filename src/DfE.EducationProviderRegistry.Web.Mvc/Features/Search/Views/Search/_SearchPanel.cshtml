@@ -1,5 +1,5 @@
 ﻿@using DfE.EducationProviderRegistry.Web.Mvc.Extensions
-@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels
+@using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Request
 
 @model SearchRequestViewModel
 
@@ -46,6 +46,16 @@
                     <input asp-for="Where"
                            class="govuk-input @(hasAddressError ? "govuk-input--error" : "")"
                            aria-describedby="Address-hint" />
+                </div>
+            </div>
+        </div>
+        <div class="govuk-grid-row">
+            <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                <div class="govuk-checkboxes__item">
+                    <input class="govuk-checkboxes__input" id="includeClosedProviders" name="includeClosedProviders" type="checkbox" value="true" @(Model.IncludeClosedProviders ? "checked" : "")>
+                    <label class="govuk-label govuk-checkboxes__label" for="includeClosedProviders">
+                        Include closed education providers
+                    </label>
                 </div>
             </div>
         </div>

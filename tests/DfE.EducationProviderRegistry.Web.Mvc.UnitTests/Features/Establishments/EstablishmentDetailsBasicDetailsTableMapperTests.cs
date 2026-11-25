@@ -1,4 +1,5 @@
-﻿using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.Model;
+﻿using DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles.EstablishmentDetails;
+using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.Model;
 using DfE.EducationProviderRegistry.Core.Query.Test.Database.Data.Establishments;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments.Mappers;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
@@ -36,43 +37,233 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
     }
 
     [Fact]
-    public void Map_Should_Map_Empty_Status_When_Status_Is_Null()
+    public void Map_Should_Omit_Status_When_Status_Is_Null()
     {
-        // Arrange
         EstablishmentDetailsModel model =
             EstablishmentDetailsBuilder.Create()
                 .WithStatus(null!)
                 .Build();
 
-        // Act
         GovUkTable result = Mapper.Map(model);
 
-        // Assert
+        Assert.Null(
+            result.Rows.SingleOrDefault(
+                row => row.Cells[0].Text == "Status"));
+    }
+
+    [Fact]
+    public void Map_Should_Map_Open_Status_With_Opened_Date()
+    {
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .WithStatus(EstablishmentStatus.Open)
+                .WithOpenedDate(new DateOnly(2024, 1, 15))
+                .Build();
+
+        GovUkTable result = Mapper.Map(model);
+
         AssertValue(
             result,
             "Status",
-            string.Empty);
+            "Open on 15 January 2024");
+    }
+
+    [Fact]
+    public void Map_Should_Map_Proposed_To_Open_Status_With_Opened_Date()
+    {
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .WithStatus(EstablishmentStatus.ProposedToOpen)
+                .WithOpenedDate(new DateOnly(2024, 2, 1))
+                .Build();
+
+        GovUkTable result = Mapper.Map(model);
+
+        AssertValue(
+            result,
+            "Status",
+            "Proposed to open on 01 February 2024");
+    }
+
+    [Fact]
+    public void Map_Should_Map_Closed_Status_With_Closed_Date()
+    {
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .WithStatus(EstablishmentStatus.Closed)
+                .WithClosedDate(new DateOnly(2024, 3, 10))
+                .Build();
+
+        GovUkTable result = Mapper.Map(model);
+
+        AssertValue(
+            result,
+            "Status",
+            "Closed on 10 March 2024");
+    }
+
+    [Fact]
+    public void Map_Should_Map_Open_But_Proposed_To_Close_Status_With_Closed_Date()
+    {
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .WithStatus(EstablishmentStatus.OpenButProposedToClose)
+                .WithClosedDate(new DateOnly(2024, 4, 5))
+                .Build();
+
+        GovUkTable result = Mapper.Map(model);
+
+        AssertValue(
+            result,
+            "Status",
+            "Open but proposed to close on 05 April 2024");
+    }
+
+    [Fact]
+    public void Map_Should_Omit_Sen_Provision_When_Null()
+    {
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .WithSenProvision(null)
+                .Build();
+
+        GovUkTable result = Mapper.Map(model);
+
+        Assert.Null(
+            result.Rows.SingleOrDefault(
+                row => row.Cells[0].Text == "Type of SEN provision"));
+    }
+
+    [Fact]
+    public void Map_Should_Omit_Ofsted_When_Not_Eligible()
+    {
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .Build();
+
+        GovUkTable result = Mapper.Map(model);
+
+        Assert.Null(
+            result.Rows.SingleOrDefault(
+                row => row.Cells[0].Text == "Ofsted"));
+    }
+
+    [Fact]
+    public void Map_Should_Map_Ofsted_Link()
+    {
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .WithStatus(EstablishmentStatus.Open)
+                .WithOpenedDate(new DateOnly(2024, 1, 1))
+                .WithType("Academy")
+                .WithUrn(123456)
+                .Build();
+
+        GovUkTable result = Mapper.Map(model);
+
+        TableCell ofstedCell =
+            GetValueCell(result, "Ofsted");
+
+        Assert.Equal(
+            "View Ofsted report",
+            ofstedCell.Text);
+
+        Assert.Equal(
+            "https://www.ofsted.gov.uk/oxedu_providers/full/(urn)/123456",
+            ofstedCell.Href);
+
+        Assert.True(ofstedCell.OpenInNewTab);
+    }
+
+    [Fact]
+    public void Map_Should_Map_Number_Of_Pupils()
+    {
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .WithPupilGirlCount(1)
+                .WithPupilBoyCount(1)
+                .WithPupilCount(2)
+                .Build();
+
+        GovUkTable result = Mapper.Map(model);
+
+        AssertValue(
+            result,
+            "Number of pupils",
+            "2 (1 boys, 1 girls)");
+    }
+
+    [Fact]
+    public void Map_Should_Map_Free_School_Meals()
+    {
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .WithFreeSchoolMealsNumber(50)
+                .WithFreeSchoolMealsPercentage(25)
+                .Build();
+
+        GovUkTable result = Mapper.Map(model);
+
+        AssertValue(
+            result,
+            "Pupils eligible for free school meals",
+            "50 (25%)");
     }
 
     [Theory]
-    [InlineData(EstablishmentStatus.Open, "Open")]
-    [InlineData(EstablishmentStatus.Closed, "Closed")]
-    [InlineData(EstablishmentStatus.OpenButProposedToClose, "Open but proposed to close")]
-    [InlineData(EstablishmentStatus.ProposedToOpen, "Proposed to open")]
-    public void Map_Should_Map_Open_Status(EstablishmentStatus status, string expectedLabel)
+    [InlineData("None")]
+    [InlineData("Does not apply")]
+    public void Map_Should_Omit_Religious_Character_When_Excluded(
+    string value)
     {
-        // Arrange
         EstablishmentDetailsModel model =
             EstablishmentDetailsBuilder.Create()
-                .WithStatus(status)
+                .WithReligiousCharacter(value)
                 .Build();
 
-        // Act
         GovUkTable result = Mapper.Map(model);
 
-        // Assert
-        AssertValue(result, "Status", expectedLabel);
+        Assert.Null(
+            result.Rows.SingleOrDefault(
+                row => row.Cells[0].Text == "Religious character"));
     }
+
+    [Fact]
+    public void Map_Should_Omit_Diocese_When_Not_Applicable()
+    {
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .WithDiocese("Not applicable")
+                .Build();
+
+        GovUkTable result = Mapper.Map(model);
+
+        Assert.Null(
+            result.Rows.SingleOrDefault(
+                row => row.Cells[0].Text == "Diocese"));
+    }
+
+    [Fact]
+    public void Map_Should_Omit_Ofsted_For_Other_Independent_School()
+    {
+        EstablishmentDetailsModel model =
+            EstablishmentDetailsBuilder.Create()
+                .WithStatus(EstablishmentStatus.Open)
+                .WithType("Other independent school")
+                .Build();
+
+        GovUkTable result = Mapper.Map(model);
+
+        Assert.Null(
+            result.Rows.SingleOrDefault(
+                row => row.Cells[0].Text == "Ofsted"));
+    }
+
+
+
+
+
+
 
     [Fact]
     public void Map_Should_Map_LocalAuthority()
@@ -206,54 +397,6 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
     }
 
     [Fact]
-    public void Map_Should_Map_Empty_Ofsted_When_Not_Present()
-    {
-        // Arrange
-        EstablishmentDetailsModel model =
-            EstablishmentDetailsBuilder.Create()
-                .Build();
-
-        // Act
-        GovUkTable result = Mapper.Map(model);
-
-        // Assert
-        TableCell ofstedCell =
-            GetValueCell(result, "Ofsted");
-
-        Assert.Equal(string.Empty, ofstedCell.Text);
-        Assert.Equal(string.Empty, ofstedCell.Href);
-        Assert.True(ofstedCell.OpenInNewTab);
-    }
-
-    [Fact]
-    public void Map_Should_Map_Ofsted_Link()
-    {
-        // Arrange
-        EstablishmentDetailsModel model =
-            EstablishmentDetailsBuilder.Create()
-                .WithOfstedDate(new DateOnly(2024, 5, 31))
-                .WithOfstedReportUrl("https://ofsted.example.com")
-                .Build();
-
-        // Act
-        GovUkTable result = Mapper.Map(model);
-
-        // Assert
-        TableCell ofstedCell =
-            GetValueCell(result, "Ofsted");
-
-        Assert.Equal(
-            "Latest report 31 May 2024 (opens in new tab)",
-            ofstedCell.Text);
-
-        Assert.Equal(
-            "https://ofsted.example.com",
-            ofstedCell.Href);
-
-        Assert.True(ofstedCell.OpenInNewTab);
-    }
-
-    [Fact]
     public void Map_Should_Omit_Headteacher_When_Not_Present()
     {
         // Arrange
@@ -307,25 +450,6 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
         Assert.Null(
             result.Rows.SingleOrDefault(
                 row => row.Cells[0].Text == "Telephone number"));
-    }
-
-    [Fact]
-    public void Map_Should_Map_NotRecorded_When_SenProvision_Is_Null()
-    {
-        // Arrange
-        EstablishmentDetailsModel model =
-            EstablishmentDetailsBuilder.Create()
-                .WithSenProvision(null)
-                .Build();
-
-        // Act
-        GovUkTable result = Mapper.Map(model);
-
-        // Assert
-        AssertValue(
-            result,
-            "Type of SEN provision",
-            "Not recorded");
     }
 
     [Fact]
@@ -424,25 +548,6 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
     }
 
     [Fact]
-    public void Map_Should_Map_Number_Of_Pupils()
-    {
-        // Arrange
-        EstablishmentDetailsModel model =
-            EstablishmentDetailsBuilder.Create()
-                .WithPupilCount(123)
-                .Build();
-
-        // Act
-        GovUkTable result = Mapper.Map(model);
-
-        // Assert
-        AssertValue(
-            result,
-            "Number of pupils",
-            "123");
-    }
-
-    [Fact]
     public void Map_Should_Map_Religious_Character()
     {
         // Arrange
@@ -476,7 +581,7 @@ public sealed class EstablishmentDetailsBasicDetailsTableMapperTests
         // Assert
         AssertValue(
             result,
-            "Type of SEN provision",
+            "Resourced provision",
             "SEN Unit");
     }
 

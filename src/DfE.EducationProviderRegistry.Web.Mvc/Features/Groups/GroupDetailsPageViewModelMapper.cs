@@ -1,8 +1,7 @@
 ﻿using DfE.Core.Libraries.CrossCutting.Mapper;
-using DfE.EducationProviderRegistry.Core.Query.Groups.Application.Model;
-using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupByUid;
-using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupByUid.Mappers;
-using DfE.EducationProviderRegistry.Web.ViewComponents.SummaryList;
+using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupByUid.Response;
+using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments;
+using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
@@ -15,106 +14,128 @@ internal sealed class GroupDetailsPageViewModelMapper : IMapper<GroupReadModel, 
         {
             Heading = readModel.Name,
             Details = CreateBasicDetails(readModel),
-            Academies = CreateAcademies(readModel),
+            Establishments = CreateAcademies(readModel),
             Governance = CreateGovernance(readModel)
         };
     }
 
     private static GroupDetailsTabViewModel CreateBasicDetails(GroupReadModel model)
     {
-        List<SummaryListRow> values = [];
+        GovUkTableBuilder builder = GovUkTableBuilder
+            .Create()
+            .WithColumns(
+                new TableColumn { IsRowHeader = true },
+                new TableColumn());
 
-        values.AddRange(
-            new SummaryListRow(
-                "UID",
-                new SummaryListValue(text: model.GroupUID.ToString())),
-            new SummaryListRow(
-                "Group ID",
-                new SummaryListValue(text: model.GroupId)));
+        builder.AddRow(
+            new TableCell() { Text = "ID Numbers" },
+            new TableCell() { Rows = MapIdentifiers(model) });
 
-        if (!string.IsNullOrWhiteSpace(model.UKPRN))
-        {
-            values.Add(
-                new SummaryListRow(
-                    "UKPRN",
-                    new SummaryListValue(text: model.UKPRN)));
-        }
-
-        if (!string.IsNullOrWhiteSpace(model.CompaniesHouseId))
-        {
-            values.Add(
-                new SummaryListRow(
-                    "Company number",
-                    new SummaryListValue(text: $"{model.CompaniesHouseId} (opens in new tab)", href: $"https://find-and-update.company-information.service.gov.uk/company/{model.CompaniesHouseId}")));
-        }
-
-        if (!string.IsNullOrWhiteSpace(model.Status))
-        {
-            values.Add(
-                new SummaryListRow(
-                    "Status",
-                    new SummaryListValue(text: model.Status)));
-        }
-
-        if (!string.IsNullOrWhiteSpace(model.Address))
-        {
-            values.Add(
-                new SummaryListRow(
-                    "Address",
-                    new SummaryListValue(text: model.Address)));
-        }
-
-        if (!string.IsNullOrWhiteSpace(model.Type))
-        {
-            values.Add(
-                new SummaryListRow(
-                    "Type",
-                    new SummaryListValue(model.Type)));
-        }
-
-        GovUkSummaryList details = new(rows: values);
+        AddRow(builder, "Status", model.Status);
+        AddRow(builder, "Address", model.Address);
+        AddRow(builder, "Education group type", model.TypeName);
 
         return new()
         {
             Tab = "Details",
-            Summary = details
+            Table = builder.Build()
         };
     }
 
-    private static GroupDetailsAcademyTabViewModel CreateAcademies(GroupReadModel model)
+    private static void AddRow(GovUkTableBuilder builder, string label, string? value)
     {
-        TableColumn[] columns = [
+        if (string.IsNullOrWhiteSpace(value))
+            return;
+
+        builder.AddRow(
+            new TableCell { Text = label },
+            new TableCell { Text = value.Trim() });
+    }
+
+    private static List<TableCellRow> MapIdentifiers(GroupReadModel model)
+    {
+        (string Label, string? value, string? Href)[] values =
+        [
+            ("Group Id", model.GroupId, null),
+            ("UID", model.GroupUID.ToString(), null),
+            ("UKPRN" , model.UKPRN, null),
+            ("Company number", model.CompaniesHouseId, $"https://find-and-update.company-information.service.gov.uk/company/{model.CompaniesHouseId}")
+        ];
+
+        List<TableCellRow> rows = [];
+
+        foreach ((string identifier, string? label, string? href) in values)
+        {
+            if (!string.IsNullOrWhiteSpace(label))
+            {
+                rows.Add(new TableCellRow
+                {
+                    Label = new TableCell { Text = label, Href = href, OpenInNewTab = true },
+                    Value = new TableCell { Text = identifier }
+                });
+            }
+        }
+
+        return rows;
+    }
+
+    private static GroupDetailsEstablishmentTabViewModel CreateAcademies(GroupReadModel model)
+    {
+
+        TableColumn[] columns =
+        [
             new() { Text = "Name", IsRowHeader = true },
             new() { Text = "URN" }
         ];
 
+        string establishmentLabelForGroupType = model.TypeCode switch
+        {
+            GroupTypeCodes.Federation => "Providers",
+            GroupTypeCodes.ChildrensCentresGroup or GroupTypeCodes.ChildrensCentresCollaboration => "Centres",
+            _ => "Academies"
+        };
+
+        string tabLabel = $"{establishmentLabelForGroupType} ({model.Establishments.Count})";
+
+        if (model.Establishments.Count == 0)
+        {
+            return new()
+            {
+                Tab = tabLabel,
+                Table = null,
+                NoEstablishmentsMessage = "No centres are currently recorded for this group."
+            };
+        }
+
         List<TableRow> rows = [];
 
-        foreach (Academy academy in model.Academies)
+        foreach (EstablishmentReadModel establishment in model.Establishments)
         {
             TableCell name = new()
             {
-                Text = academy.Name.ToString(),
-                Href = $"/establishments/{academy.Id.Value}"
+                Text = establishment.Name,
+                Href = EstablishmentRoutes.EstablishmentDetails(urn: establishment.Urn).ToString()
             };
 
             TableCell urn = new()
             {
-                Text = academy.Id.Value
+                Text = establishment.Urn
             };
 
-            rows.Add(new TableRow { Cells = [name, urn] });
+            rows.Add(
+                new TableRow
+                {
+                    Cells = [name, urn]
+                });
         }
-
-        GovUkTable academiesTable = new(
-            columns: columns,
-            rows: rows,
-            caption: "Academies");
 
         return new()
         {
-            Tab = $"Academies ({model.Academies.Count})",
-            Table = academiesTable
+            Tab = tabLabel,
+            Table = new GovUkTable(
+                columns: columns,
+                rows: rows,
+                caption: establishmentLabelForGroupType)
         };
     }
 

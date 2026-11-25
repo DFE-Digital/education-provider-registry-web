@@ -26,7 +26,7 @@ public sealed class UseCaseResponseToViewModelMapperTests
         // arrange
         byte[] fileBytes = [];
 
-        Dataset dataset =
+        DatasetFile dataset =
             new(
                 Filename: null!,
                 DataType: "All Establishments",
@@ -51,7 +51,7 @@ public sealed class UseCaseResponseToViewModelMapperTests
         // arrange
         byte[] fileBytes = [];
 
-        Dataset dataset =
+        DatasetFile dataset =
             new(
                 Filename: "test-dataset",
                 DataType: null!,
@@ -76,7 +76,7 @@ public sealed class UseCaseResponseToViewModelMapperTests
         // arrange
         byte[] fileBytes = [];
 
-        Dataset dataset =
+        DatasetFile dataset =
             new(
                 Filename: "test-dataset",
                 DataType: "All Establishments",
@@ -101,7 +101,7 @@ public sealed class UseCaseResponseToViewModelMapperTests
         // arrange
         byte[] fileBytes = [1, 2, 3];
 
-        Dataset dataset =
+        DatasetFile dataset =
             new(
                 Filename: "test-dataset",
                 DataType: "All Establishments",

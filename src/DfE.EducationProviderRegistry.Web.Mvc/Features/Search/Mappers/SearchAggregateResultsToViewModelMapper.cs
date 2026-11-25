@@ -88,7 +88,6 @@ public sealed class SearchAggregateCategoryEstablishmentMapper : ISearchAggregat
                     Href = $"/groups/{input.Group.Uid}"
                 });
         }
-        ;
 
         return builder.Build();
     }
@@ -111,24 +110,27 @@ public sealed class SearchAggregateCategoryGroupMapper : ISearchAggregateCategor
             .Create()
             .WithCaption(
                 input.Name.Value,
-                $"/groups/{input.UniqueIdentifier.Value}")
+                link: input.Group?.Uid is null ? null : $"/groups/{input.Group.Uid}")
             .WithColumns(columns);
 
         builder.AddRow(
-            new TableCell { Text = "Group ID" },
-            new TableCell { Text = input.UniqueIdentifier.Value });
+            new TableCell { Text = "UID" },
+            new TableCell { Text = input.Group?.Uid });
 
-        builder.AddRow(
-            new TableCell { Text = "Type" },
-            new TableCell { Text = input.Type?.Name });
-
-        builder.AddRow(
-            new TableCell { Text = "Address" },
-            new TableCell { Text = input.Address?.FullAddress });
+        if (input.Address is not null)
+        {
+            builder.AddRow(
+                new TableCell { Text = "Address" },
+                new TableCell { Text = input.Address.FullAddress });
+        }
 
         builder.AddRow(
            new TableCell { Text = "Academies" },
            new TableCell { Text = $"{input.AcademyCount}" });
+
+        builder.AddRow(
+           new TableCell { Text = "Education group type" },
+           new TableCell { Text = $"{input.Type?.Name}" });
 
         return builder.Build();
     }

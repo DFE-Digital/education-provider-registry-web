@@ -1,11 +1,13 @@
 ﻿using DfE.Core.Libraries.CleanArchitecture.Application;
+using DfE.Document.Abstractions;
+using DfE.Document.Anglesharp;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.Models.Search;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Request;
 using DfE.EducationProviderRegistry.Core.Query.Search.Application.UseCases.Response;
 using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Search.TestDoubles;
-using DfE.EducationProviderRegistry.Web.SharedTests.Features.PageComponents;
+using DfE.EducationProviderRegistry.Web.PageComponents;
+using DfE.EducationProviderRegistry.Web.PageComponents.Pages;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search;
-using DfE.EducationProviderRegistry.Web.SharedTests.Features.Search.Components;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Search;
 
@@ -36,7 +38,9 @@ public sealed class SearchResultsTests
 
         // Assert
         using IHtmlDocument responseDocument = await response.AssertSuccessfulHtmlResponseAsync();
-        SearchResultsComponent results = new(responseDocument);
+        IQueryHandler query = new QueryHandler(SearchContext.From(responseDocument));
+
+        SearchResultsComponent results = new(query);
 
         string resultsHeading = results.GetHeading();
         Assert.StartsWith("Search results for ", resultsHeading);
@@ -71,7 +75,9 @@ public sealed class SearchResultsTests
 
         // Assert
         using IHtmlDocument doc = await response.AssertSuccessfulHtmlResponseAsync();
-        SearchResultsComponent results = new(doc);
+        IQueryHandler query = new QueryHandler(SearchContext.From(doc));
+
+        SearchResultsComponent results = new(query);
         string resultsHeading = results.GetHeading();
 
         Assert.StartsWith($"Search results for ", resultsHeading);
@@ -105,7 +111,8 @@ public sealed class SearchResultsTests
 
         // Assert
         using IHtmlDocument doc = await response.AssertSuccessfulHtmlResponseAsync();
-        SearchResultsComponent results = new(doc);
+        IQueryHandler query = new QueryHandler(SearchContext.From(doc));
+        SearchResultsComponent results = new(query);
 
         string resultsHeading = results.GetHeading();
         Assert.StartsWith($"Search results for ", resultsHeading);
@@ -168,8 +175,8 @@ public sealed class SearchResultsTests
         };
 
         List<(TextContent, TextContent)> results = [
-            (new TextContent(){ Text = "Group ID" }, new TextContent(){ Text = response.UniqueIdentifier.Value }),
-            (new TextContent(){ Text = "Type" }, new TextContent(){ Text = response.Type!.Name! }),
+            (new TextContent(){ Text = "UID" }, new TextContent(){ Text = response.UniqueIdentifier.Value }),
+            (new TextContent(){ Text = "Education group type" }, new TextContent(){ Text = response.Type!.Name! }),
             (new TextContent(){ Text = "Address" }, new TextContent(){ Text = response.Address!.FullAddress }),
             (new TextContent(){ Text = "Academies" }, new TextContent(){ Text = response.AcademyCount.ToString() })
         ];

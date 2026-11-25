@@ -8,7 +8,7 @@ internal static class DatabaseServiceCollectionExtensions
 {
     public static IServiceCollection AddPostgresDatabase(this IServiceCollection services, IConfiguration configuration)
     {
-        const string ConnectionStringKey = "eprweb_eprdat_dotnet_db_connection";
+        const string ConnectionStringKey = "eprweb_dotnet_db_connection";
 
         string connectionString =
             configuration[ConnectionStringKey] ??

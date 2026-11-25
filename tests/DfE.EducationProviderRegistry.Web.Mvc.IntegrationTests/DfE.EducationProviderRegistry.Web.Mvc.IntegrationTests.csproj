@@ -24,6 +24,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\DfE.EducationProviderRegistry.Web.Mvc\DfE.EducationProviderRegistry.Web.Mvc.csproj" />
+    <ProjectReference Include="..\DfE.Document.Anglesharp\DfE.Document.Anglesharp.csproj" />
+    <ProjectReference Include="..\DfE.EducationProviderRegistry.Web.PageComponents\DfE.EducationProviderRegistry.Web.PageComponents.csproj" />
     <ProjectReference Include="..\DfE.EducationProviderRegistry.Web.SharedTests\DfE.EducationProviderRegistry.Web.SharedTests.csproj" />
   </ItemGroup>
 

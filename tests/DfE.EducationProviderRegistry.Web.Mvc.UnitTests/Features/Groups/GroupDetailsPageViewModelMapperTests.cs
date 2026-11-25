@@ -2,9 +2,9 @@
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.Model;
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupByUid;
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupByUid.Mappers;
+using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupByUid.Response;
 using DfE.EducationProviderRegistry.Core.Query.Shared;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
-using DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Groups.TestDoubles;
 using DfE.EducationProviderRegistry.Web.ViewComponents.SummaryList;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
 using GroupReadModelTestDoubles = DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles.GroupDetails.GroupReadModelTestDoubles;
@@ -29,6 +29,8 @@ public sealed class GroupDetailsPageViewModelMapperTests
               .WithName("Test Group")
               .WithGroupId("group-1")
               .WithGroupUid(123L)
+              .WithCompaniesHouseId("123456789")
+              .WithUkprn("12345678")
               .Build();
 
         // Act
@@ -38,11 +40,12 @@ public sealed class GroupDetailsPageViewModelMapperTests
         Assert.Equal("Test Group", result.Heading);
         Assert.Equal("Details", result.Details.Tab);
 
-        GovUkSummaryList summary =
-            Assert.IsType<GovUkSummaryList>(result.Details.Summary);
-
-        AssertSummaryRow(summary.Rows[0], "UID", "123");
-        AssertSummaryRow(summary.Rows[1], "Group ID", "group-1");
+        Assert.Collection(
+            GetDetailsValue(result, "ID Numbers").Rows,
+            row => Assert.Equal(("group-1", "Group Id"), (row.Label.Text, row.Value.Text)),
+            row => Assert.Equal(("123", "UID"), (row.Label.Text, row.Value.Text)),
+            row => Assert.Equal(("12345678", "UKPRN"), (row.Label.Text, row.Value.Text)),
+            row => Assert.Equal(("123456789", "Company number"), (row.Label.Text, row.Value.Text)));
     }
 
     [Theory]
@@ -62,10 +65,9 @@ public sealed class GroupDetailsPageViewModelMapperTests
         GroupDetailsPageViewModel result = _mapper.Map(model);
 
         // Assert
-        GovUkSummaryList summary =
-            Assert.IsType<GovUkSummaryList>(result.Details.Summary);
-
-        Assert.Null(summary.Rows.SingleOrDefault((row) => row.Key == "UKPRN"));
+        Assert.Null(
+            GetDetailsValue(result, "ID Numbers").Rows
+                .SingleOrDefault(row => row.Value.Text == "UKPRN"));
     }
 
     [Fact]
@@ -81,13 +83,11 @@ public sealed class GroupDetailsPageViewModelMapperTests
         GroupDetailsPageViewModel result = _mapper.Map(model);
 
         // Assert
-        GovUkSummaryList summary =
-            Assert.IsType<GovUkSummaryList>(result.Details.Summary);
-
-        SummaryListRow row = Assert.Single(summary.Rows, (row) => row.Key == "UKPRN");
-        Assert.Equal("testUkprn", row.Value.Text);
-        Assert.Null(row.Value.Href);
-        Assert.Empty(row.Actions);
+        TableCellRow identifer = Assert.Single(
+            GetDetailsValue(result, "ID Numbers").Rows,
+            row => row.Value.Text == "UKPRN");
+        Assert.Equal("testUkprn", identifer.Label.Text);
+        Assert.Null(identifer.Label.Href);
     }
 
     [Theory]
@@ -107,10 +107,9 @@ public sealed class GroupDetailsPageViewModelMapperTests
         GroupDetailsPageViewModel result = _mapper.Map(model);
 
         // Assert
-        GovUkSummaryList summary =
-            Assert.IsType<GovUkSummaryList>(result.Details.Summary);
-
-        Assert.Null(summary.Rows.SingleOrDefault((row) => row.Key == "Company number"));
+        Assert.Null(
+            GetDetailsValue(result, "ID Numbers").Rows
+                .SingleOrDefault(row => row.Value.Text == "Company number"));
     }
 
     [Fact]
@@ -126,13 +125,13 @@ public sealed class GroupDetailsPageViewModelMapperTests
         GroupDetailsPageViewModel result = _mapper.Map(model);
 
         // Assert
-        GovUkSummaryList summary =
-            Assert.IsType<GovUkSummaryList>(result.Details.Summary);
-
-        SummaryListRow row = Assert.Single(summary.Rows, (row) => row.Key == "Company number");
-        Assert.Equal("testCompaniesHouseId (opens in new tab)", row.Value.Text);
-        Assert.Equal("https://find-and-update.company-information.service.gov.uk/company/testCompaniesHouseId", row.Value.Href);
-        Assert.Empty(row.Actions);
+        TableCellRow identifer = Assert.Single(
+           GetDetailsValue(result, "ID Numbers").Rows,
+           row => row.Value.Text == "Company number");
+        Assert.Equal("testCompaniesHouseId", identifer.Label.Text);
+        Assert.Equal("https://find-and-update.company-information.service.gov.uk/company/testCompaniesHouseId", identifer.Label.Href);
+        Assert.True(identifer.Label.OpenInNewTab);
+        Assert.Null(identifer.Value.Href);
     }
 
     [Theory]
@@ -152,10 +151,8 @@ public sealed class GroupDetailsPageViewModelMapperTests
         GroupDetailsPageViewModel result = _mapper.Map(model);
 
         // Assert
-        GovUkSummaryList summary =
-            Assert.IsType<GovUkSummaryList>(result.Details.Summary);
-
-        Assert.Null(summary.Rows.SingleOrDefault((row) => row.Key == "Status"));
+        GovUkTable table = Assert.IsType<GovUkTable>(result.Details.Table);
+        Assert.Null(table.Rows.SingleOrDefault((row) => row.Cells[0].Text == "Status"));
     }
 
     [Fact]
@@ -171,13 +168,9 @@ public sealed class GroupDetailsPageViewModelMapperTests
         GroupDetailsPageViewModel result = _mapper.Map(model);
 
         // Assert
-        GovUkSummaryList summary =
-            Assert.IsType<GovUkSummaryList>(result.Details.Summary);
-
-        SummaryListRow row = Assert.Single(summary.Rows, (row) => row.Key == "Status");
-        Assert.Equal("testStatus", row.Value.Text);
-        Assert.Null(row.Value.Href);
-        Assert.Empty(row.Actions);
+        TableCell value = GetDetailsValue(result, "Status");
+        Assert.Equal("testStatus", value.Text);
+        Assert.Null(value.Href);
     }
 
     [Theory]
@@ -197,10 +190,8 @@ public sealed class GroupDetailsPageViewModelMapperTests
         GroupDetailsPageViewModel result = _mapper.Map(model);
 
         // Assert
-        GovUkSummaryList summary =
-            Assert.IsType<GovUkSummaryList>(result.Details.Summary);
-
-        Assert.Null(summary.Rows.SingleOrDefault((row) => row.Key == "Address"));
+        GovUkTable table = Assert.IsType<GovUkTable>(result.Details.Table);
+        Assert.Null(table.Rows.SingleOrDefault((row) => row.Cells[0].Text == "Address"));
     }
 
     [Fact]
@@ -216,13 +207,9 @@ public sealed class GroupDetailsPageViewModelMapperTests
         GroupDetailsPageViewModel result = _mapper.Map(model);
 
         // Assert
-        GovUkSummaryList summary =
-            Assert.IsType<GovUkSummaryList>(result.Details.Summary);
-
-        SummaryListRow row = Assert.Single(summary.Rows, (row) => row.Key == "Address");
-        Assert.Equal("testAddress, testVille, TE5 1ST", row.Value.Text);
-        Assert.Null(row.Value.Href);
-        Assert.Empty(row.Actions);
+        TableCell value = GetDetailsValue(result, "Address");
+        Assert.Equal("testAddress, testVille, TE5 1ST", value.Text);
+        Assert.Null(value.Href);
     }
 
     [Theory]
@@ -235,17 +222,15 @@ public sealed class GroupDetailsPageViewModelMapperTests
         // Arrange
         GroupReadModel model =
             GroupReadModelBuilder.Create()
-              .WithGroupType(type)
+              .WithTypeName(type)
               .Build();
 
         // Act
         GroupDetailsPageViewModel result = _mapper.Map(model);
 
         // Assert
-        GovUkSummaryList summary =
-            Assert.IsType<GovUkSummaryList>(result.Details.Summary);
-
-        Assert.Null(summary.Rows.SingleOrDefault((row) => row.Key == "Type"));
+        GovUkTable table = Assert.IsType<GovUkTable>(result.Details.Table);
+        Assert.Null(table.Rows.SingleOrDefault((row) => row.Cells[0].Text == "Education group type"));
     }
 
     [Fact]
@@ -254,20 +239,16 @@ public sealed class GroupDetailsPageViewModelMapperTests
         // Arrange
         GroupReadModel model =
             GroupReadModelBuilder.Create()
-                .WithGroupType("Single-Academy trust")
+                .WithTypeName("Single-Academy trust")
                 .Build();
 
         // Act
         GroupDetailsPageViewModel result = _mapper.Map(model);
 
         // Assert
-        GovUkSummaryList summary =
-            Assert.IsType<GovUkSummaryList>(result.Details.Summary);
-
-        SummaryListRow row = Assert.Single(summary.Rows, (row) => row.Key == "Type");
-        Assert.Equal("Single-Academy trust", row.Value.Text);
-        Assert.Null(row.Value.Href);
-        Assert.Empty(row.Actions);
+        TableCell value = GetDetailsValue(result, "Education group type");
+        Assert.Equal("Single-Academy trust", value.Text);
+        Assert.Null(value.Href);
     }
 
     [Fact]
@@ -276,11 +257,13 @@ public sealed class GroupDetailsPageViewModelMapperTests
         // Arrange
         GroupReadModel readModel = GroupReadModelTestDoubles.Stub() with
         {
-            Academies =
+            Establishments =
             [
-                CreateAcademy(
-                    urn: "123456",
-                    name: "Test Academy")
+                new EstablishmentReadModel()
+                {
+                    Name = "Test Academy",
+                    Urn = "123456"
+                }
             ]
         };
 
@@ -288,10 +271,10 @@ public sealed class GroupDetailsPageViewModelMapperTests
         GroupDetailsPageViewModel result = _mapper.Map(readModel);
 
         // Assert
-        Assert.Equal("Academies (1)", result.Academies.Tab);
+        Assert.Equal("Academies (1)", result.Establishments.Tab);
 
         GovUkTable table =
-            Assert.IsType<GovUkTable>(result.Academies.Table);
+            Assert.IsType<GovUkTable>(result.Establishments.Table);
 
         Assert.Equal("Academies", table.Caption);
 
@@ -366,16 +349,15 @@ public sealed class GroupDetailsPageViewModelMapperTests
         // Arrange
         GroupReadModel readModel =
             GroupReadModelBuilder.Create()
-              .Build();
+                .Build();
 
         // Act
         GroupDetailsPageViewModel result = _mapper.Map(readModel);
 
         // Assert
-        Assert.Equal("Academies (0)", result.Academies.Tab);
+        Assert.Equal("Academies (0)", result.Establishments.Tab);
 
-        Assert.Empty(
-            Assert.IsType<GovUkTable>(result.Academies.Table).Rows);
+        Assert.Null(result.Establishments.Table);
 
         Assert.Empty(
             Assert.IsType<GovUkTable>(
@@ -440,24 +422,10 @@ public sealed class GroupDetailsPageViewModelMapperTests
             });
     }
 
-    private static void AssertSummaryRow(
-        SummaryListRow row,
-        string expectedKey,
-        string expectedText,
-        string? expectedHref = null)
+    private static TableCell GetDetailsValue(GroupDetailsPageViewModel result, string label)
     {
-        Assert.Equal(expectedKey, row.Key);
-        Assert.Equal(expectedText, row.Value.Text);
-        Assert.Equal(expectedHref, row.Value.Href);
-    }
-
-    private static Academy CreateAcademy(
-        string urn,
-        string name)
-    {
-        return new Academy(
-            new AcademyId(
-                new UniqueReferenceNumber(urn)),
-            new AcademyName(name));
+        GovUkTable table = Assert.IsType<GovUkTable>(result.Details.Table);
+        TableRow row = Assert.Single(table.Rows, row => row.Cells[0].Text == label);
+        return row.Cells[1];
     }
 }

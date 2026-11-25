@@ -18,7 +18,7 @@ public sealed class DatasetsControllerTests
 {
     private static DatasetsController CreateController(
         Mock<IUseCase<DownloadDatasetsRequest, UseCaseResponse<DownloadDatasetsResponse>>> useCaseMock,
-        Mock<IMapper<Dataset, DownloadedDatasetViewModel>> mapperMock,
+        Mock<IMapper<DatasetFile, DownloadedDatasetViewModel>> mapperMock,
         ISession session)
     {
         DatasetsController controller =
@@ -44,7 +44,7 @@ public sealed class DatasetsControllerTests
         Mock<IUseCase<DownloadDatasetsRequest, UseCaseResponse<DownloadDatasetsResponse>>> useCaseMock =
             DownloadDatasetsUseCaseTestDouble.Mock();
 
-        Mock<IMapper<Dataset, DownloadedDatasetViewModel>> mapperMock =
+        Mock<IMapper<DatasetFile, DownloadedDatasetViewModel>> mapperMock =
             UseCaseReponseToViewModelMapperTestDouble.Mock();
 
         ISession session =
@@ -68,7 +68,7 @@ public sealed class DatasetsControllerTests
         Mock<IUseCase<DownloadDatasetsRequest, UseCaseResponse<DownloadDatasetsResponse>>> useCaseMock =
             DownloadDatasetsUseCaseTestDouble.Mock();
 
-        Mock<IMapper<Dataset, DownloadedDatasetViewModel>> mapperMock =
+        Mock<IMapper<DatasetFile, DownloadedDatasetViewModel>> mapperMock =
             UseCaseReponseToViewModelMapperTestDouble.Mock();
 
         ISession session =
@@ -98,7 +98,7 @@ public sealed class DatasetsControllerTests
         Mock<IUseCase<DownloadDatasetsRequest, UseCaseResponse<DownloadDatasetsResponse>>> useCaseMock =
             DownloadDatasetsUseCaseTestDouble.Mock();
 
-        Mock<IMapper<Dataset, DownloadedDatasetViewModel>> mapperMock =
+        Mock<IMapper<DatasetFile, DownloadedDatasetViewModel>> mapperMock =
             UseCaseReponseToViewModelMapperTestDouble.Mock();
 
         ISession session =
@@ -127,7 +127,7 @@ public sealed class DatasetsControllerTests
         // arrange
         byte[] fileBytes = [1, 2, 3];
 
-        Dataset dataset =
+        DatasetFile dataset =
             new(
                 Filename: "test-dataset",
                 DataType: "All Establishments",
@@ -153,7 +153,7 @@ public sealed class DatasetsControllerTests
                 ContentType = dataset.DataType
             };
 
-        Mock<IMapper<Dataset, DownloadedDatasetViewModel>> mapperMock =
+        Mock<IMapper<DatasetFile, DownloadedDatasetViewModel>> mapperMock =
             UseCaseReponseToViewModelMapperTestDouble.MockFor(viewModel, dataset);
 
         ISession session =
@@ -189,7 +189,7 @@ public sealed class DatasetsControllerTests
         Mock<IUseCase<DownloadDatasetsRequest, UseCaseResponse<DownloadDatasetsResponse>>> useCaseMock =
             DownloadDatasetsUseCaseTestDouble.Mock();
 
-        Mock<IMapper<Dataset, DownloadedDatasetViewModel>> mapperMock =
+        Mock<IMapper<DatasetFile, DownloadedDatasetViewModel>> mapperMock =
             UseCaseReponseToViewModelMapperTestDouble.Mock();
 
         ISession session =
@@ -213,7 +213,7 @@ public sealed class DatasetsControllerTests
         Mock<IUseCase<DownloadDatasetsRequest, UseCaseResponse<DownloadDatasetsResponse>>> useCaseMock =
             DownloadDatasetsUseCaseTestDouble.Mock();
 
-        Mock<IMapper<Dataset, DownloadedDatasetViewModel>> mapperMock =
+        Mock<IMapper<DatasetFile, DownloadedDatasetViewModel>> mapperMock =
             UseCaseReponseToViewModelMapperTestDouble.Mock();
 
         ISession session =
@@ -239,7 +239,7 @@ public sealed class DatasetsControllerTests
         Mock<IUseCase<DownloadDatasetsRequest, UseCaseResponse<DownloadDatasetsResponse>>> useCaseMock =
             DownloadDatasetsUseCaseTestDouble.Mock();
 
-        Mock<IMapper<Dataset, DownloadedDatasetViewModel>> mapperMock =
+        Mock<IMapper<DatasetFile, DownloadedDatasetViewModel>> mapperMock =
             UseCaseReponseToViewModelMapperTestDouble.Mock();
 
         ISession session =
@@ -282,7 +282,7 @@ public sealed class DatasetsControllerTests
             UseCaseResponse<DownloadDatasetsResponse>>> useCaseMock =
             DownloadDatasetsUseCaseTestDouble.Mock();
 
-        Mock<IMapper<Dataset, DownloadedDatasetViewModel>> mapperMock =
+        Mock<IMapper<DatasetFile, DownloadedDatasetViewModel>> mapperMock =
             UseCaseReponseToViewModelMapperTestDouble.Mock();
 
         ISession session =
@@ -313,7 +313,7 @@ public sealed class DatasetsControllerTests
             UseCaseResponse<DownloadDatasetsResponse>>> useCaseMock =
             DownloadDatasetsUseCaseTestDouble.Mock();
 
-        Mock<IMapper<Dataset, DownloadedDatasetViewModel>> mapperMock =
+        Mock<IMapper<DatasetFile, DownloadedDatasetViewModel>> mapperMock =
             UseCaseReponseToViewModelMapperTestDouble.Mock();
 
         ISession session =
@@ -344,7 +344,7 @@ public sealed class DatasetsControllerTests
             UseCaseResponse<DownloadDatasetsResponse>>> useCaseMock =
             DownloadDatasetsUseCaseTestDouble.Mock();
 
-        Mock<IMapper<Dataset, DownloadedDatasetViewModel>> mapperMock =
+        Mock<IMapper<DatasetFile, DownloadedDatasetViewModel>> mapperMock =
             UseCaseReponseToViewModelMapperTestDouble.Mock();
 
         ISession session =

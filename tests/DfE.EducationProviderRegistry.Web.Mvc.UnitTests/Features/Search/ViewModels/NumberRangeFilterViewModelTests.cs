@@ -1,0 +1,129 @@
+﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Search.ViewModels.Request;
+
+namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Search.ViewModels;
+
+public sealed class NumberRangeFilterViewModelTests
+{
+    [Fact]
+    public void IsEmpty_ReturnsTrue_WhenFromAndToAreNull()
+    {
+        // arrange
+        NumberRangeInputFilterViewModel sut = new();
+
+        // act/assert
+        Assert.True(sut.IsEmpty);
+    }
+
+    [Fact]
+    public void IsEmpty_ReturnsFalse_WhenFromHasValue()
+    {
+        // arrange
+        NumberRangeInputFilterViewModel sut = new()
+        {
+            From = "10"
+        };
+
+        // act/assert
+        Assert.False(sut.IsEmpty);
+    }
+
+    [Fact]
+    public void IsEmpty_ReturnsFalse_WhenToHasValue()
+    {
+        // arrange
+        NumberRangeInputFilterViewModel sut = new()
+        {
+            To = "20"
+        };
+
+        // act/assert
+        Assert.False(sut.IsEmpty);
+    }
+
+    [Fact]
+    public void SelectedLabel_ReturnsNull_WhenFromAndToAreNull()
+    {
+        // arrange
+        NumberRangeInputFilterViewModel sut = new();
+
+        // act
+        string? result = sut.SelectedLabel;
+
+        // assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void SelectedLabel_ReturnsRange_WhenFromAndToHaveValues()
+    {
+        // arrange
+        NumberRangeInputFilterViewModel sut = new()
+        {
+            From = "10",
+            To = "20"
+        };
+
+        // act
+        string? result = sut.SelectedLabel;
+
+        // assert
+        Assert.Equal(
+            "10 to 20",
+            result);
+    }
+
+    [Fact]
+    public void SelectedLabel_ReturnsAndOver_WhenOnlyFromHasValue()
+    {
+        // arrange
+        NumberRangeInputFilterViewModel sut = new()
+        {
+            From = "10"
+        };
+
+        // act
+        string? result = sut.SelectedLabel;
+
+        // assert
+        Assert.Equal(
+            "10 and over",
+            result);
+    }
+
+    [Fact]
+    public void SelectedLabel_ReturnsUpTo_WhenOnlyToHasValue()
+    {
+        // arrange
+        NumberRangeInputFilterViewModel sut = new()
+        {
+            To = "20"
+        };
+
+        // act
+        string? result = sut.SelectedLabel;
+
+        // assert
+        Assert.Equal(
+            "Up to 20",
+            result);
+    }
+
+    [Fact]
+    public void SelectedLabel_ReturnsRange_WhenFromAndToAreEqual()
+    {
+        // arrange
+        NumberRangeInputFilterViewModel sut = new()
+        {
+            From = "10",
+            To = "10"
+        };
+
+        // act
+        string? result = sut.SelectedLabel;
+
+        // assert
+        Assert.Equal(
+            "10 to 10",
+            result);
+    }
+}

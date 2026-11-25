@@ -14,7 +14,7 @@ internal static class SearchUseCaseTestDoubles
         SearchResults<SearchAggregateResults, SearchFacets> result = SearchResultsTestDouble.Stub();
 
         SearchResponse response =
-            new(result.Results!, result.FacetResults, result.TotalCount);
+            new(result.Results!, result.FacetResults, result.TotalCount, []);
 
         UseCaseResponse<SearchResponse> stubbedResponse = UseCaseResponse<SearchResponse>.Success(response);
 
@@ -26,7 +26,7 @@ internal static class SearchUseCaseTestDoubles
     internal static UseCaseStub<SearchRequest, SearchResponse> StubFor(SearchAggregateResults searchResults, SearchFacets facets)
     {
         SearchResponse response =
-            new(searchResults, facets, searchResults.Count);
+            new(searchResults, facets, searchResults.Count, []);
 
         UseCaseResponse<SearchResponse> stubbedResponse =
             UseCaseResponse<SearchResponse>.Success(response);

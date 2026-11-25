@@ -1,5 +1,4 @@
-﻿using Bogus;
-using DfE.Core.Libraries.CleanArchitecture.Application;
+﻿using DfE.Core.Libraries.CleanArchitecture.Application;
 using DfE.Document.Anglesharp;
 using DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles.GroupDetails;
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupByUid;
@@ -8,6 +7,7 @@ using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments;
 using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestDoubles;
 using DfE.EducationProviderRegistry.Web.PageComponents.Pages;
 using DfE.EducationProviderRegistry.Web.SharedTests.Features.Groups;
+using DfE.EducationProviderRegistry.Web.SharedTests.TestDoubles.Groups;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.Groups;
 
@@ -105,27 +105,5 @@ public sealed class GroupPageTests
             Assert.False(actual.Link.OpensInNewWindow);
             Assert.Empty(actual.Link.SecurityAttributes);
         }
-    }
-}
-
-
-public static class EstablishmentReadModelTestDoubles
-{
-    public static IReadOnlyList<EstablishmentReadModel> Create(int count = 1)
-    {
-        Faker faker = new();
-        List<EstablishmentReadModel> establishments = new(count);
-
-        for (int i = 0; i < count; i++)
-        {
-            establishments.Add(
-                new EstablishmentReadModel
-                {
-                    Name = faker.Company.CompanyName(),
-                    Urn = faker.Random.Number(100000, 999999).ToString()
-                });
-        }
-
-        return establishments;
     }
 }

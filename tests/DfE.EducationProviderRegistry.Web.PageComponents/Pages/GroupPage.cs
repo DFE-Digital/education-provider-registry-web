@@ -19,7 +19,7 @@ public sealed class GroupPage
             .Find("#establishments .govuk-body")?.Text;
     }
 
-    public IReadOnlyCollection<GroupEstablishment> LinkedEstablishments()
+    public IReadOnlyCollection<GroupEstablishment> Establishments()
     {
         GovUkTable? table =
             _context
@@ -49,11 +49,11 @@ public sealed class GroupPage
 
 public sealed record GroupEstablishment
 {
-    public GroupEstablishment(string name, string urn, Link link)
+    public GroupEstablishment(string name, string urn, Link linkedTo)
     {
         Name = name;
         Urn = urn;
-        Link = link;
+        Link = linkedTo;
     }
 
     public string Name { get; }

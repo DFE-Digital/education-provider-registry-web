@@ -2,5 +2,5 @@
 
 public static class EstablishmentRoutes
 {
-    public static Uri EstablishmentDetails(string urn) => new($"/establishments/{urn}", UriKind.Relative);
+    public static Uri Details(string urn) => new($"/establishments/{urn}", UriKind.Relative);
 }

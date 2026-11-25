@@ -1,4 +1,5 @@
-﻿using DfE.Core.Libraries.CrossCutting.Mapper;
+﻿using System.Globalization;
+using DfE.Core.Libraries.CrossCutting.Mapper;
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupByUid.Response;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
@@ -8,6 +9,8 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 
 internal sealed class GroupDetailsPageViewModelMapper : IMapper<GroupReadModel, GroupDetailsPageViewModel>
 {
+    private static readonly CultureInfo UkCulture = CultureInfo.GetCultureInfo("en-GB");
+
     public GroupDetailsPageViewModel Map(GroupReadModel readModel)
     {
         return new GroupDetailsPageViewModel
@@ -31,7 +34,7 @@ internal sealed class GroupDetailsPageViewModelMapper : IMapper<GroupReadModel, 
             new TableCell() { Text = "ID Numbers" },
             new TableCell() { Rows = MapIdentifiers(model) });
 
-        AddRow(builder, "Status", model.Status);
+        AddRow(builder, "Status", MapStatus(model.StatusLabel, model.OpenedDate, model.ClosedDate));
         AddRow(builder, "Address", model.Address);
         AddRow(builder, "Education group type", model.TypeName);
 
@@ -78,6 +81,25 @@ internal sealed class GroupDetailsPageViewModelMapper : IMapper<GroupReadModel, 
 
         return rows;
     }
+
+    private static string? MapStatus(string? status, DateOnly? openedDate, DateOnly? closedDate)
+    {
+        (string label, DateOnly? date) = status switch
+        {
+            "Open" => ("Open", openedDate),
+            "Proposed to open" => ("Proposed to open", openedDate),
+            "Closed" => ("Closed", closedDate),
+            "Open but proposed to close" => ("Open but proposed to close", closedDate),
+            _ => (string.Empty, null)
+        };
+
+        if (!date.HasValue)
+            return null;
+
+        string formattedDate = date.Value.ToString("dd MMMM yyyy", UkCulture);
+        return $"{label} on {formattedDate}";
+    }
+
 
     private static GroupDetailsEstablishmentTabViewModel CreateAcademies(GroupReadModel model)
     {

@@ -155,13 +155,21 @@ public sealed class GroupDetailsPageViewModelMapperTests
         Assert.Null(table.Rows.SingleOrDefault((row) => row.Cells[0].Text == "Status"));
     }
 
-    [Fact]
-    public void Map_Maps_Status()
+    [Theory]
+    [InlineData("Open", 2024, 1, 1, "Open on 01 January 2024")]
+    [InlineData("Proposed to open", 2024, 1, 1, "Proposed to open on 01 January 2024")]
+    public void Map_Maps_Open_Statuses(
+    string status,
+    int year,
+    int month,
+    int day,
+    string expected)
     {
         // Arrange
         GroupReadModel model =
             GroupReadModelBuilder.Create()
-                .WithStatus("testStatus")
+                .WithStatus(status)
+                .WithOpenedDate(new DateOnly(year, month, day))
                 .Build();
 
         // Act
@@ -169,7 +177,30 @@ public sealed class GroupDetailsPageViewModelMapperTests
 
         // Assert
         TableCell value = GetDetailsValue(result, "Status");
-        Assert.Equal("testStatus", value.Text);
+        Assert.Equal(expected, value.Text);
+        Assert.Null(value.Href);
+    }
+
+    [Theory]
+    [InlineData("Closed", "Closed on 01 January 2024")]
+    [InlineData("Open but proposed to close", "Open but proposed to close on 01 January 2024")]
+    public void Map_Maps_Closed_Statuses(
+    string status,
+    string expected)
+    {
+        // Arrange
+        GroupReadModel model =
+            GroupReadModelBuilder.Create()
+                .WithStatus(status)
+                .WithClosedDate(new DateOnly(2024, 1, 1))
+                .Build();
+
+        // Act
+        GroupDetailsPageViewModel result = _mapper.Map(model);
+
+        // Assert
+        TableCell value = GetDetailsValue(result, "Status");
+        Assert.Equal(expected, value.Text);
         Assert.Null(value.Href);
     }
 

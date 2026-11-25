@@ -49,6 +49,16 @@
                 </div>
             </div>
         </div>
+        <div class="govuk-grid-row">
+            <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                <div class="govuk-checkboxes__item">
+                    <input class="govuk-checkboxes__input" id="includeClosedProviders" name="includeClosedProviders" type="checkbox" value="true" @(Model.IncludeClosedProviders ? "checked" : "")>
+                    <label class="govuk-label govuk-checkboxes__label" for="includeClosedProviders">
+                        Include closed education providers
+                    </label>
+                </div>
+            </div>
+        </div>
         <div class="dfe-search-panel__actions">
             <button class="govuk-button govuk-!-margin-bottom-0" type="submit">
                 Search

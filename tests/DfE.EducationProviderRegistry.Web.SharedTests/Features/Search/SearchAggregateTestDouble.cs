@@ -18,7 +18,8 @@ public static class SearchAggregateTestDouble
             SearchAggregateBuilder builder =
                 SearchAggregateBuilder.Create()
                     .WithProviderName($"{namePrefix} {index}")
-                    .WithProviderTypeName(even ? "Academy converter" : "Community school");
+                    .WithProviderTypeName(even ? "Academy converter" : "Community school")
+                    .SetValue("StatusName", "Open");
 
             SearchAggregate model = builder.Build();
             output.Add(model);

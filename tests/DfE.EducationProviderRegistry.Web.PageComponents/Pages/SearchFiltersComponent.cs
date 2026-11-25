@@ -112,7 +112,8 @@ public sealed class SearchFiltersComponent
         _commandHandler.Handle<ClickCommand, ClickCommandModel>(
             new ClickCommandModel
             {
-                Selector = SubmitFiltersSelector
+                Selector = SubmitFiltersSelector,
+                WithText = "Apply filters"
             });
 
         // Validate Filter applied state transition

@@ -1,4 +1,5 @@
-﻿using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.Model;
+﻿using DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles.EstablishmentDetails;
+using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.Model;
 using DfE.EducationProviderRegistry.Core.Query.Test.Database.Data.Establishments;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments.Mappers;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;

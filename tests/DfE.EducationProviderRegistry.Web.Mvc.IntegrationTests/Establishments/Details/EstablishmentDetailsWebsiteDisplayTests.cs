@@ -1,9 +1,9 @@
 ﻿using DfE.Core.Libraries.CleanArchitecture.Application;
 using DfE.Core.Libraries.IntegrationTests.Abstractions;
 using DfE.Document.Anglesharp;
+using DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles.EstablishmentDetails;
 using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.Model;
 using DfE.EducationProviderRegistry.Core.Query.Establishments.Application.UseCases.GetEstablishmentByUrn;
-using DfE.EducationProviderRegistry.Core.Query.Test.Database.Data.Establishments;
 using DfE.EducationProviderRegistry.Web.Mvc.IntegrationTests.TestDoubles;
 using DfE.EducationProviderRegistry.Web.PageComponents;
 using DfE.EducationProviderRegistry.Web.PageComponents.GovUk;
@@ -42,15 +42,19 @@ public sealed class EstablishmentDetailsWebsiteDisplayTests : IntegrationTestsBa
         // Act
         using HttpResponseMessage httpResponseMessage =
             await client.GetAsync(
-                EstablishmentDetailsRoute.ForUrn("100000"),
+                EstablishmentRoutes.Details("100000"),
                 TestContext.Current.CancellationToken);
 
         // Assert
 
         using IHtmlDocument document = await httpResponseMessage.AssertSuccessfulHtmlResponseAsync();
-        EstablishmentDetailsPage page = new(SearchContext.From(document));
+        EstablishmentPage page = new(SearchContext.From(document));
 
-        TextContent websiteValue = page.GetEstablishmentDetailsTable().Rows["Website"];
+        TextContent websiteValue =
+            page.Details().Rows
+                .Single((row)
+                    => row[0].Text == "Website")[1]; // return the value of the row
+
 
         Assert.Equal(seededWebsite, websiteValue.Text);
 
@@ -91,17 +95,17 @@ public sealed class EstablishmentDetailsWebsiteDisplayTests : IntegrationTestsBa
         // Act
         using HttpResponseMessage response =
             await client.GetAsync(
-                EstablishmentDetailsRoute.ForUrn("100000"),
+                EstablishmentRoutes.Details("100000"),
                 TestContext.Current.CancellationToken);
 
         // Assert
         using IHtmlDocument document =
             await response.AssertSuccessfulHtmlResponseAsync();
 
-        EstablishmentDetailsPage page = new(SearchContext.From(document));
-        GovUkTable table = page.GetEstablishmentDetailsTable();
+        EstablishmentPage page = new(SearchContext.From(document));
+        GovUkTable table = page.Details();
 
         Assert.NotEmpty(table.Rows);
-        Assert.False(table.Rows.ContainsKey("Website"));
+        Assert.DoesNotContain(table.Rows, row => row[0].Text == "Website");
     }
 }

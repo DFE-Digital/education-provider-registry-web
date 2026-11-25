@@ -13,30 +13,36 @@ public static class GovUkTableExtensions
             .Text
             .Trim();
 
-        IReadOnlyDictionary<string, TextContent> rows =
+        IReadOnlyList<GovUkTableRow> rows =
             element.FindAll("tbody tr")
-                 .ToDictionary(
-                     (row) => row.Find("th")?.Text.Trim() ?? throw new ArgumentException("Could not find tbody > tr > th"),
-                     (row) =>
-                     {
-                         IElement td = row.Find("td") ??
-                            throw new ArgumentException("Could not find tbody > tr > td");
+                .Select(row =>
+                {
+                    IReadOnlyList<TextContent> cells =
+                        row.FindAll("th, td")
+                            .Select(cell =>
+                            {
+                                IElement? a = cell.Find("a");
 
-                         IElement? a = td.Find("a");
+                                return new TextContent
+                                {
+                                    Text = cell.Text.Trim(),
+                                    Link = a is not null
+                                        ? new Link(
+                                            url: a.Attribute("href") ?? null,
+                                            securityAttributes: a.Attribute("rel")?
+                                                .Split(" ", StringSplitOptions.RemoveEmptyEntries) ?? [],
+                                            opensInNewWindow: a.Attribute("target") == "_blank")
+                                        : null
+                                };
+                            })
+                            .ToArray();
 
-                         TextContent content = new()
-                         {
-                             Text = td.Text.Trim(),
-                             Link = a is not null ?
-                                new Link(
-                                    url: a.Attribute("href") ?? null,
-                                    securityAttributes: a.Attribute("rel")?.Split(" ", StringSplitOptions.RemoveEmptyEntries) ?? [],
-                                    opensInNewWindow: a.Attribute("target") == "_blank")
-                                : null
-                         };
-
-                         return content;
-                     });
+                    return new GovUkTableRow
+                    {
+                        Cells = cells
+                    };
+                })
+                .ToArray();
 
         return new GovUkTable
         {

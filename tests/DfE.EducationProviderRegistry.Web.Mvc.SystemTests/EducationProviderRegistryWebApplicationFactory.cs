@@ -48,7 +48,7 @@ public sealed class EducationProviderRegistryWebApplicationFactory : WebApplicat
         builder.ConfigureHostConfiguration(config =>
         {
             config.AddInMemoryCollection([
-                new("eprweb_eprdat_dotnet_db_connection", _connectionString)
+                new("eprweb_dotnet_db_connection", _connectionString)
             ]);
 
             _configureConfiguration?.Invoke(config);

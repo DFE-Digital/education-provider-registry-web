@@ -1,3 +1,5 @@
+using DfE.EducationProviderRegistry.Core.Query.Download.Shared.Infrastructure.DownloadService.Exporters.Csv;
+using DfE.EducationProviderRegistry.Core.Query.Download.Shared.Infrastructure.QueryEngine;
 using DfE.EducationProviderRegistry.Web.Mvc.Extensions;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Download;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Download.Datasets.Views;
@@ -60,6 +62,7 @@ builder.Services.Configure<RazorViewEngineOptions>(options =>
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IQueryEngine, StubQueryEngine>();
 
 builder.Services.AddSession(options =>
 {
@@ -72,6 +75,7 @@ builder.Services.AddScoped<ISession>(provider =>
     provider.GetRequiredService<IHttpContextAccessor>().HttpContext!.Session);
 
 builder.Services.AddBreadcrumbDependencies(builder.Configuration);
+
 
 WebApplication app = builder.Build();
 

@@ -56,7 +56,7 @@ public sealed class DatasetsControllerTests
         // act
         IActionResult result = controller.Index();
 
-        // asssert
+        // assert
         ViewResult view = Assert.IsType<ViewResult>(result);
         Assert.Equal("Index", view.ViewName);
     }
@@ -81,7 +81,7 @@ public sealed class DatasetsControllerTests
         DownloadDatasetRequestViewModel viewModel =
             new()
             {
-                Filename = "file",
+                SelectedDatasets = ["establishment-data"],
             };
 
         IActionResult result = controller.StartDownloading(viewModel);
@@ -111,7 +111,7 @@ public sealed class DatasetsControllerTests
         DownloadDatasetRequestViewModel viewModel =
             new()
             {
-                Filename = "file",
+                SelectedDatasets = ["establishment-data"],
             };
 
         IActionResult result = controller.Downloading(viewModel);
@@ -163,13 +163,12 @@ public sealed class DatasetsControllerTests
             CreateController(useCaseMock, mapperMock, session);
 
         // act
-        const string DatasetFileName = "test-dataset";
-        IActionResult result = await controller.FileDownload(DatasetFileName);
+        IActionResult result = await controller.FileDownload(["test-dataset"]);
 
         // assert
         FileStreamResult fileResult = Assert.IsType<FileStreamResult>(result);
         Assert.Equal("application/zip", fileResult.ContentType);
-        Assert.Contains($"{DatasetFileName}", fileResult.FileDownloadName);
+        Assert.Contains("test-dataset", fileResult.FileDownloadName);
 
         using (MemoryStream memoryStream = new())
         {
@@ -291,7 +290,7 @@ public sealed class DatasetsControllerTests
         DatasetsController controller =
             CreateController(useCaseMock, mapperMock, session);
 
-        controller.ModelState.AddModelError("Filename", "The Filename field is required.");
+        controller.ModelState.AddModelError("SelectedDatasets", "Please select at least one dataset.");
 
         DownloadDatasetRequestViewModel viewModel = new();
 
@@ -322,7 +321,7 @@ public sealed class DatasetsControllerTests
         DatasetsController controller =
             CreateController(useCaseMock, mapperMock, session);
 
-        controller.ModelState.AddModelError("Filename", "The Filename field is required.");
+        controller.ModelState.AddModelError("SelectedDatasets", "Please select at least one dataset.");
 
         DownloadDatasetRequestViewModel viewModel = new();
 

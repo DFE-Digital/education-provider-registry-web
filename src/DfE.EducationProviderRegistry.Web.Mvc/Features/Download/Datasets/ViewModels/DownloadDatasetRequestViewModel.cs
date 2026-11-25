@@ -1,9 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using DfE.EducationProviderRegistry.Web.Mvc.Features.Download.Datasets.ViewModels.Validation;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Download.Datasets.ViewModels;
 
 public sealed class DownloadDatasetRequestViewModel
 {
-    [Required(ErrorMessage = "A download file name is required.")]
-    public string? Filename { get; set; }
+    [NonEmptyList("Choose at least one dataset file download name.")]
+    public List<string> SelectedDatasets { get; set; } = [];
 }

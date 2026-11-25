@@ -2,10 +2,13 @@
 @model DownloadDatasetRequestViewModel
 
 @{
+    ViewData["Title"] = "Preparing download";
+
+    // Pass the selected dataset list directly so Url.Action generates ?filenames=item1&filenames=item2
     string downloadUrl = Url.Action(
         "FileDownload",
         "Datasets",
-        new { filename = Model.Filename })!;
+        new { filenames = Model.SelectedDatasets })!;
 }
 
 <div class="govuk-width-container">
@@ -40,7 +43,7 @@
     const minSpinnerTime = 500; // Minimum time to show spinner (1/2 second)
 
     function checkStatus() {
-        fetch('@Url.Action("Status", "Datasets")')
+        fetch('@Url.Action("Status", "Datasets", new { filenames = Model.SelectedDatasets })')
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`Status request failed: ${response.status}`);

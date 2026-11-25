@@ -69,9 +69,9 @@ public sealed class DatasetsController : Controller
     }
 
     [HttpGet("file")]
-    public async Task<IActionResult> FileDownload(string filename)
+    public async Task<IActionResult> FileDownload([FromQuery] List<string> filenames)
     {
-        DownloadDatasetsRequest request = new(filename, []);
+        DownloadDatasetsRequest request = new("Dataset-Download", [.. filenames]);
 
         UseCaseResponse<DownloadDatasetsResponse> response =
             await _downloadDatasetUsecase.HandleRequestAsync(request)

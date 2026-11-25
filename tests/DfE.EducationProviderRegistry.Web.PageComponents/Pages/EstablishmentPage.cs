@@ -3,17 +3,17 @@ using DfE.EducationProviderRegistry.Web.PageComponents.GovUk;
 
 namespace DfE.EducationProviderRegistry.Web.PageComponents.Pages;
 
-public sealed class EstablishmentDetailsPage
+public sealed class EstablishmentPage
 {
     private readonly ISearchContext _context;
 
-    public EstablishmentDetailsPage(ISearchContext context)
+    public EstablishmentPage(ISearchContext context)
     {
         ArgumentNullException.ThrowIfNull(context);
         _context = context;
     }
 
-    public GovUkTable GetEstablishmentDetailsTable()
+    public GovUkTable Details()
     {
         return
             _context

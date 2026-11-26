@@ -7,7 +7,7 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Establishment
 
 public sealed class EstablishmentDetailsGovernorsTableMapperTests
 {
-    private static readonly EstablishmentDetailsGovernorsTableMapper Mapper = new();
+    private static readonly EstablishmentDetailsGovernorsTableMapper _mapper = new();
 
     [Fact]
     public void Map_CreatesExpectedTableStructure()
@@ -19,7 +19,7 @@ public sealed class EstablishmentDetailsGovernorsTableMapperTests
         ];
 
         // Act
-        GovUkTable table = Mapper.Map(governors);
+        GovUkTable table = _mapper.Map(governors);
 
         // Assert
         Assert.Equal("Governors", table.Caption);
@@ -55,7 +55,7 @@ public sealed class EstablishmentDetailsGovernorsTableMapperTests
         ];
 
         // Act
-        GovUkTable table = Mapper.Map(governors);
+        GovUkTable table = _mapper.Map(governors);
 
         // Assert
         Assert.Collection(
@@ -77,12 +77,12 @@ public sealed class EstablishmentDetailsGovernorsTableMapperTests
         GovernorModel[] governors =
         [
             CreateGovernor(
-                identifier: null,
+                identifier: null!,
                 name: "testGovernorName")
         ];
 
         // Act
-        GovUkTable table = Mapper.Map(governors);
+        GovUkTable table = _mapper.Map(governors);
 
         // Assert
         TableRow row = Assert.Single(table.Rows);
@@ -103,7 +103,7 @@ public sealed class EstablishmentDetailsGovernorsTableMapperTests
         ];
 
         // Act
-        GovUkTable table = Mapper.Map(governors);
+        GovUkTable table = _mapper.Map(governors);
 
         // Assert
         TableRow row = Assert.Single(table.Rows);
@@ -118,7 +118,7 @@ public sealed class EstablishmentDetailsGovernorsTableMapperTests
         GovernorModel[] governors = [];
 
         // Act
-        GovUkTable table = Mapper.Map(governors);
+        GovUkTable table = _mapper.Map(governors);
 
         // Assert
         Assert.Equal("Governors", table.Caption);
@@ -127,7 +127,7 @@ public sealed class EstablishmentDetailsGovernorsTableMapperTests
     }
 
     private static GovernorModel CreateGovernor(
-        string? identifier = "testGovernorIdentifier",
+        string identifier = "testGovernorIdentifier",
         string name = "testGovernorName")
     {
         return new GovernorModel(

@@ -62,6 +62,13 @@ public sealed class SearchAggregateCategoryEstablishmentMapper : ISearchAggregat
                 $"/establishments/{input.UniqueIdentifier.Value}")
             .WithColumns(columns);
 
+        if (input.Status == SearchProviderStatus.Closed)
+        {
+            builder.AddRow(
+                new TableCell { Text = "Status" },
+                new TableCell { Text = input.Status?.ToString() });
+        }
+
         builder.AddRow(
             new TableCell { Text = "URN" },
             new TableCell { Text = input.UniqueIdentifier.Value });

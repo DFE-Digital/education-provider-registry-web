@@ -10,7 +10,8 @@ public sealed class SearchAggregateResultsToViewModelMapperTests
 {
     private static SearchAggregateResult MakeEstablishmentResult(
         string identifier = "111111",
-        string name = "Test School")
+        string name = "Test School",
+        SearchProviderStatus? status = SearchProviderStatus.Open)
     {
         return SearchAggregateResult.Create(
             new ProviderIdentifier(identifier),
@@ -20,7 +21,7 @@ public sealed class SearchAggregateResultsToViewModelMapperTests
             new GroupDetail("Group Name", "1234"),
             new SearchLocalAuthority("LA Name"),
             new SearchCategory("Establishment"),
-            SearchProviderStatus.Open,
+            status,
             0);
     }
 
@@ -217,5 +218,37 @@ public sealed class SearchAggregateResultsToViewModelMapperTests
         // act / assert
         Assert.Throws<InvalidOperationException>(
             () => mapper.Map([input]));
+    }
+
+    [Theory]
+    [InlineData(SearchProviderStatus.Open, false)]
+    [InlineData(SearchProviderStatus.OpenButProposedToClose, false)]
+    [InlineData(SearchProviderStatus.ProposedToOpen, false)]
+    [InlineData(SearchProviderStatus.Closed, true)]
+    public void Map_AddsStatusRow_OnlyForClosedEstablishments(
+    SearchProviderStatus status,
+    bool shouldContainStatusRow)
+    {
+        // arrange
+        SearchAggregateResult input =
+            MakeEstablishmentResult(
+                status: status);
+
+        SearchAggregateResultsToViewModelMapper mapper =
+            new(
+            [
+                new SearchAggregateCategoryEstablishmentMapper(),
+                new SearchAggregateCategoryGroupMapper()
+            ]);
+
+        // act
+        GovUkTable result = mapper.Map([input]).Single();
+
+        // assert
+        bool hasStatusRow = result.Rows.Any(
+            row => row.Cells[0].Text == "Status"
+                && row.Cells[1].Text == "Closed");
+
+        Assert.Equal(shouldContainStatusRow, hasStatusRow);
     }
 }

@@ -7,17 +7,29 @@ using DfE.EducationProviderRegistry.Core.Query.Shared;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 using DfE.EducationProviderRegistry.Web.ViewComponents.SummaryList;
 using DfE.EducationProviderRegistry.Web.ViewComponents.Table;
+using Microsoft.Extensions.Time.Testing;
 using GroupReadModelTestDoubles = DfE.EducationProviderRegistry.Core.Query.Contracts.TestDoubles.GroupDetails.GroupReadModelTestDoubles;
 
 namespace DfE.EducationProviderRegistry.Web.Mvc.UnitTests.Features.Groups;
 
 public sealed class GroupDetailsPageViewModelMapperTests
 {
+    private readonly FakeTimeProvider _timeProvider;
     private readonly GroupDetailsPageViewModelMapper _mapper;
 
     public GroupDetailsPageViewModelMapperTests()
     {
-        _mapper = new();
+        _timeProvider = new(
+            new DateTimeOffset(
+                2026,
+                9,
+                3,
+                0,
+                0,
+                0,
+                TimeSpan.Zero));
+
+        _mapper = new(_timeProvider);
     }
 
     [Fact]
@@ -346,21 +358,24 @@ public sealed class GroupDetailsPageViewModelMapperTests
         {
             Trustees =
             [
-                new TrusteeReadModel
-                {
-                    Id = "T123",
-                    FullName = "Test Trustee",
-                    StartDate = new DateTime(2020, 1, 15)
-                }
+                TrusteeReadModelTestDoubles.CreateWith(
+                id: "T123",
+                fullName: "Test Trustee",
+                role: "Chair of Trustees",
+                startDate: new DateOnly(2020, 1, 15),
+                endDate: new DateOnly(2030, 1, 15),
+                title: "Mr",
+                appointedBy: "Appointed by academy members")
             ],
             Members =
             [
-                new MemberReadModel
-                {
-                    Identifier = "M123",
-                    FullName = "Test Member",
-                    StartDate = new DateTime(2021, 6, 25)
-                }
+                MemberReadModelTestDoubles.Stub(
+                identifier: "M123",
+                fullName: "Test Member",
+                startDate: new DateOnly(2021, 6, 25),
+                endDate: null,
+                title: "Mrs",
+                appointedBy: "Appointed by academy members")
             ]
         };
 
@@ -372,6 +387,206 @@ public sealed class GroupDetailsPageViewModelMapperTests
 
         AssertTrusteesTable(result.Governance.TrusteesTable);
         AssertMembersTable(result.Governance.MembersTable);
+    }
+
+    [Fact]
+    public void Map_DoesNotPrefixName_WhenTitleIsNull()
+    {
+        // Arrange
+        GroupReadModel readModel = GroupReadModelTestDoubles.Stub() with
+        {
+            Trustees =
+            [
+                TrusteeReadModelTestDoubles.CreateWith(
+                id: "T123",
+                fullName: "Test Trustee",
+                role: "Trustee",
+                startDate: new DateOnly(2020, 1, 15),
+                endDate: null,
+                title: null)
+            ]
+        };
+
+        // Act
+        GroupDetailsPageViewModel result = _mapper.Map(readModel);
+
+        // Assert
+        GovUkTable trusteesTable =
+            Assert.IsType<GovUkTable>(
+                result.Governance.TrusteesTable);
+
+        TableRow row = Assert.Single(trusteesTable.Rows);
+
+        Assert.Equal(
+            "Test Trustee (Trustee)",
+            row.Cells[0].Text);
+    }
+
+    [Fact]
+    public void Map_MapsTrusteesWhoLeftWithinLastTwelveMonthsToHistoricTable()
+    {
+        // Arrange
+        GroupReadModel readModel = GroupReadModelTestDoubles.Stub() with
+        {
+            Trustees =
+            [
+                TrusteeReadModelTestDoubles.CreateWith(
+                id: "T123",
+                fullName: "Historic Trustee",
+                role: "Chair of Trustees",
+                startDate: new DateOnly(2020, 1, 15),
+                endDate: new DateOnly(2026, 8, 27),
+                title: "Mrs",
+                appointedBy: "Appointed by trustees")
+            ]
+        };
+
+        // Act
+        GroupDetailsPageViewModel result = _mapper.Map(readModel);
+
+        // Assert
+        GovUkTable historicTrusteesTable =
+            Assert.IsType<GovUkTable>(
+                result.Governance.HistoricTrusteesTable);
+
+        Assert.Equal(
+            "Trustees who have left within the last 12 months",
+            historicTrusteesTable.Caption);
+
+        TableRow row = Assert.Single(historicTrusteesTable.Rows);
+
+        Assert.Collection(
+            row.Cells,
+            cell => Assert.Equal(
+                "Mrs Historic Trustee (Chair of Trustees)",
+                cell.Text),
+            cell => Assert.Equal("T123", cell.Text),
+            cell => Assert.Equal("Appointed by trustees", cell.Text),
+            cell => Assert.Equal(
+                "15 January 2020 to 27 August 2026",
+                cell.Text));
+    }
+
+    [Fact]
+    public void Map_DoesNotMapTrusteesWhoLeftMoreThanTwelveMonthsAgo()
+    {
+        // Arrange
+        GroupReadModel readModel = GroupReadModelTestDoubles.Stub() with
+        {
+            Trustees =
+            [
+                TrusteeReadModelTestDoubles.CreateWith(
+                id: "T123",
+                fullName: "Historic Trustee",
+                role: "Trustee",
+                startDate: new DateOnly(2020, 1, 15),
+                endDate: new DateOnly(2025, 8, 27))
+            ]
+        };
+
+        // Act
+        GroupDetailsPageViewModel result = _mapper.Map(readModel);
+
+        // Assert
+        GovUkTable historicTrusteesTable =
+            Assert.IsType<GovUkTable>(
+                result.Governance.HistoricTrusteesTable);
+
+        Assert.Empty(historicTrusteesTable.Rows);
+    }
+
+    [Fact]
+    public void Map_MapsTrusteeEndingExactlyTwelveMonthsAgoToHistoricTable()
+    {
+        // Arrange
+        GroupReadModel readModel = GroupReadModelTestDoubles.Stub() with
+        {
+            Trustees =
+            [
+                TrusteeReadModelTestDoubles.CreateWith(
+                id: "T123",
+                fullName: "Boundary Trustee",
+                role: "Trustee",
+                startDate: new DateOnly(2020, 1, 15),
+                endDate: new DateOnly(2025, 9, 3))
+            ]
+        };
+
+        // Act
+        GroupDetailsPageViewModel result = _mapper.Map(readModel);
+
+        // Assert
+        GovUkTable historicTrusteesTable =
+            Assert.IsType<GovUkTable>(
+                result.Governance.HistoricTrusteesTable);
+
+        Assert.Single(historicTrusteesTable.Rows);
+    }
+
+    [Fact]
+    public void Map_MapsTrusteeEndingTodayToActiveTrusteesTable()
+    {
+        // Arrange
+        GroupReadModel readModel = GroupReadModelTestDoubles.Stub() with
+        {
+            Trustees =
+            [
+                TrusteeReadModelTestDoubles.CreateWith(
+                id: "T123",
+                fullName: "Current Trustee",
+                role: "Trustee",
+                startDate: new DateOnly(2020, 1, 15),
+                endDate: new DateOnly(2026, 9, 3))
+            ]
+        };
+
+        // Act
+        GroupDetailsPageViewModel result = _mapper.Map(readModel);
+
+        // Assert
+        GovUkTable trusteesTable =
+            Assert.IsType<GovUkTable>(
+                result.Governance.TrusteesTable);
+
+        GovUkTable historicTrusteesTable =
+            Assert.IsType<GovUkTable>(
+                result.Governance.HistoricTrusteesTable);
+
+        Assert.Single(trusteesTable.Rows);
+        Assert.Empty(historicTrusteesTable.Rows);
+    }
+
+    [Fact]
+    public void Map_DoesNotMapFutureTrusteeAsActive()
+    {
+        // Arrange
+        GroupReadModel readModel = GroupReadModelTestDoubles.Stub() with
+        {
+            Trustees =
+            [
+                TrusteeReadModelTestDoubles.CreateWith(
+                id: "T123",
+                fullName: "Future Trustee",
+                role: "Trustee",
+                startDate: new DateOnly(2026, 9, 4),
+                endDate: null)
+            ]
+        };
+
+        // Act
+        GroupDetailsPageViewModel result = _mapper.Map(readModel);
+
+        // Assert
+        GovUkTable trusteesTable =
+            Assert.IsType<GovUkTable>(
+                result.Governance.TrusteesTable);
+
+        GovUkTable historicTrusteesTable =
+            Assert.IsType<GovUkTable>(
+                result.Governance.HistoricTrusteesTable);
+
+        Assert.Empty(trusteesTable.Rows);
+        Assert.Empty(historicTrusteesTable.Rows);
     }
 
     [Fact]
@@ -387,12 +602,15 @@ public sealed class GroupDetailsPageViewModelMapperTests
 
         // Assert
         Assert.Equal("Academies (0)", result.Establishments.Tab);
-
         Assert.Null(result.Establishments.Table);
 
         Assert.Empty(
             Assert.IsType<GovUkTable>(
                 result.Governance.TrusteesTable).Rows);
+
+        Assert.Empty(
+            Assert.IsType<GovUkTable>(
+                result.Governance.HistoricTrusteesTable).Rows);
 
         Assert.Empty(
             Assert.IsType<GovUkTable>(
@@ -410,9 +628,16 @@ public sealed class GroupDetailsPageViewModelMapperTests
 
         Assert.Collection(
             row.Cells,
-            cell => Assert.Equal("Test Trustee", cell.Text),
+            cell => Assert.Equal(
+                "Mr Test Trustee (Chair of Trustees)",
+                cell.Text),
             cell => Assert.Equal("T123", cell.Text),
-            cell => Assert.Equal("15 January 2020", cell.Text));
+            cell => Assert.Equal(
+                "Appointed by academy members",
+                cell.Text),
+            cell => Assert.Equal(
+                "15 January 2020 to 15 January 2030",
+                cell.Text));
     }
 
     private static void AssertMembersTable(GovUkTable? table)
@@ -426,9 +651,14 @@ public sealed class GroupDetailsPageViewModelMapperTests
 
         Assert.Collection(
             row.Cells,
-            cell => Assert.Equal("Test Member", cell.Text),
+            cell => Assert.Equal("Mrs Test Member", cell.Text),
             cell => Assert.Equal("M123", cell.Text),
-            cell => Assert.Equal("25 June 2021", cell.Text));
+            cell => Assert.Equal(
+                "Appointed by academy members",
+                cell.Text),
+            cell => Assert.Equal(
+                "From 25 June 2021",
+                cell.Text));
     }
 
     private static void AssertGovernanceColumns(
@@ -438,7 +668,7 @@ public sealed class GroupDetailsPageViewModelMapperTests
             columns,
             column =>
             {
-                Assert.Equal("Name", column.Text);
+                Assert.Equal("Name and role", column.Text);
                 Assert.True(column.IsRowHeader);
             },
             column =>
@@ -448,7 +678,12 @@ public sealed class GroupDetailsPageViewModelMapperTests
             },
             column =>
             {
-                Assert.Equal("Start date", column.Text);
+                Assert.Equal("Appointed by", column.Text);
+                Assert.False(column.IsRowHeader);
+            },
+            column =>
+            {
+                Assert.Equal("Term", column.Text);
                 Assert.False(column.IsRowHeader);
             });
     }

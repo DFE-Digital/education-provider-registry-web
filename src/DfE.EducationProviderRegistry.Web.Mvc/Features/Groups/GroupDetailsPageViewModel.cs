@@ -28,5 +28,6 @@ public sealed class GroupDetailsGovernanceTabViewModel
 {
     public string? Tab { get; set; }
     public GovUkTable? TrusteesTable { get; set; }
+    public GovUkTable? HistoricTrusteesTable { get; set; }
     public GovUkTable? MembersTable { get; set; }
 }

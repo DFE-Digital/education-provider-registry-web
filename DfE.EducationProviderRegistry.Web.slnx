@@ -6,6 +6,7 @@
   <Folder Name="/tests/">
     <File Path="tests/Directory.Build.props" />
     <File Path="tests/Directory.Packages.props" />
+    <Project Path="tests/DfE.Document.Abstractions/DfE.Document.Abstractions.csproj" />
     <Project Path="tests/DfE.Document.Anglesharp.UnitTests/DfE.Document.Anglesharp.UnitTests.csproj" />
     <Project Path="tests/DfE.Document.Anglesharp/DfE.Document.Anglesharp.csproj" />
     <Project Path="tests/DfE.Document.Webdriver.UnitTests/DfE.Document.Webdriver.UnitTests.csproj" />
@@ -15,7 +16,6 @@
     <Project Path="tests/DfE.EducationProviderRegistry.Web.Mvc.SystemTests/DfE.EducationProviderRegistry.Web.Mvc.SystemTests.csproj" />
     <Project Path="tests/DfE.EducationProviderRegistry.Web.Mvc.UITests/DfE.EducationProviderRegistry.Web.Mvc.UITests.csproj" />
     <Project Path="tests/DfE.EducationProviderRegistry.Web.Mvc.UnitTests/DfE.EducationProviderRegistry.Web.Mvc.UnitTests.csproj" />
-    <Project Path="tests/DfE.Document.Abstractions/DfE.Document.Abstractions.csproj" />
     <Project Path="tests/DfE.EducationProviderRegistry.Web.PageComponents/DfE.EducationProviderRegistry.Web.PageComponents.csproj" />
     <Project Path="tests/DfE.EducationProviderRegistry.Web.SharedTests/DfE.EducationProviderRegistry.Web.SharedTests.csproj" Id="416d64b2-33ea-4d2d-a2ea-174f5a8979a8" />
     <Project Path="tests/DfE.EducationProviderRegistry.Web.ViewComponents.UnitTests/DfE.EducationProviderRegistry.Web.ViewComponents.UnitTests.csproj" />

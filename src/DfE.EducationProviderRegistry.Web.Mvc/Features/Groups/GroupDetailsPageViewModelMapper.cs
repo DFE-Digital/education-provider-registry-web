@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using DfE.Core.Libraries.CrossCutting.Mapper;
+using DfE.EducationProviderRegistry.Core.Query.Groups.Application.Model;
 using DfE.EducationProviderRegistry.Core.Query.Groups.Application.UseCases.GetGroupByUid.Response;
 using DfE.EducationProviderRegistry.Web.Mvc.Features.Establishments;
 using DfE.EducationProviderRegistry.Web.Mvc.ViewComponents;
@@ -10,6 +11,13 @@ namespace DfE.EducationProviderRegistry.Web.Mvc.Features.Groups;
 internal sealed class GroupDetailsPageViewModelMapper : IMapper<GroupReadModel, GroupDetailsPageViewModel>
 {
     private static readonly CultureInfo UkCulture = CultureInfo.GetCultureInfo("en-GB");
+    private readonly TimeProvider _timeProvider;
+
+    public GroupDetailsPageViewModelMapper(TimeProvider timeProvider)
+    {
+        ArgumentNullException.ThrowIfNull(timeProvider);
+        _timeProvider = timeProvider;
+    }
 
     public GroupDetailsPageViewModel Map(GroupReadModel readModel)
     {
@@ -162,80 +170,140 @@ internal sealed class GroupDetailsPageViewModelMapper : IMapper<GroupReadModel, 
     }
 
 
-    private static GroupDetailsGovernanceTabViewModel CreateGovernance(GroupReadModel model)
+    private GroupDetailsGovernanceTabViewModel CreateGovernance(GroupReadModel model)
     {
+
+        DateOnly today = DateOnly.FromDateTime(_timeProvider.GetUtcNow().DateTime);
+
+        DateOnly twelveMonthsAgo = today.AddYears(-1);
+
+        IReadOnlyCollection<TrusteeReadModel> activeTrustees = model.Trustees
+            .Where(trustee =>
+                trustee.StartDate <= today &&
+                    (!trustee.EndDate.HasValue || trustee.EndDate.Value >= today))
+            .ToArray();
+
+        IReadOnlyCollection<TrusteeReadModel> historicTrustees = model.Trustees
+            .Where(trustee =>
+                trustee.EndDate.HasValue &&
+                    trustee.EndDate.Value < today &&
+                        trustee.EndDate.Value >= twelveMonthsAgo)
+            .ToArray();
+
         return new()
         {
             Tab = "Governance",
-            TrusteesTable = CreateTrusteesTable(model.Trustees),
+            TrusteesTable = CreateTrusteesTable(activeTrustees, caption: "Trustees"),
+            HistoricTrusteesTable = CreateTrusteesTable(historicTrustees, caption: "Trustees who have left within the last 12 months"),
             MembersTable = CreateMembersTable(model.Members)
         };
     }
 
 
-    private static GovUkTable CreateTrusteesTable(IEnumerable<TrusteeReadModel> trustees)
+    private static GovUkTable CreateTrusteesTable(
+        IEnumerable<TrusteeReadModel> trustees,
+        string caption)
     {
-        TableColumn[] columns = [
-            new() { Text = "Name", IsRowHeader = true },
+        TableColumn[] columns =
+        [
+            new() { Text = "Name and role", IsRowHeader = true },
             new() { Text = "Governor ID" },
-            new() { Text = "Start date" }
+            new() { Text = "Appointed by" },
+            new() { Text = "Term" }
         ];
 
         List<TableRow> rows = [];
 
         foreach (TrusteeReadModel trustee in trustees)
         {
-            TableCell name = new()
-            {
-                Text = trustee.FullName,
-            };
+            string name = FormatName(trustee.Title, trustee.FullName);
 
-            TableCell governorId = new()
-            {
-                Text = trustee.Id
-            };
-
-            TableCell startDate = new()
-            {
-                Text = trustee.StartDate.ToString("dd MMMM yyyy")
-            };
-
-            rows.Add(new TableRow { Cells = [name, governorId, startDate] });
+            rows.Add(
+                new TableRow
+                {
+                    Cells =
+                    [
+                        new()
+                    {
+                        Text = string.IsNullOrWhiteSpace(trustee.Role)
+                            ? name
+                            : $"{name} ({trustee.Role})"
+                    },
+                    new()
+                    {
+                        Text = trustee.Id
+                    },
+                    new()
+                    {
+                        Text = trustee.AppointedBy
+                    },
+                    new()
+                    {
+                        Text = FormatTerm(trustee.StartDate, trustee.EndDate)
+                    }
+                    ]
+                });
         }
 
-        return new(columns, rows, caption: "Trustees");
+        return new(columns, rows, caption: caption);
     }
 
-    private static GovUkTable CreateMembersTable(IEnumerable<MemberReadModel> members)
+    private static GovUkTable CreateMembersTable(
+        IEnumerable<MemberReadModel> members)
     {
-        TableColumn[] columns = [
-            new() { Text = "Name", IsRowHeader = true },
+        TableColumn[] columns =
+        [
+            new() { Text = "Name and role", IsRowHeader = true },
             new() { Text = "Governor ID" },
-            new() { Text = "Start date" }
+            new() { Text = "Appointed by" },
+            new() { Text = "Term" }
         ];
 
         List<TableRow> rows = [];
 
         foreach (MemberReadModel member in members)
         {
-            TableCell name = new()
-            {
-                Text = member.FullName,
-            };
-
-            TableCell governorId = new()
-            {
-                Text = member.Identifier
-            };
-
-            TableCell startDate = new()
-            {
-                Text = member.StartDate.ToString("dd MMMM yyyy")
-            };
-
-            rows.Add(new TableRow { Cells = [name, governorId, startDate] });
+            rows.Add(
+                new TableRow
+                {
+                    Cells =
+                    [
+                        new()
+                    {
+                        Text = FormatName(member.Title, member.FullName)
+                    },
+                    new()
+                    {
+                        Text = member.Identifier
+                    },
+                    new()
+                    {
+                        Text = member.AppointedBy
+                    },
+                    new()
+                    {
+                        Text = FormatTerm(member.StartDate, member.EndDate)
+                    }
+                    ]
+                });
         }
 
         return new(columns, rows, caption: "Members");
+    }
+
+    private static string FormatName(string? title, string fullName)
+    {
+        return string.IsNullOrWhiteSpace(title)
+            ? fullName
+            : $"{title} {fullName}";
+    }
+
+    private static string FormatTerm(DateOnly startDate, DateOnly? endDate)
+    {
+        string formattedStartDate = startDate.ToString("d MMMM yyyy");
+
+        return endDate.HasValue
+            ? $"{formattedStartDate} to {endDate.Value.ToString("d MMMM yyyy")}"
+            : $"From {formattedStartDate}";
     }
 }

@@ -25,6 +25,8 @@ builder.Services
     .AddApplicationPart(typeof(
         DfE.EducationProviderRegistry.Web.ViewComponents.Table.GovUkTableViewComponent).Assembly);
 
+builder.Services.AddSingleton(TimeProvider.System);
+
 builder.Services.AddRouting(options =>
 {
     options.LowercaseUrls = true;

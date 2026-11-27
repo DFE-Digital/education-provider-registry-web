@@ -6,6 +6,7 @@ public class EstablishmentDetailsPageViewModel
 {
     public string? Heading { get; set; }
 
-    public GovUkTable? BasicDetails { get; set; }
-    public GovUkTable? Governors { get; set; }
+    public GovUkTable? BasicDetailsTable { get; set; }
+    public GovUkTable? GovernorsTable { get; set; }
+    public GovUkTable? HistoricGovernorsTable { get; set; }
 }

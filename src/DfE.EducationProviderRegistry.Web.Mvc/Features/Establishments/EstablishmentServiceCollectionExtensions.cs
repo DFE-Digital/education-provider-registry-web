@@ -17,9 +17,6 @@ public static class EstablishmentServiceCollectionExtensions
         services.AddTransient<
             IMapper<EstablishmentDetailsModel, GovUkTable>,
             EstablishmentDetailsBasicDetailsTableMapper>();
-        services.AddTransient<
-            IMapper<IEnumerable<GovernorModel>, GovUkTable>,
-            EstablishmentDetailsGovernorsTableMapper>();
 
         services.AddEstablishmentsUseCaseDependencies();
         services.AddEstablishmentsInfrastructureDependencies();

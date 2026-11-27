@@ -96,8 +96,8 @@ public sealed class EstablishmentDetailsPageViewModelMapperTests
 
         // Assert
         Assert.Equal("testEstablishmentName", result.Heading);
-        Assert.Same(basicDetailsTable, result.BasicDetails);
-        Assert.Same(governorsTable, result.Governors);
+        Assert.Same(basicDetailsTable, result.BasicDetailsTable);
+        Assert.Same(governorsTable, result.GovernorsTable);
 
         basicMapper.Verify(
             candidate => candidate.Map(model),

@@ -32,10 +32,12 @@ public class EstablishmentDetailsPageViewModelMapper : IMapper<EstablishmentDeta
 
         IReadOnlyCollection<GovernorModel> activeGovernors = model.Governors
             .Where(g => g.StartDate <= today && (g.EndDate is null || g.EndDate >= today))
+            .OrderBy(g => g.RoleOrder)
             .ToArray();
 
         IReadOnlyCollection<GovernorModel> historicGovernors = model.Governors
             .Where(g => g.EndDate >= twelveMonthsAgo && g.EndDate < today)
+            .OrderBy(g => g.RoleOrder)
             .ToArray();
 
         return new EstablishmentDetailsPageViewModel
